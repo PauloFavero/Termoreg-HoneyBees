@@ -27,10 +27,10 @@ public class Bee implements Runnable{
         { 
         	while(true) {
             // Displaying the thread that is running 
-            System.out.println ("Thread " + 
-                  Thread.currentThread().getId() + 
-                  " is running"); 
-            System.out.println("Bee Id: " + this.sBeeId);
+//            System.out.println ("Thread " + 
+//                  Thread.currentThread().getId() + 
+//                  " is running"); 
+//            System.out.println("Bee Id: " + this.sBeeId);
         	}
   
         } 
