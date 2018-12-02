@@ -19,6 +19,8 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 	public double infValue;
 	public double supValue;
 	
+	public boolean update = false;
+	
 	//A Jpanel is a inner container that can be placed inside a JFrame
 	private JPanel mainPanel;
 	private JPanel sliderPanel;
@@ -121,6 +123,12 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 	    if (!source.getValueIsAdjusting()) {
 	        int value = (int)source.getValue();
 	        System.out.println("Slider Value: " +  value);
+	        if(source == infLimSlider ) {
+	        	Bee.setdInfLim((double)value);
+	        }
+	        else {
+	        	Bee.setdSupLim((double)value);
+	        }
 	        
 	    }
 	}
@@ -131,9 +139,21 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 	    if(e.getSource() == resetButton) {
 	    	infLimSlider.setValue(32);
 	    	supLimSlider.setValue(36);
-	    	this.infValue = infLimSlider.getValue();
-	    	this.supValue = supLimSlider.getValue();
+	    	
+	    	this.infValue = (double)infLimSlider.getValue();
+	    	this.supValue = (double)supLimSlider.getValue();
+	    	
+	    	Bee.setdInfLim((double)infLimSlider.getValue());
+	    	Bee.setdSupLim((double)supLimSlider.getValue());
 	    	}
+	    else if(e.getSource() == applyButton) {
+	    	
+	    	for (int i = 0; i < Hive.getInstance().getBee().length; i++) {
+	    		Hive.getInstance().getBee()[i].changeThreshold();
+				
+			}
+	    	
+	    }
 	}
 
 	

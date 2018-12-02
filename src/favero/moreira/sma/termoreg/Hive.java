@@ -7,6 +7,11 @@ public class Hive {
 	private Bee[] bee;
 
 
+	public Bee[] getBee() {
+		return bee;
+	}
+
+
 	//create an object of SingleObject
 	   private static Hive instance;
 	   
@@ -17,8 +22,7 @@ public class Hive {
 		   this.setMaxOfBees(5);
 		   this.bee = new Bee[this.maxOfBees];
 		   this.setTemp(15.);
-		   System.out.println ("Hive's temperature right now is " + 
-                   this.temp);
+		   //System.out.println ("Hive's temperature right now is " + this.temp);
 		   for(int i  = 0; i<this.maxOfBees; i++) {
 			   this.bee[i] = new Bee(this);
 		   }

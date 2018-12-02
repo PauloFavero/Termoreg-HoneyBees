@@ -28,8 +28,8 @@ public class Bee implements Runnable{
                   Thread.currentThread().getId() + 
                   " is running");
             System.out.println("Bee Id: " + this.sBeeId);*/
-        	System.out.println ("Hive's temperature right now is " + 
-                        this.hHive.temp);
+//        	System.out.println ("Hive's temperature right now is " + 
+//                        this.hHive.temp);
         	this.perception();
         	}
         } 
@@ -63,16 +63,16 @@ public class Bee implements Runnable{
 	
 	private void makeItCold() {
 		this.hHive.setTemp(-0.0005);
-		System.out.println ("Bee " + 
-                this.iId + 
-                " is cooling the hive");
+//		System.out.println ("Bee " + 
+//                this.iId + 
+//                " is cooling the hive");
 	}
 	
 	private void makeItHot() {
 		this.hHive.setTemp(0.0005);
-		System.out.println ("Bee " + 
-                this.iId + 
-                " is heating the hive");
+//		System.out.println ("Bee " + 
+//                this.iId + 
+//                " is heating the hive");
 	}
 	
 	public void init() {
@@ -84,7 +84,7 @@ public class Bee implements Runnable{
 		this.iId = (int)java.lang.Thread.currentThread().getId();
 	}
 	
-	public void setThreshold() {
+	public void changeThreshold() {
 		this.dThreshold = randomGenerator();
 	}
 	

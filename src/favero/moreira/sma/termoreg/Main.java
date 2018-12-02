@@ -9,12 +9,8 @@ public class Main {
 		Hive hive = Hive.getInstance();
 		GuiSettings guiWindow = new GuiSettings();
 
-		
-		// show the message
-
-		//hive.showMessage();
-		//hive.setTemp(35.0);
-		//hive.setMaxOfBees(5);
+		guiWindow.getInfValue();
+		guiWindow.getSupValue();
 		
 		System.out.println("Hive temperature: " + hive.getTemp());
 		
