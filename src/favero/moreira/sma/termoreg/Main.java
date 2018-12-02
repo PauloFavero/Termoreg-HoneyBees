@@ -1,25 +1,20 @@
 package favero.moreira.sma.termoreg;
+import favero.moreira.sma.termoreg.Hive;
 
 public class Main {
 
 	public static void main(String[] args) {
-		
-		public double dTempAmb;
 
 		// Get the only object available
 		Hive hive = Hive.getInstance();
 
+		
 		// show the message
-		hive.showMessage();
-		hive.setTemp(35.0);
+		//hive.showMessage();
+		//hive.setTemp(35.0);
+		//hive.setMaxOfBees(5);
 		
 		System.out.println("Hive temperature: " + hive.getTemp());
 		
-		for(int b = 0; b<5000; b++) {
-			Bee bee = new Bee();
-		    bee.start();
-		}
-		
 	}
-
 }
