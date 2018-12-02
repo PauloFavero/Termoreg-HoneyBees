@@ -14,19 +14,19 @@ public class Bee {
 		this.dThreshold = dThreshold;
 	}
 	public double getdPrecision() {
-		return dPrecision;
+		return this.dPrecision;
 	}
 	public void setdPrecision(double dPrecision) {
 		this.dPrecision = dPrecision;
 	}
 	public double getdSupLim() {
-		return dSupLim;
+		return this.dSupLim;
 	}
 	public void setdSupLim(double dSupLim) {
 		this.dSupLim = dSupLim;
 	}
 	public double getdInfLim() {
-		return dInfLim;
+		return this.dInfLim;
 	}
 	public void setdInfLim(double dInfLim) {
 		this.dInfLim = dInfLim;

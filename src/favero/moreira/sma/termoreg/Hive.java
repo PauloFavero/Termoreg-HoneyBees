@@ -15,7 +15,6 @@ public class Hive {
 	   private Hive(){
 		   
 		   
-		   
 	   }
 
 	   //Get the only object available
@@ -30,8 +29,9 @@ public class Hive {
 		public void setTemp(double temp) {
 			this.temp = temp;
 		}
+		
 	   
-	   public void showMessage(){
+		public void showMessage(){
 	      System.out.println("I'm a hive with a lot of honey :) !");
 	   }
 
