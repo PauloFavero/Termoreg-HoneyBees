@@ -12,6 +12,12 @@ public class Main {
 		hive.setTemp(35.0);
 		
 		System.out.println("Hive temperature: " + hive.getTemp());
+		
+		for (int i = 0; i < 10; i++) {
+			
+			Bee b = new Bee(Integer.toString(i));
+			
+		}
 	}
 
 }
