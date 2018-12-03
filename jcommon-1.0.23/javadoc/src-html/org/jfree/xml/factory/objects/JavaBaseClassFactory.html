@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ========================================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JCommon : a free general purpose class library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ========================================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2005, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * </a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jcommon/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it </a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by </a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or </a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but </a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY </a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public </a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, </a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.  </a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Java is a trademark or registered trademark of Sun Microsystems, Inc. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * in the United States and other countries.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * -------------------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * JavaBaseClassFactory.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * -------------------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C)opyright 2003, 2004, by Thomas Morgner and Contributors.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  Thomas Morgner (taquera@sherito.org);</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *</a>
+<span class="sourceLineNo">035</span><a id="line.35"> * $Id: JavaBaseClassFactory.java,v 1.3 2005/11/14 11:02:34 mungady Exp $</a>
+<span class="sourceLineNo">036</span><a id="line.36"> *</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * Changes</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * -------</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * 14-Apr-2003 : Initial version</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 29-Apr-2003 : Distilled from the JFreeReport project and moved into JCommon</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * 13-Jan-2004 : Did not handle java.awt.Dimension objects correctly.</a>
+<span class="sourceLineNo">042</span><a id="line.42"> */</a>
+<span class="sourceLineNo">043</span><a id="line.43">package org.jfree.xml.factory.objects;</a>
+<span class="sourceLineNo">044</span><a id="line.44"></a>
+<span class="sourceLineNo">045</span><a id="line.45">import java.awt.BasicStroke;</a>
+<span class="sourceLineNo">046</span><a id="line.46">import java.awt.Color;</a>
+<span class="sourceLineNo">047</span><a id="line.47">import java.awt.Dimension;</a>
+<span class="sourceLineNo">048</span><a id="line.48">import java.awt.geom.Dimension2D;</a>
+<span class="sourceLineNo">049</span><a id="line.49">import java.awt.geom.Line2D;</a>
+<span class="sourceLineNo">050</span><a id="line.50">import java.awt.geom.Point2D;</a>
+<span class="sourceLineNo">051</span><a id="line.51">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">052</span><a id="line.52">import java.text.DateFormat;</a>
+<span class="sourceLineNo">053</span><a id="line.53">import java.text.DateFormatSymbols;</a>
+<span class="sourceLineNo">054</span><a id="line.54">import java.text.DecimalFormat;</a>
+<span class="sourceLineNo">055</span><a id="line.55">import java.text.DecimalFormatSymbols;</a>
+<span class="sourceLineNo">056</span><a id="line.56">import java.text.Format;</a>
+<span class="sourceLineNo">057</span><a id="line.57">import java.text.NumberFormat;</a>
+<span class="sourceLineNo">058</span><a id="line.58">import java.text.SimpleDateFormat;</a>
+<span class="sourceLineNo">059</span><a id="line.59">import java.util.ArrayList;</a>
+<span class="sourceLineNo">060</span><a id="line.60">import java.util.Collection;</a>
+<span class="sourceLineNo">061</span><a id="line.61">import java.util.Date;</a>
+<span class="sourceLineNo">062</span><a id="line.62">import java.util.HashSet;</a>
+<span class="sourceLineNo">063</span><a id="line.63">import java.util.List;</a>
+<span class="sourceLineNo">064</span><a id="line.64">import java.util.Set;</a>
+<span class="sourceLineNo">065</span><a id="line.65">import java.util.TreeSet;</a>
+<span class="sourceLineNo">066</span><a id="line.66">import java.util.Vector;</a>
+<span class="sourceLineNo">067</span><a id="line.67"></a>
+<span class="sourceLineNo">068</span><a id="line.68">import org.jfree.ui.FloatDimension;</a>
+<span class="sourceLineNo">069</span><a id="line.69"></a>
+<span class="sourceLineNo">070</span><a id="line.70">/**</a>
+<span class="sourceLineNo">071</span><a id="line.71"> * A default factory for all commonly used java base classes from java.lang, java.awt</a>
+<span class="sourceLineNo">072</span><a id="line.72"> * etc.</a>
+<span class="sourceLineNo">073</span><a id="line.73"> *</a>
+<span class="sourceLineNo">074</span><a id="line.74"> * @author Thomas Morgner</a>
+<span class="sourceLineNo">075</span><a id="line.75"> */</a>
+<span class="sourceLineNo">076</span><a id="line.76">public class JavaBaseClassFactory extends ClassFactoryImpl {</a>
+<span class="sourceLineNo">077</span><a id="line.77"></a>
+<span class="sourceLineNo">078</span><a id="line.78">    /**</a>
+<span class="sourceLineNo">079</span><a id="line.79">     * DefaultConstructor. Creates the object factory for all java base classes.</a>
+<span class="sourceLineNo">080</span><a id="line.80">     */</a>
+<span class="sourceLineNo">081</span><a id="line.81">    public JavaBaseClassFactory() {</a>
+<span class="sourceLineNo">082</span><a id="line.82">        registerClass(Dimension.class, new DimensionObjectDescription());</a>
+<span class="sourceLineNo">083</span><a id="line.83">        registerClass(Dimension2D.class, new Dimension2DObjectDescription());</a>
+<span class="sourceLineNo">084</span><a id="line.84">        registerClass(FloatDimension.class, new BeanObjectDescription(FloatDimension.class));</a>
+<span class="sourceLineNo">085</span><a id="line.85">        registerClass(Date.class, new DateObjectDescription());</a>
+<span class="sourceLineNo">086</span><a id="line.86">        registerClass(Boolean.TYPE, new BooleanObjectDescription());</a>
+<span class="sourceLineNo">087</span><a id="line.87">        registerClass(Byte.TYPE, new ByteObjectDescription());</a>
+<span class="sourceLineNo">088</span><a id="line.88">        registerClass(Double.TYPE, new DoubleObjectDescription());</a>
+<span class="sourceLineNo">089</span><a id="line.89">        registerClass(Float.TYPE, new FloatObjectDescription());</a>
+<span class="sourceLineNo">090</span><a id="line.90">        registerClass(Integer.TYPE, new IntegerObjectDescription());</a>
+<span class="sourceLineNo">091</span><a id="line.91">        registerClass(Long.TYPE, new LongObjectDescription());</a>
+<span class="sourceLineNo">092</span><a id="line.92">        registerClass(Short.TYPE, new ShortObjectDescription());</a>
+<span class="sourceLineNo">093</span><a id="line.93">        registerClass(Character.TYPE, new CharacterObjectDescription());</a>
+<span class="sourceLineNo">094</span><a id="line.94">        registerClass(Character.class, new CharacterObjectDescription());</a>
+<span class="sourceLineNo">095</span><a id="line.95">        registerClass(Boolean.class, new BooleanObjectDescription());</a>
+<span class="sourceLineNo">096</span><a id="line.96">        registerClass(Byte.class, new ByteObjectDescription());</a>
+<span class="sourceLineNo">097</span><a id="line.97">        registerClass(Double.class, new DoubleObjectDescription());</a>
+<span class="sourceLineNo">098</span><a id="line.98">        registerClass(Float.class, new FloatObjectDescription());</a>
+<span class="sourceLineNo">099</span><a id="line.99">        registerClass(Integer.class, new IntegerObjectDescription());</a>
+<span class="sourceLineNo">100</span><a id="line.100">        registerClass(Long.class, new LongObjectDescription());</a>
+<span class="sourceLineNo">101</span><a id="line.101">        registerClass(Short.class, new ShortObjectDescription());</a>
+<span class="sourceLineNo">102</span><a id="line.102">        registerClass(Line2D.class, new Line2DObjectDescription());</a>
+<span class="sourceLineNo">103</span><a id="line.103">        registerClass(Point2D.class, new Point2DObjectDescription());</a>
+<span class="sourceLineNo">104</span><a id="line.104">        registerClass(Rectangle2D.class, new Rectangle2DObjectDescription());</a>
+<span class="sourceLineNo">105</span><a id="line.105">        registerClass(String.class, new StringObjectDescription());</a>
+<span class="sourceLineNo">106</span><a id="line.106">        registerClass(Color.class, new ColorObjectDescription());</a>
+<span class="sourceLineNo">107</span><a id="line.107">        registerClass(BasicStroke.class, new BasicStrokeObjectDescription());</a>
+<span class="sourceLineNo">108</span><a id="line.108">        registerClass(Object.class, new ClassLoaderObjectDescription());</a>
+<span class="sourceLineNo">109</span><a id="line.109"></a>
+<span class="sourceLineNo">110</span><a id="line.110">        registerClass(Format.class, new ClassLoaderObjectDescription());</a>
+<span class="sourceLineNo">111</span><a id="line.111">        registerClass(NumberFormat.class, createNumberFormatDescription());</a>
+<span class="sourceLineNo">112</span><a id="line.112">        registerClass(DecimalFormat.class, new DecimalFormatObjectDescription());</a>
+<span class="sourceLineNo">113</span><a id="line.113">        registerClass(DecimalFormatSymbols.class, createDecimalFormatSymbols());</a>
+<span class="sourceLineNo">114</span><a id="line.114">        registerClass(DateFormat.class, new ClassLoaderObjectDescription());</a>
+<span class="sourceLineNo">115</span><a id="line.115">        registerClass(SimpleDateFormat.class, new SimpleDateFormatObjectDescription());</a>
+<span class="sourceLineNo">116</span><a id="line.116">        registerClass(DateFormatSymbols.class, new ClassLoaderObjectDescription());</a>
+<span class="sourceLineNo">117</span><a id="line.117"></a>
+<span class="sourceLineNo">118</span><a id="line.118">        registerClass(ArrayList.class, new CollectionObjectDescription(ArrayList.class));</a>
+<span class="sourceLineNo">119</span><a id="line.119">        registerClass(Vector.class, new CollectionObjectDescription(Vector.class));</a>
+<span class="sourceLineNo">120</span><a id="line.120">        registerClass(HashSet.class, new CollectionObjectDescription(HashSet.class));</a>
+<span class="sourceLineNo">121</span><a id="line.121">        registerClass(TreeSet.class, new CollectionObjectDescription(TreeSet.class));</a>
+<span class="sourceLineNo">122</span><a id="line.122">        registerClass(Set.class, new CollectionObjectDescription(HashSet.class));</a>
+<span class="sourceLineNo">123</span><a id="line.123">        registerClass(List.class, new CollectionObjectDescription(ArrayList.class));</a>
+<span class="sourceLineNo">124</span><a id="line.124">        registerClass(Collection.class, new CollectionObjectDescription(ArrayList.class));</a>
+<span class="sourceLineNo">125</span><a id="line.125">    }</a>
+<span class="sourceLineNo">126</span><a id="line.126"></a>
+<span class="sourceLineNo">127</span><a id="line.127">    private ObjectDescription createNumberFormatDescription () {</a>
+<span class="sourceLineNo">128</span><a id="line.128">        final BeanObjectDescription nfDesc =</a>
+<span class="sourceLineNo">129</span><a id="line.129">            new BeanObjectDescription(NumberFormat.class, false);</a>
+<span class="sourceLineNo">130</span><a id="line.130">        nfDesc.setParameterDefinition("groupingUsed", Boolean.TYPE);</a>
+<span class="sourceLineNo">131</span><a id="line.131">        nfDesc.setParameterDefinition("maximumFractionDigits", Integer.TYPE);</a>
+<span class="sourceLineNo">132</span><a id="line.132">        nfDesc.setParameterDefinition("minimumFractionDigits", Integer.TYPE);</a>
+<span class="sourceLineNo">133</span><a id="line.133">        nfDesc.setParameterDefinition("maximumIntegerDigits", Integer.TYPE);</a>
+<span class="sourceLineNo">134</span><a id="line.134">        nfDesc.setParameterDefinition("minimumIntegerDigits", Integer.TYPE);</a>
+<span class="sourceLineNo">135</span><a id="line.135">        nfDesc.setParameterDefinition("parseIntegerOnly", Boolean.TYPE);</a>
+<span class="sourceLineNo">136</span><a id="line.136">        return nfDesc;</a>
+<span class="sourceLineNo">137</span><a id="line.137">    }</a>
+<span class="sourceLineNo">138</span><a id="line.138"></a>
+<span class="sourceLineNo">139</span><a id="line.139">    private ObjectDescription createDecimalFormatSymbols() {</a>
+<span class="sourceLineNo">140</span><a id="line.140">        final BeanObjectDescription dfsDesc =</a>
+<span class="sourceLineNo">141</span><a id="line.141">            new BeanObjectDescription(DecimalFormatSymbols.class, false);</a>
+<span class="sourceLineNo">142</span><a id="line.142">        dfsDesc.setParameterDefinition("currencySymbol", String.class);</a>
+<span class="sourceLineNo">143</span><a id="line.143">        dfsDesc.setParameterDefinition("decimalSeparator", Character.TYPE);</a>
+<span class="sourceLineNo">144</span><a id="line.144">        dfsDesc.setParameterDefinition("digit", Character.TYPE);</a>
+<span class="sourceLineNo">145</span><a id="line.145">        dfsDesc.setParameterDefinition("groupingSeparator", Character.TYPE);</a>
+<span class="sourceLineNo">146</span><a id="line.146">        dfsDesc.setParameterDefinition("infinity", String.class);</a>
+<span class="sourceLineNo">147</span><a id="line.147">        dfsDesc.setParameterDefinition("internationalCurrencySymbol", String.class);</a>
+<span class="sourceLineNo">148</span><a id="line.148">        dfsDesc.setParameterDefinition("minusSign", Character.TYPE);</a>
+<span class="sourceLineNo">149</span><a id="line.149">        dfsDesc.setParameterDefinition("monetaryDecimalSeparator", Character.TYPE);</a>
+<span class="sourceLineNo">150</span><a id="line.150">        dfsDesc.setParameterDefinition("naN", String.class);</a>
+<span class="sourceLineNo">151</span><a id="line.151">        dfsDesc.setParameterDefinition("patternSeparator", Character.TYPE);</a>
+<span class="sourceLineNo">152</span><a id="line.152">        dfsDesc.setParameterDefinition("perMill", Character.TYPE);</a>
+<span class="sourceLineNo">153</span><a id="line.153">        dfsDesc.setParameterDefinition("percent", Character.TYPE);</a>
+<span class="sourceLineNo">154</span><a id="line.154">        dfsDesc.setParameterDefinition("zeroDigit", Character.TYPE);</a>
+<span class="sourceLineNo">155</span><a id="line.155">        return dfsDesc;</a>
+<span class="sourceLineNo">156</span><a id="line.156"></a>
+<span class="sourceLineNo">157</span><a id="line.157">    }</a>
+<span class="sourceLineNo">158</span><a id="line.158">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

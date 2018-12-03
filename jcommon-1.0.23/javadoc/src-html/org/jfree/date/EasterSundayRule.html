@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ========================================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JCommon : a free general purpose class library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ========================================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2005, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * </a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jcommon/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it </a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by </a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or </a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but </a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY </a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public </a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, </a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.  </a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Java is a trademark or registered trademark of Sun Microsystems, Inc. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * in the United States and other countries.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * ---------------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * EasterSundayRule.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * ---------------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2000-2003, by Object Refinery Limited.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   -;</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *</a>
+<span class="sourceLineNo">035</span><a id="line.35"> * $Id: EasterSundayRule.java,v 1.4 2005/11/16 15:58:40 taqua Exp $</a>
+<span class="sourceLineNo">036</span><a id="line.36"> *</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * Changes (from 26-Oct-2001)</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * --------------------------</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * 26-Oct-2001 : Changed package to com.jrefinery.date.*;</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 03-Oct-2002 : Fixed errors reported by Checkstyle (DG);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * 01-Jun-2005 : Removed the explicit clonable declaration, it is declared</a>
+<span class="sourceLineNo">042</span><a id="line.42"> *               in the super class.</a>
+<span class="sourceLineNo">043</span><a id="line.43"> */</a>
+<span class="sourceLineNo">044</span><a id="line.44"></a>
+<span class="sourceLineNo">045</span><a id="line.45">package org.jfree.date;</a>
+<span class="sourceLineNo">046</span><a id="line.46"></a>
+<span class="sourceLineNo">047</span><a id="line.47">/**</a>
+<span class="sourceLineNo">048</span><a id="line.48"> * An annual date rule for Easter (Sunday).  The algorithm used here was</a>
+<span class="sourceLineNo">049</span><a id="line.49"> * obtained from a Calendar FAQ which can be found at:</a>
+<span class="sourceLineNo">050</span><a id="line.50"> * &lt;P&gt;</a>
+<span class="sourceLineNo">051</span><a id="line.51"> * &lt;a href="http://www.tondering.dk/claus/calendar.html"</a>
+<span class="sourceLineNo">052</span><a id="line.52"> *     &gt;http://www.tondering.dk/claus/calendar.html&lt;/a&gt;.</a>
+<span class="sourceLineNo">053</span><a id="line.53"> * &lt;P&gt;</a>
+<span class="sourceLineNo">054</span><a id="line.54"> * It is based on an algorithm by Oudin (1940) and quoted in "Explanatory Supplement to the</a>
+<span class="sourceLineNo">055</span><a id="line.55"> * Astronomical Almanac", P. Kenneth Seidelmann, editor.</a>
+<span class="sourceLineNo">056</span><a id="line.56"> *</a>
+<span class="sourceLineNo">057</span><a id="line.57"> * @author David Gilbert</a>
+<span class="sourceLineNo">058</span><a id="line.58"> */</a>
+<span class="sourceLineNo">059</span><a id="line.59">public class EasterSundayRule extends AnnualDateRule {</a>
+<span class="sourceLineNo">060</span><a id="line.60"></a>
+<span class="sourceLineNo">061</span><a id="line.61">    /**</a>
+<span class="sourceLineNo">062</span><a id="line.62">     * Default constructor.</a>
+<span class="sourceLineNo">063</span><a id="line.63">     */</a>
+<span class="sourceLineNo">064</span><a id="line.64">    public EasterSundayRule() {</a>
+<span class="sourceLineNo">065</span><a id="line.65">    }</a>
+<span class="sourceLineNo">066</span><a id="line.66"></a>
+<span class="sourceLineNo">067</span><a id="line.67">    /**</a>
+<span class="sourceLineNo">068</span><a id="line.68">     * Returns the date of Easter Sunday for the given year.  See the class</a>
+<span class="sourceLineNo">069</span><a id="line.69">     * description for the source of the algorithm.</a>
+<span class="sourceLineNo">070</span><a id="line.70">     * &lt;P&gt;</a>
+<span class="sourceLineNo">071</span><a id="line.71">     * This method supports the AnnualDateRule interface.</a>
+<span class="sourceLineNo">072</span><a id="line.72">     *</a>
+<span class="sourceLineNo">073</span><a id="line.73">     * @param year  the year to check.</a>
+<span class="sourceLineNo">074</span><a id="line.74">     *</a>
+<span class="sourceLineNo">075</span><a id="line.75">     * @return the date of Easter Sunday for the given year.</a>
+<span class="sourceLineNo">076</span><a id="line.76">     */</a>
+<span class="sourceLineNo">077</span><a id="line.77">    public SerialDate getDate(final int year) {</a>
+<span class="sourceLineNo">078</span><a id="line.78">        final int g = year % 19;</a>
+<span class="sourceLineNo">079</span><a id="line.79">        final int c = year / 100;</a>
+<span class="sourceLineNo">080</span><a id="line.80">        final int h = (c - c / 4 - (8 * c + 13) / 25 + 19 * g + 15) % 30;</a>
+<span class="sourceLineNo">081</span><a id="line.81">        final int i = h - h / 28 * (1 - h / 28 * 29 / (h + 1) * (21 - g) / 11);</a>
+<span class="sourceLineNo">082</span><a id="line.82">        final int j = (year + year / 4 + i + 2 - c + c / 4) % 7;</a>
+<span class="sourceLineNo">083</span><a id="line.83">        final int l = i - j;</a>
+<span class="sourceLineNo">084</span><a id="line.84">        final int month = 3 + (l + 40) / 44;</a>
+<span class="sourceLineNo">085</span><a id="line.85">        final int day = l + 28 - 31 * (month / 4);</a>
+<span class="sourceLineNo">086</span><a id="line.86">        return SerialDate.createInstance(day, month, year);</a>
+<span class="sourceLineNo">087</span><a id="line.87">    }</a>
+<span class="sourceLineNo">088</span><a id="line.88"></a>
+<span class="sourceLineNo">089</span><a id="line.89">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/**</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * ========================================</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * JCommon : a free Java report library</a>
+<span class="sourceLineNo">004</span><a id="line.4"> * ========================================</a>
+<span class="sourceLineNo">005</span><a id="line.5"> *</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * Project Info:  http://www.jfree.org/jcommon/</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Lead:  Thomas Morgner;</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * (C) Copyright 2000-2006, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">010</span><a id="line.10"> *</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * This library is free software; you can redistribute it and/or modify it under the terms</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * of the GNU Lesser General Public License as published by the Free Software Foundation;</a>
+<span class="sourceLineNo">013</span><a id="line.13"> * either version 2.1 of the License, or (at your option) any later version.</a>
+<span class="sourceLineNo">014</span><a id="line.14"> *</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * See the GNU Lesser General Public License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public License along with this</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Boston, MA 02111-1307, USA.</a>
+<span class="sourceLineNo">022</span><a id="line.22"> *</a>
+<span class="sourceLineNo">023</span><a id="line.23"> * [Java is a trademark or registered trademark of Sun Microsystems, Inc.</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * in the United States and other countries.]</a>
+<span class="sourceLineNo">025</span><a id="line.25"> *</a>
+<span class="sourceLineNo">026</span><a id="line.26"> * ------------</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * DrawablePanel.java</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * ------------</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * (C) Copyright 2002-2006, by Object Refinery Limited.</a>
+<span class="sourceLineNo">030</span><a id="line.30"> *</a>
+<span class="sourceLineNo">031</span><a id="line.31"> * Original Author:  Thomas Morgner;</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Contributor(s):   -;</a>
+<span class="sourceLineNo">033</span><a id="line.33"> *</a>
+<span class="sourceLineNo">034</span><a id="line.34"> * $Id: DrawablePanel.java,v 1.4 2008/09/10 09:25:09 mungady Exp $</a>
+<span class="sourceLineNo">035</span><a id="line.35"> *</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * Changes</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * -------</a>
+<span class="sourceLineNo">038</span><a id="line.38"> *</a>
+<span class="sourceLineNo">039</span><a id="line.39"> *</a>
+<span class="sourceLineNo">040</span><a id="line.40"> */</a>
+<span class="sourceLineNo">041</span><a id="line.41">package org.jfree.ui;</a>
+<span class="sourceLineNo">042</span><a id="line.42"></a>
+<span class="sourceLineNo">043</span><a id="line.43">import java.awt.Dimension;</a>
+<span class="sourceLineNo">044</span><a id="line.44">import java.awt.Graphics;</a>
+<span class="sourceLineNo">045</span><a id="line.45">import java.awt.Graphics2D;</a>
+<span class="sourceLineNo">046</span><a id="line.46">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">047</span><a id="line.47">import javax.swing.JPanel;</a>
+<span class="sourceLineNo">048</span><a id="line.48"></a>
+<span class="sourceLineNo">049</span><a id="line.49">/**</a>
+<span class="sourceLineNo">050</span><a id="line.50"> * A component, that accepts a drawable and which draws that drawable.</a>
+<span class="sourceLineNo">051</span><a id="line.51"> *</a>
+<span class="sourceLineNo">052</span><a id="line.52"> * @author Thomas Morgner</a>
+<span class="sourceLineNo">053</span><a id="line.53"> */</a>
+<span class="sourceLineNo">054</span><a id="line.54">public class DrawablePanel extends JPanel</a>
+<span class="sourceLineNo">055</span><a id="line.55">{</a>
+<span class="sourceLineNo">056</span><a id="line.56">  private Drawable drawable;</a>
+<span class="sourceLineNo">057</span><a id="line.57"></a>
+<span class="sourceLineNo">058</span><a id="line.58">  /**</a>
+<span class="sourceLineNo">059</span><a id="line.59">   * Creates a new instance.</a>
+<span class="sourceLineNo">060</span><a id="line.60">   */</a>
+<span class="sourceLineNo">061</span><a id="line.61">  public DrawablePanel()</a>
+<span class="sourceLineNo">062</span><a id="line.62">  {</a>
+<span class="sourceLineNo">063</span><a id="line.63">    setOpaque(false);</a>
+<span class="sourceLineNo">064</span><a id="line.64">  }</a>
+<span class="sourceLineNo">065</span><a id="line.65"></a>
+<span class="sourceLineNo">066</span><a id="line.66">  /**</a>
+<span class="sourceLineNo">067</span><a id="line.67">   * Returns the drawable item.</a>
+<span class="sourceLineNo">068</span><a id="line.68">   *</a>
+<span class="sourceLineNo">069</span><a id="line.69">   * @return The drawable item.</a>
+<span class="sourceLineNo">070</span><a id="line.70">   */</a>
+<span class="sourceLineNo">071</span><a id="line.71">  public Drawable getDrawable()</a>
+<span class="sourceLineNo">072</span><a id="line.72">  {</a>
+<span class="sourceLineNo">073</span><a id="line.73">    return this.drawable;</a>
+<span class="sourceLineNo">074</span><a id="line.74">  }</a>
+<span class="sourceLineNo">075</span><a id="line.75"></a>
+<span class="sourceLineNo">076</span><a id="line.76">  /**</a>
+<span class="sourceLineNo">077</span><a id="line.77">   * Sets the drawable item.</a>
+<span class="sourceLineNo">078</span><a id="line.78">   *</a>
+<span class="sourceLineNo">079</span><a id="line.79">   * @param drawable  the drawable item.</a>
+<span class="sourceLineNo">080</span><a id="line.80">   */</a>
+<span class="sourceLineNo">081</span><a id="line.81">  public void setDrawable(final Drawable drawable)</a>
+<span class="sourceLineNo">082</span><a id="line.82">  {</a>
+<span class="sourceLineNo">083</span><a id="line.83">    this.drawable = drawable;</a>
+<span class="sourceLineNo">084</span><a id="line.84">    revalidate();</a>
+<span class="sourceLineNo">085</span><a id="line.85">    repaint();</a>
+<span class="sourceLineNo">086</span><a id="line.86">  }</a>
+<span class="sourceLineNo">087</span><a id="line.87"></a>
+<span class="sourceLineNo">088</span><a id="line.88">  /**</a>
+<span class="sourceLineNo">089</span><a id="line.89">   * If the &lt;code&gt;preferredSize&lt;/code&gt; has been set to a non-&lt;code&gt;null&lt;/code&gt;</a>
+<span class="sourceLineNo">090</span><a id="line.90">   * value just returns it. If the UI delegate's &lt;code&gt;getPreferredSize&lt;/code&gt;</a>
+<span class="sourceLineNo">091</span><a id="line.91">   * method returns a non &lt;code&gt;null&lt;/code&gt; value then return that; otherwise</a>
+<span class="sourceLineNo">092</span><a id="line.92">   * defer to the component's layout manager.</a>
+<span class="sourceLineNo">093</span><a id="line.93">   *</a>
+<span class="sourceLineNo">094</span><a id="line.94">   * @return the value of the &lt;code&gt;preferredSize&lt;/code&gt; property</a>
+<span class="sourceLineNo">095</span><a id="line.95">   * @see #setPreferredSize</a>
+<span class="sourceLineNo">096</span><a id="line.96">   * @see javax.swing.plaf.ComponentUI</a>
+<span class="sourceLineNo">097</span><a id="line.97">   */</a>
+<span class="sourceLineNo">098</span><a id="line.98">  public Dimension getPreferredSize()</a>
+<span class="sourceLineNo">099</span><a id="line.99">  {</a>
+<span class="sourceLineNo">100</span><a id="line.100">    if (this.drawable instanceof ExtendedDrawable)</a>
+<span class="sourceLineNo">101</span><a id="line.101">    {</a>
+<span class="sourceLineNo">102</span><a id="line.102">      final ExtendedDrawable ed = (ExtendedDrawable) this.drawable;</a>
+<span class="sourceLineNo">103</span><a id="line.103">      return ed.getPreferredSize();</a>
+<span class="sourceLineNo">104</span><a id="line.104">    }</a>
+<span class="sourceLineNo">105</span><a id="line.105">    return super.getPreferredSize();</a>
+<span class="sourceLineNo">106</span><a id="line.106">  }</a>
+<span class="sourceLineNo">107</span><a id="line.107"></a>
+<span class="sourceLineNo">108</span><a id="line.108">  /**</a>
+<span class="sourceLineNo">109</span><a id="line.109">   * If the minimum size has been set to a non-&lt;code&gt;null&lt;/code&gt; value just</a>
+<span class="sourceLineNo">110</span><a id="line.110">   * returns it.  If the UI delegate's &lt;code&gt;getMinimumSize&lt;/code&gt; method</a>
+<span class="sourceLineNo">111</span><a id="line.111">   * returns a non-&lt;code&gt;null&lt;/code&gt; value then return that; otherwise defer to</a>
+<span class="sourceLineNo">112</span><a id="line.112">   * the component's layout manager.</a>
+<span class="sourceLineNo">113</span><a id="line.113">   *</a>
+<span class="sourceLineNo">114</span><a id="line.114">   * @return the value of the &lt;code&gt;minimumSize&lt;/code&gt; property</a>
+<span class="sourceLineNo">115</span><a id="line.115">   * @see #setMinimumSize</a>
+<span class="sourceLineNo">116</span><a id="line.116">   * @see javax.swing.plaf.ComponentUI</a>
+<span class="sourceLineNo">117</span><a id="line.117">   */</a>
+<span class="sourceLineNo">118</span><a id="line.118">  public Dimension getMinimumSize()</a>
+<span class="sourceLineNo">119</span><a id="line.119">  {</a>
+<span class="sourceLineNo">120</span><a id="line.120">    if (this.drawable instanceof ExtendedDrawable)</a>
+<span class="sourceLineNo">121</span><a id="line.121">    {</a>
+<span class="sourceLineNo">122</span><a id="line.122">      final ExtendedDrawable ed = (ExtendedDrawable) this.drawable;</a>
+<span class="sourceLineNo">123</span><a id="line.123">      return ed.getPreferredSize();</a>
+<span class="sourceLineNo">124</span><a id="line.124">    }</a>
+<span class="sourceLineNo">125</span><a id="line.125">    return super.getMinimumSize();</a>
+<span class="sourceLineNo">126</span><a id="line.126">  }</a>
+<span class="sourceLineNo">127</span><a id="line.127"></a>
+<span class="sourceLineNo">128</span><a id="line.128">  /**</a>
+<span class="sourceLineNo">129</span><a id="line.129">   * Returns true if this component is completely opaque.</a>
+<span class="sourceLineNo">130</span><a id="line.130">   * &lt;p&gt;</a>
+<span class="sourceLineNo">131</span><a id="line.131">   * An opaque component paints every pixel within its rectangular bounds. A</a>
+<span class="sourceLineNo">132</span><a id="line.132">   * non-opaque component paints only a subset of its pixels or none at all,</a>
+<span class="sourceLineNo">133</span><a id="line.133">   * allowing the pixels underneath it to "show through".  Therefore, a</a>
+<span class="sourceLineNo">134</span><a id="line.134">   * component that does not fully paint its pixels provides a degree of</a>
+<span class="sourceLineNo">135</span><a id="line.135">   * transparency.&lt;/p&gt;</a>
+<span class="sourceLineNo">136</span><a id="line.136">   * &lt;p&gt;</a>
+<span class="sourceLineNo">137</span><a id="line.137">   * Subclasses that guarantee to always completely paint their contents should</a>
+<span class="sourceLineNo">138</span><a id="line.138">   * override this method and return true.&lt;/p&gt;</a>
+<span class="sourceLineNo">139</span><a id="line.139">   *</a>
+<span class="sourceLineNo">140</span><a id="line.140">   * @return true if this component is completely opaque</a>
+<span class="sourceLineNo">141</span><a id="line.141">   * @see #setOpaque</a>
+<span class="sourceLineNo">142</span><a id="line.142">   */</a>
+<span class="sourceLineNo">143</span><a id="line.143">  public boolean isOpaque()</a>
+<span class="sourceLineNo">144</span><a id="line.144">  {</a>
+<span class="sourceLineNo">145</span><a id="line.145">    if (this.drawable == null)</a>
+<span class="sourceLineNo">146</span><a id="line.146">    {</a>
+<span class="sourceLineNo">147</span><a id="line.147">      return false;</a>
+<span class="sourceLineNo">148</span><a id="line.148">    }</a>
+<span class="sourceLineNo">149</span><a id="line.149">    return super.isOpaque();</a>
+<span class="sourceLineNo">150</span><a id="line.150">  }</a>
+<span class="sourceLineNo">151</span><a id="line.151"></a>
+<span class="sourceLineNo">152</span><a id="line.152">  /**</a>
+<span class="sourceLineNo">153</span><a id="line.153">   * Calls the UI delegate's paint method, if the UI delegate is</a>
+<span class="sourceLineNo">154</span><a id="line.154">   * non-&lt;code&gt;null&lt;/code&gt;.  We pass the delegate a copy of the</a>
+<span class="sourceLineNo">155</span><a id="line.155">   * &lt;code&gt;Graphics&lt;/code&gt; object to protect the rest of the paint code from</a>
+<span class="sourceLineNo">156</span><a id="line.156">   * irrevocable changes (for example, &lt;code&gt;Graphics.translate&lt;/code&gt;).</a>
+<span class="sourceLineNo">157</span><a id="line.157">   * &lt;p&gt;</a>
+<span class="sourceLineNo">158</span><a id="line.158">   * If you override this in a subclass you should not make permanent changes to</a>
+<span class="sourceLineNo">159</span><a id="line.159">   * the passed in &lt;code&gt;Graphics&lt;/code&gt;. For example, you should not alter the</a>
+<span class="sourceLineNo">160</span><a id="line.160">   * clip &lt;code&gt;Rectangle&lt;/code&gt; or modify the transform. If you need to do</a>
+<span class="sourceLineNo">161</span><a id="line.161">   * these operations you may find it easier to create a new</a>
+<span class="sourceLineNo">162</span><a id="line.162">   * &lt;code&gt;Graphics&lt;/code&gt; from the passed in &lt;code&gt;Graphics&lt;/code&gt; and</a>
+<span class="sourceLineNo">163</span><a id="line.163">   * manipulate it. Further, if you do not invoker super's implementation you</a>
+<span class="sourceLineNo">164</span><a id="line.164">   * must honor the opaque property, that is if this component is opaque, you</a>
+<span class="sourceLineNo">165</span><a id="line.165">   * must completely fill in the background in a non-opaque color. If you do not</a>
+<span class="sourceLineNo">166</span><a id="line.166">   * honor the opaque property you will likely see visual artifacts.&lt;/p&gt;</a>
+<span class="sourceLineNo">167</span><a id="line.167">   * &lt;p&gt;</a>
+<span class="sourceLineNo">168</span><a id="line.168">   * The passed in &lt;code&gt;Graphics&lt;/code&gt; object might have a transform other</a>
+<span class="sourceLineNo">169</span><a id="line.169">   * than the identify transform installed on it.  In this case, you might get</a>
+<span class="sourceLineNo">170</span><a id="line.170">   * unexpected results if you cumulatively apply another transform.&lt;/p&gt;</a>
+<span class="sourceLineNo">171</span><a id="line.171">   *</a>
+<span class="sourceLineNo">172</span><a id="line.172">   * @param g the &lt;code&gt;Graphics&lt;/code&gt; object to protect</a>
+<span class="sourceLineNo">173</span><a id="line.173">   * @see #paint</a>
+<span class="sourceLineNo">174</span><a id="line.174">   * @see javax.swing.plaf.ComponentUI</a>
+<span class="sourceLineNo">175</span><a id="line.175">   */</a>
+<span class="sourceLineNo">176</span><a id="line.176">  protected void paintComponent(Graphics g)</a>
+<span class="sourceLineNo">177</span><a id="line.177">  {</a>
+<span class="sourceLineNo">178</span><a id="line.178">    super.paintComponent(g);</a>
+<span class="sourceLineNo">179</span><a id="line.179">    if (this.drawable == null)</a>
+<span class="sourceLineNo">180</span><a id="line.180">    {</a>
+<span class="sourceLineNo">181</span><a id="line.181">      return;</a>
+<span class="sourceLineNo">182</span><a id="line.182">    }</a>
+<span class="sourceLineNo">183</span><a id="line.183"></a>
+<span class="sourceLineNo">184</span><a id="line.184">    final Graphics2D g2 = (Graphics2D) g.create</a>
+<span class="sourceLineNo">185</span><a id="line.185">            (0, 0, getWidth(), getHeight());</a>
+<span class="sourceLineNo">186</span><a id="line.186"></a>
+<span class="sourceLineNo">187</span><a id="line.187">    this.drawable.draw(g2, new Rectangle2D.Double(0, 0, getWidth(), getHeight()));</a>
+<span class="sourceLineNo">188</span><a id="line.188">    g2.dispose();</a>
+<span class="sourceLineNo">189</span><a id="line.189">  }</a>
+<span class="sourceLineNo">190</span><a id="line.190"></a>
+<span class="sourceLineNo">191</span><a id="line.191">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>
