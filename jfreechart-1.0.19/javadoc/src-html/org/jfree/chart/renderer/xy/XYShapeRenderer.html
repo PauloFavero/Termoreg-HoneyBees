@@ -1,0 +1,697 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * --------------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * XYShapeRenderer.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * --------------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2008-2014 by Andreas Haumer, xS+S and Contributors.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  Martin Hoeller (x Software + Systeme  xS+S - Andreas</a>
+<span class="sourceLineNo">033</span><a id="line.33"> *                       Haumer);</a>
+<span class="sourceLineNo">034</span><a id="line.34"> * Contributor(s):   David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">035</span><a id="line.35"> *</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * Changes:</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * --------</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * 17-Sep-2008 : Version 1, based on a contribution from Martin Hoeller with</a>
+<span class="sourceLineNo">039</span><a id="line.39"> *               amendments by David Gilbert (DG);</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 16-Feb-2010 : Added findZBounds() (patch 2952086) (MH);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * 19-Oct-2011 : Fixed NPE in findRangeBounds() (bug 3026341) (DG);</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * 03-Jul-2013 : Use ParamChecks (DG);</a>
+<span class="sourceLineNo">043</span><a id="line.43"> *</a>
+<span class="sourceLineNo">044</span><a id="line.44"> */</a>
+<span class="sourceLineNo">045</span><a id="line.45"></a>
+<span class="sourceLineNo">046</span><a id="line.46">package org.jfree.chart.renderer.xy;</a>
+<span class="sourceLineNo">047</span><a id="line.47"></a>
+<span class="sourceLineNo">048</span><a id="line.48">import java.awt.BasicStroke;</a>
+<span class="sourceLineNo">049</span><a id="line.49">import java.awt.Color;</a>
+<span class="sourceLineNo">050</span><a id="line.50">import java.awt.Graphics2D;</a>
+<span class="sourceLineNo">051</span><a id="line.51">import java.awt.Paint;</a>
+<span class="sourceLineNo">052</span><a id="line.52">import java.awt.Shape;</a>
+<span class="sourceLineNo">053</span><a id="line.53">import java.awt.Stroke;</a>
+<span class="sourceLineNo">054</span><a id="line.54">import java.awt.geom.Ellipse2D;</a>
+<span class="sourceLineNo">055</span><a id="line.55">import java.awt.geom.Line2D;</a>
+<span class="sourceLineNo">056</span><a id="line.56">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">057</span><a id="line.57">import java.io.IOException;</a>
+<span class="sourceLineNo">058</span><a id="line.58">import java.io.ObjectInputStream;</a>
+<span class="sourceLineNo">059</span><a id="line.59">import java.io.ObjectOutputStream;</a>
+<span class="sourceLineNo">060</span><a id="line.60">import java.io.Serializable;</a>
+<span class="sourceLineNo">061</span><a id="line.61"></a>
+<span class="sourceLineNo">062</span><a id="line.62">import org.jfree.chart.axis.ValueAxis;</a>
+<span class="sourceLineNo">063</span><a id="line.63">import org.jfree.chart.entity.EntityCollection;</a>
+<span class="sourceLineNo">064</span><a id="line.64">import org.jfree.chart.event.RendererChangeEvent;</a>
+<span class="sourceLineNo">065</span><a id="line.65">import org.jfree.chart.plot.CrosshairState;</a>
+<span class="sourceLineNo">066</span><a id="line.66">import org.jfree.chart.plot.PlotOrientation;</a>
+<span class="sourceLineNo">067</span><a id="line.67">import org.jfree.chart.plot.PlotRenderingInfo;</a>
+<span class="sourceLineNo">068</span><a id="line.68">import org.jfree.chart.plot.XYPlot;</a>
+<span class="sourceLineNo">069</span><a id="line.69">import org.jfree.chart.renderer.LookupPaintScale;</a>
+<span class="sourceLineNo">070</span><a id="line.70">import org.jfree.chart.renderer.PaintScale;</a>
+<span class="sourceLineNo">071</span><a id="line.71">import org.jfree.chart.util.ParamChecks;</a>
+<span class="sourceLineNo">072</span><a id="line.72">import org.jfree.data.Range;</a>
+<span class="sourceLineNo">073</span><a id="line.73">import org.jfree.data.general.DatasetUtilities;</a>
+<span class="sourceLineNo">074</span><a id="line.74">import org.jfree.data.xy.XYDataset;</a>
+<span class="sourceLineNo">075</span><a id="line.75">import org.jfree.data.xy.XYZDataset;</a>
+<span class="sourceLineNo">076</span><a id="line.76">import org.jfree.io.SerialUtilities;</a>
+<span class="sourceLineNo">077</span><a id="line.77">import org.jfree.util.PublicCloneable;</a>
+<span class="sourceLineNo">078</span><a id="line.78">import org.jfree.util.ShapeUtilities;</a>
+<span class="sourceLineNo">079</span><a id="line.79"></a>
+<span class="sourceLineNo">080</span><a id="line.80">/**</a>
+<span class="sourceLineNo">081</span><a id="line.81"> * A renderer that draws shapes at (x, y) coordinates and, if the dataset</a>
+<span class="sourceLineNo">082</span><a id="line.82"> * is an instance of {@link XYZDataset}, fills the shapes with a paint that</a>
+<span class="sourceLineNo">083</span><a id="line.83"> * is based on the z-value (the paint is obtained from a lookup table).  The</a>
+<span class="sourceLineNo">084</span><a id="line.84"> * renderer also allows for optional guidelines, horizontal and vertical lines</a>
+<span class="sourceLineNo">085</span><a id="line.85"> * connecting the shape to the edges of the plot.</a>
+<span class="sourceLineNo">086</span><a id="line.86"> * &lt;br&gt;&lt;br&gt;</a>
+<span class="sourceLineNo">087</span><a id="line.87"> * The example shown here is generated by the</a>
+<span class="sourceLineNo">088</span><a id="line.88"> * &lt;code&gt;XYShapeRendererDemo1.java&lt;/code&gt; program included in the JFreeChart</a>
+<span class="sourceLineNo">089</span><a id="line.89"> * demo collection:</a>
+<span class="sourceLineNo">090</span><a id="line.90"> * &lt;br&gt;&lt;br&gt;</a>
+<span class="sourceLineNo">091</span><a id="line.91"> * &lt;img src="../../../../../images/XYShapeRendererSample.png"</a>
+<span class="sourceLineNo">092</span><a id="line.92"> * alt="XYShapeRendererSample.png"&gt;</a>
+<span class="sourceLineNo">093</span><a id="line.93"> * &lt;br&gt;&lt;br&gt;</a>
+<span class="sourceLineNo">094</span><a id="line.94"> * This renderer has similarities to, but also differences from, the</a>
+<span class="sourceLineNo">095</span><a id="line.95"> * {@link XYLineAndShapeRenderer}.</a>
+<span class="sourceLineNo">096</span><a id="line.96"> *</a>
+<span class="sourceLineNo">097</span><a id="line.97"> * @since 1.0.11</a>
+<span class="sourceLineNo">098</span><a id="line.98"> */</a>
+<span class="sourceLineNo">099</span><a id="line.99">public class XYShapeRenderer extends AbstractXYItemRenderer</a>
+<span class="sourceLineNo">100</span><a id="line.100">        implements XYItemRenderer, Cloneable, Serializable {</a>
+<span class="sourceLineNo">101</span><a id="line.101"></a>
+<span class="sourceLineNo">102</span><a id="line.102">    /** Auto generated serial version id. */</a>
+<span class="sourceLineNo">103</span><a id="line.103">    private static final long serialVersionUID = 8320552104211173221L;</a>
+<span class="sourceLineNo">104</span><a id="line.104"></a>
+<span class="sourceLineNo">105</span><a id="line.105">    /** The paint scale (never null). */</a>
+<span class="sourceLineNo">106</span><a id="line.106">    private PaintScale paintScale;</a>
+<span class="sourceLineNo">107</span><a id="line.107"></a>
+<span class="sourceLineNo">108</span><a id="line.108">    /** A flag that controls whether or not the shape outlines are drawn. */</a>
+<span class="sourceLineNo">109</span><a id="line.109">    private boolean drawOutlines;</a>
+<span class="sourceLineNo">110</span><a id="line.110"></a>
+<span class="sourceLineNo">111</span><a id="line.111">    /**</a>
+<span class="sourceLineNo">112</span><a id="line.112">     * A flag that controls whether or not the outline paint is used (if not,</a>
+<span class="sourceLineNo">113</span><a id="line.113">     * the regular paint is used).</a>
+<span class="sourceLineNo">114</span><a id="line.114">     */</a>
+<span class="sourceLineNo">115</span><a id="line.115">    private boolean useOutlinePaint;</a>
+<span class="sourceLineNo">116</span><a id="line.116"></a>
+<span class="sourceLineNo">117</span><a id="line.117">    /**</a>
+<span class="sourceLineNo">118</span><a id="line.118">     * A flag that controls whether or not the fill paint is used (if not,</a>
+<span class="sourceLineNo">119</span><a id="line.119">     * the fill paint is used).</a>
+<span class="sourceLineNo">120</span><a id="line.120">     */</a>
+<span class="sourceLineNo">121</span><a id="line.121">    private boolean useFillPaint;</a>
+<span class="sourceLineNo">122</span><a id="line.122"></a>
+<span class="sourceLineNo">123</span><a id="line.123">    /** Flag indicating if guide lines should be drawn for every item. */</a>
+<span class="sourceLineNo">124</span><a id="line.124">    private boolean guideLinesVisible;</a>
+<span class="sourceLineNo">125</span><a id="line.125"></a>
+<span class="sourceLineNo">126</span><a id="line.126">    /** The paint used for drawing the guide lines (never null). */</a>
+<span class="sourceLineNo">127</span><a id="line.127">    private transient Paint guideLinePaint;</a>
+<span class="sourceLineNo">128</span><a id="line.128"></a>
+<span class="sourceLineNo">129</span><a id="line.129">    /** The stroke used for drawing the guide lines (never null). */</a>
+<span class="sourceLineNo">130</span><a id="line.130">    private transient Stroke guideLineStroke;</a>
+<span class="sourceLineNo">131</span><a id="line.131"></a>
+<span class="sourceLineNo">132</span><a id="line.132">    /**</a>
+<span class="sourceLineNo">133</span><a id="line.133">     * Creates a new &lt;code&gt;XYShapeRenderer&lt;/code&gt; instance with default</a>
+<span class="sourceLineNo">134</span><a id="line.134">     * attributes.</a>
+<span class="sourceLineNo">135</span><a id="line.135">     */</a>
+<span class="sourceLineNo">136</span><a id="line.136">    public XYShapeRenderer() {</a>
+<span class="sourceLineNo">137</span><a id="line.137">        this.paintScale = new LookupPaintScale();</a>
+<span class="sourceLineNo">138</span><a id="line.138">        this.useFillPaint = false;</a>
+<span class="sourceLineNo">139</span><a id="line.139">        this.drawOutlines = false;</a>
+<span class="sourceLineNo">140</span><a id="line.140">        this.useOutlinePaint = true;</a>
+<span class="sourceLineNo">141</span><a id="line.141">        this.guideLinesVisible = false;</a>
+<span class="sourceLineNo">142</span><a id="line.142">        this.guideLinePaint = Color.darkGray;</a>
+<span class="sourceLineNo">143</span><a id="line.143">        this.guideLineStroke = new BasicStroke();</a>
+<span class="sourceLineNo">144</span><a id="line.144">        setBaseShape(new Ellipse2D.Double(-5.0, -5.0, 10.0, 10.0));</a>
+<span class="sourceLineNo">145</span><a id="line.145">        setAutoPopulateSeriesShape(false);</a>
+<span class="sourceLineNo">146</span><a id="line.146">    }</a>
+<span class="sourceLineNo">147</span><a id="line.147"></a>
+<span class="sourceLineNo">148</span><a id="line.148">    /**</a>
+<span class="sourceLineNo">149</span><a id="line.149">     * Returns the paint scale used by the renderer.</a>
+<span class="sourceLineNo">150</span><a id="line.150">     *</a>
+<span class="sourceLineNo">151</span><a id="line.151">     * @return The paint scale (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">152</span><a id="line.152">     *</a>
+<span class="sourceLineNo">153</span><a id="line.153">     * @see #setPaintScale(PaintScale)</a>
+<span class="sourceLineNo">154</span><a id="line.154">     */</a>
+<span class="sourceLineNo">155</span><a id="line.155">    public PaintScale getPaintScale() {</a>
+<span class="sourceLineNo">156</span><a id="line.156">        return this.paintScale;</a>
+<span class="sourceLineNo">157</span><a id="line.157">    }</a>
+<span class="sourceLineNo">158</span><a id="line.158"></a>
+<span class="sourceLineNo">159</span><a id="line.159">    /**</a>
+<span class="sourceLineNo">160</span><a id="line.160">     * Sets the paint scale used by the renderer and sends a</a>
+<span class="sourceLineNo">161</span><a id="line.161">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">162</span><a id="line.162">     *</a>
+<span class="sourceLineNo">163</span><a id="line.163">     * @param scale  the scale (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">164</span><a id="line.164">     *</a>
+<span class="sourceLineNo">165</span><a id="line.165">     * @see #getPaintScale()</a>
+<span class="sourceLineNo">166</span><a id="line.166">     */</a>
+<span class="sourceLineNo">167</span><a id="line.167">    public void setPaintScale(PaintScale scale) {</a>
+<span class="sourceLineNo">168</span><a id="line.168">        ParamChecks.nullNotPermitted(scale, "scale");</a>
+<span class="sourceLineNo">169</span><a id="line.169">        this.paintScale = scale;</a>
+<span class="sourceLineNo">170</span><a id="line.170">        notifyListeners(new RendererChangeEvent(this));</a>
+<span class="sourceLineNo">171</span><a id="line.171">    }</a>
+<span class="sourceLineNo">172</span><a id="line.172"></a>
+<span class="sourceLineNo">173</span><a id="line.173">    /**</a>
+<span class="sourceLineNo">174</span><a id="line.174">     * Returns &lt;code&gt;true&lt;/code&gt; if outlines should be drawn for shapes, and</a>
+<span class="sourceLineNo">175</span><a id="line.175">     * &lt;code&gt;false&lt;/code&gt; otherwise.</a>
+<span class="sourceLineNo">176</span><a id="line.176">     *</a>
+<span class="sourceLineNo">177</span><a id="line.177">     * @return A boolean.</a>
+<span class="sourceLineNo">178</span><a id="line.178">     *</a>
+<span class="sourceLineNo">179</span><a id="line.179">     * @see #setDrawOutlines(boolean)</a>
+<span class="sourceLineNo">180</span><a id="line.180">     */</a>
+<span class="sourceLineNo">181</span><a id="line.181">    public boolean getDrawOutlines() {</a>
+<span class="sourceLineNo">182</span><a id="line.182">        return this.drawOutlines;</a>
+<span class="sourceLineNo">183</span><a id="line.183">    }</a>
+<span class="sourceLineNo">184</span><a id="line.184"></a>
+<span class="sourceLineNo">185</span><a id="line.185">    /**</a>
+<span class="sourceLineNo">186</span><a id="line.186">     * Sets the flag that controls whether outlines are drawn for</a>
+<span class="sourceLineNo">187</span><a id="line.187">     * shapes, and sends a {@link RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">188</span><a id="line.188">     * listeners.</a>
+<span class="sourceLineNo">189</span><a id="line.189">     * &lt;P&gt;</a>
+<span class="sourceLineNo">190</span><a id="line.190">     * In some cases, shapes look better if they do NOT have an outline, but</a>
+<span class="sourceLineNo">191</span><a id="line.191">     * this flag allows you to set your own preference.</a>
+<span class="sourceLineNo">192</span><a id="line.192">     *</a>
+<span class="sourceLineNo">193</span><a id="line.193">     * @param flag  the flag.</a>
+<span class="sourceLineNo">194</span><a id="line.194">     *</a>
+<span class="sourceLineNo">195</span><a id="line.195">     * @see #getDrawOutlines()</a>
+<span class="sourceLineNo">196</span><a id="line.196">     */</a>
+<span class="sourceLineNo">197</span><a id="line.197">    public void setDrawOutlines(boolean flag) {</a>
+<span class="sourceLineNo">198</span><a id="line.198">        this.drawOutlines = flag;</a>
+<span class="sourceLineNo">199</span><a id="line.199">        fireChangeEvent();</a>
+<span class="sourceLineNo">200</span><a id="line.200">    }</a>
+<span class="sourceLineNo">201</span><a id="line.201"></a>
+<span class="sourceLineNo">202</span><a id="line.202">    /**</a>
+<span class="sourceLineNo">203</span><a id="line.203">     * Returns &lt;code&gt;true&lt;/code&gt; if the renderer should use the fill paint</a>
+<span class="sourceLineNo">204</span><a id="line.204">     * setting to fill shapes, and &lt;code&gt;false&lt;/code&gt; if it should just</a>
+<span class="sourceLineNo">205</span><a id="line.205">     * use the regular paint.</a>
+<span class="sourceLineNo">206</span><a id="line.206">     * &lt;p&gt;</a>
+<span class="sourceLineNo">207</span><a id="line.207">     * Refer to &lt;code&gt;XYLineAndShapeRendererDemo2.java&lt;/code&gt; to see the</a>
+<span class="sourceLineNo">208</span><a id="line.208">     * effect of this flag.</a>
+<span class="sourceLineNo">209</span><a id="line.209">     *</a>
+<span class="sourceLineNo">210</span><a id="line.210">     * @return A boolean.</a>
+<span class="sourceLineNo">211</span><a id="line.211">     *</a>
+<span class="sourceLineNo">212</span><a id="line.212">     * @see #setUseFillPaint(boolean)</a>
+<span class="sourceLineNo">213</span><a id="line.213">     * @see #getUseOutlinePaint()</a>
+<span class="sourceLineNo">214</span><a id="line.214">     */</a>
+<span class="sourceLineNo">215</span><a id="line.215">    public boolean getUseFillPaint() {</a>
+<span class="sourceLineNo">216</span><a id="line.216">        return this.useFillPaint;</a>
+<span class="sourceLineNo">217</span><a id="line.217">    }</a>
+<span class="sourceLineNo">218</span><a id="line.218"></a>
+<span class="sourceLineNo">219</span><a id="line.219">    /**</a>
+<span class="sourceLineNo">220</span><a id="line.220">     * Sets the flag that controls whether the fill paint is used to fill</a>
+<span class="sourceLineNo">221</span><a id="line.221">     * shapes, and sends a {@link RendererChangeEvent} to all</a>
+<span class="sourceLineNo">222</span><a id="line.222">     * registered listeners.</a>
+<span class="sourceLineNo">223</span><a id="line.223">     *</a>
+<span class="sourceLineNo">224</span><a id="line.224">     * @param flag  the flag.</a>
+<span class="sourceLineNo">225</span><a id="line.225">     *</a>
+<span class="sourceLineNo">226</span><a id="line.226">     * @see #getUseFillPaint()</a>
+<span class="sourceLineNo">227</span><a id="line.227">     */</a>
+<span class="sourceLineNo">228</span><a id="line.228">    public void setUseFillPaint(boolean flag) {</a>
+<span class="sourceLineNo">229</span><a id="line.229">        this.useFillPaint = flag;</a>
+<span class="sourceLineNo">230</span><a id="line.230">        fireChangeEvent();</a>
+<span class="sourceLineNo">231</span><a id="line.231">    }</a>
+<span class="sourceLineNo">232</span><a id="line.232"></a>
+<span class="sourceLineNo">233</span><a id="line.233">    /**</a>
+<span class="sourceLineNo">234</span><a id="line.234">     * Returns the flag that controls whether the outline paint is used for</a>
+<span class="sourceLineNo">235</span><a id="line.235">     * shape outlines.  If not, the regular series paint is used.</a>
+<span class="sourceLineNo">236</span><a id="line.236">     *</a>
+<span class="sourceLineNo">237</span><a id="line.237">     * @return A boolean.</a>
+<span class="sourceLineNo">238</span><a id="line.238">     *</a>
+<span class="sourceLineNo">239</span><a id="line.239">     * @see #setUseOutlinePaint(boolean)</a>
+<span class="sourceLineNo">240</span><a id="line.240">     */</a>
+<span class="sourceLineNo">241</span><a id="line.241">    public boolean getUseOutlinePaint() {</a>
+<span class="sourceLineNo">242</span><a id="line.242">        return this.useOutlinePaint;</a>
+<span class="sourceLineNo">243</span><a id="line.243">    }</a>
+<span class="sourceLineNo">244</span><a id="line.244"></a>
+<span class="sourceLineNo">245</span><a id="line.245">    /**</a>
+<span class="sourceLineNo">246</span><a id="line.246">     * Sets the flag that controls whether the outline paint is used for shape</a>
+<span class="sourceLineNo">247</span><a id="line.247">     * outlines, and sends a {@link RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">248</span><a id="line.248">     * listeners.</a>
+<span class="sourceLineNo">249</span><a id="line.249">     *</a>
+<span class="sourceLineNo">250</span><a id="line.250">     * @param use  the flag.</a>
+<span class="sourceLineNo">251</span><a id="line.251">     *</a>
+<span class="sourceLineNo">252</span><a id="line.252">     * @see #getUseOutlinePaint()</a>
+<span class="sourceLineNo">253</span><a id="line.253">     */</a>
+<span class="sourceLineNo">254</span><a id="line.254">    public void setUseOutlinePaint(boolean use) {</a>
+<span class="sourceLineNo">255</span><a id="line.255">        this.useOutlinePaint = use;</a>
+<span class="sourceLineNo">256</span><a id="line.256">        fireChangeEvent();</a>
+<span class="sourceLineNo">257</span><a id="line.257">    }</a>
+<span class="sourceLineNo">258</span><a id="line.258"></a>
+<span class="sourceLineNo">259</span><a id="line.259">    /**</a>
+<span class="sourceLineNo">260</span><a id="line.260">     * Returns a flag that controls whether or not guide lines are drawn for</a>
+<span class="sourceLineNo">261</span><a id="line.261">     * each data item (the lines are horizontal and vertical "crosshairs"</a>
+<span class="sourceLineNo">262</span><a id="line.262">     * linking the data point to the axes).</a>
+<span class="sourceLineNo">263</span><a id="line.263">     *</a>
+<span class="sourceLineNo">264</span><a id="line.264">     * @return A boolean.</a>
+<span class="sourceLineNo">265</span><a id="line.265">     *</a>
+<span class="sourceLineNo">266</span><a id="line.266">     * @see #setGuideLinesVisible(boolean)</a>
+<span class="sourceLineNo">267</span><a id="line.267">     */</a>
+<span class="sourceLineNo">268</span><a id="line.268">    public boolean isGuideLinesVisible() {</a>
+<span class="sourceLineNo">269</span><a id="line.269">        return this.guideLinesVisible;</a>
+<span class="sourceLineNo">270</span><a id="line.270">    }</a>
+<span class="sourceLineNo">271</span><a id="line.271"></a>
+<span class="sourceLineNo">272</span><a id="line.272">    /**</a>
+<span class="sourceLineNo">273</span><a id="line.273">     * Sets the flag that controls whether or not guide lines are drawn for</a>
+<span class="sourceLineNo">274</span><a id="line.274">     * each data item and sends a {@link RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">275</span><a id="line.275">     * listeners.</a>
+<span class="sourceLineNo">276</span><a id="line.276">     *</a>
+<span class="sourceLineNo">277</span><a id="line.277">     * @param visible  the new flag value.</a>
+<span class="sourceLineNo">278</span><a id="line.278">     *</a>
+<span class="sourceLineNo">279</span><a id="line.279">     * @see #isGuideLinesVisible()</a>
+<span class="sourceLineNo">280</span><a id="line.280">     */</a>
+<span class="sourceLineNo">281</span><a id="line.281">    public void setGuideLinesVisible(boolean visible) {</a>
+<span class="sourceLineNo">282</span><a id="line.282">        this.guideLinesVisible = visible;</a>
+<span class="sourceLineNo">283</span><a id="line.283">        fireChangeEvent();</a>
+<span class="sourceLineNo">284</span><a id="line.284">    }</a>
+<span class="sourceLineNo">285</span><a id="line.285"></a>
+<span class="sourceLineNo">286</span><a id="line.286">    /**</a>
+<span class="sourceLineNo">287</span><a id="line.287">     * Returns the paint used to draw the guide lines.</a>
+<span class="sourceLineNo">288</span><a id="line.288">     *</a>
+<span class="sourceLineNo">289</span><a id="line.289">     * @return The paint (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">290</span><a id="line.290">     *</a>
+<span class="sourceLineNo">291</span><a id="line.291">     * @see #setGuideLinePaint(Paint)</a>
+<span class="sourceLineNo">292</span><a id="line.292">     */</a>
+<span class="sourceLineNo">293</span><a id="line.293">    public Paint getGuideLinePaint() {</a>
+<span class="sourceLineNo">294</span><a id="line.294">        return this.guideLinePaint;</a>
+<span class="sourceLineNo">295</span><a id="line.295">    }</a>
+<span class="sourceLineNo">296</span><a id="line.296"></a>
+<span class="sourceLineNo">297</span><a id="line.297">    /**</a>
+<span class="sourceLineNo">298</span><a id="line.298">     * Sets the paint used to draw the guide lines and sends a</a>
+<span class="sourceLineNo">299</span><a id="line.299">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">300</span><a id="line.300">     *</a>
+<span class="sourceLineNo">301</span><a id="line.301">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">302</span><a id="line.302">     *</a>
+<span class="sourceLineNo">303</span><a id="line.303">     * @see #getGuideLinePaint()</a>
+<span class="sourceLineNo">304</span><a id="line.304">     */</a>
+<span class="sourceLineNo">305</span><a id="line.305">    public void setGuideLinePaint(Paint paint) {</a>
+<span class="sourceLineNo">306</span><a id="line.306">        ParamChecks.nullNotPermitted(paint, "paint");</a>
+<span class="sourceLineNo">307</span><a id="line.307">        this.guideLinePaint = paint;</a>
+<span class="sourceLineNo">308</span><a id="line.308">        fireChangeEvent();</a>
+<span class="sourceLineNo">309</span><a id="line.309">    }</a>
+<span class="sourceLineNo">310</span><a id="line.310"></a>
+<span class="sourceLineNo">311</span><a id="line.311">    /**</a>
+<span class="sourceLineNo">312</span><a id="line.312">     * Returns the stroke used to draw the guide lines.</a>
+<span class="sourceLineNo">313</span><a id="line.313">     *</a>
+<span class="sourceLineNo">314</span><a id="line.314">     * @return The stroke.</a>
+<span class="sourceLineNo">315</span><a id="line.315">     *</a>
+<span class="sourceLineNo">316</span><a id="line.316">     * @see #setGuideLineStroke(Stroke)</a>
+<span class="sourceLineNo">317</span><a id="line.317">     */</a>
+<span class="sourceLineNo">318</span><a id="line.318">    public Stroke getGuideLineStroke() {</a>
+<span class="sourceLineNo">319</span><a id="line.319">        return this.guideLineStroke;</a>
+<span class="sourceLineNo">320</span><a id="line.320">    }</a>
+<span class="sourceLineNo">321</span><a id="line.321"></a>
+<span class="sourceLineNo">322</span><a id="line.322">    /**</a>
+<span class="sourceLineNo">323</span><a id="line.323">     * Sets the stroke used to draw the guide lines and sends a</a>
+<span class="sourceLineNo">324</span><a id="line.324">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">325</span><a id="line.325">     *</a>
+<span class="sourceLineNo">326</span><a id="line.326">     * @param stroke  the stroke (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">327</span><a id="line.327">     *</a>
+<span class="sourceLineNo">328</span><a id="line.328">     * @see #getGuideLineStroke()</a>
+<span class="sourceLineNo">329</span><a id="line.329">     */</a>
+<span class="sourceLineNo">330</span><a id="line.330">    public void setGuideLineStroke(Stroke stroke) {</a>
+<span class="sourceLineNo">331</span><a id="line.331">        ParamChecks.nullNotPermitted(stroke, "stroke");</a>
+<span class="sourceLineNo">332</span><a id="line.332">        this.guideLineStroke = stroke;</a>
+<span class="sourceLineNo">333</span><a id="line.333">        fireChangeEvent();</a>
+<span class="sourceLineNo">334</span><a id="line.334">    }</a>
+<span class="sourceLineNo">335</span><a id="line.335"></a>
+<span class="sourceLineNo">336</span><a id="line.336">    /**</a>
+<span class="sourceLineNo">337</span><a id="line.337">     * Returns the lower and upper bounds (range) of the x-values in the</a>
+<span class="sourceLineNo">338</span><a id="line.338">     * specified dataset.</a>
+<span class="sourceLineNo">339</span><a id="line.339">     *</a>
+<span class="sourceLineNo">340</span><a id="line.340">     * @param dataset  the dataset (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">341</span><a id="line.341">     *</a>
+<span class="sourceLineNo">342</span><a id="line.342">     * @return The range (&lt;code&gt;null&lt;/code&gt; if the dataset is &lt;code&gt;null&lt;/code&gt;</a>
+<span class="sourceLineNo">343</span><a id="line.343">     *         or empty).</a>
+<span class="sourceLineNo">344</span><a id="line.344">     */</a>
+<span class="sourceLineNo">345</span><a id="line.345">    @Override</a>
+<span class="sourceLineNo">346</span><a id="line.346">    public Range findDomainBounds(XYDataset dataset) {</a>
+<span class="sourceLineNo">347</span><a id="line.347">        if (dataset == null) {</a>
+<span class="sourceLineNo">348</span><a id="line.348">            return null;</a>
+<span class="sourceLineNo">349</span><a id="line.349">        }</a>
+<span class="sourceLineNo">350</span><a id="line.350">        Range r = DatasetUtilities.findDomainBounds(dataset, false);</a>
+<span class="sourceLineNo">351</span><a id="line.351">        if (r == null) {</a>
+<span class="sourceLineNo">352</span><a id="line.352">            return null;</a>
+<span class="sourceLineNo">353</span><a id="line.353">        }</a>
+<span class="sourceLineNo">354</span><a id="line.354">        double offset = 0; // TODO getSeriesShape(n).getBounds().width / 2;</a>
+<span class="sourceLineNo">355</span><a id="line.355">        return new Range(r.getLowerBound() + offset,</a>
+<span class="sourceLineNo">356</span><a id="line.356">                         r.getUpperBound() + offset);</a>
+<span class="sourceLineNo">357</span><a id="line.357">    }</a>
+<span class="sourceLineNo">358</span><a id="line.358"></a>
+<span class="sourceLineNo">359</span><a id="line.359">    /**</a>
+<span class="sourceLineNo">360</span><a id="line.360">     * Returns the range of values the renderer requires to display all the</a>
+<span class="sourceLineNo">361</span><a id="line.361">     * items from the specified dataset.</a>
+<span class="sourceLineNo">362</span><a id="line.362">     *</a>
+<span class="sourceLineNo">363</span><a id="line.363">     * @param dataset  the dataset (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">364</span><a id="line.364">     *</a>
+<span class="sourceLineNo">365</span><a id="line.365">     * @return The range (&lt;code&gt;null&lt;/code&gt; if the dataset is &lt;code&gt;null&lt;/code&gt;</a>
+<span class="sourceLineNo">366</span><a id="line.366">     *         or empty).</a>
+<span class="sourceLineNo">367</span><a id="line.367">     */</a>
+<span class="sourceLineNo">368</span><a id="line.368">    @Override</a>
+<span class="sourceLineNo">369</span><a id="line.369">    public Range findRangeBounds(XYDataset dataset) {</a>
+<span class="sourceLineNo">370</span><a id="line.370">        if (dataset == null) {</a>
+<span class="sourceLineNo">371</span><a id="line.371">            return null;</a>
+<span class="sourceLineNo">372</span><a id="line.372">        }</a>
+<span class="sourceLineNo">373</span><a id="line.373">        Range r = DatasetUtilities.findRangeBounds(dataset, false);</a>
+<span class="sourceLineNo">374</span><a id="line.374">        if (r == null) {</a>
+<span class="sourceLineNo">375</span><a id="line.375">            return null;</a>
+<span class="sourceLineNo">376</span><a id="line.376">        }</a>
+<span class="sourceLineNo">377</span><a id="line.377">        double offset = 0; // TODO getSeriesShape(n).getBounds().height / 2;</a>
+<span class="sourceLineNo">378</span><a id="line.378">        return new Range(r.getLowerBound() + offset, r.getUpperBound()</a>
+<span class="sourceLineNo">379</span><a id="line.379">                + offset);</a>
+<span class="sourceLineNo">380</span><a id="line.380">    }</a>
+<span class="sourceLineNo">381</span><a id="line.381"></a>
+<span class="sourceLineNo">382</span><a id="line.382">    /**</a>
+<span class="sourceLineNo">383</span><a id="line.383">     * Return the range of z-values in the specified dataset.</a>
+<span class="sourceLineNo">384</span><a id="line.384">     *  </a>
+<span class="sourceLineNo">385</span><a id="line.385">     * @param dataset  the dataset (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">386</span><a id="line.386">     * </a>
+<span class="sourceLineNo">387</span><a id="line.387">     * @return The range (&lt;code&gt;null&lt;/code&gt; if the dataset is &lt;code&gt;null&lt;/code&gt;</a>
+<span class="sourceLineNo">388</span><a id="line.388">     *         or empty).</a>
+<span class="sourceLineNo">389</span><a id="line.389">     */</a>
+<span class="sourceLineNo">390</span><a id="line.390">    public Range findZBounds(XYZDataset dataset) {</a>
+<span class="sourceLineNo">391</span><a id="line.391">        if (dataset != null) {</a>
+<span class="sourceLineNo">392</span><a id="line.392">            return DatasetUtilities.findZBounds(dataset);</a>
+<span class="sourceLineNo">393</span><a id="line.393">        }</a>
+<span class="sourceLineNo">394</span><a id="line.394">        else {</a>
+<span class="sourceLineNo">395</span><a id="line.395">            return null;</a>
+<span class="sourceLineNo">396</span><a id="line.396">        }</a>
+<span class="sourceLineNo">397</span><a id="line.397">    }</a>
+<span class="sourceLineNo">398</span><a id="line.398"></a>
+<span class="sourceLineNo">399</span><a id="line.399">    /**</a>
+<span class="sourceLineNo">400</span><a id="line.400">     * Returns the number of passes required by this renderer.</a>
+<span class="sourceLineNo">401</span><a id="line.401">     *</a>
+<span class="sourceLineNo">402</span><a id="line.402">     * @return &lt;code&gt;2&lt;/code&gt;.</a>
+<span class="sourceLineNo">403</span><a id="line.403">     */</a>
+<span class="sourceLineNo">404</span><a id="line.404">    @Override</a>
+<span class="sourceLineNo">405</span><a id="line.405">    public int getPassCount() {</a>
+<span class="sourceLineNo">406</span><a id="line.406">        return 2;</a>
+<span class="sourceLineNo">407</span><a id="line.407">    }</a>
+<span class="sourceLineNo">408</span><a id="line.408"></a>
+<span class="sourceLineNo">409</span><a id="line.409">    /**</a>
+<span class="sourceLineNo">410</span><a id="line.410">     * Draws the block representing the specified item.</a>
+<span class="sourceLineNo">411</span><a id="line.411">     *</a>
+<span class="sourceLineNo">412</span><a id="line.412">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">413</span><a id="line.413">     * @param state  the state.</a>
+<span class="sourceLineNo">414</span><a id="line.414">     * @param dataArea  the data area.</a>
+<span class="sourceLineNo">415</span><a id="line.415">     * @param info  the plot rendering info.</a>
+<span class="sourceLineNo">416</span><a id="line.416">     * @param plot  the plot.</a>
+<span class="sourceLineNo">417</span><a id="line.417">     * @param domainAxis  the x-axis.</a>
+<span class="sourceLineNo">418</span><a id="line.418">     * @param rangeAxis  the y-axis.</a>
+<span class="sourceLineNo">419</span><a id="line.419">     * @param dataset  the dataset.</a>
+<span class="sourceLineNo">420</span><a id="line.420">     * @param series  the series index.</a>
+<span class="sourceLineNo">421</span><a id="line.421">     * @param item  the item index.</a>
+<span class="sourceLineNo">422</span><a id="line.422">     * @param crosshairState  the crosshair state.</a>
+<span class="sourceLineNo">423</span><a id="line.423">     * @param pass  the pass index.</a>
+<span class="sourceLineNo">424</span><a id="line.424">     */</a>
+<span class="sourceLineNo">425</span><a id="line.425">    @Override</a>
+<span class="sourceLineNo">426</span><a id="line.426">    public void drawItem(Graphics2D g2, XYItemRendererState state,</a>
+<span class="sourceLineNo">427</span><a id="line.427">            Rectangle2D dataArea, PlotRenderingInfo info, XYPlot plot,</a>
+<span class="sourceLineNo">428</span><a id="line.428">            ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset,</a>
+<span class="sourceLineNo">429</span><a id="line.429">            int series, int item, CrosshairState crosshairState, int pass) {</a>
+<span class="sourceLineNo">430</span><a id="line.430"></a>
+<span class="sourceLineNo">431</span><a id="line.431">        Shape hotspot;</a>
+<span class="sourceLineNo">432</span><a id="line.432">        EntityCollection entities = null;</a>
+<span class="sourceLineNo">433</span><a id="line.433">        if (info != null) {</a>
+<span class="sourceLineNo">434</span><a id="line.434">            entities = info.getOwner().getEntityCollection();</a>
+<span class="sourceLineNo">435</span><a id="line.435">        }</a>
+<span class="sourceLineNo">436</span><a id="line.436"></a>
+<span class="sourceLineNo">437</span><a id="line.437">        double x = dataset.getXValue(series, item);</a>
+<span class="sourceLineNo">438</span><a id="line.438">        double y = dataset.getYValue(series, item);</a>
+<span class="sourceLineNo">439</span><a id="line.439">        if (Double.isNaN(x) || Double.isNaN(y)) {</a>
+<span class="sourceLineNo">440</span><a id="line.440">            // can't draw anything</a>
+<span class="sourceLineNo">441</span><a id="line.441">            return;</a>
+<span class="sourceLineNo">442</span><a id="line.442">        }</a>
+<span class="sourceLineNo">443</span><a id="line.443"></a>
+<span class="sourceLineNo">444</span><a id="line.444">        double transX = domainAxis.valueToJava2D(x, dataArea,</a>
+<span class="sourceLineNo">445</span><a id="line.445">                plot.getDomainAxisEdge());</a>
+<span class="sourceLineNo">446</span><a id="line.446">        double transY = rangeAxis.valueToJava2D(y, dataArea,</a>
+<span class="sourceLineNo">447</span><a id="line.447">                plot.getRangeAxisEdge());</a>
+<span class="sourceLineNo">448</span><a id="line.448"></a>
+<span class="sourceLineNo">449</span><a id="line.449">        PlotOrientation orientation = plot.getOrientation();</a>
+<span class="sourceLineNo">450</span><a id="line.450"></a>
+<span class="sourceLineNo">451</span><a id="line.451">        // draw optional guide lines</a>
+<span class="sourceLineNo">452</span><a id="line.452">        if ((pass == 0) &amp;&amp; this.guideLinesVisible) {</a>
+<span class="sourceLineNo">453</span><a id="line.453">            g2.setStroke(this.guideLineStroke);</a>
+<span class="sourceLineNo">454</span><a id="line.454">            g2.setPaint(this.guideLinePaint);</a>
+<span class="sourceLineNo">455</span><a id="line.455">            if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">456</span><a id="line.456">                g2.draw(new Line2D.Double(transY, dataArea.getMinY(), transY,</a>
+<span class="sourceLineNo">457</span><a id="line.457">                        dataArea.getMaxY()));</a>
+<span class="sourceLineNo">458</span><a id="line.458">                g2.draw(new Line2D.Double(dataArea.getMinX(), transX,</a>
+<span class="sourceLineNo">459</span><a id="line.459">                        dataArea.getMaxX(), transX));</a>
+<span class="sourceLineNo">460</span><a id="line.460">            }</a>
+<span class="sourceLineNo">461</span><a id="line.461">            else {</a>
+<span class="sourceLineNo">462</span><a id="line.462">                g2.draw(new Line2D.Double(transX, dataArea.getMinY(), transX,</a>
+<span class="sourceLineNo">463</span><a id="line.463">                        dataArea.getMaxY()));</a>
+<span class="sourceLineNo">464</span><a id="line.464">                g2.draw(new Line2D.Double(dataArea.getMinX(), transY,</a>
+<span class="sourceLineNo">465</span><a id="line.465">                        dataArea.getMaxX(), transY));</a>
+<span class="sourceLineNo">466</span><a id="line.466">            }</a>
+<span class="sourceLineNo">467</span><a id="line.467">        }</a>
+<span class="sourceLineNo">468</span><a id="line.468">        else if (pass == 1) {</a>
+<span class="sourceLineNo">469</span><a id="line.469">            Shape shape = getItemShape(series, item);</a>
+<span class="sourceLineNo">470</span><a id="line.470">            if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">471</span><a id="line.471">                shape = ShapeUtilities.createTranslatedShape(shape, transY,</a>
+<span class="sourceLineNo">472</span><a id="line.472">                        transX);</a>
+<span class="sourceLineNo">473</span><a id="line.473">            }</a>
+<span class="sourceLineNo">474</span><a id="line.474">            else if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">475</span><a id="line.475">                shape = ShapeUtilities.createTranslatedShape(shape, transX,</a>
+<span class="sourceLineNo">476</span><a id="line.476">                        transY);</a>
+<span class="sourceLineNo">477</span><a id="line.477">            }</a>
+<span class="sourceLineNo">478</span><a id="line.478">            hotspot = shape;</a>
+<span class="sourceLineNo">479</span><a id="line.479">            if (shape.intersects(dataArea)) {</a>
+<span class="sourceLineNo">480</span><a id="line.480">                //if (getItemShapeFilled(series, item)) {</a>
+<span class="sourceLineNo">481</span><a id="line.481">                    g2.setPaint(getPaint(dataset, series, item));</a>
+<span class="sourceLineNo">482</span><a id="line.482">                    g2.fill(shape);</a>
+<span class="sourceLineNo">483</span><a id="line.483">               //}</a>
+<span class="sourceLineNo">484</span><a id="line.484">                if (this.drawOutlines) {</a>
+<span class="sourceLineNo">485</span><a id="line.485">                    if (getUseOutlinePaint()) {</a>
+<span class="sourceLineNo">486</span><a id="line.486">                        g2.setPaint(getItemOutlinePaint(series, item));</a>
+<span class="sourceLineNo">487</span><a id="line.487">                    }</a>
+<span class="sourceLineNo">488</span><a id="line.488">                    else {</a>
+<span class="sourceLineNo">489</span><a id="line.489">                        g2.setPaint(getItemPaint(series, item));</a>
+<span class="sourceLineNo">490</span><a id="line.490">                    }</a>
+<span class="sourceLineNo">491</span><a id="line.491">                    g2.setStroke(getItemOutlineStroke(series, item));</a>
+<span class="sourceLineNo">492</span><a id="line.492">                    g2.draw(shape);</a>
+<span class="sourceLineNo">493</span><a id="line.493">                }</a>
+<span class="sourceLineNo">494</span><a id="line.494">            }</a>
+<span class="sourceLineNo">495</span><a id="line.495"></a>
+<span class="sourceLineNo">496</span><a id="line.496">            // add an entity for the item...</a>
+<span class="sourceLineNo">497</span><a id="line.497">            if (entities != null) {</a>
+<span class="sourceLineNo">498</span><a id="line.498">                addEntity(entities, hotspot, dataset, series, item, transX,</a>
+<span class="sourceLineNo">499</span><a id="line.499">                        transY);</a>
+<span class="sourceLineNo">500</span><a id="line.500">            }</a>
+<span class="sourceLineNo">501</span><a id="line.501">        }</a>
+<span class="sourceLineNo">502</span><a id="line.502">    }</a>
+<span class="sourceLineNo">503</span><a id="line.503"></a>
+<span class="sourceLineNo">504</span><a id="line.504">    /**</a>
+<span class="sourceLineNo">505</span><a id="line.505">     * Get the paint for a given series and item from a dataset.</a>
+<span class="sourceLineNo">506</span><a id="line.506">     *</a>
+<span class="sourceLineNo">507</span><a id="line.507">     * @param dataset  the dataset..</a>
+<span class="sourceLineNo">508</span><a id="line.508">     * @param series  the series index.</a>
+<span class="sourceLineNo">509</span><a id="line.509">     * @param item  the item index.</a>
+<span class="sourceLineNo">510</span><a id="line.510">     *</a>
+<span class="sourceLineNo">511</span><a id="line.511">     * @return The paint.</a>
+<span class="sourceLineNo">512</span><a id="line.512">     */</a>
+<span class="sourceLineNo">513</span><a id="line.513">    protected Paint getPaint(XYDataset dataset, int series, int item) {</a>
+<span class="sourceLineNo">514</span><a id="line.514">        Paint p;</a>
+<span class="sourceLineNo">515</span><a id="line.515">        if (dataset instanceof XYZDataset) {</a>
+<span class="sourceLineNo">516</span><a id="line.516">            double z = ((XYZDataset) dataset).getZValue(series, item);</a>
+<span class="sourceLineNo">517</span><a id="line.517">            p = this.paintScale.getPaint(z);</a>
+<span class="sourceLineNo">518</span><a id="line.518">        }</a>
+<span class="sourceLineNo">519</span><a id="line.519">        else {</a>
+<span class="sourceLineNo">520</span><a id="line.520">            if (this.useFillPaint) {</a>
+<span class="sourceLineNo">521</span><a id="line.521">                p = getItemFillPaint(series, item);</a>
+<span class="sourceLineNo">522</span><a id="line.522">            }</a>
+<span class="sourceLineNo">523</span><a id="line.523">            else {</a>
+<span class="sourceLineNo">524</span><a id="line.524">                p = getItemPaint(series, item);</a>
+<span class="sourceLineNo">525</span><a id="line.525">            }</a>
+<span class="sourceLineNo">526</span><a id="line.526">        }</a>
+<span class="sourceLineNo">527</span><a id="line.527">        return p;</a>
+<span class="sourceLineNo">528</span><a id="line.528">    }</a>
+<span class="sourceLineNo">529</span><a id="line.529"></a>
+<span class="sourceLineNo">530</span><a id="line.530">    /**</a>
+<span class="sourceLineNo">531</span><a id="line.531">     * Tests this instance for equality with an arbitrary object.  This method</a>
+<span class="sourceLineNo">532</span><a id="line.532">     * returns &lt;code&gt;true&lt;/code&gt; if and only if:</a>
+<span class="sourceLineNo">533</span><a id="line.533">     * &lt;ul&gt;</a>
+<span class="sourceLineNo">534</span><a id="line.534">     * &lt;li&gt;&lt;code&gt;obj&lt;/code&gt; is an instance of &lt;code&gt;XYShapeRenderer&lt;/code&gt; (not</a>
+<span class="sourceLineNo">535</span><a id="line.535">     *     &lt;code&gt;null&lt;/code&gt;);&lt;/li&gt;</a>
+<span class="sourceLineNo">536</span><a id="line.536">     * &lt;li&gt;&lt;code&gt;obj&lt;/code&gt; has the same field values as this</a>
+<span class="sourceLineNo">537</span><a id="line.537">     *     &lt;code&gt;XYShapeRenderer&lt;/code&gt;;&lt;/li&gt;</a>
+<span class="sourceLineNo">538</span><a id="line.538">     * &lt;/ul&gt;</a>
+<span class="sourceLineNo">539</span><a id="line.539">     *</a>
+<span class="sourceLineNo">540</span><a id="line.540">     * @param obj  the object (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">541</span><a id="line.541">     *</a>
+<span class="sourceLineNo">542</span><a id="line.542">     * @return A boolean.</a>
+<span class="sourceLineNo">543</span><a id="line.543">     */</a>
+<span class="sourceLineNo">544</span><a id="line.544">    @Override</a>
+<span class="sourceLineNo">545</span><a id="line.545">    public boolean equals(Object obj) {</a>
+<span class="sourceLineNo">546</span><a id="line.546">        if (obj == this) {</a>
+<span class="sourceLineNo">547</span><a id="line.547">            return true;</a>
+<span class="sourceLineNo">548</span><a id="line.548">        }</a>
+<span class="sourceLineNo">549</span><a id="line.549">        if (!(obj instanceof XYShapeRenderer)) {</a>
+<span class="sourceLineNo">550</span><a id="line.550">            return false;</a>
+<span class="sourceLineNo">551</span><a id="line.551">        }</a>
+<span class="sourceLineNo">552</span><a id="line.552">        XYShapeRenderer that = (XYShapeRenderer) obj;</a>
+<span class="sourceLineNo">553</span><a id="line.553">        if (!this.paintScale.equals(that.paintScale)) {</a>
+<span class="sourceLineNo">554</span><a id="line.554">            return false;</a>
+<span class="sourceLineNo">555</span><a id="line.555">        }</a>
+<span class="sourceLineNo">556</span><a id="line.556">        if (this.drawOutlines != that.drawOutlines) {</a>
+<span class="sourceLineNo">557</span><a id="line.557">            return false;</a>
+<span class="sourceLineNo">558</span><a id="line.558">        }</a>
+<span class="sourceLineNo">559</span><a id="line.559">        if (this.useOutlinePaint != that.useOutlinePaint) {</a>
+<span class="sourceLineNo">560</span><a id="line.560">            return false;</a>
+<span class="sourceLineNo">561</span><a id="line.561">        }</a>
+<span class="sourceLineNo">562</span><a id="line.562">        if (this.useFillPaint != that.useFillPaint) {</a>
+<span class="sourceLineNo">563</span><a id="line.563">            return false;</a>
+<span class="sourceLineNo">564</span><a id="line.564">        }</a>
+<span class="sourceLineNo">565</span><a id="line.565">        if (this.guideLinesVisible != that.guideLinesVisible) {</a>
+<span class="sourceLineNo">566</span><a id="line.566">            return false;</a>
+<span class="sourceLineNo">567</span><a id="line.567">        }</a>
+<span class="sourceLineNo">568</span><a id="line.568">        if (!this.guideLinePaint.equals(that.guideLinePaint)) {</a>
+<span class="sourceLineNo">569</span><a id="line.569">            return false;</a>
+<span class="sourceLineNo">570</span><a id="line.570">        }</a>
+<span class="sourceLineNo">571</span><a id="line.571">        if (!this.guideLineStroke.equals(that.guideLineStroke)) {</a>
+<span class="sourceLineNo">572</span><a id="line.572">            return false;</a>
+<span class="sourceLineNo">573</span><a id="line.573">        }</a>
+<span class="sourceLineNo">574</span><a id="line.574">        return super.equals(obj);</a>
+<span class="sourceLineNo">575</span><a id="line.575">    }</a>
+<span class="sourceLineNo">576</span><a id="line.576"></a>
+<span class="sourceLineNo">577</span><a id="line.577">    /**</a>
+<span class="sourceLineNo">578</span><a id="line.578">     * Returns a clone of this renderer.</a>
+<span class="sourceLineNo">579</span><a id="line.579">     *</a>
+<span class="sourceLineNo">580</span><a id="line.580">     * @return A clone of this renderer.</a>
+<span class="sourceLineNo">581</span><a id="line.581">     *</a>
+<span class="sourceLineNo">582</span><a id="line.582">     * @throws CloneNotSupportedException if there is a problem creating the</a>
+<span class="sourceLineNo">583</span><a id="line.583">     *     clone.</a>
+<span class="sourceLineNo">584</span><a id="line.584">     */</a>
+<span class="sourceLineNo">585</span><a id="line.585">    @Override</a>
+<span class="sourceLineNo">586</span><a id="line.586">    public Object clone() throws CloneNotSupportedException {</a>
+<span class="sourceLineNo">587</span><a id="line.587">        XYShapeRenderer clone = (XYShapeRenderer) super.clone();</a>
+<span class="sourceLineNo">588</span><a id="line.588">        if (this.paintScale instanceof PublicCloneable) {</a>
+<span class="sourceLineNo">589</span><a id="line.589">            PublicCloneable pc = (PublicCloneable) this.paintScale;</a>
+<span class="sourceLineNo">590</span><a id="line.590">            clone.paintScale = (PaintScale) pc.clone();</a>
+<span class="sourceLineNo">591</span><a id="line.591">        }</a>
+<span class="sourceLineNo">592</span><a id="line.592">        return clone;</a>
+<span class="sourceLineNo">593</span><a id="line.593">    }</a>
+<span class="sourceLineNo">594</span><a id="line.594"></a>
+<span class="sourceLineNo">595</span><a id="line.595">    /**</a>
+<span class="sourceLineNo">596</span><a id="line.596">     * Provides serialization support.</a>
+<span class="sourceLineNo">597</span><a id="line.597">     *</a>
+<span class="sourceLineNo">598</span><a id="line.598">     * @param stream  the input stream.</a>
+<span class="sourceLineNo">599</span><a id="line.599">     *</a>
+<span class="sourceLineNo">600</span><a id="line.600">     * @throws IOException  if there is an I/O error.</a>
+<span class="sourceLineNo">601</span><a id="line.601">     * @throws ClassNotFoundException  if there is a classpath problem.</a>
+<span class="sourceLineNo">602</span><a id="line.602">     */</a>
+<span class="sourceLineNo">603</span><a id="line.603">    private void readObject(ObjectInputStream stream)</a>
+<span class="sourceLineNo">604</span><a id="line.604">            throws IOException, ClassNotFoundException {</a>
+<span class="sourceLineNo">605</span><a id="line.605">        stream.defaultReadObject();</a>
+<span class="sourceLineNo">606</span><a id="line.606">        this.guideLinePaint = SerialUtilities.readPaint(stream);</a>
+<span class="sourceLineNo">607</span><a id="line.607">        this.guideLineStroke = SerialUtilities.readStroke(stream);</a>
+<span class="sourceLineNo">608</span><a id="line.608">    }</a>
+<span class="sourceLineNo">609</span><a id="line.609"></a>
+<span class="sourceLineNo">610</span><a id="line.610">    /**</a>
+<span class="sourceLineNo">611</span><a id="line.611">     * Provides serialization support.</a>
+<span class="sourceLineNo">612</span><a id="line.612">     *</a>
+<span class="sourceLineNo">613</span><a id="line.613">     * @param stream  the output stream.</a>
+<span class="sourceLineNo">614</span><a id="line.614">     *</a>
+<span class="sourceLineNo">615</span><a id="line.615">     * @throws IOException  if there is an I/O error.</a>
+<span class="sourceLineNo">616</span><a id="line.616">     */</a>
+<span class="sourceLineNo">617</span><a id="line.617">    private void writeObject(ObjectOutputStream stream) throws IOException {</a>
+<span class="sourceLineNo">618</span><a id="line.618">        stream.defaultWriteObject();</a>
+<span class="sourceLineNo">619</span><a id="line.619">        SerialUtilities.writePaint(this.guideLinePaint, stream);</a>
+<span class="sourceLineNo">620</span><a id="line.620">        SerialUtilities.writeStroke(this.guideLineStroke, stream);</a>
+<span class="sourceLineNo">621</span><a id="line.621">    }</a>
+<span class="sourceLineNo">622</span><a id="line.622"></a>
+<span class="sourceLineNo">623</span><a id="line.623">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2013, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * ---------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * TaskSeries.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * ---------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2002-2013, by Object Refinery Limited.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   -;</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *</a>
+<span class="sourceLineNo">035</span><a id="line.35"> * Changes</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * -------</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * 06-Jun-2002 : Version 1 (DG);</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * 07-Oct-2002 : Fixed errors reported by Checkstyle (DG);</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * 24-Oct-2002 : Added methods to get TimeAllocation by task index (DG);</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 10-Jan-2003 : Renamed GanttSeries --&gt; TaskSeries (DG);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * 30-Jul-2004 : Added equals() method (DG);</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * 09-May-2008 : Fixed cloning bug (DG);</a>
+<span class="sourceLineNo">043</span><a id="line.43"> * 03-Jul-2013 : Use ParamChecks (DG);</a>
+<span class="sourceLineNo">044</span><a id="line.44"> *</a>
+<span class="sourceLineNo">045</span><a id="line.45"> */</a>
+<span class="sourceLineNo">046</span><a id="line.46"></a>
+<span class="sourceLineNo">047</span><a id="line.47">package org.jfree.data.gantt;</a>
+<span class="sourceLineNo">048</span><a id="line.48"></a>
+<span class="sourceLineNo">049</span><a id="line.49">import java.util.Collections;</a>
+<span class="sourceLineNo">050</span><a id="line.50">import java.util.List;</a>
+<span class="sourceLineNo">051</span><a id="line.51">import org.jfree.chart.util.ParamChecks;</a>
+<span class="sourceLineNo">052</span><a id="line.52"></a>
+<span class="sourceLineNo">053</span><a id="line.53">import org.jfree.data.general.Series;</a>
+<span class="sourceLineNo">054</span><a id="line.54">import org.jfree.util.ObjectUtilities;</a>
+<span class="sourceLineNo">055</span><a id="line.55"></a>
+<span class="sourceLineNo">056</span><a id="line.56">/**</a>
+<span class="sourceLineNo">057</span><a id="line.57"> * A series that contains zero, one or many {@link Task} objects.</a>
+<span class="sourceLineNo">058</span><a id="line.58"> * &lt;P&gt;</a>
+<span class="sourceLineNo">059</span><a id="line.59"> * This class is used as a building block for the {@link TaskSeriesCollection}</a>
+<span class="sourceLineNo">060</span><a id="line.60"> * class that can be used to construct basic Gantt charts.</a>
+<span class="sourceLineNo">061</span><a id="line.61"> */</a>
+<span class="sourceLineNo">062</span><a id="line.62">public class TaskSeries extends Series {</a>
+<span class="sourceLineNo">063</span><a id="line.63"></a>
+<span class="sourceLineNo">064</span><a id="line.64">    /** Storage for the tasks in the series. */</a>
+<span class="sourceLineNo">065</span><a id="line.65">    private List tasks;</a>
+<span class="sourceLineNo">066</span><a id="line.66"></a>
+<span class="sourceLineNo">067</span><a id="line.67">    /**</a>
+<span class="sourceLineNo">068</span><a id="line.68">     * Constructs a new series with the specified name.</a>
+<span class="sourceLineNo">069</span><a id="line.69">     *</a>
+<span class="sourceLineNo">070</span><a id="line.70">     * @param name  the series name (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">071</span><a id="line.71">     */</a>
+<span class="sourceLineNo">072</span><a id="line.72">    public TaskSeries(String name) {</a>
+<span class="sourceLineNo">073</span><a id="line.73">        super(name);</a>
+<span class="sourceLineNo">074</span><a id="line.74">        this.tasks = new java.util.ArrayList();</a>
+<span class="sourceLineNo">075</span><a id="line.75">    }</a>
+<span class="sourceLineNo">076</span><a id="line.76"></a>
+<span class="sourceLineNo">077</span><a id="line.77">    /**</a>
+<span class="sourceLineNo">078</span><a id="line.78">     * Adds a task to the series and sends a</a>
+<span class="sourceLineNo">079</span><a id="line.79">     * {@link org.jfree.data.general.SeriesChangeEvent} to all registered</a>
+<span class="sourceLineNo">080</span><a id="line.80">     * listeners.</a>
+<span class="sourceLineNo">081</span><a id="line.81">     *</a>
+<span class="sourceLineNo">082</span><a id="line.82">     * @param task  the task (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">083</span><a id="line.83">     */</a>
+<span class="sourceLineNo">084</span><a id="line.84">    public void add(Task task) {</a>
+<span class="sourceLineNo">085</span><a id="line.85">        ParamChecks.nullNotPermitted(task, "task");</a>
+<span class="sourceLineNo">086</span><a id="line.86">        this.tasks.add(task);</a>
+<span class="sourceLineNo">087</span><a id="line.87">        fireSeriesChanged();</a>
+<span class="sourceLineNo">088</span><a id="line.88">    }</a>
+<span class="sourceLineNo">089</span><a id="line.89"></a>
+<span class="sourceLineNo">090</span><a id="line.90">    /**</a>
+<span class="sourceLineNo">091</span><a id="line.91">     * Removes a task from the series and sends</a>
+<span class="sourceLineNo">092</span><a id="line.92">     * a {@link org.jfree.data.general.SeriesChangeEvent}</a>
+<span class="sourceLineNo">093</span><a id="line.93">     * to all registered listeners.</a>
+<span class="sourceLineNo">094</span><a id="line.94">     *</a>
+<span class="sourceLineNo">095</span><a id="line.95">     * @param task  the task.</a>
+<span class="sourceLineNo">096</span><a id="line.96">     */</a>
+<span class="sourceLineNo">097</span><a id="line.97">    public void remove(Task task) {</a>
+<span class="sourceLineNo">098</span><a id="line.98">        this.tasks.remove(task);</a>
+<span class="sourceLineNo">099</span><a id="line.99">        fireSeriesChanged();</a>
+<span class="sourceLineNo">100</span><a id="line.100">    }</a>
+<span class="sourceLineNo">101</span><a id="line.101"></a>
+<span class="sourceLineNo">102</span><a id="line.102">    /**</a>
+<span class="sourceLineNo">103</span><a id="line.103">     * Removes all tasks from the series and sends</a>
+<span class="sourceLineNo">104</span><a id="line.104">     * a {@link org.jfree.data.general.SeriesChangeEvent}</a>
+<span class="sourceLineNo">105</span><a id="line.105">     * to all registered listeners.</a>
+<span class="sourceLineNo">106</span><a id="line.106">     */</a>
+<span class="sourceLineNo">107</span><a id="line.107">    public void removeAll() {</a>
+<span class="sourceLineNo">108</span><a id="line.108">        this.tasks.clear();</a>
+<span class="sourceLineNo">109</span><a id="line.109">        fireSeriesChanged();</a>
+<span class="sourceLineNo">110</span><a id="line.110">    }</a>
+<span class="sourceLineNo">111</span><a id="line.111"></a>
+<span class="sourceLineNo">112</span><a id="line.112">    /**</a>
+<span class="sourceLineNo">113</span><a id="line.113">     * Returns the number of items in the series.</a>
+<span class="sourceLineNo">114</span><a id="line.114">     *</a>
+<span class="sourceLineNo">115</span><a id="line.115">     * @return The item count.</a>
+<span class="sourceLineNo">116</span><a id="line.116">     */</a>
+<span class="sourceLineNo">117</span><a id="line.117">    @Override</a>
+<span class="sourceLineNo">118</span><a id="line.118">    public int getItemCount() {</a>
+<span class="sourceLineNo">119</span><a id="line.119">        return this.tasks.size();</a>
+<span class="sourceLineNo">120</span><a id="line.120">    }</a>
+<span class="sourceLineNo">121</span><a id="line.121"></a>
+<span class="sourceLineNo">122</span><a id="line.122">    /**</a>
+<span class="sourceLineNo">123</span><a id="line.123">     * Returns a task from the series.</a>
+<span class="sourceLineNo">124</span><a id="line.124">     *</a>
+<span class="sourceLineNo">125</span><a id="line.125">     * @param index  the task index (zero-based).</a>
+<span class="sourceLineNo">126</span><a id="line.126">     *</a>
+<span class="sourceLineNo">127</span><a id="line.127">     * @return The task.</a>
+<span class="sourceLineNo">128</span><a id="line.128">     */</a>
+<span class="sourceLineNo">129</span><a id="line.129">    public Task get(int index) {</a>
+<span class="sourceLineNo">130</span><a id="line.130">        return (Task) this.tasks.get(index);</a>
+<span class="sourceLineNo">131</span><a id="line.131">    }</a>
+<span class="sourceLineNo">132</span><a id="line.132"></a>
+<span class="sourceLineNo">133</span><a id="line.133">    /**</a>
+<span class="sourceLineNo">134</span><a id="line.134">     * Returns the task in the series that has the specified description.</a>
+<span class="sourceLineNo">135</span><a id="line.135">     *</a>
+<span class="sourceLineNo">136</span><a id="line.136">     * @param description  the name (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">137</span><a id="line.137">     *</a>
+<span class="sourceLineNo">138</span><a id="line.138">     * @return The task (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">139</span><a id="line.139">     */</a>
+<span class="sourceLineNo">140</span><a id="line.140">    public Task get(String description) {</a>
+<span class="sourceLineNo">141</span><a id="line.141">        Task result = null;</a>
+<span class="sourceLineNo">142</span><a id="line.142">        int count = this.tasks.size();</a>
+<span class="sourceLineNo">143</span><a id="line.143">        for (int i = 0; i &lt; count; i++) {</a>
+<span class="sourceLineNo">144</span><a id="line.144">            Task t = (Task) this.tasks.get(i);</a>
+<span class="sourceLineNo">145</span><a id="line.145">            if (t.getDescription().equals(description)) {</a>
+<span class="sourceLineNo">146</span><a id="line.146">                result = t;</a>
+<span class="sourceLineNo">147</span><a id="line.147">                break;</a>
+<span class="sourceLineNo">148</span><a id="line.148">            }</a>
+<span class="sourceLineNo">149</span><a id="line.149">        }</a>
+<span class="sourceLineNo">150</span><a id="line.150">        return result;</a>
+<span class="sourceLineNo">151</span><a id="line.151">    }</a>
+<span class="sourceLineNo">152</span><a id="line.152"></a>
+<span class="sourceLineNo">153</span><a id="line.153">    /**</a>
+<span class="sourceLineNo">154</span><a id="line.154">     * Returns an unmodifialble list of the tasks in the series.</a>
+<span class="sourceLineNo">155</span><a id="line.155">     *</a>
+<span class="sourceLineNo">156</span><a id="line.156">     * @return The tasks.</a>
+<span class="sourceLineNo">157</span><a id="line.157">     */</a>
+<span class="sourceLineNo">158</span><a id="line.158">    public List getTasks() {</a>
+<span class="sourceLineNo">159</span><a id="line.159">        return Collections.unmodifiableList(this.tasks);</a>
+<span class="sourceLineNo">160</span><a id="line.160">    }</a>
+<span class="sourceLineNo">161</span><a id="line.161"></a>
+<span class="sourceLineNo">162</span><a id="line.162">    /**</a>
+<span class="sourceLineNo">163</span><a id="line.163">     * Tests this object for equality with an arbitrary object.</a>
+<span class="sourceLineNo">164</span><a id="line.164">     *</a>
+<span class="sourceLineNo">165</span><a id="line.165">     * @param obj  the object to test against (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">166</span><a id="line.166">     *</a>
+<span class="sourceLineNo">167</span><a id="line.167">     * @return A boolean.</a>
+<span class="sourceLineNo">168</span><a id="line.168">     */</a>
+<span class="sourceLineNo">169</span><a id="line.169">    @Override</a>
+<span class="sourceLineNo">170</span><a id="line.170">    public boolean equals(Object obj) {</a>
+<span class="sourceLineNo">171</span><a id="line.171">        if (obj == this) {</a>
+<span class="sourceLineNo">172</span><a id="line.172">            return true;</a>
+<span class="sourceLineNo">173</span><a id="line.173">        }</a>
+<span class="sourceLineNo">174</span><a id="line.174">        if (!(obj instanceof TaskSeries)) {</a>
+<span class="sourceLineNo">175</span><a id="line.175">            return false;</a>
+<span class="sourceLineNo">176</span><a id="line.176">        }</a>
+<span class="sourceLineNo">177</span><a id="line.177">        if (!super.equals(obj)) {</a>
+<span class="sourceLineNo">178</span><a id="line.178">            return false;</a>
+<span class="sourceLineNo">179</span><a id="line.179">        }</a>
+<span class="sourceLineNo">180</span><a id="line.180">        TaskSeries that = (TaskSeries) obj;</a>
+<span class="sourceLineNo">181</span><a id="line.181">        if (!this.tasks.equals(that.tasks)) {</a>
+<span class="sourceLineNo">182</span><a id="line.182">            return false;</a>
+<span class="sourceLineNo">183</span><a id="line.183">        }</a>
+<span class="sourceLineNo">184</span><a id="line.184">        return true;</a>
+<span class="sourceLineNo">185</span><a id="line.185">    }</a>
+<span class="sourceLineNo">186</span><a id="line.186"></a>
+<span class="sourceLineNo">187</span><a id="line.187">    /**</a>
+<span class="sourceLineNo">188</span><a id="line.188">     * Returns an independent copy of this series.</a>
+<span class="sourceLineNo">189</span><a id="line.189">     *</a>
+<span class="sourceLineNo">190</span><a id="line.190">     * @return A clone of the series.</a>
+<span class="sourceLineNo">191</span><a id="line.191">     *</a>
+<span class="sourceLineNo">192</span><a id="line.192">     * @throws CloneNotSupportedException if there is some problem cloning</a>
+<span class="sourceLineNo">193</span><a id="line.193">     *     the dataset.</a>
+<span class="sourceLineNo">194</span><a id="line.194">     */</a>
+<span class="sourceLineNo">195</span><a id="line.195">    @Override</a>
+<span class="sourceLineNo">196</span><a id="line.196">    public Object clone() throws CloneNotSupportedException {</a>
+<span class="sourceLineNo">197</span><a id="line.197">        TaskSeries clone = (TaskSeries) super.clone();</a>
+<span class="sourceLineNo">198</span><a id="line.198">        clone.tasks = (List) ObjectUtilities.deepClone(this.tasks);</a>
+<span class="sourceLineNo">199</span><a id="line.199">        return clone;</a>
+<span class="sourceLineNo">200</span><a id="line.200">    }</a>
+<span class="sourceLineNo">201</span><a id="line.201"></a>
+<span class="sourceLineNo">202</span><a id="line.202">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

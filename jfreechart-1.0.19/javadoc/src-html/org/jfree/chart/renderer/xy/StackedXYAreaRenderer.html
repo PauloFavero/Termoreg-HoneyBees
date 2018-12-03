@@ -1,0 +1,770 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * --------------------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * StackedXYAreaRenderer.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * --------------------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2003-2014, by Richard Atkinson and Contributors.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  Richard Atkinson;</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   Christian W. Zuckschwerdt;</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *                   David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">035</span><a id="line.35"> *</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * Changes:</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * --------</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * 27-Jul-2003 : Initial version (RA);</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * 30-Jul-2003 : Modified entity constructor (CZ);</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 18-Aug-2003 : Now handles null values (RA);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * 20-Aug-2003 : Implemented Cloneable, PublicCloneable and Serializable (DG);</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * 22-Sep-2003 : Changed to be a two pass renderer with optional shape Paint</a>
+<span class="sourceLineNo">043</span><a id="line.43"> *               and Stroke (RA);</a>
+<span class="sourceLineNo">044</span><a id="line.44"> * 07-Oct-2003 : Added renderer state (DG);</a>
+<span class="sourceLineNo">045</span><a id="line.45"> * 10-Feb-2004 : Updated state object and changed drawItem() method to make</a>
+<span class="sourceLineNo">046</span><a id="line.46"> *               overriding easier (DG);</a>
+<span class="sourceLineNo">047</span><a id="line.47"> * 25-Feb-2004 : Replaced CrosshairInfo with CrosshairState.  Renamed</a>
+<span class="sourceLineNo">048</span><a id="line.48"> *               XYToolTipGenerator --&gt; XYItemLabelGenerator (DG);</a>
+<span class="sourceLineNo">049</span><a id="line.49"> * 15-Jul-2004 : Switched getX() with getXValue() and getY() with</a>
+<span class="sourceLineNo">050</span><a id="line.50"> *               getYValue() (DG);</a>
+<span class="sourceLineNo">051</span><a id="line.51"> * 10-Sep-2004 : Removed getRangeType() method (DG);</a>
+<span class="sourceLineNo">052</span><a id="line.52"> * 11-Nov-2004 : Now uses ShapeUtilities to translate shapes (DG);</a>
+<span class="sourceLineNo">053</span><a id="line.53"> * 06-Jan-2005 : Override equals() (DG);</a>
+<span class="sourceLineNo">054</span><a id="line.54"> * 07-Jan-2005 : Update for method name changes in DatasetUtilities (DG);</a>
+<span class="sourceLineNo">055</span><a id="line.55"> * 28-Mar-2005 : Use getXValue() and getYValue() from dataset (DG);</a>
+<span class="sourceLineNo">056</span><a id="line.56"> * 06-Jun-2005 : Fixed null pointer exception, plus problems with equals() and</a>
+<span class="sourceLineNo">057</span><a id="line.57"> *               serialization (DG);</a>
+<span class="sourceLineNo">058</span><a id="line.58"> * ------------- JFREECHART 1.0.x ---------------------------------------------</a>
+<span class="sourceLineNo">059</span><a id="line.59"> * 10-Nov-2006 : Fixed bug 1593156, NullPointerException with line</a>
+<span class="sourceLineNo">060</span><a id="line.60"> *               plotting (DG);</a>
+<span class="sourceLineNo">061</span><a id="line.61"> * 02-Feb-2007 : Fixed bug 1649686, crosshairs don't stack y-values (DG);</a>
+<span class="sourceLineNo">062</span><a id="line.62"> * 06-Feb-2007 : Fixed bug 1086307, crosshairs with multiple axes (DG);</a>
+<span class="sourceLineNo">063</span><a id="line.63"> * 22-Mar-2007 : Fire change events in setShapePaint() and setShapeStroke()</a>
+<span class="sourceLineNo">064</span><a id="line.64"> *               methods (DG);</a>
+<span class="sourceLineNo">065</span><a id="line.65"> * 20-Apr-2007 : Updated getLegendItem() for renderer change (DG);</a>
+<span class="sourceLineNo">066</span><a id="line.66"> *</a>
+<span class="sourceLineNo">067</span><a id="line.67"> */</a>
+<span class="sourceLineNo">068</span><a id="line.68"></a>
+<span class="sourceLineNo">069</span><a id="line.69">package org.jfree.chart.renderer.xy;</a>
+<span class="sourceLineNo">070</span><a id="line.70"></a>
+<span class="sourceLineNo">071</span><a id="line.71">import java.awt.Graphics2D;</a>
+<span class="sourceLineNo">072</span><a id="line.72">import java.awt.Paint;</a>
+<span class="sourceLineNo">073</span><a id="line.73">import java.awt.Point;</a>
+<span class="sourceLineNo">074</span><a id="line.74">import java.awt.Polygon;</a>
+<span class="sourceLineNo">075</span><a id="line.75">import java.awt.Shape;</a>
+<span class="sourceLineNo">076</span><a id="line.76">import java.awt.Stroke;</a>
+<span class="sourceLineNo">077</span><a id="line.77">import java.awt.geom.Line2D;</a>
+<span class="sourceLineNo">078</span><a id="line.78">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">079</span><a id="line.79">import java.io.IOException;</a>
+<span class="sourceLineNo">080</span><a id="line.80">import java.io.ObjectInputStream;</a>
+<span class="sourceLineNo">081</span><a id="line.81">import java.io.ObjectOutputStream;</a>
+<span class="sourceLineNo">082</span><a id="line.82">import java.io.Serializable;</a>
+<span class="sourceLineNo">083</span><a id="line.83">import java.util.Stack;</a>
+<span class="sourceLineNo">084</span><a id="line.84"></a>
+<span class="sourceLineNo">085</span><a id="line.85">import org.jfree.chart.axis.ValueAxis;</a>
+<span class="sourceLineNo">086</span><a id="line.86">import org.jfree.chart.entity.EntityCollection;</a>
+<span class="sourceLineNo">087</span><a id="line.87">import org.jfree.chart.entity.XYItemEntity;</a>
+<span class="sourceLineNo">088</span><a id="line.88">import org.jfree.chart.event.RendererChangeEvent;</a>
+<span class="sourceLineNo">089</span><a id="line.89">import org.jfree.chart.labels.XYToolTipGenerator;</a>
+<span class="sourceLineNo">090</span><a id="line.90">import org.jfree.chart.plot.CrosshairState;</a>
+<span class="sourceLineNo">091</span><a id="line.91">import org.jfree.chart.plot.PlotOrientation;</a>
+<span class="sourceLineNo">092</span><a id="line.92">import org.jfree.chart.plot.PlotRenderingInfo;</a>
+<span class="sourceLineNo">093</span><a id="line.93">import org.jfree.chart.plot.XYPlot;</a>
+<span class="sourceLineNo">094</span><a id="line.94">import org.jfree.chart.urls.XYURLGenerator;</a>
+<span class="sourceLineNo">095</span><a id="line.95">import org.jfree.data.Range;</a>
+<span class="sourceLineNo">096</span><a id="line.96">import org.jfree.data.general.DatasetUtilities;</a>
+<span class="sourceLineNo">097</span><a id="line.97">import org.jfree.data.xy.TableXYDataset;</a>
+<span class="sourceLineNo">098</span><a id="line.98">import org.jfree.data.xy.XYDataset;</a>
+<span class="sourceLineNo">099</span><a id="line.99">import org.jfree.io.SerialUtilities;</a>
+<span class="sourceLineNo">100</span><a id="line.100">import org.jfree.util.ObjectUtilities;</a>
+<span class="sourceLineNo">101</span><a id="line.101">import org.jfree.util.PaintUtilities;</a>
+<span class="sourceLineNo">102</span><a id="line.102">import org.jfree.util.PublicCloneable;</a>
+<span class="sourceLineNo">103</span><a id="line.103">import org.jfree.util.ShapeUtilities;</a>
+<span class="sourceLineNo">104</span><a id="line.104"></a>
+<span class="sourceLineNo">105</span><a id="line.105">/**</a>
+<span class="sourceLineNo">106</span><a id="line.106"> * A stacked area renderer for the {@link XYPlot} class.</a>
+<span class="sourceLineNo">107</span><a id="line.107"> * &lt;br&gt;&lt;br&gt;</a>
+<span class="sourceLineNo">108</span><a id="line.108"> * The example shown here is generated by the</a>
+<span class="sourceLineNo">109</span><a id="line.109"> * &lt;code&gt;StackedXYAreaRendererDemo1.java&lt;/code&gt; program included in the</a>
+<span class="sourceLineNo">110</span><a id="line.110"> * JFreeChart demo collection:</a>
+<span class="sourceLineNo">111</span><a id="line.111"> * &lt;br&gt;&lt;br&gt;</a>
+<span class="sourceLineNo">112</span><a id="line.112"> * &lt;img src="../../../../../images/StackedXYAreaRendererSample.png"</a>
+<span class="sourceLineNo">113</span><a id="line.113"> * alt="StackedXYAreaRendererSample.png"&gt;</a>
+<span class="sourceLineNo">114</span><a id="line.114"> * &lt;br&gt;&lt;br&gt;</a>
+<span class="sourceLineNo">115</span><a id="line.115"> * SPECIAL NOTE:  This renderer does not currently handle negative data values</a>
+<span class="sourceLineNo">116</span><a id="line.116"> * correctly.  This should get fixed at some point, but the current workaround</a>
+<span class="sourceLineNo">117</span><a id="line.117"> * is to use the {@link StackedXYAreaRenderer2} class instead.</a>
+<span class="sourceLineNo">118</span><a id="line.118"> */</a>
+<span class="sourceLineNo">119</span><a id="line.119">public class StackedXYAreaRenderer extends XYAreaRenderer</a>
+<span class="sourceLineNo">120</span><a id="line.120">        implements Cloneable, PublicCloneable, Serializable {</a>
+<span class="sourceLineNo">121</span><a id="line.121"></a>
+<span class="sourceLineNo">122</span><a id="line.122">    /** For serialization. */</a>
+<span class="sourceLineNo">123</span><a id="line.123">    private static final long serialVersionUID = 5217394318178570889L;</a>
+<span class="sourceLineNo">124</span><a id="line.124"></a>
+<span class="sourceLineNo">125</span><a id="line.125">     /**</a>
+<span class="sourceLineNo">126</span><a id="line.126">     * A state object for use by this renderer.</a>
+<span class="sourceLineNo">127</span><a id="line.127">     */</a>
+<span class="sourceLineNo">128</span><a id="line.128">    static class StackedXYAreaRendererState extends XYItemRendererState {</a>
+<span class="sourceLineNo">129</span><a id="line.129"></a>
+<span class="sourceLineNo">130</span><a id="line.130">        /** The area for the current series. */</a>
+<span class="sourceLineNo">131</span><a id="line.131">        private Polygon seriesArea;</a>
+<span class="sourceLineNo">132</span><a id="line.132"></a>
+<span class="sourceLineNo">133</span><a id="line.133">        /** The line. */</a>
+<span class="sourceLineNo">134</span><a id="line.134">        private Line2D line;</a>
+<span class="sourceLineNo">135</span><a id="line.135"></a>
+<span class="sourceLineNo">136</span><a id="line.136">        /** The points from the last series. */</a>
+<span class="sourceLineNo">137</span><a id="line.137">        private Stack lastSeriesPoints;</a>
+<span class="sourceLineNo">138</span><a id="line.138"></a>
+<span class="sourceLineNo">139</span><a id="line.139">        /** The points for the current series. */</a>
+<span class="sourceLineNo">140</span><a id="line.140">        private Stack currentSeriesPoints;</a>
+<span class="sourceLineNo">141</span><a id="line.141"></a>
+<span class="sourceLineNo">142</span><a id="line.142">        /**</a>
+<span class="sourceLineNo">143</span><a id="line.143">         * Creates a new state for the renderer.</a>
+<span class="sourceLineNo">144</span><a id="line.144">         *</a>
+<span class="sourceLineNo">145</span><a id="line.145">         * @param info  the plot rendering info.</a>
+<span class="sourceLineNo">146</span><a id="line.146">         */</a>
+<span class="sourceLineNo">147</span><a id="line.147">        public StackedXYAreaRendererState(PlotRenderingInfo info) {</a>
+<span class="sourceLineNo">148</span><a id="line.148">            super(info);</a>
+<span class="sourceLineNo">149</span><a id="line.149">            this.seriesArea = null;</a>
+<span class="sourceLineNo">150</span><a id="line.150">            this.line = new Line2D.Double();</a>
+<span class="sourceLineNo">151</span><a id="line.151">            this.lastSeriesPoints = new Stack();</a>
+<span class="sourceLineNo">152</span><a id="line.152">            this.currentSeriesPoints = new Stack();</a>
+<span class="sourceLineNo">153</span><a id="line.153">        }</a>
+<span class="sourceLineNo">154</span><a id="line.154"></a>
+<span class="sourceLineNo">155</span><a id="line.155">        /**</a>
+<span class="sourceLineNo">156</span><a id="line.156">         * Returns the series area.</a>
+<span class="sourceLineNo">157</span><a id="line.157">         *</a>
+<span class="sourceLineNo">158</span><a id="line.158">         * @return The series area.</a>
+<span class="sourceLineNo">159</span><a id="line.159">         */</a>
+<span class="sourceLineNo">160</span><a id="line.160">        public Polygon getSeriesArea() {</a>
+<span class="sourceLineNo">161</span><a id="line.161">            return this.seriesArea;</a>
+<span class="sourceLineNo">162</span><a id="line.162">        }</a>
+<span class="sourceLineNo">163</span><a id="line.163"></a>
+<span class="sourceLineNo">164</span><a id="line.164">        /**</a>
+<span class="sourceLineNo">165</span><a id="line.165">         * Sets the series area.</a>
+<span class="sourceLineNo">166</span><a id="line.166">         *</a>
+<span class="sourceLineNo">167</span><a id="line.167">         * @param area  the area.</a>
+<span class="sourceLineNo">168</span><a id="line.168">         */</a>
+<span class="sourceLineNo">169</span><a id="line.169">        public void setSeriesArea(Polygon area) {</a>
+<span class="sourceLineNo">170</span><a id="line.170">            this.seriesArea = area;</a>
+<span class="sourceLineNo">171</span><a id="line.171">        }</a>
+<span class="sourceLineNo">172</span><a id="line.172"></a>
+<span class="sourceLineNo">173</span><a id="line.173">        /**</a>
+<span class="sourceLineNo">174</span><a id="line.174">         * Returns the working line.</a>
+<span class="sourceLineNo">175</span><a id="line.175">         *</a>
+<span class="sourceLineNo">176</span><a id="line.176">         * @return The working line.</a>
+<span class="sourceLineNo">177</span><a id="line.177">         */</a>
+<span class="sourceLineNo">178</span><a id="line.178">        public Line2D getLine() {</a>
+<span class="sourceLineNo">179</span><a id="line.179">            return this.line;</a>
+<span class="sourceLineNo">180</span><a id="line.180">        }</a>
+<span class="sourceLineNo">181</span><a id="line.181"></a>
+<span class="sourceLineNo">182</span><a id="line.182">        /**</a>
+<span class="sourceLineNo">183</span><a id="line.183">         * Returns the current series points.</a>
+<span class="sourceLineNo">184</span><a id="line.184">         *</a>
+<span class="sourceLineNo">185</span><a id="line.185">         * @return The current series points.</a>
+<span class="sourceLineNo">186</span><a id="line.186">         */</a>
+<span class="sourceLineNo">187</span><a id="line.187">        public Stack getCurrentSeriesPoints() {</a>
+<span class="sourceLineNo">188</span><a id="line.188">            return this.currentSeriesPoints;</a>
+<span class="sourceLineNo">189</span><a id="line.189">        }</a>
+<span class="sourceLineNo">190</span><a id="line.190"></a>
+<span class="sourceLineNo">191</span><a id="line.191">        /**</a>
+<span class="sourceLineNo">192</span><a id="line.192">         * Sets the current series points.</a>
+<span class="sourceLineNo">193</span><a id="line.193">         *</a>
+<span class="sourceLineNo">194</span><a id="line.194">         * @param points  the points.</a>
+<span class="sourceLineNo">195</span><a id="line.195">         */</a>
+<span class="sourceLineNo">196</span><a id="line.196">        public void setCurrentSeriesPoints(Stack points) {</a>
+<span class="sourceLineNo">197</span><a id="line.197">            this.currentSeriesPoints = points;</a>
+<span class="sourceLineNo">198</span><a id="line.198">        }</a>
+<span class="sourceLineNo">199</span><a id="line.199"></a>
+<span class="sourceLineNo">200</span><a id="line.200">        /**</a>
+<span class="sourceLineNo">201</span><a id="line.201">         * Returns the last series points.</a>
+<span class="sourceLineNo">202</span><a id="line.202">         *</a>
+<span class="sourceLineNo">203</span><a id="line.203">         * @return The last series points.</a>
+<span class="sourceLineNo">204</span><a id="line.204">         */</a>
+<span class="sourceLineNo">205</span><a id="line.205">        public Stack getLastSeriesPoints() {</a>
+<span class="sourceLineNo">206</span><a id="line.206">            return this.lastSeriesPoints;</a>
+<span class="sourceLineNo">207</span><a id="line.207">        }</a>
+<span class="sourceLineNo">208</span><a id="line.208"></a>
+<span class="sourceLineNo">209</span><a id="line.209">        /**</a>
+<span class="sourceLineNo">210</span><a id="line.210">         * Sets the last series points.</a>
+<span class="sourceLineNo">211</span><a id="line.211">         *</a>
+<span class="sourceLineNo">212</span><a id="line.212">         * @param points  the points.</a>
+<span class="sourceLineNo">213</span><a id="line.213">         */</a>
+<span class="sourceLineNo">214</span><a id="line.214">        public void setLastSeriesPoints(Stack points) {</a>
+<span class="sourceLineNo">215</span><a id="line.215">            this.lastSeriesPoints = points;</a>
+<span class="sourceLineNo">216</span><a id="line.216">        }</a>
+<span class="sourceLineNo">217</span><a id="line.217"></a>
+<span class="sourceLineNo">218</span><a id="line.218">    }</a>
+<span class="sourceLineNo">219</span><a id="line.219"></a>
+<span class="sourceLineNo">220</span><a id="line.220">    /**</a>
+<span class="sourceLineNo">221</span><a id="line.221">     * Custom Paint for drawing all shapes, if null defaults to series shapes</a>
+<span class="sourceLineNo">222</span><a id="line.222">     */</a>
+<span class="sourceLineNo">223</span><a id="line.223">    private transient Paint shapePaint = null;</a>
+<span class="sourceLineNo">224</span><a id="line.224"></a>
+<span class="sourceLineNo">225</span><a id="line.225">    /**</a>
+<span class="sourceLineNo">226</span><a id="line.226">     * Custom Stroke for drawing all shapes, if null defaults to series</a>
+<span class="sourceLineNo">227</span><a id="line.227">     * strokes.</a>
+<span class="sourceLineNo">228</span><a id="line.228">     */</a>
+<span class="sourceLineNo">229</span><a id="line.229">    private transient Stroke shapeStroke = null;</a>
+<span class="sourceLineNo">230</span><a id="line.230"></a>
+<span class="sourceLineNo">231</span><a id="line.231">    /**</a>
+<span class="sourceLineNo">232</span><a id="line.232">     * Creates a new renderer.</a>
+<span class="sourceLineNo">233</span><a id="line.233">     */</a>
+<span class="sourceLineNo">234</span><a id="line.234">    public StackedXYAreaRenderer() {</a>
+<span class="sourceLineNo">235</span><a id="line.235">        this(AREA);</a>
+<span class="sourceLineNo">236</span><a id="line.236">    }</a>
+<span class="sourceLineNo">237</span><a id="line.237"></a>
+<span class="sourceLineNo">238</span><a id="line.238">    /**</a>
+<span class="sourceLineNo">239</span><a id="line.239">     * Constructs a new renderer.</a>
+<span class="sourceLineNo">240</span><a id="line.240">     *</a>
+<span class="sourceLineNo">241</span><a id="line.241">     * @param type  the type of the renderer.</a>
+<span class="sourceLineNo">242</span><a id="line.242">     */</a>
+<span class="sourceLineNo">243</span><a id="line.243">    public StackedXYAreaRenderer(int type) {</a>
+<span class="sourceLineNo">244</span><a id="line.244">        this(type, null, null);</a>
+<span class="sourceLineNo">245</span><a id="line.245">    }</a>
+<span class="sourceLineNo">246</span><a id="line.246"></a>
+<span class="sourceLineNo">247</span><a id="line.247">    /**</a>
+<span class="sourceLineNo">248</span><a id="line.248">     * Constructs a new renderer.  To specify the type of renderer, use one of</a>
+<span class="sourceLineNo">249</span><a id="line.249">     * the constants: &lt;code&gt;SHAPES&lt;/code&gt;, &lt;code&gt;LINES&lt;/code&gt;,</a>
+<span class="sourceLineNo">250</span><a id="line.250">     * &lt;code&gt;SHAPES_AND_LINES&lt;/code&gt;, &lt;code&gt;AREA&lt;/code&gt; or</a>
+<span class="sourceLineNo">251</span><a id="line.251">     * &lt;code&gt;AREA_AND_SHAPES&lt;/code&gt;.</a>
+<span class="sourceLineNo">252</span><a id="line.252">     *</a>
+<span class="sourceLineNo">253</span><a id="line.253">     * @param type  the type of renderer.</a>
+<span class="sourceLineNo">254</span><a id="line.254">     * @param labelGenerator  the tool tip generator to use (&lt;code&gt;null&lt;/code&gt;</a>
+<span class="sourceLineNo">255</span><a id="line.255">     *                        is none).</a>
+<span class="sourceLineNo">256</span><a id="line.256">     * @param urlGenerator  the URL generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">257</span><a id="line.257">     */</a>
+<span class="sourceLineNo">258</span><a id="line.258">    public StackedXYAreaRenderer(int type, XYToolTipGenerator labelGenerator,</a>
+<span class="sourceLineNo">259</span><a id="line.259">            XYURLGenerator urlGenerator) {</a>
+<span class="sourceLineNo">260</span><a id="line.260">        super(type, labelGenerator, urlGenerator);</a>
+<span class="sourceLineNo">261</span><a id="line.261">    }</a>
+<span class="sourceLineNo">262</span><a id="line.262"></a>
+<span class="sourceLineNo">263</span><a id="line.263">    /**</a>
+<span class="sourceLineNo">264</span><a id="line.264">     * Returns the paint used for rendering shapes, or &lt;code&gt;null&lt;/code&gt; if</a>
+<span class="sourceLineNo">265</span><a id="line.265">     * using series paints.</a>
+<span class="sourceLineNo">266</span><a id="line.266">     *</a>
+<span class="sourceLineNo">267</span><a id="line.267">     * @return The paint (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">268</span><a id="line.268">     *</a>
+<span class="sourceLineNo">269</span><a id="line.269">     * @see #setShapePaint(Paint)</a>
+<span class="sourceLineNo">270</span><a id="line.270">     */</a>
+<span class="sourceLineNo">271</span><a id="line.271">    public Paint getShapePaint() {</a>
+<span class="sourceLineNo">272</span><a id="line.272">        return this.shapePaint;</a>
+<span class="sourceLineNo">273</span><a id="line.273">    }</a>
+<span class="sourceLineNo">274</span><a id="line.274"></a>
+<span class="sourceLineNo">275</span><a id="line.275">    /**</a>
+<span class="sourceLineNo">276</span><a id="line.276">     * Sets the paint for rendering shapes and sends a</a>
+<span class="sourceLineNo">277</span><a id="line.277">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">278</span><a id="line.278">     *</a>
+<span class="sourceLineNo">279</span><a id="line.279">     * @param shapePaint  the paint (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">280</span><a id="line.280">     *</a>
+<span class="sourceLineNo">281</span><a id="line.281">     * @see #getShapePaint()</a>
+<span class="sourceLineNo">282</span><a id="line.282">     */</a>
+<span class="sourceLineNo">283</span><a id="line.283">    public void setShapePaint(Paint shapePaint) {</a>
+<span class="sourceLineNo">284</span><a id="line.284">        this.shapePaint = shapePaint;</a>
+<span class="sourceLineNo">285</span><a id="line.285">        fireChangeEvent();</a>
+<span class="sourceLineNo">286</span><a id="line.286">    }</a>
+<span class="sourceLineNo">287</span><a id="line.287"></a>
+<span class="sourceLineNo">288</span><a id="line.288">    /**</a>
+<span class="sourceLineNo">289</span><a id="line.289">     * Returns the stroke used for rendering shapes, or &lt;code&gt;null&lt;/code&gt; if</a>
+<span class="sourceLineNo">290</span><a id="line.290">     * using series strokes.</a>
+<span class="sourceLineNo">291</span><a id="line.291">     *</a>
+<span class="sourceLineNo">292</span><a id="line.292">     * @return The stroke (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">293</span><a id="line.293">     *</a>
+<span class="sourceLineNo">294</span><a id="line.294">     * @see #setShapeStroke(Stroke)</a>
+<span class="sourceLineNo">295</span><a id="line.295">     */</a>
+<span class="sourceLineNo">296</span><a id="line.296">    public Stroke getShapeStroke() {</a>
+<span class="sourceLineNo">297</span><a id="line.297">        return this.shapeStroke;</a>
+<span class="sourceLineNo">298</span><a id="line.298">    }</a>
+<span class="sourceLineNo">299</span><a id="line.299"></a>
+<span class="sourceLineNo">300</span><a id="line.300">    /**</a>
+<span class="sourceLineNo">301</span><a id="line.301">     * Sets the stroke for rendering shapes and sends a</a>
+<span class="sourceLineNo">302</span><a id="line.302">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">303</span><a id="line.303">     *</a>
+<span class="sourceLineNo">304</span><a id="line.304">     * @param shapeStroke  the stroke (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">305</span><a id="line.305">     *</a>
+<span class="sourceLineNo">306</span><a id="line.306">     * @see #getShapeStroke()</a>
+<span class="sourceLineNo">307</span><a id="line.307">     */</a>
+<span class="sourceLineNo">308</span><a id="line.308">    public void setShapeStroke(Stroke shapeStroke) {</a>
+<span class="sourceLineNo">309</span><a id="line.309">        this.shapeStroke = shapeStroke;</a>
+<span class="sourceLineNo">310</span><a id="line.310">        fireChangeEvent();</a>
+<span class="sourceLineNo">311</span><a id="line.311">    }</a>
+<span class="sourceLineNo">312</span><a id="line.312"></a>
+<span class="sourceLineNo">313</span><a id="line.313">    /**</a>
+<span class="sourceLineNo">314</span><a id="line.314">     * Initialises the renderer. This method will be called before the first</a>
+<span class="sourceLineNo">315</span><a id="line.315">     * item is rendered, giving the renderer an opportunity to initialise any</a>
+<span class="sourceLineNo">316</span><a id="line.316">     * state information it wants to maintain.</a>
+<span class="sourceLineNo">317</span><a id="line.317">     *</a>
+<span class="sourceLineNo">318</span><a id="line.318">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">319</span><a id="line.319">     * @param dataArea  the area inside the axes.</a>
+<span class="sourceLineNo">320</span><a id="line.320">     * @param plot  the plot.</a>
+<span class="sourceLineNo">321</span><a id="line.321">     * @param data  the data.</a>
+<span class="sourceLineNo">322</span><a id="line.322">     * @param info  an optional info collection object to return data back to</a>
+<span class="sourceLineNo">323</span><a id="line.323">     *              the caller.</a>
+<span class="sourceLineNo">324</span><a id="line.324">     *</a>
+<span class="sourceLineNo">325</span><a id="line.325">     * @return A state object that should be passed to subsequent calls to the</a>
+<span class="sourceLineNo">326</span><a id="line.326">     *         drawItem() method.</a>
+<span class="sourceLineNo">327</span><a id="line.327">     */</a>
+<span class="sourceLineNo">328</span><a id="line.328">    @Override</a>
+<span class="sourceLineNo">329</span><a id="line.329">    public XYItemRendererState initialise(Graphics2D g2, Rectangle2D dataArea,</a>
+<span class="sourceLineNo">330</span><a id="line.330">            XYPlot plot, XYDataset data, PlotRenderingInfo info) {</a>
+<span class="sourceLineNo">331</span><a id="line.331"></a>
+<span class="sourceLineNo">332</span><a id="line.332">        XYItemRendererState state = new StackedXYAreaRendererState(info);</a>
+<span class="sourceLineNo">333</span><a id="line.333">        // in the rendering process, there is special handling for item</a>
+<span class="sourceLineNo">334</span><a id="line.334">        // zero, so we can't support processing of visible data items only</a>
+<span class="sourceLineNo">335</span><a id="line.335">        state.setProcessVisibleItemsOnly(false);</a>
+<span class="sourceLineNo">336</span><a id="line.336">        return state;</a>
+<span class="sourceLineNo">337</span><a id="line.337">    }</a>
+<span class="sourceLineNo">338</span><a id="line.338"></a>
+<span class="sourceLineNo">339</span><a id="line.339">    /**</a>
+<span class="sourceLineNo">340</span><a id="line.340">     * Returns the number of passes required by the renderer.</a>
+<span class="sourceLineNo">341</span><a id="line.341">     *</a>
+<span class="sourceLineNo">342</span><a id="line.342">     * @return 2.</a>
+<span class="sourceLineNo">343</span><a id="line.343">     */</a>
+<span class="sourceLineNo">344</span><a id="line.344">    @Override</a>
+<span class="sourceLineNo">345</span><a id="line.345">    public int getPassCount() {</a>
+<span class="sourceLineNo">346</span><a id="line.346">        return 2;</a>
+<span class="sourceLineNo">347</span><a id="line.347">    }</a>
+<span class="sourceLineNo">348</span><a id="line.348"></a>
+<span class="sourceLineNo">349</span><a id="line.349">    /**</a>
+<span class="sourceLineNo">350</span><a id="line.350">     * Returns the range of values the renderer requires to display all the</a>
+<span class="sourceLineNo">351</span><a id="line.351">     * items from the specified dataset.</a>
+<span class="sourceLineNo">352</span><a id="line.352">     *</a>
+<span class="sourceLineNo">353</span><a id="line.353">     * @param dataset  the dataset (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">354</span><a id="line.354">     *</a>
+<span class="sourceLineNo">355</span><a id="line.355">     * @return The range ([0.0, 0.0] if the dataset contains no values, and</a>
+<span class="sourceLineNo">356</span><a id="line.356">     *         &lt;code&gt;null&lt;/code&gt; if the dataset is &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">357</span><a id="line.357">     *</a>
+<span class="sourceLineNo">358</span><a id="line.358">     * @throws ClassCastException if &lt;code&gt;dataset&lt;/code&gt; is not an instance</a>
+<span class="sourceLineNo">359</span><a id="line.359">     *         of {@link TableXYDataset}.</a>
+<span class="sourceLineNo">360</span><a id="line.360">     */</a>
+<span class="sourceLineNo">361</span><a id="line.361">    @Override</a>
+<span class="sourceLineNo">362</span><a id="line.362">    public Range findRangeBounds(XYDataset dataset) {</a>
+<span class="sourceLineNo">363</span><a id="line.363">        if (dataset != null) {</a>
+<span class="sourceLineNo">364</span><a id="line.364">            return DatasetUtilities.findStackedRangeBounds(</a>
+<span class="sourceLineNo">365</span><a id="line.365">                (TableXYDataset) dataset);</a>
+<span class="sourceLineNo">366</span><a id="line.366">        }</a>
+<span class="sourceLineNo">367</span><a id="line.367">        else {</a>
+<span class="sourceLineNo">368</span><a id="line.368">            return null;</a>
+<span class="sourceLineNo">369</span><a id="line.369">        }</a>
+<span class="sourceLineNo">370</span><a id="line.370">    }</a>
+<span class="sourceLineNo">371</span><a id="line.371"></a>
+<span class="sourceLineNo">372</span><a id="line.372">    /**</a>
+<span class="sourceLineNo">373</span><a id="line.373">     * Draws the visual representation of a single data item.</a>
+<span class="sourceLineNo">374</span><a id="line.374">     *</a>
+<span class="sourceLineNo">375</span><a id="line.375">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">376</span><a id="line.376">     * @param state  the renderer state.</a>
+<span class="sourceLineNo">377</span><a id="line.377">     * @param dataArea  the area within which the data is being drawn.</a>
+<span class="sourceLineNo">378</span><a id="line.378">     * @param info  collects information about the drawing.</a>
+<span class="sourceLineNo">379</span><a id="line.379">     * @param plot  the plot (can be used to obtain standard color information</a>
+<span class="sourceLineNo">380</span><a id="line.380">     *              etc).</a>
+<span class="sourceLineNo">381</span><a id="line.381">     * @param domainAxis  the domain axis.</a>
+<span class="sourceLineNo">382</span><a id="line.382">     * @param rangeAxis  the range axis.</a>
+<span class="sourceLineNo">383</span><a id="line.383">     * @param dataset  the dataset.</a>
+<span class="sourceLineNo">384</span><a id="line.384">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">385</span><a id="line.385">     * @param item  the item index (zero-based).</a>
+<span class="sourceLineNo">386</span><a id="line.386">     * @param crosshairState  information about crosshairs on a plot.</a>
+<span class="sourceLineNo">387</span><a id="line.387">     * @param pass  the pass index.</a>
+<span class="sourceLineNo">388</span><a id="line.388">     *</a>
+<span class="sourceLineNo">389</span><a id="line.389">     * @throws ClassCastException if &lt;code&gt;state&lt;/code&gt; is not an instance of</a>
+<span class="sourceLineNo">390</span><a id="line.390">     *         &lt;code&gt;StackedXYAreaRendererState&lt;/code&gt; or &lt;code&gt;dataset&lt;/code&gt;</a>
+<span class="sourceLineNo">391</span><a id="line.391">     *         is not an instance of {@link TableXYDataset}.</a>
+<span class="sourceLineNo">392</span><a id="line.392">     */</a>
+<span class="sourceLineNo">393</span><a id="line.393">    @Override</a>
+<span class="sourceLineNo">394</span><a id="line.394">    public void drawItem(Graphics2D g2, XYItemRendererState state,</a>
+<span class="sourceLineNo">395</span><a id="line.395">            Rectangle2D dataArea, PlotRenderingInfo info, XYPlot plot,</a>
+<span class="sourceLineNo">396</span><a id="line.396">            ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset,</a>
+<span class="sourceLineNo">397</span><a id="line.397">            int series, int item, CrosshairState crosshairState, int pass) {</a>
+<span class="sourceLineNo">398</span><a id="line.398"></a>
+<span class="sourceLineNo">399</span><a id="line.399">        PlotOrientation orientation = plot.getOrientation();</a>
+<span class="sourceLineNo">400</span><a id="line.400">        StackedXYAreaRendererState areaState</a>
+<span class="sourceLineNo">401</span><a id="line.401">            = (StackedXYAreaRendererState) state;</a>
+<span class="sourceLineNo">402</span><a id="line.402">        // Get the item count for the series, so that we can know which is the</a>
+<span class="sourceLineNo">403</span><a id="line.403">        // end of the series.</a>
+<span class="sourceLineNo">404</span><a id="line.404">        TableXYDataset tdataset = (TableXYDataset) dataset;</a>
+<span class="sourceLineNo">405</span><a id="line.405">        int itemCount = tdataset.getItemCount();</a>
+<span class="sourceLineNo">406</span><a id="line.406"></a>
+<span class="sourceLineNo">407</span><a id="line.407">        // get the data point...</a>
+<span class="sourceLineNo">408</span><a id="line.408">        double x1 = dataset.getXValue(series, item);</a>
+<span class="sourceLineNo">409</span><a id="line.409">        double y1 = dataset.getYValue(series, item);</a>
+<span class="sourceLineNo">410</span><a id="line.410">        boolean nullPoint = false;</a>
+<span class="sourceLineNo">411</span><a id="line.411">        if (Double.isNaN(y1)) {</a>
+<span class="sourceLineNo">412</span><a id="line.412">            y1 = 0.0;</a>
+<span class="sourceLineNo">413</span><a id="line.413">            nullPoint = true;</a>
+<span class="sourceLineNo">414</span><a id="line.414">        }</a>
+<span class="sourceLineNo">415</span><a id="line.415"></a>
+<span class="sourceLineNo">416</span><a id="line.416">        //  Get height adjustment based on stack and translate to Java2D values</a>
+<span class="sourceLineNo">417</span><a id="line.417">        double ph1 = getPreviousHeight(tdataset, series, item);</a>
+<span class="sourceLineNo">418</span><a id="line.418">        double transX1 = domainAxis.valueToJava2D(x1, dataArea,</a>
+<span class="sourceLineNo">419</span><a id="line.419">                plot.getDomainAxisEdge());</a>
+<span class="sourceLineNo">420</span><a id="line.420">        double transY1 = rangeAxis.valueToJava2D(y1 + ph1, dataArea,</a>
+<span class="sourceLineNo">421</span><a id="line.421">                plot.getRangeAxisEdge());</a>
+<span class="sourceLineNo">422</span><a id="line.422"></a>
+<span class="sourceLineNo">423</span><a id="line.423">        //  Get series Paint and Stroke</a>
+<span class="sourceLineNo">424</span><a id="line.424">        Paint seriesPaint = getItemPaint(series, item);</a>
+<span class="sourceLineNo">425</span><a id="line.425">        Paint seriesFillPaint = seriesPaint;</a>
+<span class="sourceLineNo">426</span><a id="line.426">        if (getUseFillPaint()) {</a>
+<span class="sourceLineNo">427</span><a id="line.427">            seriesFillPaint = getItemFillPaint(series, item);</a>
+<span class="sourceLineNo">428</span><a id="line.428">        }</a>
+<span class="sourceLineNo">429</span><a id="line.429">        Stroke seriesStroke = getItemStroke(series, item);</a>
+<span class="sourceLineNo">430</span><a id="line.430"></a>
+<span class="sourceLineNo">431</span><a id="line.431">        if (pass == 0) {</a>
+<span class="sourceLineNo">432</span><a id="line.432">            //  On first pass render the areas, line and outlines</a>
+<span class="sourceLineNo">433</span><a id="line.433"></a>
+<span class="sourceLineNo">434</span><a id="line.434">            if (item == 0) {</a>
+<span class="sourceLineNo">435</span><a id="line.435">                // Create a new Area for the series</a>
+<span class="sourceLineNo">436</span><a id="line.436">                areaState.setSeriesArea(new Polygon());</a>
+<span class="sourceLineNo">437</span><a id="line.437">                areaState.setLastSeriesPoints(</a>
+<span class="sourceLineNo">438</span><a id="line.438">                        areaState.getCurrentSeriesPoints());</a>
+<span class="sourceLineNo">439</span><a id="line.439">                areaState.setCurrentSeriesPoints(new Stack());</a>
+<span class="sourceLineNo">440</span><a id="line.440"></a>
+<span class="sourceLineNo">441</span><a id="line.441">                // start from previous height (ph1)</a>
+<span class="sourceLineNo">442</span><a id="line.442">                double transY2 = rangeAxis.valueToJava2D(ph1, dataArea,</a>
+<span class="sourceLineNo">443</span><a id="line.443">                        plot.getRangeAxisEdge());</a>
+<span class="sourceLineNo">444</span><a id="line.444"></a>
+<span class="sourceLineNo">445</span><a id="line.445">                // The first point is (x, 0)</a>
+<span class="sourceLineNo">446</span><a id="line.446">                if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">447</span><a id="line.447">                    areaState.getSeriesArea().addPoint((int) transX1,</a>
+<span class="sourceLineNo">448</span><a id="line.448">                            (int) transY2);</a>
+<span class="sourceLineNo">449</span><a id="line.449">                }</a>
+<span class="sourceLineNo">450</span><a id="line.450">                else if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">451</span><a id="line.451">                    areaState.getSeriesArea().addPoint((int) transY2,</a>
+<span class="sourceLineNo">452</span><a id="line.452">                            (int) transX1);</a>
+<span class="sourceLineNo">453</span><a id="line.453">                }</a>
+<span class="sourceLineNo">454</span><a id="line.454">            }</a>
+<span class="sourceLineNo">455</span><a id="line.455"></a>
+<span class="sourceLineNo">456</span><a id="line.456">            // Add each point to Area (x, y)</a>
+<span class="sourceLineNo">457</span><a id="line.457">            if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">458</span><a id="line.458">                Point point = new Point((int) transX1, (int) transY1);</a>
+<span class="sourceLineNo">459</span><a id="line.459">                areaState.getSeriesArea().addPoint((int) point.getX(),</a>
+<span class="sourceLineNo">460</span><a id="line.460">                        (int) point.getY());</a>
+<span class="sourceLineNo">461</span><a id="line.461">                areaState.getCurrentSeriesPoints().push(point);</a>
+<span class="sourceLineNo">462</span><a id="line.462">            }</a>
+<span class="sourceLineNo">463</span><a id="line.463">            else if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">464</span><a id="line.464">                areaState.getSeriesArea().addPoint((int) transY1,</a>
+<span class="sourceLineNo">465</span><a id="line.465">                        (int) transX1);</a>
+<span class="sourceLineNo">466</span><a id="line.466">            }</a>
+<span class="sourceLineNo">467</span><a id="line.467"></a>
+<span class="sourceLineNo">468</span><a id="line.468">            if (getPlotLines()) {</a>
+<span class="sourceLineNo">469</span><a id="line.469">                if (item &gt; 0) {</a>
+<span class="sourceLineNo">470</span><a id="line.470">                    // get the previous data point...</a>
+<span class="sourceLineNo">471</span><a id="line.471">                    double x0 = dataset.getXValue(series, item - 1);</a>
+<span class="sourceLineNo">472</span><a id="line.472">                    double y0 = dataset.getYValue(series, item - 1);</a>
+<span class="sourceLineNo">473</span><a id="line.473">                    double ph0 = getPreviousHeight(tdataset, series, item - 1);</a>
+<span class="sourceLineNo">474</span><a id="line.474">                    double transX0 = domainAxis.valueToJava2D(x0, dataArea,</a>
+<span class="sourceLineNo">475</span><a id="line.475">                            plot.getDomainAxisEdge());</a>
+<span class="sourceLineNo">476</span><a id="line.476">                    double transY0 = rangeAxis.valueToJava2D(y0 + ph0,</a>
+<span class="sourceLineNo">477</span><a id="line.477">                            dataArea, plot.getRangeAxisEdge());</a>
+<span class="sourceLineNo">478</span><a id="line.478"></a>
+<span class="sourceLineNo">479</span><a id="line.479">                    if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">480</span><a id="line.480">                        areaState.getLine().setLine(transX0, transY0, transX1,</a>
+<span class="sourceLineNo">481</span><a id="line.481">                                transY1);</a>
+<span class="sourceLineNo">482</span><a id="line.482">                    }</a>
+<span class="sourceLineNo">483</span><a id="line.483">                    else if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">484</span><a id="line.484">                        areaState.getLine().setLine(transY0, transX0, transY1,</a>
+<span class="sourceLineNo">485</span><a id="line.485">                                transX1);</a>
+<span class="sourceLineNo">486</span><a id="line.486">                    }</a>
+<span class="sourceLineNo">487</span><a id="line.487">                    g2.setPaint(seriesPaint);</a>
+<span class="sourceLineNo">488</span><a id="line.488">                    g2.setStroke(seriesStroke);</a>
+<span class="sourceLineNo">489</span><a id="line.489">                    g2.draw(areaState.getLine());</a>
+<span class="sourceLineNo">490</span><a id="line.490">                }</a>
+<span class="sourceLineNo">491</span><a id="line.491">            }</a>
+<span class="sourceLineNo">492</span><a id="line.492"></a>
+<span class="sourceLineNo">493</span><a id="line.493">            // Check if the item is the last item for the series and number of</a>
+<span class="sourceLineNo">494</span><a id="line.494">            // items &gt; 0.  We can't draw an area for a single point.</a>
+<span class="sourceLineNo">495</span><a id="line.495">            if (getPlotArea() &amp;&amp; item &gt; 0 &amp;&amp; item == (itemCount - 1)) {</a>
+<span class="sourceLineNo">496</span><a id="line.496"></a>
+<span class="sourceLineNo">497</span><a id="line.497">                double transY2 = rangeAxis.valueToJava2D(ph1, dataArea,</a>
+<span class="sourceLineNo">498</span><a id="line.498">                        plot.getRangeAxisEdge());</a>
+<span class="sourceLineNo">499</span><a id="line.499"></a>
+<span class="sourceLineNo">500</span><a id="line.500">                if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">501</span><a id="line.501">                    // Add the last point (x,0)</a>
+<span class="sourceLineNo">502</span><a id="line.502">                    areaState.getSeriesArea().addPoint((int) transX1,</a>
+<span class="sourceLineNo">503</span><a id="line.503">                            (int) transY2);</a>
+<span class="sourceLineNo">504</span><a id="line.504">                }</a>
+<span class="sourceLineNo">505</span><a id="line.505">                else if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">506</span><a id="line.506">                    // Add the last point (x,0)</a>
+<span class="sourceLineNo">507</span><a id="line.507">                    areaState.getSeriesArea().addPoint((int) transY2,</a>
+<span class="sourceLineNo">508</span><a id="line.508">                            (int) transX1);</a>
+<span class="sourceLineNo">509</span><a id="line.509">                }</a>
+<span class="sourceLineNo">510</span><a id="line.510"></a>
+<span class="sourceLineNo">511</span><a id="line.511">                // Add points from last series to complete the base of the</a>
+<span class="sourceLineNo">512</span><a id="line.512">                // polygon</a>
+<span class="sourceLineNo">513</span><a id="line.513">                if (series != 0) {</a>
+<span class="sourceLineNo">514</span><a id="line.514">                    Stack points = areaState.getLastSeriesPoints();</a>
+<span class="sourceLineNo">515</span><a id="line.515">                    while (!points.empty()) {</a>
+<span class="sourceLineNo">516</span><a id="line.516">                        Point point = (Point) points.pop();</a>
+<span class="sourceLineNo">517</span><a id="line.517">                        areaState.getSeriesArea().addPoint((int) point.getX(),</a>
+<span class="sourceLineNo">518</span><a id="line.518">                                (int) point.getY());</a>
+<span class="sourceLineNo">519</span><a id="line.519">                    }</a>
+<span class="sourceLineNo">520</span><a id="line.520">                }</a>
+<span class="sourceLineNo">521</span><a id="line.521"></a>
+<span class="sourceLineNo">522</span><a id="line.522">                //  Fill the polygon</a>
+<span class="sourceLineNo">523</span><a id="line.523">                g2.setPaint(seriesFillPaint);</a>
+<span class="sourceLineNo">524</span><a id="line.524">                g2.setStroke(seriesStroke);</a>
+<span class="sourceLineNo">525</span><a id="line.525">                g2.fill(areaState.getSeriesArea());</a>
+<span class="sourceLineNo">526</span><a id="line.526"></a>
+<span class="sourceLineNo">527</span><a id="line.527">                //  Draw an outline around the Area.</a>
+<span class="sourceLineNo">528</span><a id="line.528">                if (isOutline()) {</a>
+<span class="sourceLineNo">529</span><a id="line.529">                    g2.setStroke(lookupSeriesOutlineStroke(series));</a>
+<span class="sourceLineNo">530</span><a id="line.530">                    g2.setPaint(lookupSeriesOutlinePaint(series));</a>
+<span class="sourceLineNo">531</span><a id="line.531">                    g2.draw(areaState.getSeriesArea());</a>
+<span class="sourceLineNo">532</span><a id="line.532">                }</a>
+<span class="sourceLineNo">533</span><a id="line.533">            }</a>
+<span class="sourceLineNo">534</span><a id="line.534"></a>
+<span class="sourceLineNo">535</span><a id="line.535">            int domainAxisIndex = plot.getDomainAxisIndex(domainAxis);</a>
+<span class="sourceLineNo">536</span><a id="line.536">            int rangeAxisIndex = plot.getRangeAxisIndex(rangeAxis);</a>
+<span class="sourceLineNo">537</span><a id="line.537">            updateCrosshairValues(crosshairState, x1, ph1 + y1, domainAxisIndex,</a>
+<span class="sourceLineNo">538</span><a id="line.538">                    rangeAxisIndex, transX1, transY1, orientation);</a>
+<span class="sourceLineNo">539</span><a id="line.539"></a>
+<span class="sourceLineNo">540</span><a id="line.540">        }</a>
+<span class="sourceLineNo">541</span><a id="line.541">        else if (pass == 1) {</a>
+<span class="sourceLineNo">542</span><a id="line.542">            // On second pass render shapes and collect entity and tooltip</a>
+<span class="sourceLineNo">543</span><a id="line.543">            // information</a>
+<span class="sourceLineNo">544</span><a id="line.544"></a>
+<span class="sourceLineNo">545</span><a id="line.545">            Shape shape = null;</a>
+<span class="sourceLineNo">546</span><a id="line.546">            if (getPlotShapes()) {</a>
+<span class="sourceLineNo">547</span><a id="line.547">                shape = getItemShape(series, item);</a>
+<span class="sourceLineNo">548</span><a id="line.548">                if (plot.getOrientation() == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">549</span><a id="line.549">                    shape = ShapeUtilities.createTranslatedShape(shape,</a>
+<span class="sourceLineNo">550</span><a id="line.550">                            transX1, transY1);</a>
+<span class="sourceLineNo">551</span><a id="line.551">                }</a>
+<span class="sourceLineNo">552</span><a id="line.552">                else if (plot.getOrientation() == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">553</span><a id="line.553">                    shape = ShapeUtilities.createTranslatedShape(shape,</a>
+<span class="sourceLineNo">554</span><a id="line.554">                            transY1, transX1);</a>
+<span class="sourceLineNo">555</span><a id="line.555">                }</a>
+<span class="sourceLineNo">556</span><a id="line.556">                if (!nullPoint) {</a>
+<span class="sourceLineNo">557</span><a id="line.557">                    if (getShapePaint() != null) {</a>
+<span class="sourceLineNo">558</span><a id="line.558">                        g2.setPaint(getShapePaint());</a>
+<span class="sourceLineNo">559</span><a id="line.559">                    }</a>
+<span class="sourceLineNo">560</span><a id="line.560">                    else {</a>
+<span class="sourceLineNo">561</span><a id="line.561">                        g2.setPaint(seriesPaint);</a>
+<span class="sourceLineNo">562</span><a id="line.562">                    }</a>
+<span class="sourceLineNo">563</span><a id="line.563">                    if (getShapeStroke() != null) {</a>
+<span class="sourceLineNo">564</span><a id="line.564">                        g2.setStroke(getShapeStroke());</a>
+<span class="sourceLineNo">565</span><a id="line.565">                    }</a>
+<span class="sourceLineNo">566</span><a id="line.566">                    else {</a>
+<span class="sourceLineNo">567</span><a id="line.567">                        g2.setStroke(seriesStroke);</a>
+<span class="sourceLineNo">568</span><a id="line.568">                    }</a>
+<span class="sourceLineNo">569</span><a id="line.569">                    g2.draw(shape);</a>
+<span class="sourceLineNo">570</span><a id="line.570">                }</a>
+<span class="sourceLineNo">571</span><a id="line.571">            }</a>
+<span class="sourceLineNo">572</span><a id="line.572">            else {</a>
+<span class="sourceLineNo">573</span><a id="line.573">                if (plot.getOrientation() == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">574</span><a id="line.574">                    shape = new Rectangle2D.Double(transX1 - 3, transY1 - 3,</a>
+<span class="sourceLineNo">575</span><a id="line.575">                            6.0, 6.0);</a>
+<span class="sourceLineNo">576</span><a id="line.576">                }</a>
+<span class="sourceLineNo">577</span><a id="line.577">                else if (plot.getOrientation() == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">578</span><a id="line.578">                    shape = new Rectangle2D.Double(transY1 - 3, transX1 - 3,</a>
+<span class="sourceLineNo">579</span><a id="line.579">                            6.0, 6.0);</a>
+<span class="sourceLineNo">580</span><a id="line.580">                }</a>
+<span class="sourceLineNo">581</span><a id="line.581">            }</a>
+<span class="sourceLineNo">582</span><a id="line.582"></a>
+<span class="sourceLineNo">583</span><a id="line.583">            // collect entity and tool tip information...</a>
+<span class="sourceLineNo">584</span><a id="line.584">            if (state.getInfo() != null) {</a>
+<span class="sourceLineNo">585</span><a id="line.585">                EntityCollection entities = state.getEntityCollection();</a>
+<span class="sourceLineNo">586</span><a id="line.586">                if (entities != null &amp;&amp; shape != null &amp;&amp; !nullPoint) {</a>
+<span class="sourceLineNo">587</span><a id="line.587">                    String tip = null;</a>
+<span class="sourceLineNo">588</span><a id="line.588">                    XYToolTipGenerator generator</a>
+<span class="sourceLineNo">589</span><a id="line.589">                        = getToolTipGenerator(series, item);</a>
+<span class="sourceLineNo">590</span><a id="line.590">                    if (generator != null) {</a>
+<span class="sourceLineNo">591</span><a id="line.591">                        tip = generator.generateToolTip(dataset, series, item);</a>
+<span class="sourceLineNo">592</span><a id="line.592">                    }</a>
+<span class="sourceLineNo">593</span><a id="line.593">                    String url = null;</a>
+<span class="sourceLineNo">594</span><a id="line.594">                    if (getURLGenerator() != null) {</a>
+<span class="sourceLineNo">595</span><a id="line.595">                        url = getURLGenerator().generateURL(dataset, series,</a>
+<span class="sourceLineNo">596</span><a id="line.596">                                item);</a>
+<span class="sourceLineNo">597</span><a id="line.597">                    }</a>
+<span class="sourceLineNo">598</span><a id="line.598">                    XYItemEntity entity = new XYItemEntity(shape, dataset,</a>
+<span class="sourceLineNo">599</span><a id="line.599">                            series, item, tip, url);</a>
+<span class="sourceLineNo">600</span><a id="line.600">                    entities.add(entity);</a>
+<span class="sourceLineNo">601</span><a id="line.601">                }</a>
+<span class="sourceLineNo">602</span><a id="line.602">            }</a>
+<span class="sourceLineNo">603</span><a id="line.603"></a>
+<span class="sourceLineNo">604</span><a id="line.604">        }</a>
+<span class="sourceLineNo">605</span><a id="line.605">    }</a>
+<span class="sourceLineNo">606</span><a id="line.606"></a>
+<span class="sourceLineNo">607</span><a id="line.607">    /**</a>
+<span class="sourceLineNo">608</span><a id="line.608">     * Calculates the stacked value of the all series up to, but not including</a>
+<span class="sourceLineNo">609</span><a id="line.609">     * &lt;code&gt;series&lt;/code&gt; for the specified item. It returns 0.0 if</a>
+<span class="sourceLineNo">610</span><a id="line.610">     * &lt;code&gt;series&lt;/code&gt; is the first series, i.e. 0.</a>
+<span class="sourceLineNo">611</span><a id="line.611">     *</a>
+<span class="sourceLineNo">612</span><a id="line.612">     * @param dataset  the dataset.</a>
+<span class="sourceLineNo">613</span><a id="line.613">     * @param series  the series.</a>
+<span class="sourceLineNo">614</span><a id="line.614">     * @param index  the index.</a>
+<span class="sourceLineNo">615</span><a id="line.615">     *</a>
+<span class="sourceLineNo">616</span><a id="line.616">     * @return The cumulative value for all series' values up to but excluding</a>
+<span class="sourceLineNo">617</span><a id="line.617">     *         &lt;code&gt;series&lt;/code&gt; for &lt;code&gt;index&lt;/code&gt;.</a>
+<span class="sourceLineNo">618</span><a id="line.618">     */</a>
+<span class="sourceLineNo">619</span><a id="line.619">    protected double getPreviousHeight(TableXYDataset dataset,</a>
+<span class="sourceLineNo">620</span><a id="line.620">                                       int series, int index) {</a>
+<span class="sourceLineNo">621</span><a id="line.621">        double result = 0.0;</a>
+<span class="sourceLineNo">622</span><a id="line.622">        for (int i = 0; i &lt; series; i++) {</a>
+<span class="sourceLineNo">623</span><a id="line.623">            double value = dataset.getYValue(i, index);</a>
+<span class="sourceLineNo">624</span><a id="line.624">            if (!Double.isNaN(value)) {</a>
+<span class="sourceLineNo">625</span><a id="line.625">                result += value;</a>
+<span class="sourceLineNo">626</span><a id="line.626">            }</a>
+<span class="sourceLineNo">627</span><a id="line.627">        }</a>
+<span class="sourceLineNo">628</span><a id="line.628">        return result;</a>
+<span class="sourceLineNo">629</span><a id="line.629">    }</a>
+<span class="sourceLineNo">630</span><a id="line.630"></a>
+<span class="sourceLineNo">631</span><a id="line.631">    /**</a>
+<span class="sourceLineNo">632</span><a id="line.632">     * Tests the renderer for equality with an arbitrary object.</a>
+<span class="sourceLineNo">633</span><a id="line.633">     *</a>
+<span class="sourceLineNo">634</span><a id="line.634">     * @param obj  the object (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">635</span><a id="line.635">     *</a>
+<span class="sourceLineNo">636</span><a id="line.636">     * @return A boolean.</a>
+<span class="sourceLineNo">637</span><a id="line.637">     */</a>
+<span class="sourceLineNo">638</span><a id="line.638">    @Override</a>
+<span class="sourceLineNo">639</span><a id="line.639">    public boolean equals(Object obj) {</a>
+<span class="sourceLineNo">640</span><a id="line.640">        if (obj == this) {</a>
+<span class="sourceLineNo">641</span><a id="line.641">            return true;</a>
+<span class="sourceLineNo">642</span><a id="line.642">        }</a>
+<span class="sourceLineNo">643</span><a id="line.643">        if (!(obj instanceof StackedXYAreaRenderer) || !super.equals(obj)) {</a>
+<span class="sourceLineNo">644</span><a id="line.644">            return false;</a>
+<span class="sourceLineNo">645</span><a id="line.645">        }</a>
+<span class="sourceLineNo">646</span><a id="line.646">        StackedXYAreaRenderer that = (StackedXYAreaRenderer) obj;</a>
+<span class="sourceLineNo">647</span><a id="line.647">        if (!PaintUtilities.equal(this.shapePaint, that.shapePaint)) {</a>
+<span class="sourceLineNo">648</span><a id="line.648">            return false;</a>
+<span class="sourceLineNo">649</span><a id="line.649">        }</a>
+<span class="sourceLineNo">650</span><a id="line.650">        if (!ObjectUtilities.equal(this.shapeStroke, that.shapeStroke)) {</a>
+<span class="sourceLineNo">651</span><a id="line.651">            return false;</a>
+<span class="sourceLineNo">652</span><a id="line.652">        }</a>
+<span class="sourceLineNo">653</span><a id="line.653">        return true;</a>
+<span class="sourceLineNo">654</span><a id="line.654">    }</a>
+<span class="sourceLineNo">655</span><a id="line.655"></a>
+<span class="sourceLineNo">656</span><a id="line.656">    /**</a>
+<span class="sourceLineNo">657</span><a id="line.657">     * Returns a clone of the renderer.</a>
+<span class="sourceLineNo">658</span><a id="line.658">     *</a>
+<span class="sourceLineNo">659</span><a id="line.659">     * @return A clone.</a>
+<span class="sourceLineNo">660</span><a id="line.660">     *</a>
+<span class="sourceLineNo">661</span><a id="line.661">     * @throws CloneNotSupportedException if the renderer cannot be cloned.</a>
+<span class="sourceLineNo">662</span><a id="line.662">     */</a>
+<span class="sourceLineNo">663</span><a id="line.663">    @Override</a>
+<span class="sourceLineNo">664</span><a id="line.664">    public Object clone() throws CloneNotSupportedException {</a>
+<span class="sourceLineNo">665</span><a id="line.665">        return super.clone();</a>
+<span class="sourceLineNo">666</span><a id="line.666">    }</a>
+<span class="sourceLineNo">667</span><a id="line.667"></a>
+<span class="sourceLineNo">668</span><a id="line.668">    /**</a>
+<span class="sourceLineNo">669</span><a id="line.669">     * Provides serialization support.</a>
+<span class="sourceLineNo">670</span><a id="line.670">     *</a>
+<span class="sourceLineNo">671</span><a id="line.671">     * @param stream  the input stream.</a>
+<span class="sourceLineNo">672</span><a id="line.672">     *</a>
+<span class="sourceLineNo">673</span><a id="line.673">     * @throws IOException  if there is an I/O error.</a>
+<span class="sourceLineNo">674</span><a id="line.674">     * @throws ClassNotFoundException  if there is a classpath problem.</a>
+<span class="sourceLineNo">675</span><a id="line.675">     */</a>
+<span class="sourceLineNo">676</span><a id="line.676">    private void readObject(ObjectInputStream stream)</a>
+<span class="sourceLineNo">677</span><a id="line.677">            throws IOException, ClassNotFoundException {</a>
+<span class="sourceLineNo">678</span><a id="line.678">        stream.defaultReadObject();</a>
+<span class="sourceLineNo">679</span><a id="line.679">        this.shapePaint = SerialUtilities.readPaint(stream);</a>
+<span class="sourceLineNo">680</span><a id="line.680">        this.shapeStroke = SerialUtilities.readStroke(stream);</a>
+<span class="sourceLineNo">681</span><a id="line.681">    }</a>
+<span class="sourceLineNo">682</span><a id="line.682"></a>
+<span class="sourceLineNo">683</span><a id="line.683">    /**</a>
+<span class="sourceLineNo">684</span><a id="line.684">     * Provides serialization support.</a>
+<span class="sourceLineNo">685</span><a id="line.685">     *</a>
+<span class="sourceLineNo">686</span><a id="line.686">     * @param stream  the output stream.</a>
+<span class="sourceLineNo">687</span><a id="line.687">     *</a>
+<span class="sourceLineNo">688</span><a id="line.688">     * @throws IOException  if there is an I/O error.</a>
+<span class="sourceLineNo">689</span><a id="line.689">     */</a>
+<span class="sourceLineNo">690</span><a id="line.690">    private void writeObject(ObjectOutputStream stream) throws IOException {</a>
+<span class="sourceLineNo">691</span><a id="line.691">        stream.defaultWriteObject();</a>
+<span class="sourceLineNo">692</span><a id="line.692">        SerialUtilities.writePaint(this.shapePaint, stream);</a>
+<span class="sourceLineNo">693</span><a id="line.693">        SerialUtilities.writeStroke(this.shapeStroke, stream);</a>
+<span class="sourceLineNo">694</span><a id="line.694">    }</a>
+<span class="sourceLineNo">695</span><a id="line.695"></a>
+<span class="sourceLineNo">696</span><a id="line.696">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

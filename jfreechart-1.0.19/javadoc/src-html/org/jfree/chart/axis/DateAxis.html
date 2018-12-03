@@ -1,0 +1,2079 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * -------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * DateAxis.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * -------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  David Gilbert;</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   Jonathan Nash;</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *                   David Li;</a>
+<span class="sourceLineNo">035</span><a id="line.35"> *                   Michael Rauch;</a>
+<span class="sourceLineNo">036</span><a id="line.36"> *                   Bill Kelemen;</a>
+<span class="sourceLineNo">037</span><a id="line.37"> *                   Pawel Pabis;</a>
+<span class="sourceLineNo">038</span><a id="line.38"> *                   Chris Boek;</a>
+<span class="sourceLineNo">039</span><a id="line.39"> *                   Peter Kolb (patches 1934255 and 2603321);</a>
+<span class="sourceLineNo">040</span><a id="line.40"> *                   Andrew Mickish (patch 1870189);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> *                   Fawad Halim (bug 2201869);</a>
+<span class="sourceLineNo">042</span><a id="line.42"> *</a>
+<span class="sourceLineNo">043</span><a id="line.43"> * Changes (from 23-Jun-2001)</a>
+<span class="sourceLineNo">044</span><a id="line.44"> * --------------------------</a>
+<span class="sourceLineNo">045</span><a id="line.45"> * 23-Jun-2001 : Modified to work with null data source (DG);</a>
+<span class="sourceLineNo">046</span><a id="line.46"> * 18-Sep-2001 : Updated header (DG);</a>
+<span class="sourceLineNo">047</span><a id="line.47"> * 27-Nov-2001 : Changed constructors from public to protected, updated Javadoc</a>
+<span class="sourceLineNo">048</span><a id="line.48"> *               comments (DG);</a>
+<span class="sourceLineNo">049</span><a id="line.49"> * 16-Jan-2002 : Added an optional crosshair, based on the implementation by</a>
+<span class="sourceLineNo">050</span><a id="line.50"> *               Jonathan Nash (DG);</a>
+<span class="sourceLineNo">051</span><a id="line.51"> * 26-Feb-2002 : Updated import statements (DG);</a>
+<span class="sourceLineNo">052</span><a id="line.52"> * 22-Apr-2002 : Added a setRange() method (DG);</a>
+<span class="sourceLineNo">053</span><a id="line.53"> * 25-Jun-2002 : Removed redundant local variable (DG);</a>
+<span class="sourceLineNo">054</span><a id="line.54"> * 25-Jul-2002 : Changed order of parameters in ValueAxis constructor (DG);</a>
+<span class="sourceLineNo">055</span><a id="line.55"> * 21-Aug-2002 : The setTickUnit() method now turns off auto-tick unit</a>
+<span class="sourceLineNo">056</span><a id="line.56"> *               selection (fix for bug id 528885) (DG);</a>
+<span class="sourceLineNo">057</span><a id="line.57"> * 05-Sep-2002 : Updated the constructors to reflect changes in the Axis</a>
+<span class="sourceLineNo">058</span><a id="line.58"> *               class (DG);</a>
+<span class="sourceLineNo">059</span><a id="line.59"> * 18-Sep-2002 : Fixed errors reported by Checkstyle (DG);</a>
+<span class="sourceLineNo">060</span><a id="line.60"> * 25-Sep-2002 : Added new setRange() methods, and deprecated</a>
+<span class="sourceLineNo">061</span><a id="line.61"> *               setAxisRange() (DG);</a>
+<span class="sourceLineNo">062</span><a id="line.62"> * 04-Oct-2002 : Changed auto tick selection to parallel number axis</a>
+<span class="sourceLineNo">063</span><a id="line.63"> *               classes (DG);</a>
+<span class="sourceLineNo">064</span><a id="line.64"> * 24-Oct-2002 : Added a date format override (DG);</a>
+<span class="sourceLineNo">065</span><a id="line.65"> * 08-Nov-2002 : Moved to new package com.jrefinery.chart.axis (DG);</a>
+<span class="sourceLineNo">066</span><a id="line.66"> * 14-Jan-2003 : Changed autoRangeMinimumSize from Number --&gt; double, moved</a>
+<span class="sourceLineNo">067</span><a id="line.67"> *               crosshair settings to the plot (DG);</a>
+<span class="sourceLineNo">068</span><a id="line.68"> * 15-Jan-2003 : Removed anchor date (DG);</a>
+<span class="sourceLineNo">069</span><a id="line.69"> * 20-Jan-2003 : Removed unnecessary constructors (DG);</a>
+<span class="sourceLineNo">070</span><a id="line.70"> * 26-Mar-2003 : Implemented Serializable (DG);</a>
+<span class="sourceLineNo">071</span><a id="line.71"> * 02-May-2003 : Added additional units to createStandardDateTickUnits()</a>
+<span class="sourceLineNo">072</span><a id="line.72"> *               method, as suggested by mhilpert in bug report 723187 (DG);</a>
+<span class="sourceLineNo">073</span><a id="line.73"> * 13-May-2003 : Merged HorizontalDateAxis and VerticalDateAxis (DG);</a>
+<span class="sourceLineNo">074</span><a id="line.74"> * 24-May-2003 : Added support for underlying timeline for</a>
+<span class="sourceLineNo">075</span><a id="line.75"> *               SegmentedTimeline (BK);</a>
+<span class="sourceLineNo">076</span><a id="line.76"> * 16-Jul-2003 : Applied patch from Pawel Pabis to fix overlapping dates (DG);</a>
+<span class="sourceLineNo">077</span><a id="line.77"> * 22-Jul-2003 : Applied patch from Pawel Pabis for monthly ticks (DG);</a>
+<span class="sourceLineNo">078</span><a id="line.78"> * 25-Jul-2003 : Fixed bug 777561 and 777586 (DG);</a>
+<span class="sourceLineNo">079</span><a id="line.79"> * 13-Aug-2003 : Implemented Cloneable and added equals() method (DG);</a>
+<span class="sourceLineNo">080</span><a id="line.80"> * 02-Sep-2003 : Fixes for bug report 790506 (DG);</a>
+<span class="sourceLineNo">081</span><a id="line.81"> * 04-Sep-2003 : Fixed tick label alignment when axis appears at the top (DG);</a>
+<span class="sourceLineNo">082</span><a id="line.82"> * 10-Sep-2003 : Fixes for segmented timeline (DG);</a>
+<span class="sourceLineNo">083</span><a id="line.83"> * 17-Sep-2003 : Fixed a layout bug when multiple domain axes are used (DG);</a>
+<span class="sourceLineNo">084</span><a id="line.84"> * 29-Oct-2003 : Added workaround for font alignment in PDF output (DG);</a>
+<span class="sourceLineNo">085</span><a id="line.85"> * 07-Nov-2003 : Modified to use new tick classes (DG);</a>
+<span class="sourceLineNo">086</span><a id="line.86"> * 12-Nov-2003 : Modified tick labelling to use roll unit from DateTickUnit</a>
+<span class="sourceLineNo">087</span><a id="line.87"> *               when a calculated tick value is hidden (which can occur in</a>
+<span class="sourceLineNo">088</span><a id="line.88"> *               segmented date axes) (DG);</a>
+<span class="sourceLineNo">089</span><a id="line.89"> * 24-Nov-2003 : Fixed some problems with the auto tick unit selection, and</a>
+<span class="sourceLineNo">090</span><a id="line.90"> *               fixed bug 846277 (labels missing for inverted axis) (DG);</a>
+<span class="sourceLineNo">091</span><a id="line.91"> * 30-Dec-2003 : Fixed bug in refreshTicksHorizontal() when start of time unit</a>
+<span class="sourceLineNo">092</span><a id="line.92"> *               (ex. 1st of month) was hidden, causing infinite loop (BK);</a>
+<span class="sourceLineNo">093</span><a id="line.93"> * 13-Jan-2004 : Fixed bug in previousStandardDate() method (fix by Richard</a>
+<span class="sourceLineNo">094</span><a id="line.94"> *               Wardle) (DG);</a>
+<span class="sourceLineNo">095</span><a id="line.95"> * 21-Jan-2004 : Renamed translateJava2DToValue --&gt; java2DToValue, and</a>
+<span class="sourceLineNo">096</span><a id="line.96"> *               translateValueToJava2D --&gt; valueToJava2D (DG);</a>
+<span class="sourceLineNo">097</span><a id="line.97"> * 12-Mar-2004 : Fixed bug where date format override is ignored for vertical</a>
+<span class="sourceLineNo">098</span><a id="line.98"> *               axis (DG);</a>
+<span class="sourceLineNo">099</span><a id="line.99"> * 16-Mar-2004 : Added plotState to draw() method (DG);</a>
+<span class="sourceLineNo">100</span><a id="line.100"> * 07-Apr-2004 : Changed string width calculation (DG);</a>
+<span class="sourceLineNo">101</span><a id="line.101"> * 21-Apr-2004 : Fixed bug in estimateMaximumTickLabelWidth() method (bug id</a>
+<span class="sourceLineNo">102</span><a id="line.102"> *               939148) (DG);</a>
+<span class="sourceLineNo">103</span><a id="line.103"> * 11-Jan-2005 : Removed deprecated methods in preparation for 1.0.0</a>
+<span class="sourceLineNo">104</span><a id="line.104"> *               release (DG);</a>
+<span class="sourceLineNo">105</span><a id="line.105"> * 13-Jan-2005 : Fixed bug (see</a>
+<span class="sourceLineNo">106</span><a id="line.106"> *               http://www.jfree.org/forum/viewtopic.php?t=11330) (DG);</a>
+<span class="sourceLineNo">107</span><a id="line.107"> * 21-Apr-2005 : Replaced Insets with RectangleInsets, removed redundant</a>
+<span class="sourceLineNo">108</span><a id="line.108"> *               argument from selectAutoTickUnit() (DG);</a>
+<span class="sourceLineNo">109</span><a id="line.109"> * ------------- JFREECHART 1.0.x ---------------------------------------------</a>
+<span class="sourceLineNo">110</span><a id="line.110"> * 10-Feb-2006 : Added some API doc comments in respect of bug 821046 (DG);</a>
+<span class="sourceLineNo">111</span><a id="line.111"> * 19-Apr-2006 : Fixed bug 1472942 in equals() method (DG);</a>
+<span class="sourceLineNo">112</span><a id="line.112"> * 25-Sep-2006 : Fixed bug 1564977 missing tick labels (DG);</a>
+<span class="sourceLineNo">113</span><a id="line.113"> * 15-Jan-2007 : Added get/setTimeZone() suggested by 'skunk' (DG);</a>
+<span class="sourceLineNo">114</span><a id="line.114"> * 18-Jan-2007 : Fixed bug 1638678, time zone for calendar in</a>
+<span class="sourceLineNo">115</span><a id="line.115"> *               previousStandardDate() (DG);</a>
+<span class="sourceLineNo">116</span><a id="line.116"> * 04-Apr-2007 : Use time zone in date calculations (CB);</a>
+<span class="sourceLineNo">117</span><a id="line.117"> * 19-Apr-2007 : Fix exceptions in setMinimum/MaximumDate() (DG);</a>
+<span class="sourceLineNo">118</span><a id="line.118"> * 03-May-2007 : Fixed minor bugs in previousStandardDate(), with new JUnit</a>
+<span class="sourceLineNo">119</span><a id="line.119"> *               tests (DG);</a>
+<span class="sourceLineNo">120</span><a id="line.120"> * 21-Nov-2007 : Fixed warnings from FindBugs (DG);</a>
+<span class="sourceLineNo">121</span><a id="line.121"> * 01-Sep-2008 : Use new methods from DateRange, added fix for bug</a>
+<span class="sourceLineNo">122</span><a id="line.122"> *               2078057 (DG);</a>
+<span class="sourceLineNo">123</span><a id="line.123"> * 18-Sep-2008 : Added locale to go with timezone (DG);</a>
+<span class="sourceLineNo">124</span><a id="line.124"> * 25-Sep-2008 : Added minor tick support, see patch 1934255 by Peter Kolb (DG);</a>
+<span class="sourceLineNo">125</span><a id="line.125"> * 25-Nov-2008 : Added bug fix 2201869 by Fawad Halim (DG);</a>
+<span class="sourceLineNo">126</span><a id="line.126"> * 21-Jan-2009 : Check tickUnit for minor tick count (DG);</a>
+<span class="sourceLineNo">127</span><a id="line.127"> * 19-Mar-2009 : Added entity support - see patch 2603321 by Peter Kolb (DG);</a>
+<span class="sourceLineNo">128</span><a id="line.128"> * 08-Feb-2012 : Bugfix for endless-loop, bug 3484403 by rbrabe (MH);</a>
+<span class="sourceLineNo">129</span><a id="line.129"> * 25-Jul-2013 : Update event notification to use fireChangeEvent() (DG);</a>
+<span class="sourceLineNo">130</span><a id="line.130"> * 01-Aug-2013 : Added attributedLabel override to support superscripts,</a>
+<span class="sourceLineNo">131</span><a id="line.131"> *               subscripts and more (DG);</a>
+<span class="sourceLineNo">132</span><a id="line.132"> * 12-Sep-2013 : Prevent exception when zooming in below 1 millisecond (DG);</a>
+<span class="sourceLineNo">133</span><a id="line.133"> * 23-Nov-2013 : Deprecated DEFAULT_DATE_TICK_UNIT to fix bug #977 (DG);</a>
+<span class="sourceLineNo">134</span><a id="line.134"> * 10-Mar-2014 : Add get/setLocale() methods (DG);</a>
+<span class="sourceLineNo">135</span><a id="line.135"> * </a>
+<span class="sourceLineNo">136</span><a id="line.136"> */</a>
+<span class="sourceLineNo">137</span><a id="line.137"></a>
+<span class="sourceLineNo">138</span><a id="line.138">package org.jfree.chart.axis;</a>
+<span class="sourceLineNo">139</span><a id="line.139"></a>
+<span class="sourceLineNo">140</span><a id="line.140">import java.awt.Font;</a>
+<span class="sourceLineNo">141</span><a id="line.141">import java.awt.FontMetrics;</a>
+<span class="sourceLineNo">142</span><a id="line.142">import java.awt.Graphics2D;</a>
+<span class="sourceLineNo">143</span><a id="line.143">import java.awt.font.FontRenderContext;</a>
+<span class="sourceLineNo">144</span><a id="line.144">import java.awt.font.LineMetrics;</a>
+<span class="sourceLineNo">145</span><a id="line.145">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">146</span><a id="line.146">import java.io.Serializable;</a>
+<span class="sourceLineNo">147</span><a id="line.147">import java.text.DateFormat;</a>
+<span class="sourceLineNo">148</span><a id="line.148">import java.text.SimpleDateFormat;</a>
+<span class="sourceLineNo">149</span><a id="line.149">import java.util.Calendar;</a>
+<span class="sourceLineNo">150</span><a id="line.150">import java.util.Date;</a>
+<span class="sourceLineNo">151</span><a id="line.151">import java.util.List;</a>
+<span class="sourceLineNo">152</span><a id="line.152">import java.util.Locale;</a>
+<span class="sourceLineNo">153</span><a id="line.153">import java.util.TimeZone;</a>
+<span class="sourceLineNo">154</span><a id="line.154"></a>
+<span class="sourceLineNo">155</span><a id="line.155">import org.jfree.chart.event.AxisChangeEvent;</a>
+<span class="sourceLineNo">156</span><a id="line.156">import org.jfree.chart.plot.Plot;</a>
+<span class="sourceLineNo">157</span><a id="line.157">import org.jfree.chart.plot.PlotRenderingInfo;</a>
+<span class="sourceLineNo">158</span><a id="line.158">import org.jfree.chart.plot.ValueAxisPlot;</a>
+<span class="sourceLineNo">159</span><a id="line.159">import org.jfree.chart.util.ParamChecks;</a>
+<span class="sourceLineNo">160</span><a id="line.160">import org.jfree.data.Range;</a>
+<span class="sourceLineNo">161</span><a id="line.161">import org.jfree.data.time.DateRange;</a>
+<span class="sourceLineNo">162</span><a id="line.162">import org.jfree.data.time.Month;</a>
+<span class="sourceLineNo">163</span><a id="line.163">import org.jfree.data.time.RegularTimePeriod;</a>
+<span class="sourceLineNo">164</span><a id="line.164">import org.jfree.data.time.Year;</a>
+<span class="sourceLineNo">165</span><a id="line.165">import org.jfree.ui.RectangleEdge;</a>
+<span class="sourceLineNo">166</span><a id="line.166">import org.jfree.ui.RectangleInsets;</a>
+<span class="sourceLineNo">167</span><a id="line.167">import org.jfree.ui.TextAnchor;</a>
+<span class="sourceLineNo">168</span><a id="line.168">import org.jfree.util.ObjectUtilities;</a>
+<span class="sourceLineNo">169</span><a id="line.169"></a>
+<span class="sourceLineNo">170</span><a id="line.170">/**</a>
+<span class="sourceLineNo">171</span><a id="line.171"> * The base class for axes that display dates.  You will find it easier to</a>
+<span class="sourceLineNo">172</span><a id="line.172"> * understand how this axis works if you bear in mind that it really</a>
+<span class="sourceLineNo">173</span><a id="line.173"> * displays/measures integer (or long) data, where the integers are</a>
+<span class="sourceLineNo">174</span><a id="line.174"> * milliseconds since midnight, 1-Jan-1970.  When displaying tick labels, the</a>
+<span class="sourceLineNo">175</span><a id="line.175"> * millisecond values are converted back to dates using a</a>
+<span class="sourceLineNo">176</span><a id="line.176"> * &lt;code&gt;DateFormat&lt;/code&gt; instance.</a>
+<span class="sourceLineNo">177</span><a id="line.177"> * &lt;P&gt;</a>
+<span class="sourceLineNo">178</span><a id="line.178"> * You can also create a {@link org.jfree.chart.axis.Timeline} and supply in</a>
+<span class="sourceLineNo">179</span><a id="line.179"> * the constructor to create an axis that only contains certain domain values.</a>
+<span class="sourceLineNo">180</span><a id="line.180"> * For example, this allows you to create a date axis that only contains</a>
+<span class="sourceLineNo">181</span><a id="line.181"> * working days.</a>
+<span class="sourceLineNo">182</span><a id="line.182"> */</a>
+<span class="sourceLineNo">183</span><a id="line.183">public class DateAxis extends ValueAxis implements Cloneable, Serializable {</a>
+<span class="sourceLineNo">184</span><a id="line.184"></a>
+<span class="sourceLineNo">185</span><a id="line.185">    /** For serialization. */</a>
+<span class="sourceLineNo">186</span><a id="line.186">    private static final long serialVersionUID = -1013460999649007604L;</a>
+<span class="sourceLineNo">187</span><a id="line.187"></a>
+<span class="sourceLineNo">188</span><a id="line.188">    /** The default axis range. */</a>
+<span class="sourceLineNo">189</span><a id="line.189">    public static final DateRange DEFAULT_DATE_RANGE = new DateRange();</a>
+<span class="sourceLineNo">190</span><a id="line.190"></a>
+<span class="sourceLineNo">191</span><a id="line.191">    /** The default minimum auto range size. */</a>
+<span class="sourceLineNo">192</span><a id="line.192">    public static final double</a>
+<span class="sourceLineNo">193</span><a id="line.193">            DEFAULT_AUTO_RANGE_MINIMUM_SIZE_IN_MILLISECONDS = 2.0;</a>
+<span class="sourceLineNo">194</span><a id="line.194"></a>
+<span class="sourceLineNo">195</span><a id="line.195">    /** </a>
+<span class="sourceLineNo">196</span><a id="line.196">     * The default date tick unit.</a>
+<span class="sourceLineNo">197</span><a id="line.197">     * </a>
+<span class="sourceLineNo">198</span><a id="line.198">     * @deprecated As pointed out in bug #977, the SimpleDateFormat in this</a>
+<span class="sourceLineNo">199</span><a id="line.199">     *     object uses Calendar which is not thread safe...so you should </a>
+<span class="sourceLineNo">200</span><a id="line.200">     *     avoid reusing this instance and create a new instance as required.</a>
+<span class="sourceLineNo">201</span><a id="line.201">     */</a>
+<span class="sourceLineNo">202</span><a id="line.202">    public static final DateTickUnit DEFAULT_DATE_TICK_UNIT</a>
+<span class="sourceLineNo">203</span><a id="line.203">            = new DateTickUnit(DateTickUnitType.DAY, 1, new SimpleDateFormat());</a>
+<span class="sourceLineNo">204</span><a id="line.204"></a>
+<span class="sourceLineNo">205</span><a id="line.205">    /** The default anchor date. */</a>
+<span class="sourceLineNo">206</span><a id="line.206">    public static final Date DEFAULT_ANCHOR_DATE = new Date();</a>
+<span class="sourceLineNo">207</span><a id="line.207"></a>
+<span class="sourceLineNo">208</span><a id="line.208">    /** The current tick unit. */</a>
+<span class="sourceLineNo">209</span><a id="line.209">    private DateTickUnit tickUnit;</a>
+<span class="sourceLineNo">210</span><a id="line.210"></a>
+<span class="sourceLineNo">211</span><a id="line.211">    /** The override date format. */</a>
+<span class="sourceLineNo">212</span><a id="line.212">    private DateFormat dateFormatOverride;</a>
+<span class="sourceLineNo">213</span><a id="line.213"></a>
+<span class="sourceLineNo">214</span><a id="line.214">    /**</a>
+<span class="sourceLineNo">215</span><a id="line.215">     * Tick marks can be displayed at the start or the middle of the time</a>
+<span class="sourceLineNo">216</span><a id="line.216">     * period.</a>
+<span class="sourceLineNo">217</span><a id="line.217">     */</a>
+<span class="sourceLineNo">218</span><a id="line.218">    private DateTickMarkPosition tickMarkPosition = DateTickMarkPosition.START;</a>
+<span class="sourceLineNo">219</span><a id="line.219"></a>
+<span class="sourceLineNo">220</span><a id="line.220">    /**</a>
+<span class="sourceLineNo">221</span><a id="line.221">     * A timeline that includes all milliseconds (as defined by</a>
+<span class="sourceLineNo">222</span><a id="line.222">     * &lt;code&gt;java.util.Date&lt;/code&gt;) in the real time line.</a>
+<span class="sourceLineNo">223</span><a id="line.223">     */</a>
+<span class="sourceLineNo">224</span><a id="line.224">    private static class DefaultTimeline implements Timeline, Serializable {</a>
+<span class="sourceLineNo">225</span><a id="line.225"></a>
+<span class="sourceLineNo">226</span><a id="line.226">        /**</a>
+<span class="sourceLineNo">227</span><a id="line.227">         * Converts a millisecond into a timeline value.</a>
+<span class="sourceLineNo">228</span><a id="line.228">         *</a>
+<span class="sourceLineNo">229</span><a id="line.229">         * @param millisecond  the millisecond.</a>
+<span class="sourceLineNo">230</span><a id="line.230">         *</a>
+<span class="sourceLineNo">231</span><a id="line.231">         * @return The timeline value.</a>
+<span class="sourceLineNo">232</span><a id="line.232">         */</a>
+<span class="sourceLineNo">233</span><a id="line.233">        @Override</a>
+<span class="sourceLineNo">234</span><a id="line.234">        public long toTimelineValue(long millisecond) {</a>
+<span class="sourceLineNo">235</span><a id="line.235">            return millisecond;</a>
+<span class="sourceLineNo">236</span><a id="line.236">        }</a>
+<span class="sourceLineNo">237</span><a id="line.237"></a>
+<span class="sourceLineNo">238</span><a id="line.238">        /**</a>
+<span class="sourceLineNo">239</span><a id="line.239">         * Converts a date into a timeline value.</a>
+<span class="sourceLineNo">240</span><a id="line.240">         *</a>
+<span class="sourceLineNo">241</span><a id="line.241">         * @param date  the domain value.</a>
+<span class="sourceLineNo">242</span><a id="line.242">         *</a>
+<span class="sourceLineNo">243</span><a id="line.243">         * @return The timeline value.</a>
+<span class="sourceLineNo">244</span><a id="line.244">         */</a>
+<span class="sourceLineNo">245</span><a id="line.245">        @Override</a>
+<span class="sourceLineNo">246</span><a id="line.246">        public long toTimelineValue(Date date) {</a>
+<span class="sourceLineNo">247</span><a id="line.247">            return date.getTime();</a>
+<span class="sourceLineNo">248</span><a id="line.248">        }</a>
+<span class="sourceLineNo">249</span><a id="line.249"></a>
+<span class="sourceLineNo">250</span><a id="line.250">        /**</a>
+<span class="sourceLineNo">251</span><a id="line.251">         * Converts a timeline value into a millisecond (as encoded by</a>
+<span class="sourceLineNo">252</span><a id="line.252">         * &lt;code&gt;java.util.Date&lt;/code&gt;).</a>
+<span class="sourceLineNo">253</span><a id="line.253">         *</a>
+<span class="sourceLineNo">254</span><a id="line.254">         * @param value  the value.</a>
+<span class="sourceLineNo">255</span><a id="line.255">         *</a>
+<span class="sourceLineNo">256</span><a id="line.256">         * @return The millisecond.</a>
+<span class="sourceLineNo">257</span><a id="line.257">         */</a>
+<span class="sourceLineNo">258</span><a id="line.258">        @Override</a>
+<span class="sourceLineNo">259</span><a id="line.259">        public long toMillisecond(long value) {</a>
+<span class="sourceLineNo">260</span><a id="line.260">            return value;</a>
+<span class="sourceLineNo">261</span><a id="line.261">        }</a>
+<span class="sourceLineNo">262</span><a id="line.262"></a>
+<span class="sourceLineNo">263</span><a id="line.263">        /**</a>
+<span class="sourceLineNo">264</span><a id="line.264">         * Returns &lt;code&gt;true&lt;/code&gt; if the timeline includes the specified</a>
+<span class="sourceLineNo">265</span><a id="line.265">         * domain value.</a>
+<span class="sourceLineNo">266</span><a id="line.266">         *</a>
+<span class="sourceLineNo">267</span><a id="line.267">         * @param millisecond  the millisecond.</a>
+<span class="sourceLineNo">268</span><a id="line.268">         *</a>
+<span class="sourceLineNo">269</span><a id="line.269">         * @return &lt;code&gt;true&lt;/code&gt;.</a>
+<span class="sourceLineNo">270</span><a id="line.270">         */</a>
+<span class="sourceLineNo">271</span><a id="line.271">        @Override</a>
+<span class="sourceLineNo">272</span><a id="line.272">        public boolean containsDomainValue(long millisecond) {</a>
+<span class="sourceLineNo">273</span><a id="line.273">            return true;</a>
+<span class="sourceLineNo">274</span><a id="line.274">        }</a>
+<span class="sourceLineNo">275</span><a id="line.275"></a>
+<span class="sourceLineNo">276</span><a id="line.276">        /**</a>
+<span class="sourceLineNo">277</span><a id="line.277">         * Returns &lt;code&gt;true&lt;/code&gt; if the timeline includes the specified</a>
+<span class="sourceLineNo">278</span><a id="line.278">         * domain value.</a>
+<span class="sourceLineNo">279</span><a id="line.279">         *</a>
+<span class="sourceLineNo">280</span><a id="line.280">         * @param date  the date.</a>
+<span class="sourceLineNo">281</span><a id="line.281">         *</a>
+<span class="sourceLineNo">282</span><a id="line.282">         * @return &lt;code&gt;true&lt;/code&gt;.</a>
+<span class="sourceLineNo">283</span><a id="line.283">         */</a>
+<span class="sourceLineNo">284</span><a id="line.284">        @Override</a>
+<span class="sourceLineNo">285</span><a id="line.285">        public boolean containsDomainValue(Date date) {</a>
+<span class="sourceLineNo">286</span><a id="line.286">            return true;</a>
+<span class="sourceLineNo">287</span><a id="line.287">        }</a>
+<span class="sourceLineNo">288</span><a id="line.288"></a>
+<span class="sourceLineNo">289</span><a id="line.289">        /**</a>
+<span class="sourceLineNo">290</span><a id="line.290">         * Returns &lt;code&gt;true&lt;/code&gt; if the timeline includes the specified</a>
+<span class="sourceLineNo">291</span><a id="line.291">         * domain value range.</a>
+<span class="sourceLineNo">292</span><a id="line.292">         *</a>
+<span class="sourceLineNo">293</span><a id="line.293">         * @param from  the start value.</a>
+<span class="sourceLineNo">294</span><a id="line.294">         * @param to  the end value.</a>
+<span class="sourceLineNo">295</span><a id="line.295">         *</a>
+<span class="sourceLineNo">296</span><a id="line.296">         * @return &lt;code&gt;true&lt;/code&gt;.</a>
+<span class="sourceLineNo">297</span><a id="line.297">         */</a>
+<span class="sourceLineNo">298</span><a id="line.298">        @Override</a>
+<span class="sourceLineNo">299</span><a id="line.299">        public boolean containsDomainRange(long from, long to) {</a>
+<span class="sourceLineNo">300</span><a id="line.300">            return true;</a>
+<span class="sourceLineNo">301</span><a id="line.301">        }</a>
+<span class="sourceLineNo">302</span><a id="line.302"></a>
+<span class="sourceLineNo">303</span><a id="line.303">        /**</a>
+<span class="sourceLineNo">304</span><a id="line.304">         * Returns &lt;code&gt;true&lt;/code&gt; if the timeline includes the specified</a>
+<span class="sourceLineNo">305</span><a id="line.305">         * domain value range.</a>
+<span class="sourceLineNo">306</span><a id="line.306">         *</a>
+<span class="sourceLineNo">307</span><a id="line.307">         * @param from  the start date.</a>
+<span class="sourceLineNo">308</span><a id="line.308">         * @param to  the end date.</a>
+<span class="sourceLineNo">309</span><a id="line.309">         *</a>
+<span class="sourceLineNo">310</span><a id="line.310">         * @return &lt;code&gt;true&lt;/code&gt;.</a>
+<span class="sourceLineNo">311</span><a id="line.311">         */</a>
+<span class="sourceLineNo">312</span><a id="line.312">        @Override</a>
+<span class="sourceLineNo">313</span><a id="line.313">        public boolean containsDomainRange(Date from, Date to) {</a>
+<span class="sourceLineNo">314</span><a id="line.314">            return true;</a>
+<span class="sourceLineNo">315</span><a id="line.315">        }</a>
+<span class="sourceLineNo">316</span><a id="line.316"></a>
+<span class="sourceLineNo">317</span><a id="line.317">        /**</a>
+<span class="sourceLineNo">318</span><a id="line.318">         * Tests an object for equality with this instance.</a>
+<span class="sourceLineNo">319</span><a id="line.319">         *</a>
+<span class="sourceLineNo">320</span><a id="line.320">         * @param object  the object.</a>
+<span class="sourceLineNo">321</span><a id="line.321">         *</a>
+<span class="sourceLineNo">322</span><a id="line.322">         * @return A boolean.</a>
+<span class="sourceLineNo">323</span><a id="line.323">         */</a>
+<span class="sourceLineNo">324</span><a id="line.324">        @Override</a>
+<span class="sourceLineNo">325</span><a id="line.325">        public boolean equals(Object object) {</a>
+<span class="sourceLineNo">326</span><a id="line.326">            if (object == null) {</a>
+<span class="sourceLineNo">327</span><a id="line.327">                return false;</a>
+<span class="sourceLineNo">328</span><a id="line.328">            }</a>
+<span class="sourceLineNo">329</span><a id="line.329">            if (object == this) {</a>
+<span class="sourceLineNo">330</span><a id="line.330">                return true;</a>
+<span class="sourceLineNo">331</span><a id="line.331">            }</a>
+<span class="sourceLineNo">332</span><a id="line.332">            if (object instanceof DefaultTimeline) {</a>
+<span class="sourceLineNo">333</span><a id="line.333">                return true;</a>
+<span class="sourceLineNo">334</span><a id="line.334">            }</a>
+<span class="sourceLineNo">335</span><a id="line.335">            return false;</a>
+<span class="sourceLineNo">336</span><a id="line.336">        }</a>
+<span class="sourceLineNo">337</span><a id="line.337">    }</a>
+<span class="sourceLineNo">338</span><a id="line.338"></a>
+<span class="sourceLineNo">339</span><a id="line.339">    /** A static default timeline shared by all standard DateAxis */</a>
+<span class="sourceLineNo">340</span><a id="line.340">    private static final Timeline DEFAULT_TIMELINE = new DefaultTimeline();</a>
+<span class="sourceLineNo">341</span><a id="line.341"></a>
+<span class="sourceLineNo">342</span><a id="line.342">    /** The time zone for the axis. */</a>
+<span class="sourceLineNo">343</span><a id="line.343">    private TimeZone timeZone;</a>
+<span class="sourceLineNo">344</span><a id="line.344"></a>
+<span class="sourceLineNo">345</span><a id="line.345">    /**</a>
+<span class="sourceLineNo">346</span><a id="line.346">     * The locale for the axis (&lt;code&gt;null&lt;/code&gt; is not permitted).</a>
+<span class="sourceLineNo">347</span><a id="line.347">     *</a>
+<span class="sourceLineNo">348</span><a id="line.348">     * @since 1.0.11</a>
+<span class="sourceLineNo">349</span><a id="line.349">     */</a>
+<span class="sourceLineNo">350</span><a id="line.350">    private Locale locale;</a>
+<span class="sourceLineNo">351</span><a id="line.351"></a>
+<span class="sourceLineNo">352</span><a id="line.352">    /** Our underlying timeline. */</a>
+<span class="sourceLineNo">353</span><a id="line.353">    private Timeline timeline;</a>
+<span class="sourceLineNo">354</span><a id="line.354"></a>
+<span class="sourceLineNo">355</span><a id="line.355">    /**</a>
+<span class="sourceLineNo">356</span><a id="line.356">     * Creates a date axis with no label.</a>
+<span class="sourceLineNo">357</span><a id="line.357">     */</a>
+<span class="sourceLineNo">358</span><a id="line.358">    public DateAxis() {</a>
+<span class="sourceLineNo">359</span><a id="line.359">        this(null);</a>
+<span class="sourceLineNo">360</span><a id="line.360">    }</a>
+<span class="sourceLineNo">361</span><a id="line.361"></a>
+<span class="sourceLineNo">362</span><a id="line.362">    /**</a>
+<span class="sourceLineNo">363</span><a id="line.363">     * Creates a date axis with the specified label.</a>
+<span class="sourceLineNo">364</span><a id="line.364">     *</a>
+<span class="sourceLineNo">365</span><a id="line.365">     * @param label  the axis label (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">366</span><a id="line.366">     */</a>
+<span class="sourceLineNo">367</span><a id="line.367">    public DateAxis(String label) {</a>
+<span class="sourceLineNo">368</span><a id="line.368">        this(label, TimeZone.getDefault());</a>
+<span class="sourceLineNo">369</span><a id="line.369">    }</a>
+<span class="sourceLineNo">370</span><a id="line.370"></a>
+<span class="sourceLineNo">371</span><a id="line.371">    /**</a>
+<span class="sourceLineNo">372</span><a id="line.372">     * Creates a date axis. A timeline is specified for the axis. This allows</a>
+<span class="sourceLineNo">373</span><a id="line.373">     * special transformations to occur between a domain of values and the</a>
+<span class="sourceLineNo">374</span><a id="line.374">     * values included in the axis.</a>
+<span class="sourceLineNo">375</span><a id="line.375">     *</a>
+<span class="sourceLineNo">376</span><a id="line.376">     * @see org.jfree.chart.axis.SegmentedTimeline</a>
+<span class="sourceLineNo">377</span><a id="line.377">     *</a>
+<span class="sourceLineNo">378</span><a id="line.378">     * @param label  the axis label (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">379</span><a id="line.379">     * @param zone  the time zone.</a>
+<span class="sourceLineNo">380</span><a id="line.380">     *</a>
+<span class="sourceLineNo">381</span><a id="line.381">     * @deprecated From 1.0.11 onwards, use {@link #DateAxis(String, TimeZone,</a>
+<span class="sourceLineNo">382</span><a id="line.382">     *         Locale)} instead, to explicitly set the locale.</a>
+<span class="sourceLineNo">383</span><a id="line.383">     */</a>
+<span class="sourceLineNo">384</span><a id="line.384">    public DateAxis(String label, TimeZone zone) {</a>
+<span class="sourceLineNo">385</span><a id="line.385">        this(label, zone, Locale.getDefault());</a>
+<span class="sourceLineNo">386</span><a id="line.386">    }</a>
+<span class="sourceLineNo">387</span><a id="line.387"></a>
+<span class="sourceLineNo">388</span><a id="line.388">    /**</a>
+<span class="sourceLineNo">389</span><a id="line.389">     * Creates a date axis. A timeline is specified for the axis. This allows</a>
+<span class="sourceLineNo">390</span><a id="line.390">     * special transformations to occur between a domain of values and the</a>
+<span class="sourceLineNo">391</span><a id="line.391">     * values included in the axis.</a>
+<span class="sourceLineNo">392</span><a id="line.392">     *</a>
+<span class="sourceLineNo">393</span><a id="line.393">     * @see org.jfree.chart.axis.SegmentedTimeline</a>
+<span class="sourceLineNo">394</span><a id="line.394">     *</a>
+<span class="sourceLineNo">395</span><a id="line.395">     * @param label  the axis label (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">396</span><a id="line.396">     * @param zone  the time zone.</a>
+<span class="sourceLineNo">397</span><a id="line.397">     * @param locale  the locale (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">398</span><a id="line.398">     *</a>
+<span class="sourceLineNo">399</span><a id="line.399">     * @since 1.0.11</a>
+<span class="sourceLineNo">400</span><a id="line.400">     */</a>
+<span class="sourceLineNo">401</span><a id="line.401">    public DateAxis(String label, TimeZone zone, Locale locale) {</a>
+<span class="sourceLineNo">402</span><a id="line.402">        super(label, DateAxis.createStandardDateTickUnits(zone, locale));</a>
+<span class="sourceLineNo">403</span><a id="line.403">        this.tickUnit = new DateTickUnit(DateTickUnitType.DAY, 1, </a>
+<span class="sourceLineNo">404</span><a id="line.404">                new SimpleDateFormat());</a>
+<span class="sourceLineNo">405</span><a id="line.405">        setAutoRangeMinimumSize(</a>
+<span class="sourceLineNo">406</span><a id="line.406">                DEFAULT_AUTO_RANGE_MINIMUM_SIZE_IN_MILLISECONDS);</a>
+<span class="sourceLineNo">407</span><a id="line.407">        setRange(DEFAULT_DATE_RANGE, false, false);</a>
+<span class="sourceLineNo">408</span><a id="line.408">        this.dateFormatOverride = null;</a>
+<span class="sourceLineNo">409</span><a id="line.409">        this.timeZone = zone;</a>
+<span class="sourceLineNo">410</span><a id="line.410">        this.locale = locale;</a>
+<span class="sourceLineNo">411</span><a id="line.411">        this.timeline = DEFAULT_TIMELINE;</a>
+<span class="sourceLineNo">412</span><a id="line.412">    }</a>
+<span class="sourceLineNo">413</span><a id="line.413"></a>
+<span class="sourceLineNo">414</span><a id="line.414">    /**</a>
+<span class="sourceLineNo">415</span><a id="line.415">     * Returns the time zone for the axis.</a>
+<span class="sourceLineNo">416</span><a id="line.416">     *</a>
+<span class="sourceLineNo">417</span><a id="line.417">     * @return The time zone (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">418</span><a id="line.418">     *</a>
+<span class="sourceLineNo">419</span><a id="line.419">     * @since 1.0.4</a>
+<span class="sourceLineNo">420</span><a id="line.420">     *</a>
+<span class="sourceLineNo">421</span><a id="line.421">     * @see #setTimeZone(TimeZone)</a>
+<span class="sourceLineNo">422</span><a id="line.422">     */</a>
+<span class="sourceLineNo">423</span><a id="line.423">    public TimeZone getTimeZone() {</a>
+<span class="sourceLineNo">424</span><a id="line.424">        return this.timeZone;</a>
+<span class="sourceLineNo">425</span><a id="line.425">    }</a>
+<span class="sourceLineNo">426</span><a id="line.426"></a>
+<span class="sourceLineNo">427</span><a id="line.427">    /**</a>
+<span class="sourceLineNo">428</span><a id="line.428">     * Sets the time zone for the axis and sends an {@link AxisChangeEvent} to</a>
+<span class="sourceLineNo">429</span><a id="line.429">     * all registered listeners.</a>
+<span class="sourceLineNo">430</span><a id="line.430">     *</a>
+<span class="sourceLineNo">431</span><a id="line.431">     * @param zone  the time zone (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">432</span><a id="line.432">     *</a>
+<span class="sourceLineNo">433</span><a id="line.433">     * @since 1.0.4</a>
+<span class="sourceLineNo">434</span><a id="line.434">     *</a>
+<span class="sourceLineNo">435</span><a id="line.435">     * @see #getTimeZone()</a>
+<span class="sourceLineNo">436</span><a id="line.436">     */</a>
+<span class="sourceLineNo">437</span><a id="line.437">    public void setTimeZone(TimeZone zone) {</a>
+<span class="sourceLineNo">438</span><a id="line.438">        ParamChecks.nullNotPermitted(zone, "zone");</a>
+<span class="sourceLineNo">439</span><a id="line.439">        this.timeZone = zone;</a>
+<span class="sourceLineNo">440</span><a id="line.440">        setStandardTickUnits(createStandardDateTickUnits(zone, this.locale));</a>
+<span class="sourceLineNo">441</span><a id="line.441">        fireChangeEvent();</a>
+<span class="sourceLineNo">442</span><a id="line.442">    }</a>
+<span class="sourceLineNo">443</span><a id="line.443">    </a>
+<span class="sourceLineNo">444</span><a id="line.444">    /**</a>
+<span class="sourceLineNo">445</span><a id="line.445">     * Returns the locale for this axis.</a>
+<span class="sourceLineNo">446</span><a id="line.446">     * </a>
+<span class="sourceLineNo">447</span><a id="line.447">     * @return The locale (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">448</span><a id="line.448">     * </a>
+<span class="sourceLineNo">449</span><a id="line.449">     * @since 1.0.18</a>
+<span class="sourceLineNo">450</span><a id="line.450">     */</a>
+<span class="sourceLineNo">451</span><a id="line.451">    public Locale getLocale() {</a>
+<span class="sourceLineNo">452</span><a id="line.452">        return this.locale;</a>
+<span class="sourceLineNo">453</span><a id="line.453">    }</a>
+<span class="sourceLineNo">454</span><a id="line.454">    </a>
+<span class="sourceLineNo">455</span><a id="line.455">    /**</a>
+<span class="sourceLineNo">456</span><a id="line.456">     * Sets the locale for the axis and sends a change event to all registered </a>
+<span class="sourceLineNo">457</span><a id="line.457">     * listeners.</a>
+<span class="sourceLineNo">458</span><a id="line.458">     * </a>
+<span class="sourceLineNo">459</span><a id="line.459">     * @param locale  the new locale (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">460</span><a id="line.460">     */</a>
+<span class="sourceLineNo">461</span><a id="line.461">    public void setLocale(Locale locale) {</a>
+<span class="sourceLineNo">462</span><a id="line.462">        ParamChecks.nullNotPermitted(locale, "locale");</a>
+<span class="sourceLineNo">463</span><a id="line.463">        this.locale = locale;</a>
+<span class="sourceLineNo">464</span><a id="line.464">        setStandardTickUnits(createStandardDateTickUnits(this.timeZone, </a>
+<span class="sourceLineNo">465</span><a id="line.465">                this.locale));</a>
+<span class="sourceLineNo">466</span><a id="line.466">        fireChangeEvent();</a>
+<span class="sourceLineNo">467</span><a id="line.467">    }</a>
+<span class="sourceLineNo">468</span><a id="line.468"></a>
+<span class="sourceLineNo">469</span><a id="line.469">    /**</a>
+<span class="sourceLineNo">470</span><a id="line.470">     * Returns the underlying timeline used by this axis.</a>
+<span class="sourceLineNo">471</span><a id="line.471">     *</a>
+<span class="sourceLineNo">472</span><a id="line.472">     * @return The timeline.</a>
+<span class="sourceLineNo">473</span><a id="line.473">     */</a>
+<span class="sourceLineNo">474</span><a id="line.474">    public Timeline getTimeline() {</a>
+<span class="sourceLineNo">475</span><a id="line.475">        return this.timeline;</a>
+<span class="sourceLineNo">476</span><a id="line.476">    }</a>
+<span class="sourceLineNo">477</span><a id="line.477"></a>
+<span class="sourceLineNo">478</span><a id="line.478">    /**</a>
+<span class="sourceLineNo">479</span><a id="line.479">     * Sets the underlying timeline to use for this axis.  If the timeline is </a>
+<span class="sourceLineNo">480</span><a id="line.480">     * changed, an {@link AxisChangeEvent} is sent to all registered listeners.</a>
+<span class="sourceLineNo">481</span><a id="line.481">     *</a>
+<span class="sourceLineNo">482</span><a id="line.482">     * @param timeline  the timeline.</a>
+<span class="sourceLineNo">483</span><a id="line.483">     */</a>
+<span class="sourceLineNo">484</span><a id="line.484">    public void setTimeline(Timeline timeline) {</a>
+<span class="sourceLineNo">485</span><a id="line.485">        if (this.timeline != timeline) {</a>
+<span class="sourceLineNo">486</span><a id="line.486">            this.timeline = timeline;</a>
+<span class="sourceLineNo">487</span><a id="line.487">            fireChangeEvent();</a>
+<span class="sourceLineNo">488</span><a id="line.488">        }</a>
+<span class="sourceLineNo">489</span><a id="line.489">    }</a>
+<span class="sourceLineNo">490</span><a id="line.490"></a>
+<span class="sourceLineNo">491</span><a id="line.491">    /**</a>
+<span class="sourceLineNo">492</span><a id="line.492">     * Returns the tick unit for the axis.</a>
+<span class="sourceLineNo">493</span><a id="line.493">     * &lt;p&gt;</a>
+<span class="sourceLineNo">494</span><a id="line.494">     * Note: if the &lt;code&gt;autoTickUnitSelection&lt;/code&gt; flag is</a>
+<span class="sourceLineNo">495</span><a id="line.495">     * &lt;code&gt;true&lt;/code&gt; the tick unit may be changed while the axis is being</a>
+<span class="sourceLineNo">496</span><a id="line.496">     * drawn, so in that case the return value from this method may be</a>
+<span class="sourceLineNo">497</span><a id="line.497">     * irrelevant if the method is called before the axis has been drawn.</a>
+<span class="sourceLineNo">498</span><a id="line.498">     *</a>
+<span class="sourceLineNo">499</span><a id="line.499">     * @return The tick unit (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">500</span><a id="line.500">     *</a>
+<span class="sourceLineNo">501</span><a id="line.501">     * @see #setTickUnit(DateTickUnit)</a>
+<span class="sourceLineNo">502</span><a id="line.502">     * @see ValueAxis#isAutoTickUnitSelection()</a>
+<span class="sourceLineNo">503</span><a id="line.503">     */</a>
+<span class="sourceLineNo">504</span><a id="line.504">    public DateTickUnit getTickUnit() {</a>
+<span class="sourceLineNo">505</span><a id="line.505">        return this.tickUnit;</a>
+<span class="sourceLineNo">506</span><a id="line.506">    }</a>
+<span class="sourceLineNo">507</span><a id="line.507"></a>
+<span class="sourceLineNo">508</span><a id="line.508">    /**</a>
+<span class="sourceLineNo">509</span><a id="line.509">     * Sets the tick unit for the axis.  The auto-tick-unit-selection flag is</a>
+<span class="sourceLineNo">510</span><a id="line.510">     * set to &lt;code&gt;false&lt;/code&gt;, and registered listeners are notified that</a>
+<span class="sourceLineNo">511</span><a id="line.511">     * the axis has been changed.</a>
+<span class="sourceLineNo">512</span><a id="line.512">     *</a>
+<span class="sourceLineNo">513</span><a id="line.513">     * @param unit  the tick unit.</a>
+<span class="sourceLineNo">514</span><a id="line.514">     *</a>
+<span class="sourceLineNo">515</span><a id="line.515">     * @see #getTickUnit()</a>
+<span class="sourceLineNo">516</span><a id="line.516">     * @see #setTickUnit(DateTickUnit, boolean, boolean)</a>
+<span class="sourceLineNo">517</span><a id="line.517">     */</a>
+<span class="sourceLineNo">518</span><a id="line.518">    public void setTickUnit(DateTickUnit unit) {</a>
+<span class="sourceLineNo">519</span><a id="line.519">        setTickUnit(unit, true, true);</a>
+<span class="sourceLineNo">520</span><a id="line.520">    }</a>
+<span class="sourceLineNo">521</span><a id="line.521"></a>
+<span class="sourceLineNo">522</span><a id="line.522">    /**</a>
+<span class="sourceLineNo">523</span><a id="line.523">     * Sets the tick unit attribute and, if requested, sends an </a>
+<span class="sourceLineNo">524</span><a id="line.524">     * {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">525</span><a id="line.525">     *</a>
+<span class="sourceLineNo">526</span><a id="line.526">     * @param unit  the new tick unit.</a>
+<span class="sourceLineNo">527</span><a id="line.527">     * @param notify  notify registered listeners?</a>
+<span class="sourceLineNo">528</span><a id="line.528">     * @param turnOffAutoSelection  turn off auto selection?</a>
+<span class="sourceLineNo">529</span><a id="line.529">     *</a>
+<span class="sourceLineNo">530</span><a id="line.530">     * @see #getTickUnit()</a>
+<span class="sourceLineNo">531</span><a id="line.531">     */</a>
+<span class="sourceLineNo">532</span><a id="line.532">    public void setTickUnit(DateTickUnit unit, boolean notify,</a>
+<span class="sourceLineNo">533</span><a id="line.533">                            boolean turnOffAutoSelection) {</a>
+<span class="sourceLineNo">534</span><a id="line.534"></a>
+<span class="sourceLineNo">535</span><a id="line.535">        this.tickUnit = unit;</a>
+<span class="sourceLineNo">536</span><a id="line.536">        if (turnOffAutoSelection) {</a>
+<span class="sourceLineNo">537</span><a id="line.537">            setAutoTickUnitSelection(false, false);</a>
+<span class="sourceLineNo">538</span><a id="line.538">        }</a>
+<span class="sourceLineNo">539</span><a id="line.539">        if (notify) {</a>
+<span class="sourceLineNo">540</span><a id="line.540">            fireChangeEvent();</a>
+<span class="sourceLineNo">541</span><a id="line.541">        }</a>
+<span class="sourceLineNo">542</span><a id="line.542"></a>
+<span class="sourceLineNo">543</span><a id="line.543">    }</a>
+<span class="sourceLineNo">544</span><a id="line.544"></a>
+<span class="sourceLineNo">545</span><a id="line.545">    /**</a>
+<span class="sourceLineNo">546</span><a id="line.546">     * Returns the date format override.  If this is non-null, then it will be</a>
+<span class="sourceLineNo">547</span><a id="line.547">     * used to format the dates on the axis.</a>
+<span class="sourceLineNo">548</span><a id="line.548">     *</a>
+<span class="sourceLineNo">549</span><a id="line.549">     * @return The formatter (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">550</span><a id="line.550">     */</a>
+<span class="sourceLineNo">551</span><a id="line.551">    public DateFormat getDateFormatOverride() {</a>
+<span class="sourceLineNo">552</span><a id="line.552">        return this.dateFormatOverride;</a>
+<span class="sourceLineNo">553</span><a id="line.553">    }</a>
+<span class="sourceLineNo">554</span><a id="line.554"></a>
+<span class="sourceLineNo">555</span><a id="line.555">    /**</a>
+<span class="sourceLineNo">556</span><a id="line.556">     * Sets the date format override and sends an {@link AxisChangeEvent} to </a>
+<span class="sourceLineNo">557</span><a id="line.557">     * all registered listeners.  If this is non-null, then it will be</a>
+<span class="sourceLineNo">558</span><a id="line.558">     * used to format the dates on the axis.</a>
+<span class="sourceLineNo">559</span><a id="line.559">     *</a>
+<span class="sourceLineNo">560</span><a id="line.560">     * @param formatter  the date formatter (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">561</span><a id="line.561">     */</a>
+<span class="sourceLineNo">562</span><a id="line.562">    public void setDateFormatOverride(DateFormat formatter) {</a>
+<span class="sourceLineNo">563</span><a id="line.563">        this.dateFormatOverride = formatter;</a>
+<span class="sourceLineNo">564</span><a id="line.564">        fireChangeEvent();</a>
+<span class="sourceLineNo">565</span><a id="line.565">    }</a>
+<span class="sourceLineNo">566</span><a id="line.566"></a>
+<span class="sourceLineNo">567</span><a id="line.567">    /**</a>
+<span class="sourceLineNo">568</span><a id="line.568">     * Sets the upper and lower bounds for the axis and sends an</a>
+<span class="sourceLineNo">569</span><a id="line.569">     * {@link AxisChangeEvent} to all registered listeners.  As a side-effect,</a>
+<span class="sourceLineNo">570</span><a id="line.570">     * the auto-range flag is set to false.</a>
+<span class="sourceLineNo">571</span><a id="line.571">     *</a>
+<span class="sourceLineNo">572</span><a id="line.572">     * @param range  the new range (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">573</span><a id="line.573">     */</a>
+<span class="sourceLineNo">574</span><a id="line.574">    @Override</a>
+<span class="sourceLineNo">575</span><a id="line.575">    public void setRange(Range range) {</a>
+<span class="sourceLineNo">576</span><a id="line.576">        setRange(range, true, true);</a>
+<span class="sourceLineNo">577</span><a id="line.577">    }</a>
+<span class="sourceLineNo">578</span><a id="line.578"></a>
+<span class="sourceLineNo">579</span><a id="line.579">    /**</a>
+<span class="sourceLineNo">580</span><a id="line.580">     * Sets the range for the axis, if requested, sends an</a>
+<span class="sourceLineNo">581</span><a id="line.581">     * {@link AxisChangeEvent} to all registered listeners.  As a side-effect,</a>
+<span class="sourceLineNo">582</span><a id="line.582">     * the auto-range flag is set to &lt;code&gt;false&lt;/code&gt; (optional).</a>
+<span class="sourceLineNo">583</span><a id="line.583">     *</a>
+<span class="sourceLineNo">584</span><a id="line.584">     * @param range  the range (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">585</span><a id="line.585">     * @param turnOffAutoRange  a flag that controls whether or not the auto</a>
+<span class="sourceLineNo">586</span><a id="line.586">     *                          range is turned off.</a>
+<span class="sourceLineNo">587</span><a id="line.587">     * @param notify  a flag that controls whether or not listeners are</a>
+<span class="sourceLineNo">588</span><a id="line.588">     *                notified.</a>
+<span class="sourceLineNo">589</span><a id="line.589">     */</a>
+<span class="sourceLineNo">590</span><a id="line.590">    @Override</a>
+<span class="sourceLineNo">591</span><a id="line.591">    public void setRange(Range range, boolean turnOffAutoRange,</a>
+<span class="sourceLineNo">592</span><a id="line.592">                         boolean notify) {</a>
+<span class="sourceLineNo">593</span><a id="line.593">        ParamChecks.nullNotPermitted(range, "range");</a>
+<span class="sourceLineNo">594</span><a id="line.594">        // usually the range will be a DateRange, but if it isn't do a</a>
+<span class="sourceLineNo">595</span><a id="line.595">        // conversion...</a>
+<span class="sourceLineNo">596</span><a id="line.596">        if (!(range instanceof DateRange)) {</a>
+<span class="sourceLineNo">597</span><a id="line.597">            range = new DateRange(range);</a>
+<span class="sourceLineNo">598</span><a id="line.598">        }</a>
+<span class="sourceLineNo">599</span><a id="line.599">        super.setRange(range, turnOffAutoRange, notify);</a>
+<span class="sourceLineNo">600</span><a id="line.600">    }</a>
+<span class="sourceLineNo">601</span><a id="line.601"></a>
+<span class="sourceLineNo">602</span><a id="line.602">    /**</a>
+<span class="sourceLineNo">603</span><a id="line.603">     * Sets the axis range and sends an {@link AxisChangeEvent} to all</a>
+<span class="sourceLineNo">604</span><a id="line.604">     * registered listeners.</a>
+<span class="sourceLineNo">605</span><a id="line.605">     *</a>
+<span class="sourceLineNo">606</span><a id="line.606">     * @param lower  the lower bound for the axis.</a>
+<span class="sourceLineNo">607</span><a id="line.607">     * @param upper  the upper bound for the axis.</a>
+<span class="sourceLineNo">608</span><a id="line.608">     */</a>
+<span class="sourceLineNo">609</span><a id="line.609">    public void setRange(Date lower, Date upper) {</a>
+<span class="sourceLineNo">610</span><a id="line.610">        if (lower.getTime() &gt;= upper.getTime()) {</a>
+<span class="sourceLineNo">611</span><a id="line.611">            throw new IllegalArgumentException("Requires 'lower' &lt; 'upper'.");</a>
+<span class="sourceLineNo">612</span><a id="line.612">        }</a>
+<span class="sourceLineNo">613</span><a id="line.613">        setRange(new DateRange(lower, upper));</a>
+<span class="sourceLineNo">614</span><a id="line.614">    }</a>
+<span class="sourceLineNo">615</span><a id="line.615"></a>
+<span class="sourceLineNo">616</span><a id="line.616">    /**</a>
+<span class="sourceLineNo">617</span><a id="line.617">     * Sets the axis range and sends an {@link AxisChangeEvent} to all</a>
+<span class="sourceLineNo">618</span><a id="line.618">     * registered listeners.</a>
+<span class="sourceLineNo">619</span><a id="line.619">     *</a>
+<span class="sourceLineNo">620</span><a id="line.620">     * @param lower  the lower bound for the axis.</a>
+<span class="sourceLineNo">621</span><a id="line.621">     * @param upper  the upper bound for the axis.</a>
+<span class="sourceLineNo">622</span><a id="line.622">     */</a>
+<span class="sourceLineNo">623</span><a id="line.623">    @Override</a>
+<span class="sourceLineNo">624</span><a id="line.624">    public void setRange(double lower, double upper) {</a>
+<span class="sourceLineNo">625</span><a id="line.625">        if (lower &gt;= upper) {</a>
+<span class="sourceLineNo">626</span><a id="line.626">            throw new IllegalArgumentException("Requires 'lower' &lt; 'upper'.");</a>
+<span class="sourceLineNo">627</span><a id="line.627">        }</a>
+<span class="sourceLineNo">628</span><a id="line.628">        setRange(new DateRange(lower, upper));</a>
+<span class="sourceLineNo">629</span><a id="line.629">    }</a>
+<span class="sourceLineNo">630</span><a id="line.630"></a>
+<span class="sourceLineNo">631</span><a id="line.631">    /**</a>
+<span class="sourceLineNo">632</span><a id="line.632">     * Returns the earliest date visible on the axis.</a>
+<span class="sourceLineNo">633</span><a id="line.633">     *</a>
+<span class="sourceLineNo">634</span><a id="line.634">     * @return The date.</a>
+<span class="sourceLineNo">635</span><a id="line.635">     *</a>
+<span class="sourceLineNo">636</span><a id="line.636">     * @see #setMinimumDate(Date)</a>
+<span class="sourceLineNo">637</span><a id="line.637">     * @see #getMaximumDate()</a>
+<span class="sourceLineNo">638</span><a id="line.638">     */</a>
+<span class="sourceLineNo">639</span><a id="line.639">    public Date getMinimumDate() {</a>
+<span class="sourceLineNo">640</span><a id="line.640">        Date result;</a>
+<span class="sourceLineNo">641</span><a id="line.641">        Range range = getRange();</a>
+<span class="sourceLineNo">642</span><a id="line.642">        if (range instanceof DateRange) {</a>
+<span class="sourceLineNo">643</span><a id="line.643">            DateRange r = (DateRange) range;</a>
+<span class="sourceLineNo">644</span><a id="line.644">            result = r.getLowerDate();</a>
+<span class="sourceLineNo">645</span><a id="line.645">        }</a>
+<span class="sourceLineNo">646</span><a id="line.646">        else {</a>
+<span class="sourceLineNo">647</span><a id="line.647">            result = new Date((long) range.getLowerBound());</a>
+<span class="sourceLineNo">648</span><a id="line.648">        }</a>
+<span class="sourceLineNo">649</span><a id="line.649">        return result;</a>
+<span class="sourceLineNo">650</span><a id="line.650">    }</a>
+<span class="sourceLineNo">651</span><a id="line.651"></a>
+<span class="sourceLineNo">652</span><a id="line.652">    /**</a>
+<span class="sourceLineNo">653</span><a id="line.653">     * Sets the minimum date visible on the axis and sends an</a>
+<span class="sourceLineNo">654</span><a id="line.654">     * {@link AxisChangeEvent} to all registered listeners.  If</a>
+<span class="sourceLineNo">655</span><a id="line.655">     * &lt;code&gt;date&lt;/code&gt; is on or after the current maximum date for</a>
+<span class="sourceLineNo">656</span><a id="line.656">     * the axis, the maximum date will be shifted to preserve the current</a>
+<span class="sourceLineNo">657</span><a id="line.657">     * length of the axis.</a>
+<span class="sourceLineNo">658</span><a id="line.658">     *</a>
+<span class="sourceLineNo">659</span><a id="line.659">     * @param date  the date (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">660</span><a id="line.660">     *</a>
+<span class="sourceLineNo">661</span><a id="line.661">     * @see #getMinimumDate()</a>
+<span class="sourceLineNo">662</span><a id="line.662">     * @see #setMaximumDate(Date)</a>
+<span class="sourceLineNo">663</span><a id="line.663">     */</a>
+<span class="sourceLineNo">664</span><a id="line.664">    public void setMinimumDate(Date date) {</a>
+<span class="sourceLineNo">665</span><a id="line.665">        ParamChecks.nullNotPermitted(date, "date");</a>
+<span class="sourceLineNo">666</span><a id="line.666">        // check the new minimum date relative to the current maximum date</a>
+<span class="sourceLineNo">667</span><a id="line.667">        Date maxDate = getMaximumDate();</a>
+<span class="sourceLineNo">668</span><a id="line.668">        long maxMillis = maxDate.getTime();</a>
+<span class="sourceLineNo">669</span><a id="line.669">        long newMinMillis = date.getTime();</a>
+<span class="sourceLineNo">670</span><a id="line.670">        if (maxMillis &lt;= newMinMillis) {</a>
+<span class="sourceLineNo">671</span><a id="line.671">            Date oldMin = getMinimumDate();</a>
+<span class="sourceLineNo">672</span><a id="line.672">            long length = maxMillis - oldMin.getTime();</a>
+<span class="sourceLineNo">673</span><a id="line.673">            maxDate = new Date(newMinMillis + length);</a>
+<span class="sourceLineNo">674</span><a id="line.674">        }</a>
+<span class="sourceLineNo">675</span><a id="line.675">        setRange(new DateRange(date, maxDate), true, false);</a>
+<span class="sourceLineNo">676</span><a id="line.676">        fireChangeEvent();</a>
+<span class="sourceLineNo">677</span><a id="line.677">    }</a>
+<span class="sourceLineNo">678</span><a id="line.678"></a>
+<span class="sourceLineNo">679</span><a id="line.679">    /**</a>
+<span class="sourceLineNo">680</span><a id="line.680">     * Returns the latest date visible on the axis.</a>
+<span class="sourceLineNo">681</span><a id="line.681">     *</a>
+<span class="sourceLineNo">682</span><a id="line.682">     * @return The date.</a>
+<span class="sourceLineNo">683</span><a id="line.683">     *</a>
+<span class="sourceLineNo">684</span><a id="line.684">     * @see #setMaximumDate(Date)</a>
+<span class="sourceLineNo">685</span><a id="line.685">     * @see #getMinimumDate()</a>
+<span class="sourceLineNo">686</span><a id="line.686">     */</a>
+<span class="sourceLineNo">687</span><a id="line.687">    public Date getMaximumDate() {</a>
+<span class="sourceLineNo">688</span><a id="line.688">        Date result;</a>
+<span class="sourceLineNo">689</span><a id="line.689">        Range range = getRange();</a>
+<span class="sourceLineNo">690</span><a id="line.690">        if (range instanceof DateRange) {</a>
+<span class="sourceLineNo">691</span><a id="line.691">            DateRange r = (DateRange) range;</a>
+<span class="sourceLineNo">692</span><a id="line.692">            result = r.getUpperDate();</a>
+<span class="sourceLineNo">693</span><a id="line.693">        }</a>
+<span class="sourceLineNo">694</span><a id="line.694">        else {</a>
+<span class="sourceLineNo">695</span><a id="line.695">            result = new Date((long) range.getUpperBound());</a>
+<span class="sourceLineNo">696</span><a id="line.696">        }</a>
+<span class="sourceLineNo">697</span><a id="line.697">        return result;</a>
+<span class="sourceLineNo">698</span><a id="line.698">    }</a>
+<span class="sourceLineNo">699</span><a id="line.699"></a>
+<span class="sourceLineNo">700</span><a id="line.700">    /**</a>
+<span class="sourceLineNo">701</span><a id="line.701">     * Sets the maximum date visible on the axis and sends an</a>
+<span class="sourceLineNo">702</span><a id="line.702">     * {@link AxisChangeEvent} to all registered listeners.  If</a>
+<span class="sourceLineNo">703</span><a id="line.703">     * &lt;code&gt;maximumDate&lt;/code&gt; is on or before the current minimum date for</a>
+<span class="sourceLineNo">704</span><a id="line.704">     * the axis, the minimum date will be shifted to preserve the current</a>
+<span class="sourceLineNo">705</span><a id="line.705">     * length of the axis.</a>
+<span class="sourceLineNo">706</span><a id="line.706">     *</a>
+<span class="sourceLineNo">707</span><a id="line.707">     * @param maximumDate  the date (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">708</span><a id="line.708">     *</a>
+<span class="sourceLineNo">709</span><a id="line.709">     * @see #getMinimumDate()</a>
+<span class="sourceLineNo">710</span><a id="line.710">     * @see #setMinimumDate(Date)</a>
+<span class="sourceLineNo">711</span><a id="line.711">     */</a>
+<span class="sourceLineNo">712</span><a id="line.712">    public void setMaximumDate(Date maximumDate) {</a>
+<span class="sourceLineNo">713</span><a id="line.713">        ParamChecks.nullNotPermitted(maximumDate, "maximumDate");</a>
+<span class="sourceLineNo">714</span><a id="line.714">        // check the new maximum date relative to the current minimum date</a>
+<span class="sourceLineNo">715</span><a id="line.715">        Date minDate = getMinimumDate();</a>
+<span class="sourceLineNo">716</span><a id="line.716">        long minMillis = minDate.getTime();</a>
+<span class="sourceLineNo">717</span><a id="line.717">        long newMaxMillis = maximumDate.getTime();</a>
+<span class="sourceLineNo">718</span><a id="line.718">        if (minMillis &gt;= newMaxMillis) {</a>
+<span class="sourceLineNo">719</span><a id="line.719">            Date oldMax = getMaximumDate();</a>
+<span class="sourceLineNo">720</span><a id="line.720">            long length = oldMax.getTime() - minMillis;</a>
+<span class="sourceLineNo">721</span><a id="line.721">            minDate = new Date(newMaxMillis - length);</a>
+<span class="sourceLineNo">722</span><a id="line.722">        }</a>
+<span class="sourceLineNo">723</span><a id="line.723">        setRange(new DateRange(minDate, maximumDate), true, false);</a>
+<span class="sourceLineNo">724</span><a id="line.724">        fireChangeEvent();</a>
+<span class="sourceLineNo">725</span><a id="line.725">    }</a>
+<span class="sourceLineNo">726</span><a id="line.726"></a>
+<span class="sourceLineNo">727</span><a id="line.727">    /**</a>
+<span class="sourceLineNo">728</span><a id="line.728">     * Returns the tick mark position (start, middle or end of the time period).</a>
+<span class="sourceLineNo">729</span><a id="line.729">     *</a>
+<span class="sourceLineNo">730</span><a id="line.730">     * @return The position (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">731</span><a id="line.731">     */</a>
+<span class="sourceLineNo">732</span><a id="line.732">    public DateTickMarkPosition getTickMarkPosition() {</a>
+<span class="sourceLineNo">733</span><a id="line.733">        return this.tickMarkPosition;</a>
+<span class="sourceLineNo">734</span><a id="line.734">    }</a>
+<span class="sourceLineNo">735</span><a id="line.735"></a>
+<span class="sourceLineNo">736</span><a id="line.736">    /**</a>
+<span class="sourceLineNo">737</span><a id="line.737">     * Sets the tick mark position (start, middle or end of the time period)</a>
+<span class="sourceLineNo">738</span><a id="line.738">     * and sends an {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">739</span><a id="line.739">     *</a>
+<span class="sourceLineNo">740</span><a id="line.740">     * @param position  the position (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">741</span><a id="line.741">     */</a>
+<span class="sourceLineNo">742</span><a id="line.742">    public void setTickMarkPosition(DateTickMarkPosition position) {</a>
+<span class="sourceLineNo">743</span><a id="line.743">        ParamChecks.nullNotPermitted(position, "position");</a>
+<span class="sourceLineNo">744</span><a id="line.744">        this.tickMarkPosition = position;</a>
+<span class="sourceLineNo">745</span><a id="line.745">        fireChangeEvent();</a>
+<span class="sourceLineNo">746</span><a id="line.746">    }</a>
+<span class="sourceLineNo">747</span><a id="line.747"></a>
+<span class="sourceLineNo">748</span><a id="line.748">    /**</a>
+<span class="sourceLineNo">749</span><a id="line.749">     * Configures the axis to work with the specified plot.  If the axis has</a>
+<span class="sourceLineNo">750</span><a id="line.750">     * auto-scaling, then sets the maximum and minimum values.</a>
+<span class="sourceLineNo">751</span><a id="line.751">     */</a>
+<span class="sourceLineNo">752</span><a id="line.752">    @Override</a>
+<span class="sourceLineNo">753</span><a id="line.753">    public void configure() {</a>
+<span class="sourceLineNo">754</span><a id="line.754">        if (isAutoRange()) {</a>
+<span class="sourceLineNo">755</span><a id="line.755">            autoAdjustRange();</a>
+<span class="sourceLineNo">756</span><a id="line.756">        }</a>
+<span class="sourceLineNo">757</span><a id="line.757">    }</a>
+<span class="sourceLineNo">758</span><a id="line.758"></a>
+<span class="sourceLineNo">759</span><a id="line.759">    /**</a>
+<span class="sourceLineNo">760</span><a id="line.760">     * Returns &lt;code&gt;true&lt;/code&gt; if the axis hides this value, and</a>
+<span class="sourceLineNo">761</span><a id="line.761">     * &lt;code&gt;false&lt;/code&gt; otherwise.</a>
+<span class="sourceLineNo">762</span><a id="line.762">     *</a>
+<span class="sourceLineNo">763</span><a id="line.763">     * @param millis  the data value.</a>
+<span class="sourceLineNo">764</span><a id="line.764">     *</a>
+<span class="sourceLineNo">765</span><a id="line.765">     * @return A value.</a>
+<span class="sourceLineNo">766</span><a id="line.766">     */</a>
+<span class="sourceLineNo">767</span><a id="line.767">    public boolean isHiddenValue(long millis) {</a>
+<span class="sourceLineNo">768</span><a id="line.768">        return (!this.timeline.containsDomainValue(new Date(millis)));</a>
+<span class="sourceLineNo">769</span><a id="line.769">    }</a>
+<span class="sourceLineNo">770</span><a id="line.770"></a>
+<span class="sourceLineNo">771</span><a id="line.771">    /**</a>
+<span class="sourceLineNo">772</span><a id="line.772">     * Translates the data value to the display coordinates (Java 2D User Space)</a>
+<span class="sourceLineNo">773</span><a id="line.773">     * of the chart.</a>
+<span class="sourceLineNo">774</span><a id="line.774">     *</a>
+<span class="sourceLineNo">775</span><a id="line.775">     * @param value  the date to be plotted.</a>
+<span class="sourceLineNo">776</span><a id="line.776">     * @param area  the rectangle (in Java2D space) where the data is to be</a>
+<span class="sourceLineNo">777</span><a id="line.777">     *              plotted.</a>
+<span class="sourceLineNo">778</span><a id="line.778">     * @param edge  the axis location.</a>
+<span class="sourceLineNo">779</span><a id="line.779">     *</a>
+<span class="sourceLineNo">780</span><a id="line.780">     * @return The coordinate corresponding to the supplied data value.</a>
+<span class="sourceLineNo">781</span><a id="line.781">     */</a>
+<span class="sourceLineNo">782</span><a id="line.782">    @Override</a>
+<span class="sourceLineNo">783</span><a id="line.783">    public double valueToJava2D(double value, Rectangle2D area,</a>
+<span class="sourceLineNo">784</span><a id="line.784">            RectangleEdge edge) {</a>
+<span class="sourceLineNo">785</span><a id="line.785"></a>
+<span class="sourceLineNo">786</span><a id="line.786">        value = this.timeline.toTimelineValue((long) value);</a>
+<span class="sourceLineNo">787</span><a id="line.787"></a>
+<span class="sourceLineNo">788</span><a id="line.788">        DateRange range = (DateRange) getRange();</a>
+<span class="sourceLineNo">789</span><a id="line.789">        double axisMin = this.timeline.toTimelineValue(range.getLowerMillis());</a>
+<span class="sourceLineNo">790</span><a id="line.790">        double axisMax = this.timeline.toTimelineValue(range.getUpperMillis());</a>
+<span class="sourceLineNo">791</span><a id="line.791">        double result = 0.0;</a>
+<span class="sourceLineNo">792</span><a id="line.792">        if (RectangleEdge.isTopOrBottom(edge)) {</a>
+<span class="sourceLineNo">793</span><a id="line.793">            double minX = area.getX();</a>
+<span class="sourceLineNo">794</span><a id="line.794">            double maxX = area.getMaxX();</a>
+<span class="sourceLineNo">795</span><a id="line.795">            if (isInverted()) {</a>
+<span class="sourceLineNo">796</span><a id="line.796">                result = maxX + ((value - axisMin) / (axisMax - axisMin))</a>
+<span class="sourceLineNo">797</span><a id="line.797">                         * (minX - maxX);</a>
+<span class="sourceLineNo">798</span><a id="line.798">            }</a>
+<span class="sourceLineNo">799</span><a id="line.799">            else {</a>
+<span class="sourceLineNo">800</span><a id="line.800">                result = minX + ((value - axisMin) / (axisMax - axisMin))</a>
+<span class="sourceLineNo">801</span><a id="line.801">                         * (maxX - minX);</a>
+<span class="sourceLineNo">802</span><a id="line.802">            }</a>
+<span class="sourceLineNo">803</span><a id="line.803">        }</a>
+<span class="sourceLineNo">804</span><a id="line.804">        else if (RectangleEdge.isLeftOrRight(edge)) {</a>
+<span class="sourceLineNo">805</span><a id="line.805">            double minY = area.getMinY();</a>
+<span class="sourceLineNo">806</span><a id="line.806">            double maxY = area.getMaxY();</a>
+<span class="sourceLineNo">807</span><a id="line.807">            if (isInverted()) {</a>
+<span class="sourceLineNo">808</span><a id="line.808">                result = minY + (((value - axisMin) / (axisMax - axisMin))</a>
+<span class="sourceLineNo">809</span><a id="line.809">                         * (maxY - minY));</a>
+<span class="sourceLineNo">810</span><a id="line.810">            }</a>
+<span class="sourceLineNo">811</span><a id="line.811">            else {</a>
+<span class="sourceLineNo">812</span><a id="line.812">                result = maxY - (((value - axisMin) / (axisMax - axisMin))</a>
+<span class="sourceLineNo">813</span><a id="line.813">                         * (maxY - minY));</a>
+<span class="sourceLineNo">814</span><a id="line.814">            }</a>
+<span class="sourceLineNo">815</span><a id="line.815">        }</a>
+<span class="sourceLineNo">816</span><a id="line.816">        return result;</a>
+<span class="sourceLineNo">817</span><a id="line.817">    }</a>
+<span class="sourceLineNo">818</span><a id="line.818"></a>
+<span class="sourceLineNo">819</span><a id="line.819">    /**</a>
+<span class="sourceLineNo">820</span><a id="line.820">     * Translates a date to Java2D coordinates, based on the range displayed by</a>
+<span class="sourceLineNo">821</span><a id="line.821">     * this axis for the specified data area.</a>
+<span class="sourceLineNo">822</span><a id="line.822">     *</a>
+<span class="sourceLineNo">823</span><a id="line.823">     * @param date  the date.</a>
+<span class="sourceLineNo">824</span><a id="line.824">     * @param area  the rectangle (in Java2D space) where the data is to be</a>
+<span class="sourceLineNo">825</span><a id="line.825">     *              plotted.</a>
+<span class="sourceLineNo">826</span><a id="line.826">     * @param edge  the axis location.</a>
+<span class="sourceLineNo">827</span><a id="line.827">     *</a>
+<span class="sourceLineNo">828</span><a id="line.828">     * @return The coordinate corresponding to the supplied date.</a>
+<span class="sourceLineNo">829</span><a id="line.829">     */</a>
+<span class="sourceLineNo">830</span><a id="line.830">    public double dateToJava2D(Date date, Rectangle2D area, </a>
+<span class="sourceLineNo">831</span><a id="line.831">            RectangleEdge edge) {</a>
+<span class="sourceLineNo">832</span><a id="line.832">        double value = date.getTime();</a>
+<span class="sourceLineNo">833</span><a id="line.833">        return valueToJava2D(value, area, edge);</a>
+<span class="sourceLineNo">834</span><a id="line.834">    }</a>
+<span class="sourceLineNo">835</span><a id="line.835"></a>
+<span class="sourceLineNo">836</span><a id="line.836">    /**</a>
+<span class="sourceLineNo">837</span><a id="line.837">     * Translates a Java2D coordinate into the corresponding data value.  To</a>
+<span class="sourceLineNo">838</span><a id="line.838">     * perform this translation, you need to know the area used for plotting</a>
+<span class="sourceLineNo">839</span><a id="line.839">     * data, and which edge the axis is located on.</a>
+<span class="sourceLineNo">840</span><a id="line.840">     *</a>
+<span class="sourceLineNo">841</span><a id="line.841">     * @param java2DValue  the coordinate in Java2D space.</a>
+<span class="sourceLineNo">842</span><a id="line.842">     * @param area  the rectangle (in Java2D space) where the data is to be</a>
+<span class="sourceLineNo">843</span><a id="line.843">     *              plotted.</a>
+<span class="sourceLineNo">844</span><a id="line.844">     * @param edge  the axis location.</a>
+<span class="sourceLineNo">845</span><a id="line.845">     *</a>
+<span class="sourceLineNo">846</span><a id="line.846">     * @return A data value.</a>
+<span class="sourceLineNo">847</span><a id="line.847">     */</a>
+<span class="sourceLineNo">848</span><a id="line.848">    @Override</a>
+<span class="sourceLineNo">849</span><a id="line.849">    public double java2DToValue(double java2DValue, Rectangle2D area, </a>
+<span class="sourceLineNo">850</span><a id="line.850">            RectangleEdge edge) {</a>
+<span class="sourceLineNo">851</span><a id="line.851"></a>
+<span class="sourceLineNo">852</span><a id="line.852">        DateRange range = (DateRange) getRange();</a>
+<span class="sourceLineNo">853</span><a id="line.853">        double axisMin = this.timeline.toTimelineValue(range.getLowerMillis());</a>
+<span class="sourceLineNo">854</span><a id="line.854">        double axisMax = this.timeline.toTimelineValue(range.getUpperMillis());</a>
+<span class="sourceLineNo">855</span><a id="line.855"></a>
+<span class="sourceLineNo">856</span><a id="line.856">        double min = 0.0;</a>
+<span class="sourceLineNo">857</span><a id="line.857">        double max = 0.0;</a>
+<span class="sourceLineNo">858</span><a id="line.858">        if (RectangleEdge.isTopOrBottom(edge)) {</a>
+<span class="sourceLineNo">859</span><a id="line.859">            min = area.getX();</a>
+<span class="sourceLineNo">860</span><a id="line.860">            max = area.getMaxX();</a>
+<span class="sourceLineNo">861</span><a id="line.861">        }</a>
+<span class="sourceLineNo">862</span><a id="line.862">        else if (RectangleEdge.isLeftOrRight(edge)) {</a>
+<span class="sourceLineNo">863</span><a id="line.863">            min = area.getMaxY();</a>
+<span class="sourceLineNo">864</span><a id="line.864">            max = area.getY();</a>
+<span class="sourceLineNo">865</span><a id="line.865">        }</a>
+<span class="sourceLineNo">866</span><a id="line.866"></a>
+<span class="sourceLineNo">867</span><a id="line.867">        double result;</a>
+<span class="sourceLineNo">868</span><a id="line.868">        if (isInverted()) {</a>
+<span class="sourceLineNo">869</span><a id="line.869">             result = axisMax - ((java2DValue - min) / (max - min)</a>
+<span class="sourceLineNo">870</span><a id="line.870">                      * (axisMax - axisMin));</a>
+<span class="sourceLineNo">871</span><a id="line.871">        }</a>
+<span class="sourceLineNo">872</span><a id="line.872">        else {</a>
+<span class="sourceLineNo">873</span><a id="line.873">             result = axisMin + ((java2DValue - min) / (max - min)</a>
+<span class="sourceLineNo">874</span><a id="line.874">                      * (axisMax - axisMin));</a>
+<span class="sourceLineNo">875</span><a id="line.875">        }</a>
+<span class="sourceLineNo">876</span><a id="line.876"></a>
+<span class="sourceLineNo">877</span><a id="line.877">        return this.timeline.toMillisecond((long) result);</a>
+<span class="sourceLineNo">878</span><a id="line.878">    }</a>
+<span class="sourceLineNo">879</span><a id="line.879"></a>
+<span class="sourceLineNo">880</span><a id="line.880">    /**</a>
+<span class="sourceLineNo">881</span><a id="line.881">     * Calculates the value of the lowest visible tick on the axis.</a>
+<span class="sourceLineNo">882</span><a id="line.882">     *</a>
+<span class="sourceLineNo">883</span><a id="line.883">     * @param unit  date unit to use.</a>
+<span class="sourceLineNo">884</span><a id="line.884">     *</a>
+<span class="sourceLineNo">885</span><a id="line.885">     * @return The value of the lowest visible tick on the axis.</a>
+<span class="sourceLineNo">886</span><a id="line.886">     */</a>
+<span class="sourceLineNo">887</span><a id="line.887">    public Date calculateLowestVisibleTickValue(DateTickUnit unit) {</a>
+<span class="sourceLineNo">888</span><a id="line.888">        return nextStandardDate(getMinimumDate(), unit);</a>
+<span class="sourceLineNo">889</span><a id="line.889">    }</a>
+<span class="sourceLineNo">890</span><a id="line.890"></a>
+<span class="sourceLineNo">891</span><a id="line.891">    /**</a>
+<span class="sourceLineNo">892</span><a id="line.892">     * Calculates the value of the highest visible tick on the axis.</a>
+<span class="sourceLineNo">893</span><a id="line.893">     *</a>
+<span class="sourceLineNo">894</span><a id="line.894">     * @param unit  date unit to use.</a>
+<span class="sourceLineNo">895</span><a id="line.895">     *</a>
+<span class="sourceLineNo">896</span><a id="line.896">     * @return The value of the highest visible tick on the axis.</a>
+<span class="sourceLineNo">897</span><a id="line.897">     */</a>
+<span class="sourceLineNo">898</span><a id="line.898">    public Date calculateHighestVisibleTickValue(DateTickUnit unit) {</a>
+<span class="sourceLineNo">899</span><a id="line.899">        return previousStandardDate(getMaximumDate(), unit);</a>
+<span class="sourceLineNo">900</span><a id="line.900">    }</a>
+<span class="sourceLineNo">901</span><a id="line.901"></a>
+<span class="sourceLineNo">902</span><a id="line.902">    /**</a>
+<span class="sourceLineNo">903</span><a id="line.903">     * Returns the previous "standard" date, for a given date and tick unit.</a>
+<span class="sourceLineNo">904</span><a id="line.904">     *</a>
+<span class="sourceLineNo">905</span><a id="line.905">     * @param date  the reference date.</a>
+<span class="sourceLineNo">906</span><a id="line.906">     * @param unit  the tick unit.</a>
+<span class="sourceLineNo">907</span><a id="line.907">     *</a>
+<span class="sourceLineNo">908</span><a id="line.908">     * @return The previous "standard" date.</a>
+<span class="sourceLineNo">909</span><a id="line.909">     */</a>
+<span class="sourceLineNo">910</span><a id="line.910">    protected Date previousStandardDate(Date date, DateTickUnit unit) {</a>
+<span class="sourceLineNo">911</span><a id="line.911"></a>
+<span class="sourceLineNo">912</span><a id="line.912">        int milliseconds;</a>
+<span class="sourceLineNo">913</span><a id="line.913">        int seconds;</a>
+<span class="sourceLineNo">914</span><a id="line.914">        int minutes;</a>
+<span class="sourceLineNo">915</span><a id="line.915">        int hours;</a>
+<span class="sourceLineNo">916</span><a id="line.916">        int days;</a>
+<span class="sourceLineNo">917</span><a id="line.917">        int months;</a>
+<span class="sourceLineNo">918</span><a id="line.918">        int years;</a>
+<span class="sourceLineNo">919</span><a id="line.919"></a>
+<span class="sourceLineNo">920</span><a id="line.920">        Calendar calendar = Calendar.getInstance(this.timeZone, this.locale);</a>
+<span class="sourceLineNo">921</span><a id="line.921">        calendar.setTime(date);</a>
+<span class="sourceLineNo">922</span><a id="line.922">        int count = unit.getCount();</a>
+<span class="sourceLineNo">923</span><a id="line.923">        int current = calendar.get(unit.getCalendarField());</a>
+<span class="sourceLineNo">924</span><a id="line.924">        int value = count * (current / count);</a>
+<span class="sourceLineNo">925</span><a id="line.925"></a>
+<span class="sourceLineNo">926</span><a id="line.926">        switch (unit.getUnit()) {</a>
+<span class="sourceLineNo">927</span><a id="line.927"></a>
+<span class="sourceLineNo">928</span><a id="line.928">            case DateTickUnit.MILLISECOND :</a>
+<span class="sourceLineNo">929</span><a id="line.929">                years = calendar.get(Calendar.YEAR);</a>
+<span class="sourceLineNo">930</span><a id="line.930">                months = calendar.get(Calendar.MONTH);</a>
+<span class="sourceLineNo">931</span><a id="line.931">                days = calendar.get(Calendar.DATE);</a>
+<span class="sourceLineNo">932</span><a id="line.932">                hours = calendar.get(Calendar.HOUR_OF_DAY);</a>
+<span class="sourceLineNo">933</span><a id="line.933">                minutes = calendar.get(Calendar.MINUTE);</a>
+<span class="sourceLineNo">934</span><a id="line.934">                seconds = calendar.get(Calendar.SECOND);</a>
+<span class="sourceLineNo">935</span><a id="line.935">                calendar.set(years, months, days, hours, minutes, seconds);</a>
+<span class="sourceLineNo">936</span><a id="line.936">                calendar.set(Calendar.MILLISECOND, value);</a>
+<span class="sourceLineNo">937</span><a id="line.937">                Date mm = calendar.getTime();</a>
+<span class="sourceLineNo">938</span><a id="line.938">                if (mm.getTime() &gt;= date.getTime()) {</a>
+<span class="sourceLineNo">939</span><a id="line.939">                    calendar.set(Calendar.MILLISECOND, value - 1);</a>
+<span class="sourceLineNo">940</span><a id="line.940">                    mm = calendar.getTime();</a>
+<span class="sourceLineNo">941</span><a id="line.941">                }</a>
+<span class="sourceLineNo">942</span><a id="line.942">                return mm;</a>
+<span class="sourceLineNo">943</span><a id="line.943"></a>
+<span class="sourceLineNo">944</span><a id="line.944">            case DateTickUnit.SECOND :</a>
+<span class="sourceLineNo">945</span><a id="line.945">                years = calendar.get(Calendar.YEAR);</a>
+<span class="sourceLineNo">946</span><a id="line.946">                months = calendar.get(Calendar.MONTH);</a>
+<span class="sourceLineNo">947</span><a id="line.947">                days = calendar.get(Calendar.DATE);</a>
+<span class="sourceLineNo">948</span><a id="line.948">                hours = calendar.get(Calendar.HOUR_OF_DAY);</a>
+<span class="sourceLineNo">949</span><a id="line.949">                minutes = calendar.get(Calendar.MINUTE);</a>
+<span class="sourceLineNo">950</span><a id="line.950">                if (this.tickMarkPosition == DateTickMarkPosition.START) {</a>
+<span class="sourceLineNo">951</span><a id="line.951">                    milliseconds = 0;</a>
+<span class="sourceLineNo">952</span><a id="line.952">                }</a>
+<span class="sourceLineNo">953</span><a id="line.953">                else if (this.tickMarkPosition == DateTickMarkPosition.MIDDLE) {</a>
+<span class="sourceLineNo">954</span><a id="line.954">                    milliseconds = 500;</a>
+<span class="sourceLineNo">955</span><a id="line.955">                }</a>
+<span class="sourceLineNo">956</span><a id="line.956">                else {</a>
+<span class="sourceLineNo">957</span><a id="line.957">                    milliseconds = 999;</a>
+<span class="sourceLineNo">958</span><a id="line.958">                }</a>
+<span class="sourceLineNo">959</span><a id="line.959">                calendar.set(Calendar.MILLISECOND, milliseconds);</a>
+<span class="sourceLineNo">960</span><a id="line.960">                calendar.set(years, months, days, hours, minutes, value);</a>
+<span class="sourceLineNo">961</span><a id="line.961">                Date dd = calendar.getTime();</a>
+<span class="sourceLineNo">962</span><a id="line.962">                if (dd.getTime() &gt;= date.getTime()) {</a>
+<span class="sourceLineNo">963</span><a id="line.963">                    calendar.set(Calendar.SECOND, value - 1);</a>
+<span class="sourceLineNo">964</span><a id="line.964">                    dd = calendar.getTime();</a>
+<span class="sourceLineNo">965</span><a id="line.965">                }</a>
+<span class="sourceLineNo">966</span><a id="line.966">                return dd;</a>
+<span class="sourceLineNo">967</span><a id="line.967"></a>
+<span class="sourceLineNo">968</span><a id="line.968">            case DateTickUnit.MINUTE :</a>
+<span class="sourceLineNo">969</span><a id="line.969">                years = calendar.get(Calendar.YEAR);</a>
+<span class="sourceLineNo">970</span><a id="line.970">                months = calendar.get(Calendar.MONTH);</a>
+<span class="sourceLineNo">971</span><a id="line.971">                days = calendar.get(Calendar.DATE);</a>
+<span class="sourceLineNo">972</span><a id="line.972">                hours = calendar.get(Calendar.HOUR_OF_DAY);</a>
+<span class="sourceLineNo">973</span><a id="line.973">                if (this.tickMarkPosition == DateTickMarkPosition.START) {</a>
+<span class="sourceLineNo">974</span><a id="line.974">                    seconds = 0;</a>
+<span class="sourceLineNo">975</span><a id="line.975">                }</a>
+<span class="sourceLineNo">976</span><a id="line.976">                else if (this.tickMarkPosition == DateTickMarkPosition.MIDDLE) {</a>
+<span class="sourceLineNo">977</span><a id="line.977">                    seconds = 30;</a>
+<span class="sourceLineNo">978</span><a id="line.978">                }</a>
+<span class="sourceLineNo">979</span><a id="line.979">                else {</a>
+<span class="sourceLineNo">980</span><a id="line.980">                    seconds = 59;</a>
+<span class="sourceLineNo">981</span><a id="line.981">                }</a>
+<span class="sourceLineNo">982</span><a id="line.982">                calendar.clear(Calendar.MILLISECOND);</a>
+<span class="sourceLineNo">983</span><a id="line.983">                calendar.set(years, months, days, hours, value, seconds);</a>
+<span class="sourceLineNo">984</span><a id="line.984">                Date d0 = calendar.getTime();</a>
+<span class="sourceLineNo">985</span><a id="line.985">                if (d0.getTime() &gt;= date.getTime()) {</a>
+<span class="sourceLineNo">986</span><a id="line.986">                    calendar.set(Calendar.MINUTE, value - 1);</a>
+<span class="sourceLineNo">987</span><a id="line.987">                    d0 = calendar.getTime();</a>
+<span class="sourceLineNo">988</span><a id="line.988">                }</a>
+<span class="sourceLineNo">989</span><a id="line.989">                return d0;</a>
+<span class="sourceLineNo">990</span><a id="line.990"></a>
+<span class="sourceLineNo">991</span><a id="line.991">            case DateTickUnit.HOUR :</a>
+<span class="sourceLineNo">992</span><a id="line.992">                years = calendar.get(Calendar.YEAR);</a>
+<span class="sourceLineNo">993</span><a id="line.993">                months = calendar.get(Calendar.MONTH);</a>
+<span class="sourceLineNo">994</span><a id="line.994">                days = calendar.get(Calendar.DATE);</a>
+<span class="sourceLineNo">995</span><a id="line.995">                if (this.tickMarkPosition == DateTickMarkPosition.START) {</a>
+<span class="sourceLineNo">996</span><a id="line.996">                    minutes = 0;</a>
+<span class="sourceLineNo">997</span><a id="line.997">                    seconds = 0;</a>
+<span class="sourceLineNo">998</span><a id="line.998">                }</a>
+<span class="sourceLineNo">999</span><a id="line.999">                else if (this.tickMarkPosition == DateTickMarkPosition.MIDDLE) {</a>
+<span class="sourceLineNo">1000</span><a id="line.1000">                    minutes = 30;</a>
+<span class="sourceLineNo">1001</span><a id="line.1001">                    seconds = 0;</a>
+<span class="sourceLineNo">1002</span><a id="line.1002">                }</a>
+<span class="sourceLineNo">1003</span><a id="line.1003">                else {</a>
+<span class="sourceLineNo">1004</span><a id="line.1004">                    minutes = 59;</a>
+<span class="sourceLineNo">1005</span><a id="line.1005">                    seconds = 59;</a>
+<span class="sourceLineNo">1006</span><a id="line.1006">                }</a>
+<span class="sourceLineNo">1007</span><a id="line.1007">                calendar.clear(Calendar.MILLISECOND);</a>
+<span class="sourceLineNo">1008</span><a id="line.1008">                calendar.set(years, months, days, value, minutes, seconds);</a>
+<span class="sourceLineNo">1009</span><a id="line.1009">                Date d1 = calendar.getTime();</a>
+<span class="sourceLineNo">1010</span><a id="line.1010">                if (d1.getTime() &gt;= date.getTime()) {</a>
+<span class="sourceLineNo">1011</span><a id="line.1011">                    calendar.set(Calendar.HOUR_OF_DAY, value - 1);</a>
+<span class="sourceLineNo">1012</span><a id="line.1012">                    d1 = calendar.getTime();</a>
+<span class="sourceLineNo">1013</span><a id="line.1013">                }</a>
+<span class="sourceLineNo">1014</span><a id="line.1014">                return d1;</a>
+<span class="sourceLineNo">1015</span><a id="line.1015"></a>
+<span class="sourceLineNo">1016</span><a id="line.1016">            case DateTickUnit.DAY :</a>
+<span class="sourceLineNo">1017</span><a id="line.1017">                years = calendar.get(Calendar.YEAR);</a>
+<span class="sourceLineNo">1018</span><a id="line.1018">                months = calendar.get(Calendar.MONTH);</a>
+<span class="sourceLineNo">1019</span><a id="line.1019">                if (this.tickMarkPosition == DateTickMarkPosition.START) {</a>
+<span class="sourceLineNo">1020</span><a id="line.1020">                    hours = 0;</a>
+<span class="sourceLineNo">1021</span><a id="line.1021">                }</a>
+<span class="sourceLineNo">1022</span><a id="line.1022">                else if (this.tickMarkPosition == DateTickMarkPosition.MIDDLE) {</a>
+<span class="sourceLineNo">1023</span><a id="line.1023">                    hours = 12;</a>
+<span class="sourceLineNo">1024</span><a id="line.1024">                }</a>
+<span class="sourceLineNo">1025</span><a id="line.1025">                else {</a>
+<span class="sourceLineNo">1026</span><a id="line.1026">                    hours = 23;</a>
+<span class="sourceLineNo">1027</span><a id="line.1027">                }</a>
+<span class="sourceLineNo">1028</span><a id="line.1028">                calendar.clear(Calendar.MILLISECOND);</a>
+<span class="sourceLineNo">1029</span><a id="line.1029">                calendar.set(years, months, value, hours, 0, 0);</a>
+<span class="sourceLineNo">1030</span><a id="line.1030">                // long result = calendar.getTimeInMillis();</a>
+<span class="sourceLineNo">1031</span><a id="line.1031">                    // won't work with JDK 1.3</a>
+<span class="sourceLineNo">1032</span><a id="line.1032">                Date d2 = calendar.getTime();</a>
+<span class="sourceLineNo">1033</span><a id="line.1033">                if (d2.getTime() &gt;= date.getTime()) {</a>
+<span class="sourceLineNo">1034</span><a id="line.1034">                    calendar.set(Calendar.DATE, value - 1);</a>
+<span class="sourceLineNo">1035</span><a id="line.1035">                    d2 = calendar.getTime();</a>
+<span class="sourceLineNo">1036</span><a id="line.1036">                }</a>
+<span class="sourceLineNo">1037</span><a id="line.1037">                return d2;</a>
+<span class="sourceLineNo">1038</span><a id="line.1038"></a>
+<span class="sourceLineNo">1039</span><a id="line.1039">            case DateTickUnit.MONTH :</a>
+<span class="sourceLineNo">1040</span><a id="line.1040">                years = calendar.get(Calendar.YEAR);</a>
+<span class="sourceLineNo">1041</span><a id="line.1041">                calendar.clear(Calendar.MILLISECOND);</a>
+<span class="sourceLineNo">1042</span><a id="line.1042">                calendar.set(years, value, 1, 0, 0, 0);</a>
+<span class="sourceLineNo">1043</span><a id="line.1043">                Month month = new Month(calendar.getTime(), this.timeZone,</a>
+<span class="sourceLineNo">1044</span><a id="line.1044">                        this.locale);</a>
+<span class="sourceLineNo">1045</span><a id="line.1045">                Date standardDate = calculateDateForPosition(</a>
+<span class="sourceLineNo">1046</span><a id="line.1046">                        month, this.tickMarkPosition);</a>
+<span class="sourceLineNo">1047</span><a id="line.1047">                long millis = standardDate.getTime();</a>
+<span class="sourceLineNo">1048</span><a id="line.1048">                if (millis &gt;= date.getTime()) {</a>
+<span class="sourceLineNo">1049</span><a id="line.1049">                    month = (Month) month.previous();</a>
+<span class="sourceLineNo">1050</span><a id="line.1050">                    // need to peg the month in case the time zone isn't the</a>
+<span class="sourceLineNo">1051</span><a id="line.1051">                    // default - see bug 2078057</a>
+<span class="sourceLineNo">1052</span><a id="line.1052">                    month.peg(Calendar.getInstance(this.timeZone));</a>
+<span class="sourceLineNo">1053</span><a id="line.1053">                    standardDate = calculateDateForPosition(</a>
+<span class="sourceLineNo">1054</span><a id="line.1054">                            month, this.tickMarkPosition);</a>
+<span class="sourceLineNo">1055</span><a id="line.1055">                }</a>
+<span class="sourceLineNo">1056</span><a id="line.1056">                return standardDate;</a>
+<span class="sourceLineNo">1057</span><a id="line.1057"></a>
+<span class="sourceLineNo">1058</span><a id="line.1058">            case DateTickUnit.YEAR :</a>
+<span class="sourceLineNo">1059</span><a id="line.1059">                if (this.tickMarkPosition == DateTickMarkPosition.START) {</a>
+<span class="sourceLineNo">1060</span><a id="line.1060">                    months = 0;</a>
+<span class="sourceLineNo">1061</span><a id="line.1061">                    days = 1;</a>
+<span class="sourceLineNo">1062</span><a id="line.1062">                }</a>
+<span class="sourceLineNo">1063</span><a id="line.1063">                else if (this.tickMarkPosition == DateTickMarkPosition.MIDDLE) {</a>
+<span class="sourceLineNo">1064</span><a id="line.1064">                    months = 6;</a>
+<span class="sourceLineNo">1065</span><a id="line.1065">                    days = 1;</a>
+<span class="sourceLineNo">1066</span><a id="line.1066">                }</a>
+<span class="sourceLineNo">1067</span><a id="line.1067">                else {</a>
+<span class="sourceLineNo">1068</span><a id="line.1068">                    months = 11;</a>
+<span class="sourceLineNo">1069</span><a id="line.1069">                    days = 31;</a>
+<span class="sourceLineNo">1070</span><a id="line.1070">                }</a>
+<span class="sourceLineNo">1071</span><a id="line.1071">                calendar.clear(Calendar.MILLISECOND);</a>
+<span class="sourceLineNo">1072</span><a id="line.1072">                calendar.set(value, months, days, 0, 0, 0);</a>
+<span class="sourceLineNo">1073</span><a id="line.1073">                Date d3 = calendar.getTime();</a>
+<span class="sourceLineNo">1074</span><a id="line.1074">                if (d3.getTime() &gt;= date.getTime()) {</a>
+<span class="sourceLineNo">1075</span><a id="line.1075">                    calendar.set(Calendar.YEAR, value - 1);</a>
+<span class="sourceLineNo">1076</span><a id="line.1076">                    d3 = calendar.getTime();</a>
+<span class="sourceLineNo">1077</span><a id="line.1077">                }</a>
+<span class="sourceLineNo">1078</span><a id="line.1078">                return d3;</a>
+<span class="sourceLineNo">1079</span><a id="line.1079"></a>
+<span class="sourceLineNo">1080</span><a id="line.1080">            default: return null;</a>
+<span class="sourceLineNo">1081</span><a id="line.1081"></a>
+<span class="sourceLineNo">1082</span><a id="line.1082">        }</a>
+<span class="sourceLineNo">1083</span><a id="line.1083"></a>
+<span class="sourceLineNo">1084</span><a id="line.1084">    }</a>
+<span class="sourceLineNo">1085</span><a id="line.1085"></a>
+<span class="sourceLineNo">1086</span><a id="line.1086">    /**</a>
+<span class="sourceLineNo">1087</span><a id="line.1087">     * Returns a {@link java.util.Date} corresponding to the specified position</a>
+<span class="sourceLineNo">1088</span><a id="line.1088">     * within a {@link RegularTimePeriod}.</a>
+<span class="sourceLineNo">1089</span><a id="line.1089">     *</a>
+<span class="sourceLineNo">1090</span><a id="line.1090">     * @param period  the period.</a>
+<span class="sourceLineNo">1091</span><a id="line.1091">     * @param position  the position (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">1092</span><a id="line.1092">     *</a>
+<span class="sourceLineNo">1093</span><a id="line.1093">     * @return A date.</a>
+<span class="sourceLineNo">1094</span><a id="line.1094">     */</a>
+<span class="sourceLineNo">1095</span><a id="line.1095">    private Date calculateDateForPosition(RegularTimePeriod period,</a>
+<span class="sourceLineNo">1096</span><a id="line.1096">            DateTickMarkPosition position) {</a>
+<span class="sourceLineNo">1097</span><a id="line.1097">        ParamChecks.nullNotPermitted(period, "period");</a>
+<span class="sourceLineNo">1098</span><a id="line.1098">        Date result = null;</a>
+<span class="sourceLineNo">1099</span><a id="line.1099">        if (position == DateTickMarkPosition.START) {</a>
+<span class="sourceLineNo">1100</span><a id="line.1100">            result = new Date(period.getFirstMillisecond());</a>
+<span class="sourceLineNo">1101</span><a id="line.1101">        }</a>
+<span class="sourceLineNo">1102</span><a id="line.1102">        else if (position == DateTickMarkPosition.MIDDLE) {</a>
+<span class="sourceLineNo">1103</span><a id="line.1103">            result = new Date(period.getMiddleMillisecond());</a>
+<span class="sourceLineNo">1104</span><a id="line.1104">        }</a>
+<span class="sourceLineNo">1105</span><a id="line.1105">        else if (position == DateTickMarkPosition.END) {</a>
+<span class="sourceLineNo">1106</span><a id="line.1106">            result = new Date(period.getLastMillisecond());</a>
+<span class="sourceLineNo">1107</span><a id="line.1107">        }</a>
+<span class="sourceLineNo">1108</span><a id="line.1108">        return result;</a>
+<span class="sourceLineNo">1109</span><a id="line.1109"></a>
+<span class="sourceLineNo">1110</span><a id="line.1110">    }</a>
+<span class="sourceLineNo">1111</span><a id="line.1111"></a>
+<span class="sourceLineNo">1112</span><a id="line.1112">    /**</a>
+<span class="sourceLineNo">1113</span><a id="line.1113">     * Returns the first "standard" date (based on the specified field and</a>
+<span class="sourceLineNo">1114</span><a id="line.1114">     * units).</a>
+<span class="sourceLineNo">1115</span><a id="line.1115">     *</a>
+<span class="sourceLineNo">1116</span><a id="line.1116">     * @param date  the reference date.</a>
+<span class="sourceLineNo">1117</span><a id="line.1117">     * @param unit  the date tick unit.</a>
+<span class="sourceLineNo">1118</span><a id="line.1118">     *</a>
+<span class="sourceLineNo">1119</span><a id="line.1119">     * @return The next "standard" date.</a>
+<span class="sourceLineNo">1120</span><a id="line.1120">     */</a>
+<span class="sourceLineNo">1121</span><a id="line.1121">    protected Date nextStandardDate(Date date, DateTickUnit unit) {</a>
+<span class="sourceLineNo">1122</span><a id="line.1122">        Date previous = previousStandardDate(date, unit);</a>
+<span class="sourceLineNo">1123</span><a id="line.1123">        Calendar calendar = Calendar.getInstance(this.timeZone, this.locale);</a>
+<span class="sourceLineNo">1124</span><a id="line.1124">        calendar.setTime(previous);</a>
+<span class="sourceLineNo">1125</span><a id="line.1125">        calendar.add(unit.getCalendarField(), unit.getMultiple());</a>
+<span class="sourceLineNo">1126</span><a id="line.1126">        return calendar.getTime();</a>
+<span class="sourceLineNo">1127</span><a id="line.1127">    }</a>
+<span class="sourceLineNo">1128</span><a id="line.1128"></a>
+<span class="sourceLineNo">1129</span><a id="line.1129">    /**</a>
+<span class="sourceLineNo">1130</span><a id="line.1130">     * Returns a collection of standard date tick units that uses the default</a>
+<span class="sourceLineNo">1131</span><a id="line.1131">     * time zone.  This collection will be used by default, but you are free</a>
+<span class="sourceLineNo">1132</span><a id="line.1132">     * to create your own collection if you want to (see the</a>
+<span class="sourceLineNo">1133</span><a id="line.1133">     * {@link ValueAxis#setStandardTickUnits(TickUnitSource)} method inherited</a>
+<span class="sourceLineNo">1134</span><a id="line.1134">     * from the {@link ValueAxis} class).</a>
+<span class="sourceLineNo">1135</span><a id="line.1135">     *</a>
+<span class="sourceLineNo">1136</span><a id="line.1136">     * @return A collection of standard date tick units.</a>
+<span class="sourceLineNo">1137</span><a id="line.1137">     */</a>
+<span class="sourceLineNo">1138</span><a id="line.1138">    public static TickUnitSource createStandardDateTickUnits() {</a>
+<span class="sourceLineNo">1139</span><a id="line.1139">        return createStandardDateTickUnits(TimeZone.getDefault(),</a>
+<span class="sourceLineNo">1140</span><a id="line.1140">                Locale.getDefault());</a>
+<span class="sourceLineNo">1141</span><a id="line.1141">    }</a>
+<span class="sourceLineNo">1142</span><a id="line.1142"></a>
+<span class="sourceLineNo">1143</span><a id="line.1143">    /**</a>
+<span class="sourceLineNo">1144</span><a id="line.1144">     * Returns a collection of standard date tick units.  This collection will</a>
+<span class="sourceLineNo">1145</span><a id="line.1145">     * be used by default, but you are free to create your own collection if</a>
+<span class="sourceLineNo">1146</span><a id="line.1146">     * you want to (see the</a>
+<span class="sourceLineNo">1147</span><a id="line.1147">     * {@link ValueAxis#setStandardTickUnits(TickUnitSource)} method inherited</a>
+<span class="sourceLineNo">1148</span><a id="line.1148">     * from the {@link ValueAxis} class).</a>
+<span class="sourceLineNo">1149</span><a id="line.1149">     *</a>
+<span class="sourceLineNo">1150</span><a id="line.1150">     * @param zone  the time zone (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">1151</span><a id="line.1151">     * @param locale  the locale (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">1152</span><a id="line.1152">     *</a>
+<span class="sourceLineNo">1153</span><a id="line.1153">     * @return A collection of standard date tick units.</a>
+<span class="sourceLineNo">1154</span><a id="line.1154">     *</a>
+<span class="sourceLineNo">1155</span><a id="line.1155">     * @since 1.0.11</a>
+<span class="sourceLineNo">1156</span><a id="line.1156">     */</a>
+<span class="sourceLineNo">1157</span><a id="line.1157">    public static TickUnitSource createStandardDateTickUnits(TimeZone zone,</a>
+<span class="sourceLineNo">1158</span><a id="line.1158">            Locale locale) {</a>
+<span class="sourceLineNo">1159</span><a id="line.1159"></a>
+<span class="sourceLineNo">1160</span><a id="line.1160">        ParamChecks.nullNotPermitted(zone, "zone");</a>
+<span class="sourceLineNo">1161</span><a id="line.1161">        ParamChecks.nullNotPermitted(locale, "locale");</a>
+<span class="sourceLineNo">1162</span><a id="line.1162">        TickUnits units = new TickUnits();</a>
+<span class="sourceLineNo">1163</span><a id="line.1163"></a>
+<span class="sourceLineNo">1164</span><a id="line.1164">        // date formatters</a>
+<span class="sourceLineNo">1165</span><a id="line.1165">        DateFormat f1 = new SimpleDateFormat("HH:mm:ss.SSS", locale);</a>
+<span class="sourceLineNo">1166</span><a id="line.1166">        DateFormat f2 = new SimpleDateFormat("HH:mm:ss", locale);</a>
+<span class="sourceLineNo">1167</span><a id="line.1167">        DateFormat f3 = new SimpleDateFormat("HH:mm", locale);</a>
+<span class="sourceLineNo">1168</span><a id="line.1168">        DateFormat f4 = new SimpleDateFormat("d-MMM, HH:mm", locale);</a>
+<span class="sourceLineNo">1169</span><a id="line.1169">        DateFormat f5 = new SimpleDateFormat("d-MMM", locale);</a>
+<span class="sourceLineNo">1170</span><a id="line.1170">        DateFormat f6 = new SimpleDateFormat("MMM-yyyy", locale);</a>
+<span class="sourceLineNo">1171</span><a id="line.1171">        DateFormat f7 = new SimpleDateFormat("yyyy", locale);</a>
+<span class="sourceLineNo">1172</span><a id="line.1172"></a>
+<span class="sourceLineNo">1173</span><a id="line.1173">        f1.setTimeZone(zone);</a>
+<span class="sourceLineNo">1174</span><a id="line.1174">        f2.setTimeZone(zone);</a>
+<span class="sourceLineNo">1175</span><a id="line.1175">        f3.setTimeZone(zone);</a>
+<span class="sourceLineNo">1176</span><a id="line.1176">        f4.setTimeZone(zone);</a>
+<span class="sourceLineNo">1177</span><a id="line.1177">        f5.setTimeZone(zone);</a>
+<span class="sourceLineNo">1178</span><a id="line.1178">        f6.setTimeZone(zone);</a>
+<span class="sourceLineNo">1179</span><a id="line.1179">        f7.setTimeZone(zone);</a>
+<span class="sourceLineNo">1180</span><a id="line.1180"></a>
+<span class="sourceLineNo">1181</span><a id="line.1181">        // milliseconds</a>
+<span class="sourceLineNo">1182</span><a id="line.1182">        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 1, f1));</a>
+<span class="sourceLineNo">1183</span><a id="line.1183">        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 5,</a>
+<span class="sourceLineNo">1184</span><a id="line.1184">                DateTickUnitType.MILLISECOND, 1, f1));</a>
+<span class="sourceLineNo">1185</span><a id="line.1185">        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 10,</a>
+<span class="sourceLineNo">1186</span><a id="line.1186">                DateTickUnitType.MILLISECOND, 1, f1));</a>
+<span class="sourceLineNo">1187</span><a id="line.1187">        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 25,</a>
+<span class="sourceLineNo">1188</span><a id="line.1188">                DateTickUnitType.MILLISECOND, 5, f1));</a>
+<span class="sourceLineNo">1189</span><a id="line.1189">        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 50,</a>
+<span class="sourceLineNo">1190</span><a id="line.1190">                DateTickUnitType.MILLISECOND, 10, f1));</a>
+<span class="sourceLineNo">1191</span><a id="line.1191">        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 100,</a>
+<span class="sourceLineNo">1192</span><a id="line.1192">                DateTickUnitType.MILLISECOND, 10, f1));</a>
+<span class="sourceLineNo">1193</span><a id="line.1193">        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 250,</a>
+<span class="sourceLineNo">1194</span><a id="line.1194">                DateTickUnitType.MILLISECOND, 10, f1));</a>
+<span class="sourceLineNo">1195</span><a id="line.1195">        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 500,</a>
+<span class="sourceLineNo">1196</span><a id="line.1196">                DateTickUnitType.MILLISECOND, 50, f1));</a>
+<span class="sourceLineNo">1197</span><a id="line.1197"></a>
+<span class="sourceLineNo">1198</span><a id="line.1198">        // seconds</a>
+<span class="sourceLineNo">1199</span><a id="line.1199">        units.add(new DateTickUnit(DateTickUnitType.SECOND, 1,</a>
+<span class="sourceLineNo">1200</span><a id="line.1200">                DateTickUnitType.MILLISECOND, 50, f2));</a>
+<span class="sourceLineNo">1201</span><a id="line.1201">        units.add(new DateTickUnit(DateTickUnitType.SECOND, 5,</a>
+<span class="sourceLineNo">1202</span><a id="line.1202">                DateTickUnitType.SECOND, 1, f2));</a>
+<span class="sourceLineNo">1203</span><a id="line.1203">        units.add(new DateTickUnit(DateTickUnitType.SECOND, 10,</a>
+<span class="sourceLineNo">1204</span><a id="line.1204">                DateTickUnitType.SECOND, 1, f2));</a>
+<span class="sourceLineNo">1205</span><a id="line.1205">        units.add(new DateTickUnit(DateTickUnitType.SECOND, 30,</a>
+<span class="sourceLineNo">1206</span><a id="line.1206">                DateTickUnitType.SECOND, 5, f2));</a>
+<span class="sourceLineNo">1207</span><a id="line.1207"></a>
+<span class="sourceLineNo">1208</span><a id="line.1208">        // minutes</a>
+<span class="sourceLineNo">1209</span><a id="line.1209">        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 1,</a>
+<span class="sourceLineNo">1210</span><a id="line.1210">                DateTickUnitType.SECOND, 5, f3));</a>
+<span class="sourceLineNo">1211</span><a id="line.1211">        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 2,</a>
+<span class="sourceLineNo">1212</span><a id="line.1212">                DateTickUnitType.SECOND, 10, f3));</a>
+<span class="sourceLineNo">1213</span><a id="line.1213">        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 5,</a>
+<span class="sourceLineNo">1214</span><a id="line.1214">                DateTickUnitType.MINUTE, 1, f3));</a>
+<span class="sourceLineNo">1215</span><a id="line.1215">        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 10,</a>
+<span class="sourceLineNo">1216</span><a id="line.1216">                DateTickUnitType.MINUTE, 1, f3));</a>
+<span class="sourceLineNo">1217</span><a id="line.1217">        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 15,</a>
+<span class="sourceLineNo">1218</span><a id="line.1218">                DateTickUnitType.MINUTE, 5, f3));</a>
+<span class="sourceLineNo">1219</span><a id="line.1219">        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 20,</a>
+<span class="sourceLineNo">1220</span><a id="line.1220">                DateTickUnitType.MINUTE, 5, f3));</a>
+<span class="sourceLineNo">1221</span><a id="line.1221">        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 30,</a>
+<span class="sourceLineNo">1222</span><a id="line.1222">                DateTickUnitType.MINUTE, 5, f3));</a>
+<span class="sourceLineNo">1223</span><a id="line.1223"></a>
+<span class="sourceLineNo">1224</span><a id="line.1224">        // hours</a>
+<span class="sourceLineNo">1225</span><a id="line.1225">        units.add(new DateTickUnit(DateTickUnitType.HOUR, 1,</a>
+<span class="sourceLineNo">1226</span><a id="line.1226">                DateTickUnitType.MINUTE, 5, f3));</a>
+<span class="sourceLineNo">1227</span><a id="line.1227">        units.add(new DateTickUnit(DateTickUnitType.HOUR, 2,</a>
+<span class="sourceLineNo">1228</span><a id="line.1228">                DateTickUnitType.MINUTE, 10, f3));</a>
+<span class="sourceLineNo">1229</span><a id="line.1229">        units.add(new DateTickUnit(DateTickUnitType.HOUR, 4,</a>
+<span class="sourceLineNo">1230</span><a id="line.1230">                DateTickUnitType.MINUTE, 30, f3));</a>
+<span class="sourceLineNo">1231</span><a id="line.1231">        units.add(new DateTickUnit(DateTickUnitType.HOUR, 6,</a>
+<span class="sourceLineNo">1232</span><a id="line.1232">                DateTickUnitType.HOUR, 1, f3));</a>
+<span class="sourceLineNo">1233</span><a id="line.1233">        units.add(new DateTickUnit(DateTickUnitType.HOUR, 12,</a>
+<span class="sourceLineNo">1234</span><a id="line.1234">                DateTickUnitType.HOUR, 1, f4));</a>
+<span class="sourceLineNo">1235</span><a id="line.1235"></a>
+<span class="sourceLineNo">1236</span><a id="line.1236">        // days</a>
+<span class="sourceLineNo">1237</span><a id="line.1237">        units.add(new DateTickUnit(DateTickUnitType.DAY, 1,</a>
+<span class="sourceLineNo">1238</span><a id="line.1238">                DateTickUnitType.HOUR, 1, f5));</a>
+<span class="sourceLineNo">1239</span><a id="line.1239">        units.add(new DateTickUnit(DateTickUnitType.DAY, 2,</a>
+<span class="sourceLineNo">1240</span><a id="line.1240">                DateTickUnitType.HOUR, 1, f5));</a>
+<span class="sourceLineNo">1241</span><a id="line.1241">        units.add(new DateTickUnit(DateTickUnitType.DAY, 7,</a>
+<span class="sourceLineNo">1242</span><a id="line.1242">                DateTickUnitType.DAY, 1, f5));</a>
+<span class="sourceLineNo">1243</span><a id="line.1243">        units.add(new DateTickUnit(DateTickUnitType.DAY, 15,</a>
+<span class="sourceLineNo">1244</span><a id="line.1244">                DateTickUnitType.DAY, 1, f5));</a>
+<span class="sourceLineNo">1245</span><a id="line.1245"></a>
+<span class="sourceLineNo">1246</span><a id="line.1246">        // months</a>
+<span class="sourceLineNo">1247</span><a id="line.1247">        units.add(new DateTickUnit(DateTickUnitType.MONTH, 1,</a>
+<span class="sourceLineNo">1248</span><a id="line.1248">                DateTickUnitType.DAY, 1, f6));</a>
+<span class="sourceLineNo">1249</span><a id="line.1249">        units.add(new DateTickUnit(DateTickUnitType.MONTH, 2,</a>
+<span class="sourceLineNo">1250</span><a id="line.1250">                DateTickUnitType.DAY, 1, f6));</a>
+<span class="sourceLineNo">1251</span><a id="line.1251">        units.add(new DateTickUnit(DateTickUnitType.MONTH, 3,</a>
+<span class="sourceLineNo">1252</span><a id="line.1252">                DateTickUnitType.MONTH, 1, f6));</a>
+<span class="sourceLineNo">1253</span><a id="line.1253">        units.add(new DateTickUnit(DateTickUnitType.MONTH, 4,</a>
+<span class="sourceLineNo">1254</span><a id="line.1254">                DateTickUnitType.MONTH, 1, f6));</a>
+<span class="sourceLineNo">1255</span><a id="line.1255">        units.add(new DateTickUnit(DateTickUnitType.MONTH, 6,</a>
+<span class="sourceLineNo">1256</span><a id="line.1256">                DateTickUnitType.MONTH, 1, f6));</a>
+<span class="sourceLineNo">1257</span><a id="line.1257"></a>
+<span class="sourceLineNo">1258</span><a id="line.1258">        // years</a>
+<span class="sourceLineNo">1259</span><a id="line.1259">        units.add(new DateTickUnit(DateTickUnitType.YEAR, 1,</a>
+<span class="sourceLineNo">1260</span><a id="line.1260">                DateTickUnitType.MONTH, 1, f7));</a>
+<span class="sourceLineNo">1261</span><a id="line.1261">        units.add(new DateTickUnit(DateTickUnitType.YEAR, 2,</a>
+<span class="sourceLineNo">1262</span><a id="line.1262">                DateTickUnitType.MONTH, 3, f7));</a>
+<span class="sourceLineNo">1263</span><a id="line.1263">        units.add(new DateTickUnit(DateTickUnitType.YEAR, 5,</a>
+<span class="sourceLineNo">1264</span><a id="line.1264">                DateTickUnitType.YEAR, 1, f7));</a>
+<span class="sourceLineNo">1265</span><a id="line.1265">        units.add(new DateTickUnit(DateTickUnitType.YEAR, 10,</a>
+<span class="sourceLineNo">1266</span><a id="line.1266">                DateTickUnitType.YEAR, 1, f7));</a>
+<span class="sourceLineNo">1267</span><a id="line.1267">        units.add(new DateTickUnit(DateTickUnitType.YEAR, 25,</a>
+<span class="sourceLineNo">1268</span><a id="line.1268">                DateTickUnitType.YEAR, 5, f7));</a>
+<span class="sourceLineNo">1269</span><a id="line.1269">        units.add(new DateTickUnit(DateTickUnitType.YEAR, 50,</a>
+<span class="sourceLineNo">1270</span><a id="line.1270">                DateTickUnitType.YEAR, 10, f7));</a>
+<span class="sourceLineNo">1271</span><a id="line.1271">        units.add(new DateTickUnit(DateTickUnitType.YEAR, 100,</a>
+<span class="sourceLineNo">1272</span><a id="line.1272">                DateTickUnitType.YEAR, 20, f7));</a>
+<span class="sourceLineNo">1273</span><a id="line.1273"></a>
+<span class="sourceLineNo">1274</span><a id="line.1274">        return units;</a>
+<span class="sourceLineNo">1275</span><a id="line.1275"></a>
+<span class="sourceLineNo">1276</span><a id="line.1276">    }</a>
+<span class="sourceLineNo">1277</span><a id="line.1277"></a>
+<span class="sourceLineNo">1278</span><a id="line.1278">    /**</a>
+<span class="sourceLineNo">1279</span><a id="line.1279">     * Rescales the axis to ensure that all data is visible.</a>
+<span class="sourceLineNo">1280</span><a id="line.1280">     */</a>
+<span class="sourceLineNo">1281</span><a id="line.1281">    @Override</a>
+<span class="sourceLineNo">1282</span><a id="line.1282">    protected void autoAdjustRange() {</a>
+<span class="sourceLineNo">1283</span><a id="line.1283"></a>
+<span class="sourceLineNo">1284</span><a id="line.1284">        Plot plot = getPlot();</a>
+<span class="sourceLineNo">1285</span><a id="line.1285"></a>
+<span class="sourceLineNo">1286</span><a id="line.1286">        if (plot == null) {</a>
+<span class="sourceLineNo">1287</span><a id="line.1287">            return;  // no plot, no data</a>
+<span class="sourceLineNo">1288</span><a id="line.1288">        }</a>
+<span class="sourceLineNo">1289</span><a id="line.1289"></a>
+<span class="sourceLineNo">1290</span><a id="line.1290">        if (plot instanceof ValueAxisPlot) {</a>
+<span class="sourceLineNo">1291</span><a id="line.1291">            ValueAxisPlot vap = (ValueAxisPlot) plot;</a>
+<span class="sourceLineNo">1292</span><a id="line.1292"></a>
+<span class="sourceLineNo">1293</span><a id="line.1293">            Range r = vap.getDataRange(this);</a>
+<span class="sourceLineNo">1294</span><a id="line.1294">            if (r == null) {</a>
+<span class="sourceLineNo">1295</span><a id="line.1295">                if (this.timeline instanceof SegmentedTimeline) {</a>
+<span class="sourceLineNo">1296</span><a id="line.1296">                    //Timeline hasn't method getStartTime()</a>
+<span class="sourceLineNo">1297</span><a id="line.1297">                    r = new DateRange((</a>
+<span class="sourceLineNo">1298</span><a id="line.1298">                            (SegmentedTimeline) this.timeline).getStartTime(),</a>
+<span class="sourceLineNo">1299</span><a id="line.1299">                            ((SegmentedTimeline) this.timeline).getStartTime()</a>
+<span class="sourceLineNo">1300</span><a id="line.1300">                            + 1);</a>
+<span class="sourceLineNo">1301</span><a id="line.1301">                }</a>
+<span class="sourceLineNo">1302</span><a id="line.1302">                else {</a>
+<span class="sourceLineNo">1303</span><a id="line.1303">                    r = new DateRange();</a>
+<span class="sourceLineNo">1304</span><a id="line.1304">                }</a>
+<span class="sourceLineNo">1305</span><a id="line.1305">            }</a>
+<span class="sourceLineNo">1306</span><a id="line.1306"></a>
+<span class="sourceLineNo">1307</span><a id="line.1307">            long upper = this.timeline.toTimelineValue(</a>
+<span class="sourceLineNo">1308</span><a id="line.1308">                    (long) r.getUpperBound());</a>
+<span class="sourceLineNo">1309</span><a id="line.1309">            long lower;</a>
+<span class="sourceLineNo">1310</span><a id="line.1310">            long fixedAutoRange = (long) getFixedAutoRange();</a>
+<span class="sourceLineNo">1311</span><a id="line.1311">            if (fixedAutoRange &gt; 0.0) {</a>
+<span class="sourceLineNo">1312</span><a id="line.1312">                lower = upper - fixedAutoRange;</a>
+<span class="sourceLineNo">1313</span><a id="line.1313">            }</a>
+<span class="sourceLineNo">1314</span><a id="line.1314">            else {</a>
+<span class="sourceLineNo">1315</span><a id="line.1315">                lower = this.timeline.toTimelineValue((long) r.getLowerBound());</a>
+<span class="sourceLineNo">1316</span><a id="line.1316">                double range = upper - lower;</a>
+<span class="sourceLineNo">1317</span><a id="line.1317">                long minRange = (long) getAutoRangeMinimumSize();</a>
+<span class="sourceLineNo">1318</span><a id="line.1318">                if (range &lt; minRange) {</a>
+<span class="sourceLineNo">1319</span><a id="line.1319">                    long expand = (long) (minRange - range) / 2;</a>
+<span class="sourceLineNo">1320</span><a id="line.1320">                    upper = upper + expand;</a>
+<span class="sourceLineNo">1321</span><a id="line.1321">                    lower = lower - expand;</a>
+<span class="sourceLineNo">1322</span><a id="line.1322">                }</a>
+<span class="sourceLineNo">1323</span><a id="line.1323">                upper = upper + (long) (range * getUpperMargin());</a>
+<span class="sourceLineNo">1324</span><a id="line.1324">                lower = lower - (long) (range * getLowerMargin());</a>
+<span class="sourceLineNo">1325</span><a id="line.1325">            }</a>
+<span class="sourceLineNo">1326</span><a id="line.1326"></a>
+<span class="sourceLineNo">1327</span><a id="line.1327">            upper = this.timeline.toMillisecond(upper);</a>
+<span class="sourceLineNo">1328</span><a id="line.1328">            lower = this.timeline.toMillisecond(lower);</a>
+<span class="sourceLineNo">1329</span><a id="line.1329">            DateRange dr = new DateRange(new Date(lower), new Date(upper));</a>
+<span class="sourceLineNo">1330</span><a id="line.1330">            setRange(dr, false, false);</a>
+<span class="sourceLineNo">1331</span><a id="line.1331">        }</a>
+<span class="sourceLineNo">1332</span><a id="line.1332"></a>
+<span class="sourceLineNo">1333</span><a id="line.1333">    }</a>
+<span class="sourceLineNo">1334</span><a id="line.1334"></a>
+<span class="sourceLineNo">1335</span><a id="line.1335">    /**</a>
+<span class="sourceLineNo">1336</span><a id="line.1336">     * Selects an appropriate tick value for the axis.  The strategy is to</a>
+<span class="sourceLineNo">1337</span><a id="line.1337">     * display as many ticks as possible (selected from an array of 'standard'</a>
+<span class="sourceLineNo">1338</span><a id="line.1338">     * tick units) without the labels overlapping.</a>
+<span class="sourceLineNo">1339</span><a id="line.1339">     *</a>
+<span class="sourceLineNo">1340</span><a id="line.1340">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1341</span><a id="line.1341">     * @param dataArea  the area defined by the axes.</a>
+<span class="sourceLineNo">1342</span><a id="line.1342">     * @param edge  the axis location.</a>
+<span class="sourceLineNo">1343</span><a id="line.1343">     */</a>
+<span class="sourceLineNo">1344</span><a id="line.1344">    protected void selectAutoTickUnit(Graphics2D g2, Rectangle2D dataArea,</a>
+<span class="sourceLineNo">1345</span><a id="line.1345">            RectangleEdge edge) {</a>
+<span class="sourceLineNo">1346</span><a id="line.1346"></a>
+<span class="sourceLineNo">1347</span><a id="line.1347">        if (RectangleEdge.isTopOrBottom(edge)) {</a>
+<span class="sourceLineNo">1348</span><a id="line.1348">            selectHorizontalAutoTickUnit(g2, dataArea, edge);</a>
+<span class="sourceLineNo">1349</span><a id="line.1349">        }</a>
+<span class="sourceLineNo">1350</span><a id="line.1350">        else if (RectangleEdge.isLeftOrRight(edge)) {</a>
+<span class="sourceLineNo">1351</span><a id="line.1351">            selectVerticalAutoTickUnit(g2, dataArea, edge);</a>
+<span class="sourceLineNo">1352</span><a id="line.1352">        }</a>
+<span class="sourceLineNo">1353</span><a id="line.1353"></a>
+<span class="sourceLineNo">1354</span><a id="line.1354">    }</a>
+<span class="sourceLineNo">1355</span><a id="line.1355"></a>
+<span class="sourceLineNo">1356</span><a id="line.1356">    /**</a>
+<span class="sourceLineNo">1357</span><a id="line.1357">     * Selects an appropriate tick size for the axis.  The strategy is to</a>
+<span class="sourceLineNo">1358</span><a id="line.1358">     * display as many ticks as possible (selected from a collection of</a>
+<span class="sourceLineNo">1359</span><a id="line.1359">     * 'standard' tick units) without the labels overlapping.</a>
+<span class="sourceLineNo">1360</span><a id="line.1360">     *</a>
+<span class="sourceLineNo">1361</span><a id="line.1361">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1362</span><a id="line.1362">     * @param dataArea  the area defined by the axes.</a>
+<span class="sourceLineNo">1363</span><a id="line.1363">     * @param edge  the axis location.</a>
+<span class="sourceLineNo">1364</span><a id="line.1364">     */</a>
+<span class="sourceLineNo">1365</span><a id="line.1365">    protected void selectHorizontalAutoTickUnit(Graphics2D g2,</a>
+<span class="sourceLineNo">1366</span><a id="line.1366">            Rectangle2D dataArea, RectangleEdge edge) {</a>
+<span class="sourceLineNo">1367</span><a id="line.1367"></a>
+<span class="sourceLineNo">1368</span><a id="line.1368">        long shift = 0;</a>
+<span class="sourceLineNo">1369</span><a id="line.1369">        if (this.timeline instanceof SegmentedTimeline) {</a>
+<span class="sourceLineNo">1370</span><a id="line.1370">            shift = ((SegmentedTimeline) this.timeline).getStartTime();</a>
+<span class="sourceLineNo">1371</span><a id="line.1371">        }</a>
+<span class="sourceLineNo">1372</span><a id="line.1372">        double zero = valueToJava2D(shift + 0.0, dataArea, edge);</a>
+<span class="sourceLineNo">1373</span><a id="line.1373">        double tickLabelWidth = estimateMaximumTickLabelWidth(g2,</a>
+<span class="sourceLineNo">1374</span><a id="line.1374">                getTickUnit());</a>
+<span class="sourceLineNo">1375</span><a id="line.1375"></a>
+<span class="sourceLineNo">1376</span><a id="line.1376">        // start with the current tick unit...</a>
+<span class="sourceLineNo">1377</span><a id="line.1377">        TickUnitSource tickUnits = getStandardTickUnits();</a>
+<span class="sourceLineNo">1378</span><a id="line.1378">        TickUnit unit1 = tickUnits.getCeilingTickUnit(getTickUnit());</a>
+<span class="sourceLineNo">1379</span><a id="line.1379">        double x1 = valueToJava2D(shift + unit1.getSize(), dataArea, edge);</a>
+<span class="sourceLineNo">1380</span><a id="line.1380">        double unit1Width = Math.abs(x1 - zero);</a>
+<span class="sourceLineNo">1381</span><a id="line.1381"></a>
+<span class="sourceLineNo">1382</span><a id="line.1382">        // then extrapolate...</a>
+<span class="sourceLineNo">1383</span><a id="line.1383">        double guess = (tickLabelWidth / unit1Width) * unit1.getSize();</a>
+<span class="sourceLineNo">1384</span><a id="line.1384">        DateTickUnit unit2 = (DateTickUnit) tickUnits.getCeilingTickUnit(guess);</a>
+<span class="sourceLineNo">1385</span><a id="line.1385">        double x2 = valueToJava2D(shift + unit2.getSize(), dataArea, edge);</a>
+<span class="sourceLineNo">1386</span><a id="line.1386">        double unit2Width = Math.abs(x2 - zero);</a>
+<span class="sourceLineNo">1387</span><a id="line.1387">        tickLabelWidth = estimateMaximumTickLabelWidth(g2, unit2);</a>
+<span class="sourceLineNo">1388</span><a id="line.1388">        if (tickLabelWidth &gt; unit2Width) {</a>
+<span class="sourceLineNo">1389</span><a id="line.1389">            unit2 = (DateTickUnit) tickUnits.getLargerTickUnit(unit2);</a>
+<span class="sourceLineNo">1390</span><a id="line.1390">        }</a>
+<span class="sourceLineNo">1391</span><a id="line.1391">        setTickUnit(unit2, false, false);</a>
+<span class="sourceLineNo">1392</span><a id="line.1392">    }</a>
+<span class="sourceLineNo">1393</span><a id="line.1393"></a>
+<span class="sourceLineNo">1394</span><a id="line.1394">    /**</a>
+<span class="sourceLineNo">1395</span><a id="line.1395">     * Selects an appropriate tick size for the axis.  The strategy is to</a>
+<span class="sourceLineNo">1396</span><a id="line.1396">     * display as many ticks as possible (selected from a collection of</a>
+<span class="sourceLineNo">1397</span><a id="line.1397">     * 'standard' tick units) without the labels overlapping.</a>
+<span class="sourceLineNo">1398</span><a id="line.1398">     *</a>
+<span class="sourceLineNo">1399</span><a id="line.1399">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1400</span><a id="line.1400">     * @param dataArea  the area in which the plot should be drawn.</a>
+<span class="sourceLineNo">1401</span><a id="line.1401">     * @param edge  the axis location.</a>
+<span class="sourceLineNo">1402</span><a id="line.1402">     */</a>
+<span class="sourceLineNo">1403</span><a id="line.1403">    protected void selectVerticalAutoTickUnit(Graphics2D g2,</a>
+<span class="sourceLineNo">1404</span><a id="line.1404">            Rectangle2D dataArea, RectangleEdge edge) {</a>
+<span class="sourceLineNo">1405</span><a id="line.1405"></a>
+<span class="sourceLineNo">1406</span><a id="line.1406">        // start with the current tick unit...</a>
+<span class="sourceLineNo">1407</span><a id="line.1407">        TickUnitSource tickUnits = getStandardTickUnits();</a>
+<span class="sourceLineNo">1408</span><a id="line.1408">        double zero = valueToJava2D(0.0, dataArea, edge);</a>
+<span class="sourceLineNo">1409</span><a id="line.1409"></a>
+<span class="sourceLineNo">1410</span><a id="line.1410">        // start with a unit that is at least 1/10th of the axis length</a>
+<span class="sourceLineNo">1411</span><a id="line.1411">        double estimate1 = getRange().getLength() / 10.0;</a>
+<span class="sourceLineNo">1412</span><a id="line.1412">        DateTickUnit candidate1</a>
+<span class="sourceLineNo">1413</span><a id="line.1413">            = (DateTickUnit) tickUnits.getCeilingTickUnit(estimate1);</a>
+<span class="sourceLineNo">1414</span><a id="line.1414">        double labelHeight1 = estimateMaximumTickLabelHeight(g2, candidate1);</a>
+<span class="sourceLineNo">1415</span><a id="line.1415">        double y1 = valueToJava2D(candidate1.getSize(), dataArea, edge);</a>
+<span class="sourceLineNo">1416</span><a id="line.1416">        double candidate1UnitHeight = Math.abs(y1 - zero);</a>
+<span class="sourceLineNo">1417</span><a id="line.1417"></a>
+<span class="sourceLineNo">1418</span><a id="line.1418">        // now extrapolate based on label height and unit height...</a>
+<span class="sourceLineNo">1419</span><a id="line.1419">        double estimate2</a>
+<span class="sourceLineNo">1420</span><a id="line.1420">            = (labelHeight1 / candidate1UnitHeight) * candidate1.getSize();</a>
+<span class="sourceLineNo">1421</span><a id="line.1421">        DateTickUnit candidate2</a>
+<span class="sourceLineNo">1422</span><a id="line.1422">            = (DateTickUnit) tickUnits.getCeilingTickUnit(estimate2);</a>
+<span class="sourceLineNo">1423</span><a id="line.1423">        double labelHeight2 = estimateMaximumTickLabelHeight(g2, candidate2);</a>
+<span class="sourceLineNo">1424</span><a id="line.1424">        double y2 = valueToJava2D(candidate2.getSize(), dataArea, edge);</a>
+<span class="sourceLineNo">1425</span><a id="line.1425">        double unit2Height = Math.abs(y2 - zero);</a>
+<span class="sourceLineNo">1426</span><a id="line.1426"></a>
+<span class="sourceLineNo">1427</span><a id="line.1427">       // make final selection...</a>
+<span class="sourceLineNo">1428</span><a id="line.1428">       DateTickUnit finalUnit;</a>
+<span class="sourceLineNo">1429</span><a id="line.1429">       if (labelHeight2 &lt; unit2Height) {</a>
+<span class="sourceLineNo">1430</span><a id="line.1430">           finalUnit = candidate2;</a>
+<span class="sourceLineNo">1431</span><a id="line.1431">       }</a>
+<span class="sourceLineNo">1432</span><a id="line.1432">       else {</a>
+<span class="sourceLineNo">1433</span><a id="line.1433">           finalUnit = (DateTickUnit) tickUnits.getLargerTickUnit(candidate2);</a>
+<span class="sourceLineNo">1434</span><a id="line.1434">       }</a>
+<span class="sourceLineNo">1435</span><a id="line.1435">       setTickUnit(finalUnit, false, false);</a>
+<span class="sourceLineNo">1436</span><a id="line.1436"></a>
+<span class="sourceLineNo">1437</span><a id="line.1437">    }</a>
+<span class="sourceLineNo">1438</span><a id="line.1438"></a>
+<span class="sourceLineNo">1439</span><a id="line.1439">    /**</a>
+<span class="sourceLineNo">1440</span><a id="line.1440">     * Estimates the maximum width of the tick labels, assuming the specified</a>
+<span class="sourceLineNo">1441</span><a id="line.1441">     * tick unit is used.</a>
+<span class="sourceLineNo">1442</span><a id="line.1442">     * &lt;P&gt;</a>
+<span class="sourceLineNo">1443</span><a id="line.1443">     * Rather than computing the string bounds of every tick on the axis, we</a>
+<span class="sourceLineNo">1444</span><a id="line.1444">     * just look at two values: the lower bound and the upper bound for the</a>
+<span class="sourceLineNo">1445</span><a id="line.1445">     * axis.  These two values will usually be representative.</a>
+<span class="sourceLineNo">1446</span><a id="line.1446">     *</a>
+<span class="sourceLineNo">1447</span><a id="line.1447">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1448</span><a id="line.1448">     * @param unit  the tick unit to use for calculation.</a>
+<span class="sourceLineNo">1449</span><a id="line.1449">     *</a>
+<span class="sourceLineNo">1450</span><a id="line.1450">     * @return The estimated maximum width of the tick labels.</a>
+<span class="sourceLineNo">1451</span><a id="line.1451">     */</a>
+<span class="sourceLineNo">1452</span><a id="line.1452">    private double estimateMaximumTickLabelWidth(Graphics2D g2, </a>
+<span class="sourceLineNo">1453</span><a id="line.1453">            DateTickUnit unit) {</a>
+<span class="sourceLineNo">1454</span><a id="line.1454"></a>
+<span class="sourceLineNo">1455</span><a id="line.1455">        RectangleInsets tickLabelInsets = getTickLabelInsets();</a>
+<span class="sourceLineNo">1456</span><a id="line.1456">        double result = tickLabelInsets.getLeft() + tickLabelInsets.getRight();</a>
+<span class="sourceLineNo">1457</span><a id="line.1457"></a>
+<span class="sourceLineNo">1458</span><a id="line.1458">        Font tickLabelFont = getTickLabelFont();</a>
+<span class="sourceLineNo">1459</span><a id="line.1459">        FontRenderContext frc = g2.getFontRenderContext();</a>
+<span class="sourceLineNo">1460</span><a id="line.1460">        LineMetrics lm = tickLabelFont.getLineMetrics("ABCxyz", frc);</a>
+<span class="sourceLineNo">1461</span><a id="line.1461">        if (isVerticalTickLabels()) {</a>
+<span class="sourceLineNo">1462</span><a id="line.1462">            // all tick labels have the same width (equal to the height of</a>
+<span class="sourceLineNo">1463</span><a id="line.1463">            // the font)...</a>
+<span class="sourceLineNo">1464</span><a id="line.1464">            result += lm.getHeight();</a>
+<span class="sourceLineNo">1465</span><a id="line.1465">        }</a>
+<span class="sourceLineNo">1466</span><a id="line.1466">        else {</a>
+<span class="sourceLineNo">1467</span><a id="line.1467">            // look at lower and upper bounds...</a>
+<span class="sourceLineNo">1468</span><a id="line.1468">            DateRange range = (DateRange) getRange();</a>
+<span class="sourceLineNo">1469</span><a id="line.1469">            Date lower = range.getLowerDate();</a>
+<span class="sourceLineNo">1470</span><a id="line.1470">            Date upper = range.getUpperDate();</a>
+<span class="sourceLineNo">1471</span><a id="line.1471">            String lowerStr, upperStr;</a>
+<span class="sourceLineNo">1472</span><a id="line.1472">            DateFormat formatter = getDateFormatOverride();</a>
+<span class="sourceLineNo">1473</span><a id="line.1473">            if (formatter != null) {</a>
+<span class="sourceLineNo">1474</span><a id="line.1474">                lowerStr = formatter.format(lower);</a>
+<span class="sourceLineNo">1475</span><a id="line.1475">                upperStr = formatter.format(upper);</a>
+<span class="sourceLineNo">1476</span><a id="line.1476">            }</a>
+<span class="sourceLineNo">1477</span><a id="line.1477">            else {</a>
+<span class="sourceLineNo">1478</span><a id="line.1478">                lowerStr = unit.dateToString(lower);</a>
+<span class="sourceLineNo">1479</span><a id="line.1479">                upperStr = unit.dateToString(upper);</a>
+<span class="sourceLineNo">1480</span><a id="line.1480">            }</a>
+<span class="sourceLineNo">1481</span><a id="line.1481">            FontMetrics fm = g2.getFontMetrics(tickLabelFont);</a>
+<span class="sourceLineNo">1482</span><a id="line.1482">            double w1 = fm.stringWidth(lowerStr);</a>
+<span class="sourceLineNo">1483</span><a id="line.1483">            double w2 = fm.stringWidth(upperStr);</a>
+<span class="sourceLineNo">1484</span><a id="line.1484">            result += Math.max(w1, w2);</a>
+<span class="sourceLineNo">1485</span><a id="line.1485">        }</a>
+<span class="sourceLineNo">1486</span><a id="line.1486"></a>
+<span class="sourceLineNo">1487</span><a id="line.1487">        return result;</a>
+<span class="sourceLineNo">1488</span><a id="line.1488"></a>
+<span class="sourceLineNo">1489</span><a id="line.1489">    }</a>
+<span class="sourceLineNo">1490</span><a id="line.1490"></a>
+<span class="sourceLineNo">1491</span><a id="line.1491">    /**</a>
+<span class="sourceLineNo">1492</span><a id="line.1492">     * Estimates the maximum width of the tick labels, assuming the specified</a>
+<span class="sourceLineNo">1493</span><a id="line.1493">     * tick unit is used.</a>
+<span class="sourceLineNo">1494</span><a id="line.1494">     * &lt;P&gt;</a>
+<span class="sourceLineNo">1495</span><a id="line.1495">     * Rather than computing the string bounds of every tick on the axis, we</a>
+<span class="sourceLineNo">1496</span><a id="line.1496">     * just look at two values: the lower bound and the upper bound for the</a>
+<span class="sourceLineNo">1497</span><a id="line.1497">     * axis.  These two values will usually be representative.</a>
+<span class="sourceLineNo">1498</span><a id="line.1498">     *</a>
+<span class="sourceLineNo">1499</span><a id="line.1499">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1500</span><a id="line.1500">     * @param unit  the tick unit to use for calculation.</a>
+<span class="sourceLineNo">1501</span><a id="line.1501">     *</a>
+<span class="sourceLineNo">1502</span><a id="line.1502">     * @return The estimated maximum width of the tick labels.</a>
+<span class="sourceLineNo">1503</span><a id="line.1503">     */</a>
+<span class="sourceLineNo">1504</span><a id="line.1504">    private double estimateMaximumTickLabelHeight(Graphics2D g2,</a>
+<span class="sourceLineNo">1505</span><a id="line.1505">            DateTickUnit unit) {</a>
+<span class="sourceLineNo">1506</span><a id="line.1506"></a>
+<span class="sourceLineNo">1507</span><a id="line.1507">        RectangleInsets tickLabelInsets = getTickLabelInsets();</a>
+<span class="sourceLineNo">1508</span><a id="line.1508">        double result = tickLabelInsets.getTop() + tickLabelInsets.getBottom();</a>
+<span class="sourceLineNo">1509</span><a id="line.1509"></a>
+<span class="sourceLineNo">1510</span><a id="line.1510">        Font tickLabelFont = getTickLabelFont();</a>
+<span class="sourceLineNo">1511</span><a id="line.1511">        FontRenderContext frc = g2.getFontRenderContext();</a>
+<span class="sourceLineNo">1512</span><a id="line.1512">        LineMetrics lm = tickLabelFont.getLineMetrics("ABCxyz", frc);</a>
+<span class="sourceLineNo">1513</span><a id="line.1513">        if (!isVerticalTickLabels()) {</a>
+<span class="sourceLineNo">1514</span><a id="line.1514">            // all tick labels have the same width (equal to the height of</a>
+<span class="sourceLineNo">1515</span><a id="line.1515">            // the font)...</a>
+<span class="sourceLineNo">1516</span><a id="line.1516">            result += lm.getHeight();</a>
+<span class="sourceLineNo">1517</span><a id="line.1517">        }</a>
+<span class="sourceLineNo">1518</span><a id="line.1518">        else {</a>
+<span class="sourceLineNo">1519</span><a id="line.1519">            // look at lower and upper bounds...</a>
+<span class="sourceLineNo">1520</span><a id="line.1520">            DateRange range = (DateRange) getRange();</a>
+<span class="sourceLineNo">1521</span><a id="line.1521">            Date lower = range.getLowerDate();</a>
+<span class="sourceLineNo">1522</span><a id="line.1522">            Date upper = range.getUpperDate();</a>
+<span class="sourceLineNo">1523</span><a id="line.1523">            String lowerStr, upperStr;</a>
+<span class="sourceLineNo">1524</span><a id="line.1524">            DateFormat formatter = getDateFormatOverride();</a>
+<span class="sourceLineNo">1525</span><a id="line.1525">            if (formatter != null) {</a>
+<span class="sourceLineNo">1526</span><a id="line.1526">                lowerStr = formatter.format(lower);</a>
+<span class="sourceLineNo">1527</span><a id="line.1527">                upperStr = formatter.format(upper);</a>
+<span class="sourceLineNo">1528</span><a id="line.1528">            }</a>
+<span class="sourceLineNo">1529</span><a id="line.1529">            else {</a>
+<span class="sourceLineNo">1530</span><a id="line.1530">                lowerStr = unit.dateToString(lower);</a>
+<span class="sourceLineNo">1531</span><a id="line.1531">                upperStr = unit.dateToString(upper);</a>
+<span class="sourceLineNo">1532</span><a id="line.1532">            }</a>
+<span class="sourceLineNo">1533</span><a id="line.1533">            FontMetrics fm = g2.getFontMetrics(tickLabelFont);</a>
+<span class="sourceLineNo">1534</span><a id="line.1534">            double w1 = fm.stringWidth(lowerStr);</a>
+<span class="sourceLineNo">1535</span><a id="line.1535">            double w2 = fm.stringWidth(upperStr);</a>
+<span class="sourceLineNo">1536</span><a id="line.1536">            result += Math.max(w1, w2);</a>
+<span class="sourceLineNo">1537</span><a id="line.1537">        }</a>
+<span class="sourceLineNo">1538</span><a id="line.1538"></a>
+<span class="sourceLineNo">1539</span><a id="line.1539">        return result;</a>
+<span class="sourceLineNo">1540</span><a id="line.1540"></a>
+<span class="sourceLineNo">1541</span><a id="line.1541">    }</a>
+<span class="sourceLineNo">1542</span><a id="line.1542"></a>
+<span class="sourceLineNo">1543</span><a id="line.1543">    /**</a>
+<span class="sourceLineNo">1544</span><a id="line.1544">     * Calculates the positions of the tick labels for the axis, storing the</a>
+<span class="sourceLineNo">1545</span><a id="line.1545">     * results in the tick label list (ready for drawing).</a>
+<span class="sourceLineNo">1546</span><a id="line.1546">     *</a>
+<span class="sourceLineNo">1547</span><a id="line.1547">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1548</span><a id="line.1548">     * @param state  the axis state.</a>
+<span class="sourceLineNo">1549</span><a id="line.1549">     * @param dataArea  the area in which the plot should be drawn.</a>
+<span class="sourceLineNo">1550</span><a id="line.1550">     * @param edge  the location of the axis.</a>
+<span class="sourceLineNo">1551</span><a id="line.1551">     *</a>
+<span class="sourceLineNo">1552</span><a id="line.1552">     * @return A list of ticks.</a>
+<span class="sourceLineNo">1553</span><a id="line.1553">     */</a>
+<span class="sourceLineNo">1554</span><a id="line.1554">    @Override</a>
+<span class="sourceLineNo">1555</span><a id="line.1555">    public List refreshTicks(Graphics2D g2, AxisState state, </a>
+<span class="sourceLineNo">1556</span><a id="line.1556">            Rectangle2D dataArea, RectangleEdge edge) {</a>
+<span class="sourceLineNo">1557</span><a id="line.1557"></a>
+<span class="sourceLineNo">1558</span><a id="line.1558">        List result = null;</a>
+<span class="sourceLineNo">1559</span><a id="line.1559">        if (RectangleEdge.isTopOrBottom(edge)) {</a>
+<span class="sourceLineNo">1560</span><a id="line.1560">            result = refreshTicksHorizontal(g2, dataArea, edge);</a>
+<span class="sourceLineNo">1561</span><a id="line.1561">        }</a>
+<span class="sourceLineNo">1562</span><a id="line.1562">        else if (RectangleEdge.isLeftOrRight(edge)) {</a>
+<span class="sourceLineNo">1563</span><a id="line.1563">            result = refreshTicksVertical(g2, dataArea, edge);</a>
+<span class="sourceLineNo">1564</span><a id="line.1564">        }</a>
+<span class="sourceLineNo">1565</span><a id="line.1565">        return result;</a>
+<span class="sourceLineNo">1566</span><a id="line.1566"></a>
+<span class="sourceLineNo">1567</span><a id="line.1567">    }</a>
+<span class="sourceLineNo">1568</span><a id="line.1568"></a>
+<span class="sourceLineNo">1569</span><a id="line.1569">    /**</a>
+<span class="sourceLineNo">1570</span><a id="line.1570">     * Corrects the given tick date for the position setting.</a>
+<span class="sourceLineNo">1571</span><a id="line.1571">     *</a>
+<span class="sourceLineNo">1572</span><a id="line.1572">     * @param time  the tick date/time.</a>
+<span class="sourceLineNo">1573</span><a id="line.1573">     * @param unit  the tick unit.</a>
+<span class="sourceLineNo">1574</span><a id="line.1574">     * @param position  the tick position.</a>
+<span class="sourceLineNo">1575</span><a id="line.1575">     *</a>
+<span class="sourceLineNo">1576</span><a id="line.1576">     * @return The adjusted time.</a>
+<span class="sourceLineNo">1577</span><a id="line.1577">     */</a>
+<span class="sourceLineNo">1578</span><a id="line.1578">    private Date correctTickDateForPosition(Date time, DateTickUnit unit,</a>
+<span class="sourceLineNo">1579</span><a id="line.1579">            DateTickMarkPosition position) {</a>
+<span class="sourceLineNo">1580</span><a id="line.1580">        Date result = time;</a>
+<span class="sourceLineNo">1581</span><a id="line.1581">        switch (unit.getUnit()) {</a>
+<span class="sourceLineNo">1582</span><a id="line.1582">            case DateTickUnit.MILLISECOND :</a>
+<span class="sourceLineNo">1583</span><a id="line.1583">            case DateTickUnit.SECOND :</a>
+<span class="sourceLineNo">1584</span><a id="line.1584">            case DateTickUnit.MINUTE :</a>
+<span class="sourceLineNo">1585</span><a id="line.1585">            case DateTickUnit.HOUR :</a>
+<span class="sourceLineNo">1586</span><a id="line.1586">            case DateTickUnit.DAY :</a>
+<span class="sourceLineNo">1587</span><a id="line.1587">                break;</a>
+<span class="sourceLineNo">1588</span><a id="line.1588">            case DateTickUnit.MONTH :</a>
+<span class="sourceLineNo">1589</span><a id="line.1589">                result = calculateDateForPosition(new Month(time,</a>
+<span class="sourceLineNo">1590</span><a id="line.1590">                        this.timeZone, this.locale), position);</a>
+<span class="sourceLineNo">1591</span><a id="line.1591">                break;</a>
+<span class="sourceLineNo">1592</span><a id="line.1592">            case DateTickUnit.YEAR :</a>
+<span class="sourceLineNo">1593</span><a id="line.1593">                result = calculateDateForPosition(new Year(time,</a>
+<span class="sourceLineNo">1594</span><a id="line.1594">                        this.timeZone, this.locale), position);</a>
+<span class="sourceLineNo">1595</span><a id="line.1595">                break;</a>
+<span class="sourceLineNo">1596</span><a id="line.1596"></a>
+<span class="sourceLineNo">1597</span><a id="line.1597">            default: break;</a>
+<span class="sourceLineNo">1598</span><a id="line.1598">        }</a>
+<span class="sourceLineNo">1599</span><a id="line.1599">        return result;</a>
+<span class="sourceLineNo">1600</span><a id="line.1600">    }</a>
+<span class="sourceLineNo">1601</span><a id="line.1601"></a>
+<span class="sourceLineNo">1602</span><a id="line.1602">    /**</a>
+<span class="sourceLineNo">1603</span><a id="line.1603">     * Recalculates the ticks for the date axis.</a>
+<span class="sourceLineNo">1604</span><a id="line.1604">     *</a>
+<span class="sourceLineNo">1605</span><a id="line.1605">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1606</span><a id="line.1606">     * @param dataArea  the area in which the data is to be drawn.</a>
+<span class="sourceLineNo">1607</span><a id="line.1607">     * @param edge  the location of the axis.</a>
+<span class="sourceLineNo">1608</span><a id="line.1608">     *</a>
+<span class="sourceLineNo">1609</span><a id="line.1609">     * @return A list of ticks.</a>
+<span class="sourceLineNo">1610</span><a id="line.1610">     */</a>
+<span class="sourceLineNo">1611</span><a id="line.1611">    protected List refreshTicksHorizontal(Graphics2D g2,</a>
+<span class="sourceLineNo">1612</span><a id="line.1612">                Rectangle2D dataArea, RectangleEdge edge) {</a>
+<span class="sourceLineNo">1613</span><a id="line.1613"></a>
+<span class="sourceLineNo">1614</span><a id="line.1614">        List result = new java.util.ArrayList();</a>
+<span class="sourceLineNo">1615</span><a id="line.1615"></a>
+<span class="sourceLineNo">1616</span><a id="line.1616">        Font tickLabelFont = getTickLabelFont();</a>
+<span class="sourceLineNo">1617</span><a id="line.1617">        g2.setFont(tickLabelFont);</a>
+<span class="sourceLineNo">1618</span><a id="line.1618"></a>
+<span class="sourceLineNo">1619</span><a id="line.1619">        if (isAutoTickUnitSelection()) {</a>
+<span class="sourceLineNo">1620</span><a id="line.1620">            selectAutoTickUnit(g2, dataArea, edge);</a>
+<span class="sourceLineNo">1621</span><a id="line.1621">        }</a>
+<span class="sourceLineNo">1622</span><a id="line.1622"></a>
+<span class="sourceLineNo">1623</span><a id="line.1623">        DateTickUnit unit = getTickUnit();</a>
+<span class="sourceLineNo">1624</span><a id="line.1624">        Date tickDate = calculateLowestVisibleTickValue(unit);</a>
+<span class="sourceLineNo">1625</span><a id="line.1625">        Date upperDate = getMaximumDate();</a>
+<span class="sourceLineNo">1626</span><a id="line.1626"></a>
+<span class="sourceLineNo">1627</span><a id="line.1627">        boolean hasRolled = false;</a>
+<span class="sourceLineNo">1628</span><a id="line.1628">        while (tickDate.before(upperDate)) {</a>
+<span class="sourceLineNo">1629</span><a id="line.1629">            // could add a flag to make the following correction optional...</a>
+<span class="sourceLineNo">1630</span><a id="line.1630">            if (!hasRolled) {</a>
+<span class="sourceLineNo">1631</span><a id="line.1631">                tickDate = correctTickDateForPosition(tickDate, unit,</a>
+<span class="sourceLineNo">1632</span><a id="line.1632">                     this.tickMarkPosition);</a>
+<span class="sourceLineNo">1633</span><a id="line.1633">            }</a>
+<span class="sourceLineNo">1634</span><a id="line.1634"></a>
+<span class="sourceLineNo">1635</span><a id="line.1635">            long lowestTickTime = tickDate.getTime();</a>
+<span class="sourceLineNo">1636</span><a id="line.1636">            long distance = unit.addToDate(tickDate, this.timeZone).getTime()</a>
+<span class="sourceLineNo">1637</span><a id="line.1637">                    - lowestTickTime;</a>
+<span class="sourceLineNo">1638</span><a id="line.1638">            int minorTickSpaces = getMinorTickCount();</a>
+<span class="sourceLineNo">1639</span><a id="line.1639">            if (minorTickSpaces &lt;= 0) {</a>
+<span class="sourceLineNo">1640</span><a id="line.1640">                minorTickSpaces = unit.getMinorTickCount();</a>
+<span class="sourceLineNo">1641</span><a id="line.1641">            }</a>
+<span class="sourceLineNo">1642</span><a id="line.1642">            for (int minorTick = 1; minorTick &lt; minorTickSpaces; minorTick++) {</a>
+<span class="sourceLineNo">1643</span><a id="line.1643">                long minorTickTime = lowestTickTime - distance</a>
+<span class="sourceLineNo">1644</span><a id="line.1644">                        * minorTick / minorTickSpaces;</a>
+<span class="sourceLineNo">1645</span><a id="line.1645">                if (minorTickTime &gt; 0 &amp;&amp; getRange().contains(minorTickTime)</a>
+<span class="sourceLineNo">1646</span><a id="line.1646">                        &amp;&amp; (!isHiddenValue(minorTickTime))) {</a>
+<span class="sourceLineNo">1647</span><a id="line.1647">                    result.add(new DateTick(TickType.MINOR,</a>
+<span class="sourceLineNo">1648</span><a id="line.1648">                            new Date(minorTickTime), "", TextAnchor.TOP_CENTER,</a>
+<span class="sourceLineNo">1649</span><a id="line.1649">                            TextAnchor.CENTER, 0.0));</a>
+<span class="sourceLineNo">1650</span><a id="line.1650">                }</a>
+<span class="sourceLineNo">1651</span><a id="line.1651">            }</a>
+<span class="sourceLineNo">1652</span><a id="line.1652"></a>
+<span class="sourceLineNo">1653</span><a id="line.1653">            if (!isHiddenValue(tickDate.getTime())) {</a>
+<span class="sourceLineNo">1654</span><a id="line.1654">                // work out the value, label and position</a>
+<span class="sourceLineNo">1655</span><a id="line.1655">                String tickLabel;</a>
+<span class="sourceLineNo">1656</span><a id="line.1656">                DateFormat formatter = getDateFormatOverride();</a>
+<span class="sourceLineNo">1657</span><a id="line.1657">                if (formatter != null) {</a>
+<span class="sourceLineNo">1658</span><a id="line.1658">                    tickLabel = formatter.format(tickDate);</a>
+<span class="sourceLineNo">1659</span><a id="line.1659">                }</a>
+<span class="sourceLineNo">1660</span><a id="line.1660">                else {</a>
+<span class="sourceLineNo">1661</span><a id="line.1661">                    tickLabel = this.tickUnit.dateToString(tickDate);</a>
+<span class="sourceLineNo">1662</span><a id="line.1662">                }</a>
+<span class="sourceLineNo">1663</span><a id="line.1663">                TextAnchor anchor, rotationAnchor;</a>
+<span class="sourceLineNo">1664</span><a id="line.1664">                double angle = 0.0;</a>
+<span class="sourceLineNo">1665</span><a id="line.1665">                if (isVerticalTickLabels()) {</a>
+<span class="sourceLineNo">1666</span><a id="line.1666">                    anchor = TextAnchor.CENTER_RIGHT;</a>
+<span class="sourceLineNo">1667</span><a id="line.1667">                    rotationAnchor = TextAnchor.CENTER_RIGHT;</a>
+<span class="sourceLineNo">1668</span><a id="line.1668">                    if (edge == RectangleEdge.TOP) {</a>
+<span class="sourceLineNo">1669</span><a id="line.1669">                        angle = Math.PI / 2.0;</a>
+<span class="sourceLineNo">1670</span><a id="line.1670">                    }</a>
+<span class="sourceLineNo">1671</span><a id="line.1671">                    else {</a>
+<span class="sourceLineNo">1672</span><a id="line.1672">                        angle = -Math.PI / 2.0;</a>
+<span class="sourceLineNo">1673</span><a id="line.1673">                    }</a>
+<span class="sourceLineNo">1674</span><a id="line.1674">                }</a>
+<span class="sourceLineNo">1675</span><a id="line.1675">                else {</a>
+<span class="sourceLineNo">1676</span><a id="line.1676">                    if (edge == RectangleEdge.TOP) {</a>
+<span class="sourceLineNo">1677</span><a id="line.1677">                        anchor = TextAnchor.BOTTOM_CENTER;</a>
+<span class="sourceLineNo">1678</span><a id="line.1678">                        rotationAnchor = TextAnchor.BOTTOM_CENTER;</a>
+<span class="sourceLineNo">1679</span><a id="line.1679">                    }</a>
+<span class="sourceLineNo">1680</span><a id="line.1680">                    else {</a>
+<span class="sourceLineNo">1681</span><a id="line.1681">                        anchor = TextAnchor.TOP_CENTER;</a>
+<span class="sourceLineNo">1682</span><a id="line.1682">                        rotationAnchor = TextAnchor.TOP_CENTER;</a>
+<span class="sourceLineNo">1683</span><a id="line.1683">                    }</a>
+<span class="sourceLineNo">1684</span><a id="line.1684">                }</a>
+<span class="sourceLineNo">1685</span><a id="line.1685"></a>
+<span class="sourceLineNo">1686</span><a id="line.1686">                Tick tick = new DateTick(tickDate, tickLabel, anchor,</a>
+<span class="sourceLineNo">1687</span><a id="line.1687">                        rotationAnchor, angle);</a>
+<span class="sourceLineNo">1688</span><a id="line.1688">                result.add(tick);</a>
+<span class="sourceLineNo">1689</span><a id="line.1689">                hasRolled = false;</a>
+<span class="sourceLineNo">1690</span><a id="line.1690"></a>
+<span class="sourceLineNo">1691</span><a id="line.1691">                long currentTickTime = tickDate.getTime();</a>
+<span class="sourceLineNo">1692</span><a id="line.1692">                tickDate = unit.addToDate(tickDate, this.timeZone);</a>
+<span class="sourceLineNo">1693</span><a id="line.1693">                long nextTickTime = tickDate.getTime();</a>
+<span class="sourceLineNo">1694</span><a id="line.1694">                for (int minorTick = 1; minorTick &lt; minorTickSpaces;</a>
+<span class="sourceLineNo">1695</span><a id="line.1695">                        minorTick++) {</a>
+<span class="sourceLineNo">1696</span><a id="line.1696">                    long minorTickTime = currentTickTime</a>
+<span class="sourceLineNo">1697</span><a id="line.1697">                            + (nextTickTime - currentTickTime)</a>
+<span class="sourceLineNo">1698</span><a id="line.1698">                            * minorTick / minorTickSpaces;</a>
+<span class="sourceLineNo">1699</span><a id="line.1699">                    if (getRange().contains(minorTickTime)</a>
+<span class="sourceLineNo">1700</span><a id="line.1700">                            &amp;&amp; (!isHiddenValue(minorTickTime))) {</a>
+<span class="sourceLineNo">1701</span><a id="line.1701">                        result.add(new DateTick(TickType.MINOR,</a>
+<span class="sourceLineNo">1702</span><a id="line.1702">                                new Date(minorTickTime), "",</a>
+<span class="sourceLineNo">1703</span><a id="line.1703">                                TextAnchor.TOP_CENTER, TextAnchor.CENTER,</a>
+<span class="sourceLineNo">1704</span><a id="line.1704">                                0.0));</a>
+<span class="sourceLineNo">1705</span><a id="line.1705">                    }</a>
+<span class="sourceLineNo">1706</span><a id="line.1706">                }</a>
+<span class="sourceLineNo">1707</span><a id="line.1707"></a>
+<span class="sourceLineNo">1708</span><a id="line.1708">            }</a>
+<span class="sourceLineNo">1709</span><a id="line.1709">            else {</a>
+<span class="sourceLineNo">1710</span><a id="line.1710">                tickDate = unit.rollDate(tickDate, this.timeZone);</a>
+<span class="sourceLineNo">1711</span><a id="line.1711">                hasRolled = true;</a>
+<span class="sourceLineNo">1712</span><a id="line.1712">                continue;</a>
+<span class="sourceLineNo">1713</span><a id="line.1713">            }</a>
+<span class="sourceLineNo">1714</span><a id="line.1714"></a>
+<span class="sourceLineNo">1715</span><a id="line.1715">        }</a>
+<span class="sourceLineNo">1716</span><a id="line.1716">        return result;</a>
+<span class="sourceLineNo">1717</span><a id="line.1717"></a>
+<span class="sourceLineNo">1718</span><a id="line.1718">    }</a>
+<span class="sourceLineNo">1719</span><a id="line.1719"></a>
+<span class="sourceLineNo">1720</span><a id="line.1720">    /**</a>
+<span class="sourceLineNo">1721</span><a id="line.1721">     * Recalculates the ticks for the date axis.</a>
+<span class="sourceLineNo">1722</span><a id="line.1722">     *</a>
+<span class="sourceLineNo">1723</span><a id="line.1723">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1724</span><a id="line.1724">     * @param dataArea  the area in which the plot should be drawn.</a>
+<span class="sourceLineNo">1725</span><a id="line.1725">     * @param edge  the location of the axis.</a>
+<span class="sourceLineNo">1726</span><a id="line.1726">     *</a>
+<span class="sourceLineNo">1727</span><a id="line.1727">     * @return A list of ticks.</a>
+<span class="sourceLineNo">1728</span><a id="line.1728">     */</a>
+<span class="sourceLineNo">1729</span><a id="line.1729">    protected List refreshTicksVertical(Graphics2D g2,</a>
+<span class="sourceLineNo">1730</span><a id="line.1730">            Rectangle2D dataArea, RectangleEdge edge) {</a>
+<span class="sourceLineNo">1731</span><a id="line.1731"></a>
+<span class="sourceLineNo">1732</span><a id="line.1732">        List result = new java.util.ArrayList();</a>
+<span class="sourceLineNo">1733</span><a id="line.1733"></a>
+<span class="sourceLineNo">1734</span><a id="line.1734">        Font tickLabelFont = getTickLabelFont();</a>
+<span class="sourceLineNo">1735</span><a id="line.1735">        g2.setFont(tickLabelFont);</a>
+<span class="sourceLineNo">1736</span><a id="line.1736"></a>
+<span class="sourceLineNo">1737</span><a id="line.1737">        if (isAutoTickUnitSelection()) {</a>
+<span class="sourceLineNo">1738</span><a id="line.1738">            selectAutoTickUnit(g2, dataArea, edge);</a>
+<span class="sourceLineNo">1739</span><a id="line.1739">        }</a>
+<span class="sourceLineNo">1740</span><a id="line.1740">        DateTickUnit unit = getTickUnit();</a>
+<span class="sourceLineNo">1741</span><a id="line.1741">        Date tickDate = calculateLowestVisibleTickValue(unit);</a>
+<span class="sourceLineNo">1742</span><a id="line.1742">        Date upperDate = getMaximumDate();</a>
+<span class="sourceLineNo">1743</span><a id="line.1743"></a>
+<span class="sourceLineNo">1744</span><a id="line.1744">        boolean hasRolled = false;</a>
+<span class="sourceLineNo">1745</span><a id="line.1745">        while (tickDate.before(upperDate)) {</a>
+<span class="sourceLineNo">1746</span><a id="line.1746"></a>
+<span class="sourceLineNo">1747</span><a id="line.1747">            // could add a flag to make the following correction optional...</a>
+<span class="sourceLineNo">1748</span><a id="line.1748">            if (!hasRolled) {</a>
+<span class="sourceLineNo">1749</span><a id="line.1749">                tickDate = correctTickDateForPosition(tickDate, unit,</a>
+<span class="sourceLineNo">1750</span><a id="line.1750">                    this.tickMarkPosition);</a>
+<span class="sourceLineNo">1751</span><a id="line.1751">            }</a>
+<span class="sourceLineNo">1752</span><a id="line.1752"></a>
+<span class="sourceLineNo">1753</span><a id="line.1753">            long lowestTickTime = tickDate.getTime();</a>
+<span class="sourceLineNo">1754</span><a id="line.1754">            long distance = unit.addToDate(tickDate, this.timeZone).getTime()</a>
+<span class="sourceLineNo">1755</span><a id="line.1755">                    - lowestTickTime;</a>
+<span class="sourceLineNo">1756</span><a id="line.1756">            int minorTickSpaces = getMinorTickCount();</a>
+<span class="sourceLineNo">1757</span><a id="line.1757">            if (minorTickSpaces &lt;= 0) {</a>
+<span class="sourceLineNo">1758</span><a id="line.1758">                minorTickSpaces = unit.getMinorTickCount();</a>
+<span class="sourceLineNo">1759</span><a id="line.1759">            }</a>
+<span class="sourceLineNo">1760</span><a id="line.1760">            for (int minorTick = 1; minorTick &lt; minorTickSpaces; minorTick++) {</a>
+<span class="sourceLineNo">1761</span><a id="line.1761">                long minorTickTime = lowestTickTime - distance</a>
+<span class="sourceLineNo">1762</span><a id="line.1762">                        * minorTick / minorTickSpaces;</a>
+<span class="sourceLineNo">1763</span><a id="line.1763">                if (minorTickTime &gt; 0 &amp;&amp; getRange().contains(minorTickTime)</a>
+<span class="sourceLineNo">1764</span><a id="line.1764">                        &amp;&amp; (!isHiddenValue(minorTickTime))) {</a>
+<span class="sourceLineNo">1765</span><a id="line.1765">                    result.add(new DateTick(TickType.MINOR,</a>
+<span class="sourceLineNo">1766</span><a id="line.1766">                            new Date(minorTickTime), "", TextAnchor.TOP_CENTER,</a>
+<span class="sourceLineNo">1767</span><a id="line.1767">                            TextAnchor.CENTER, 0.0));</a>
+<span class="sourceLineNo">1768</span><a id="line.1768">                }</a>
+<span class="sourceLineNo">1769</span><a id="line.1769">            }</a>
+<span class="sourceLineNo">1770</span><a id="line.1770">            if (!isHiddenValue(tickDate.getTime())) {</a>
+<span class="sourceLineNo">1771</span><a id="line.1771">                // work out the value, label and position</a>
+<span class="sourceLineNo">1772</span><a id="line.1772">                String tickLabel;</a>
+<span class="sourceLineNo">1773</span><a id="line.1773">                DateFormat formatter = getDateFormatOverride();</a>
+<span class="sourceLineNo">1774</span><a id="line.1774">                if (formatter != null) {</a>
+<span class="sourceLineNo">1775</span><a id="line.1775">                    tickLabel = formatter.format(tickDate);</a>
+<span class="sourceLineNo">1776</span><a id="line.1776">                }</a>
+<span class="sourceLineNo">1777</span><a id="line.1777">                else {</a>
+<span class="sourceLineNo">1778</span><a id="line.1778">                    tickLabel = this.tickUnit.dateToString(tickDate);</a>
+<span class="sourceLineNo">1779</span><a id="line.1779">                }</a>
+<span class="sourceLineNo">1780</span><a id="line.1780">                TextAnchor anchor, rotationAnchor;</a>
+<span class="sourceLineNo">1781</span><a id="line.1781">                double angle = 0.0;</a>
+<span class="sourceLineNo">1782</span><a id="line.1782">                if (isVerticalTickLabels()) {</a>
+<span class="sourceLineNo">1783</span><a id="line.1783">                    anchor = TextAnchor.BOTTOM_CENTER;</a>
+<span class="sourceLineNo">1784</span><a id="line.1784">                    rotationAnchor = TextAnchor.BOTTOM_CENTER;</a>
+<span class="sourceLineNo">1785</span><a id="line.1785">                    if (edge == RectangleEdge.LEFT) {</a>
+<span class="sourceLineNo">1786</span><a id="line.1786">                        angle = -Math.PI / 2.0;</a>
+<span class="sourceLineNo">1787</span><a id="line.1787">                    }</a>
+<span class="sourceLineNo">1788</span><a id="line.1788">                    else {</a>
+<span class="sourceLineNo">1789</span><a id="line.1789">                        angle = Math.PI / 2.0;</a>
+<span class="sourceLineNo">1790</span><a id="line.1790">                    }</a>
+<span class="sourceLineNo">1791</span><a id="line.1791">                }</a>
+<span class="sourceLineNo">1792</span><a id="line.1792">                else {</a>
+<span class="sourceLineNo">1793</span><a id="line.1793">                    if (edge == RectangleEdge.LEFT) {</a>
+<span class="sourceLineNo">1794</span><a id="line.1794">                        anchor = TextAnchor.CENTER_RIGHT;</a>
+<span class="sourceLineNo">1795</span><a id="line.1795">                        rotationAnchor = TextAnchor.CENTER_RIGHT;</a>
+<span class="sourceLineNo">1796</span><a id="line.1796">                    }</a>
+<span class="sourceLineNo">1797</span><a id="line.1797">                    else {</a>
+<span class="sourceLineNo">1798</span><a id="line.1798">                        anchor = TextAnchor.CENTER_LEFT;</a>
+<span class="sourceLineNo">1799</span><a id="line.1799">                        rotationAnchor = TextAnchor.CENTER_LEFT;</a>
+<span class="sourceLineNo">1800</span><a id="line.1800">                    }</a>
+<span class="sourceLineNo">1801</span><a id="line.1801">                }</a>
+<span class="sourceLineNo">1802</span><a id="line.1802"></a>
+<span class="sourceLineNo">1803</span><a id="line.1803">                Tick tick = new DateTick(tickDate, tickLabel, anchor,</a>
+<span class="sourceLineNo">1804</span><a id="line.1804">                        rotationAnchor, angle);</a>
+<span class="sourceLineNo">1805</span><a id="line.1805">                result.add(tick);</a>
+<span class="sourceLineNo">1806</span><a id="line.1806">                hasRolled = false;</a>
+<span class="sourceLineNo">1807</span><a id="line.1807"></a>
+<span class="sourceLineNo">1808</span><a id="line.1808">                long currentTickTime = tickDate.getTime();</a>
+<span class="sourceLineNo">1809</span><a id="line.1809">                tickDate = unit.addToDate(tickDate, this.timeZone);</a>
+<span class="sourceLineNo">1810</span><a id="line.1810">                long nextTickTime = tickDate.getTime();</a>
+<span class="sourceLineNo">1811</span><a id="line.1811">                for (int minorTick = 1; minorTick &lt; minorTickSpaces;</a>
+<span class="sourceLineNo">1812</span><a id="line.1812">                        minorTick++) {</a>
+<span class="sourceLineNo">1813</span><a id="line.1813">                    long minorTickTime = currentTickTime</a>
+<span class="sourceLineNo">1814</span><a id="line.1814">                            + (nextTickTime - currentTickTime)</a>
+<span class="sourceLineNo">1815</span><a id="line.1815">                            * minorTick / minorTickSpaces;</a>
+<span class="sourceLineNo">1816</span><a id="line.1816">                    if (getRange().contains(minorTickTime)</a>
+<span class="sourceLineNo">1817</span><a id="line.1817">                            &amp;&amp; (!isHiddenValue(minorTickTime))) {</a>
+<span class="sourceLineNo">1818</span><a id="line.1818">                        result.add(new DateTick(TickType.MINOR,</a>
+<span class="sourceLineNo">1819</span><a id="line.1819">                                new Date(minorTickTime), "",</a>
+<span class="sourceLineNo">1820</span><a id="line.1820">                                TextAnchor.TOP_CENTER, TextAnchor.CENTER,</a>
+<span class="sourceLineNo">1821</span><a id="line.1821">                                0.0));</a>
+<span class="sourceLineNo">1822</span><a id="line.1822">                    }</a>
+<span class="sourceLineNo">1823</span><a id="line.1823">                }</a>
+<span class="sourceLineNo">1824</span><a id="line.1824">            }</a>
+<span class="sourceLineNo">1825</span><a id="line.1825">            else {</a>
+<span class="sourceLineNo">1826</span><a id="line.1826">                tickDate = unit.rollDate(tickDate, this.timeZone);</a>
+<span class="sourceLineNo">1827</span><a id="line.1827">                hasRolled = true;</a>
+<span class="sourceLineNo">1828</span><a id="line.1828">            }</a>
+<span class="sourceLineNo">1829</span><a id="line.1829">        }</a>
+<span class="sourceLineNo">1830</span><a id="line.1830">        return result;</a>
+<span class="sourceLineNo">1831</span><a id="line.1831">    }</a>
+<span class="sourceLineNo">1832</span><a id="line.1832"></a>
+<span class="sourceLineNo">1833</span><a id="line.1833">    /**</a>
+<span class="sourceLineNo">1834</span><a id="line.1834">     * Draws the axis on a Java 2D graphics device (such as the screen or a</a>
+<span class="sourceLineNo">1835</span><a id="line.1835">     * printer).</a>
+<span class="sourceLineNo">1836</span><a id="line.1836">     *</a>
+<span class="sourceLineNo">1837</span><a id="line.1837">     * @param g2  the graphics device (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">1838</span><a id="line.1838">     * @param cursor  the cursor location.</a>
+<span class="sourceLineNo">1839</span><a id="line.1839">     * @param plotArea  the area within which the axes and data should be</a>
+<span class="sourceLineNo">1840</span><a id="line.1840">     *                  drawn (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">1841</span><a id="line.1841">     * @param dataArea  the area within which the data should be drawn</a>
+<span class="sourceLineNo">1842</span><a id="line.1842">     *                  (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">1843</span><a id="line.1843">     * @param edge  the location of the axis (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">1844</span><a id="line.1844">     * @param plotState  collects information about the plot</a>
+<span class="sourceLineNo">1845</span><a id="line.1845">     *                   (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1846</span><a id="line.1846">     *</a>
+<span class="sourceLineNo">1847</span><a id="line.1847">     * @return The axis state (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1848</span><a id="line.1848">     */</a>
+<span class="sourceLineNo">1849</span><a id="line.1849">    @Override</a>
+<span class="sourceLineNo">1850</span><a id="line.1850">    public AxisState draw(Graphics2D g2, double cursor, Rectangle2D plotArea,</a>
+<span class="sourceLineNo">1851</span><a id="line.1851">            Rectangle2D dataArea, RectangleEdge edge,</a>
+<span class="sourceLineNo">1852</span><a id="line.1852">            PlotRenderingInfo plotState) {</a>
+<span class="sourceLineNo">1853</span><a id="line.1853"></a>
+<span class="sourceLineNo">1854</span><a id="line.1854">        // if the axis is not visible, don't draw it...</a>
+<span class="sourceLineNo">1855</span><a id="line.1855">        if (!isVisible()) {</a>
+<span class="sourceLineNo">1856</span><a id="line.1856">            AxisState state = new AxisState(cursor);</a>
+<span class="sourceLineNo">1857</span><a id="line.1857">            // even though the axis is not visible, we need to refresh ticks in</a>
+<span class="sourceLineNo">1858</span><a id="line.1858">            // case the grid is being drawn...</a>
+<span class="sourceLineNo">1859</span><a id="line.1859">            List ticks = refreshTicks(g2, state, dataArea, edge);</a>
+<span class="sourceLineNo">1860</span><a id="line.1860">            state.setTicks(ticks);</a>
+<span class="sourceLineNo">1861</span><a id="line.1861">            return state;</a>
+<span class="sourceLineNo">1862</span><a id="line.1862">        }</a>
+<span class="sourceLineNo">1863</span><a id="line.1863"></a>
+<span class="sourceLineNo">1864</span><a id="line.1864">        // draw the tick marks and labels...</a>
+<span class="sourceLineNo">1865</span><a id="line.1865">        AxisState state = drawTickMarksAndLabels(g2, cursor, plotArea,</a>
+<span class="sourceLineNo">1866</span><a id="line.1866">                dataArea, edge);</a>
+<span class="sourceLineNo">1867</span><a id="line.1867"></a>
+<span class="sourceLineNo">1868</span><a id="line.1868">        // draw the axis label (note that 'state' is passed in *and*</a>
+<span class="sourceLineNo">1869</span><a id="line.1869">        // returned)...</a>
+<span class="sourceLineNo">1870</span><a id="line.1870">        if (getAttributedLabel() != null) {</a>
+<span class="sourceLineNo">1871</span><a id="line.1871">            state = drawAttributedLabel(getAttributedLabel(), g2, plotArea, </a>
+<span class="sourceLineNo">1872</span><a id="line.1872">                    dataArea, edge, state);</a>
+<span class="sourceLineNo">1873</span><a id="line.1873">            </a>
+<span class="sourceLineNo">1874</span><a id="line.1874">        } else {</a>
+<span class="sourceLineNo">1875</span><a id="line.1875">            state = drawLabel(getLabel(), g2, plotArea, dataArea, edge, state);</a>
+<span class="sourceLineNo">1876</span><a id="line.1876">        }</a>
+<span class="sourceLineNo">1877</span><a id="line.1877">        createAndAddEntity(cursor, state, dataArea, edge, plotState);</a>
+<span class="sourceLineNo">1878</span><a id="line.1878">        return state;</a>
+<span class="sourceLineNo">1879</span><a id="line.1879"></a>
+<span class="sourceLineNo">1880</span><a id="line.1880">    }</a>
+<span class="sourceLineNo">1881</span><a id="line.1881"></a>
+<span class="sourceLineNo">1882</span><a id="line.1882">    /**</a>
+<span class="sourceLineNo">1883</span><a id="line.1883">     * Zooms in on the current range (zoom-in stops once the axis length </a>
+<span class="sourceLineNo">1884</span><a id="line.1884">     * reaches the equivalent of one millisecond).  </a>
+<span class="sourceLineNo">1885</span><a id="line.1885">     *</a>
+<span class="sourceLineNo">1886</span><a id="line.1886">     * @param lowerPercent  the new lower bound.</a>
+<span class="sourceLineNo">1887</span><a id="line.1887">     * @param upperPercent  the new upper bound.</a>
+<span class="sourceLineNo">1888</span><a id="line.1888">     */</a>
+<span class="sourceLineNo">1889</span><a id="line.1889">    @Override</a>
+<span class="sourceLineNo">1890</span><a id="line.1890">    public void zoomRange(double lowerPercent, double upperPercent) {</a>
+<span class="sourceLineNo">1891</span><a id="line.1891">        double start = this.timeline.toTimelineValue(</a>
+<span class="sourceLineNo">1892</span><a id="line.1892">                (long) getRange().getLowerBound());</a>
+<span class="sourceLineNo">1893</span><a id="line.1893">        double end = this.timeline.toTimelineValue(</a>
+<span class="sourceLineNo">1894</span><a id="line.1894">                (long) getRange().getUpperBound());</a>
+<span class="sourceLineNo">1895</span><a id="line.1895">        double length = end - start;</a>
+<span class="sourceLineNo">1896</span><a id="line.1896">        Range adjusted;</a>
+<span class="sourceLineNo">1897</span><a id="line.1897">        long adjStart, adjEnd;</a>
+<span class="sourceLineNo">1898</span><a id="line.1898">        if (isInverted()) {</a>
+<span class="sourceLineNo">1899</span><a id="line.1899">            adjStart = (long) (start + (length * (1 - upperPercent)));</a>
+<span class="sourceLineNo">1900</span><a id="line.1900">            adjEnd = (long) (start + (length * (1 - lowerPercent)));</a>
+<span class="sourceLineNo">1901</span><a id="line.1901">        }</a>
+<span class="sourceLineNo">1902</span><a id="line.1902">        else {</a>
+<span class="sourceLineNo">1903</span><a id="line.1903">            adjStart = (long) (start + length * lowerPercent);</a>
+<span class="sourceLineNo">1904</span><a id="line.1904">            adjEnd = (long) (start + length * upperPercent);</a>
+<span class="sourceLineNo">1905</span><a id="line.1905">        }</a>
+<span class="sourceLineNo">1906</span><a id="line.1906">        // when zooming to sub-millisecond ranges, it can be the case that</a>
+<span class="sourceLineNo">1907</span><a id="line.1907">        // adjEnd == adjStart...and we can't have an axis with zero length</a>
+<span class="sourceLineNo">1908</span><a id="line.1908">        // so we apply this instead:</a>
+<span class="sourceLineNo">1909</span><a id="line.1909">        if (adjEnd &lt;= adjStart) {</a>
+<span class="sourceLineNo">1910</span><a id="line.1910">            adjEnd = adjStart + 1L;</a>
+<span class="sourceLineNo">1911</span><a id="line.1911">        } </a>
+<span class="sourceLineNo">1912</span><a id="line.1912">        adjusted = new DateRange(this.timeline.toMillisecond(adjStart),</a>
+<span class="sourceLineNo">1913</span><a id="line.1913">               this.timeline.toMillisecond(adjEnd));</a>
+<span class="sourceLineNo">1914</span><a id="line.1914">        setRange(adjusted);</a>
+<span class="sourceLineNo">1915</span><a id="line.1915">    }</a>
+<span class="sourceLineNo">1916</span><a id="line.1916"></a>
+<span class="sourceLineNo">1917</span><a id="line.1917">    /**</a>
+<span class="sourceLineNo">1918</span><a id="line.1918">     * Tests this axis for equality with an arbitrary object.</a>
+<span class="sourceLineNo">1919</span><a id="line.1919">     *</a>
+<span class="sourceLineNo">1920</span><a id="line.1920">     * @param obj  the object (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1921</span><a id="line.1921">     *</a>
+<span class="sourceLineNo">1922</span><a id="line.1922">     * @return A boolean.</a>
+<span class="sourceLineNo">1923</span><a id="line.1923">     */</a>
+<span class="sourceLineNo">1924</span><a id="line.1924">    @Override</a>
+<span class="sourceLineNo">1925</span><a id="line.1925">    public boolean equals(Object obj) {</a>
+<span class="sourceLineNo">1926</span><a id="line.1926">        if (obj == this) {</a>
+<span class="sourceLineNo">1927</span><a id="line.1927">            return true;</a>
+<span class="sourceLineNo">1928</span><a id="line.1928">        }</a>
+<span class="sourceLineNo">1929</span><a id="line.1929">        if (!(obj instanceof DateAxis)) {</a>
+<span class="sourceLineNo">1930</span><a id="line.1930">            return false;</a>
+<span class="sourceLineNo">1931</span><a id="line.1931">        }</a>
+<span class="sourceLineNo">1932</span><a id="line.1932">        DateAxis that = (DateAxis) obj;</a>
+<span class="sourceLineNo">1933</span><a id="line.1933">        if (!ObjectUtilities.equal(this.timeZone, that.timeZone)) {</a>
+<span class="sourceLineNo">1934</span><a id="line.1934">            return false;</a>
+<span class="sourceLineNo">1935</span><a id="line.1935">        }</a>
+<span class="sourceLineNo">1936</span><a id="line.1936">        if (!ObjectUtilities.equal(this.locale, that.locale)) {</a>
+<span class="sourceLineNo">1937</span><a id="line.1937">            return false;</a>
+<span class="sourceLineNo">1938</span><a id="line.1938">        }</a>
+<span class="sourceLineNo">1939</span><a id="line.1939">        if (!ObjectUtilities.equal(this.tickUnit, that.tickUnit)) {</a>
+<span class="sourceLineNo">1940</span><a id="line.1940">            return false;</a>
+<span class="sourceLineNo">1941</span><a id="line.1941">        }</a>
+<span class="sourceLineNo">1942</span><a id="line.1942">        if (!ObjectUtilities.equal(this.dateFormatOverride,</a>
+<span class="sourceLineNo">1943</span><a id="line.1943">                that.dateFormatOverride)) {</a>
+<span class="sourceLineNo">1944</span><a id="line.1944">            return false;</a>
+<span class="sourceLineNo">1945</span><a id="line.1945">        }</a>
+<span class="sourceLineNo">1946</span><a id="line.1946">        if (!ObjectUtilities.equal(this.tickMarkPosition,</a>
+<span class="sourceLineNo">1947</span><a id="line.1947">                that.tickMarkPosition)) {</a>
+<span class="sourceLineNo">1948</span><a id="line.1948">            return false;</a>
+<span class="sourceLineNo">1949</span><a id="line.1949">        }</a>
+<span class="sourceLineNo">1950</span><a id="line.1950">        if (!ObjectUtilities.equal(this.timeline, that.timeline)) {</a>
+<span class="sourceLineNo">1951</span><a id="line.1951">            return false;</a>
+<span class="sourceLineNo">1952</span><a id="line.1952">        }</a>
+<span class="sourceLineNo">1953</span><a id="line.1953">        return super.equals(obj);</a>
+<span class="sourceLineNo">1954</span><a id="line.1954">    }</a>
+<span class="sourceLineNo">1955</span><a id="line.1955"></a>
+<span class="sourceLineNo">1956</span><a id="line.1956">    /**</a>
+<span class="sourceLineNo">1957</span><a id="line.1957">     * Returns a hash code for this object.</a>
+<span class="sourceLineNo">1958</span><a id="line.1958">     *</a>
+<span class="sourceLineNo">1959</span><a id="line.1959">     * @return A hash code.</a>
+<span class="sourceLineNo">1960</span><a id="line.1960">     */</a>
+<span class="sourceLineNo">1961</span><a id="line.1961">    @Override</a>
+<span class="sourceLineNo">1962</span><a id="line.1962">    public int hashCode() {</a>
+<span class="sourceLineNo">1963</span><a id="line.1963">        return super.hashCode();</a>
+<span class="sourceLineNo">1964</span><a id="line.1964">    }</a>
+<span class="sourceLineNo">1965</span><a id="line.1965"></a>
+<span class="sourceLineNo">1966</span><a id="line.1966">    /**</a>
+<span class="sourceLineNo">1967</span><a id="line.1967">     * Returns a clone of the object.</a>
+<span class="sourceLineNo">1968</span><a id="line.1968">     *</a>
+<span class="sourceLineNo">1969</span><a id="line.1969">     * @return A clone.</a>
+<span class="sourceLineNo">1970</span><a id="line.1970">     *</a>
+<span class="sourceLineNo">1971</span><a id="line.1971">     * @throws CloneNotSupportedException if some component of the axis does</a>
+<span class="sourceLineNo">1972</span><a id="line.1972">     *         not support cloning.</a>
+<span class="sourceLineNo">1973</span><a id="line.1973">     */</a>
+<span class="sourceLineNo">1974</span><a id="line.1974">    @Override</a>
+<span class="sourceLineNo">1975</span><a id="line.1975">    public Object clone() throws CloneNotSupportedException {</a>
+<span class="sourceLineNo">1976</span><a id="line.1976">        DateAxis clone = (DateAxis) super.clone();</a>
+<span class="sourceLineNo">1977</span><a id="line.1977">        // 'dateTickUnit' is immutable : no need to clone</a>
+<span class="sourceLineNo">1978</span><a id="line.1978">        if (this.dateFormatOverride != null) {</a>
+<span class="sourceLineNo">1979</span><a id="line.1979">            clone.dateFormatOverride</a>
+<span class="sourceLineNo">1980</span><a id="line.1980">                = (DateFormat) this.dateFormatOverride.clone();</a>
+<span class="sourceLineNo">1981</span><a id="line.1981">        }</a>
+<span class="sourceLineNo">1982</span><a id="line.1982">        // 'tickMarkPosition' is immutable : no need to clone</a>
+<span class="sourceLineNo">1983</span><a id="line.1983">        return clone;</a>
+<span class="sourceLineNo">1984</span><a id="line.1984">    }</a>
+<span class="sourceLineNo">1985</span><a id="line.1985"> </a>
+<span class="sourceLineNo">1986</span><a id="line.1986">    /**</a>
+<span class="sourceLineNo">1987</span><a id="line.1987">     * Returns a collection of standard date tick units.  This collection will</a>
+<span class="sourceLineNo">1988</span><a id="line.1988">     * be used by default, but you are free to create your own collection if</a>
+<span class="sourceLineNo">1989</span><a id="line.1989">     * you want to (see the</a>
+<span class="sourceLineNo">1990</span><a id="line.1990">     * {@link ValueAxis#setStandardTickUnits(TickUnitSource)} method inherited</a>
+<span class="sourceLineNo">1991</span><a id="line.1991">     * from the {@link ValueAxis} class).</a>
+<span class="sourceLineNo">1992</span><a id="line.1992">     *</a>
+<span class="sourceLineNo">1993</span><a id="line.1993">     * @param zone  the time zone (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">1994</span><a id="line.1994">     *</a>
+<span class="sourceLineNo">1995</span><a id="line.1995">     * @return A collection of standard date tick units.</a>
+<span class="sourceLineNo">1996</span><a id="line.1996">     *</a>
+<span class="sourceLineNo">1997</span><a id="line.1997">     * @deprecated Since 1.0.11, use {@link #createStandardDateTickUnits(</a>
+<span class="sourceLineNo">1998</span><a id="line.1998">     *         TimeZone, Locale)} to explicitly set the locale as well as the</a>
+<span class="sourceLineNo">1999</span><a id="line.1999">     *         time zone.</a>
+<span class="sourceLineNo">2000</span><a id="line.2000">     */</a>
+<span class="sourceLineNo">2001</span><a id="line.2001">    public static TickUnitSource createStandardDateTickUnits(TimeZone zone) {</a>
+<span class="sourceLineNo">2002</span><a id="line.2002">        return createStandardDateTickUnits(zone, Locale.getDefault());</a>
+<span class="sourceLineNo">2003</span><a id="line.2003">    }</a>
+<span class="sourceLineNo">2004</span><a id="line.2004"></a>
+<span class="sourceLineNo">2005</span><a id="line.2005">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

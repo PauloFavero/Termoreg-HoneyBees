@@ -1,0 +1,534 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * --------------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * XYErrorRenderer.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * --------------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2006-2014, by Object Refinery Limited.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   -;</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *</a>
+<span class="sourceLineNo">035</span><a id="line.35"> * Changes</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * -------</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * 25-Oct-2006 : Version 1 (DG);</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * 23-Mar-2007 : Check item visibility before drawing error bars - see bug</a>
+<span class="sourceLineNo">039</span><a id="line.39"> *               1686178 (DG);</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 28-Jan-2009 : Added stroke options for error indicators (DG);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> *</a>
+<span class="sourceLineNo">042</span><a id="line.42"> */</a>
+<span class="sourceLineNo">043</span><a id="line.43"></a>
+<span class="sourceLineNo">044</span><a id="line.44">package org.jfree.chart.renderer.xy;</a>
+<span class="sourceLineNo">045</span><a id="line.45"></a>
+<span class="sourceLineNo">046</span><a id="line.46">import java.awt.Graphics2D;</a>
+<span class="sourceLineNo">047</span><a id="line.47">import java.awt.Paint;</a>
+<span class="sourceLineNo">048</span><a id="line.48">import java.awt.Stroke;</a>
+<span class="sourceLineNo">049</span><a id="line.49">import java.awt.geom.Line2D;</a>
+<span class="sourceLineNo">050</span><a id="line.50">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">051</span><a id="line.51">import java.io.IOException;</a>
+<span class="sourceLineNo">052</span><a id="line.52">import java.io.ObjectInputStream;</a>
+<span class="sourceLineNo">053</span><a id="line.53">import java.io.ObjectOutputStream;</a>
+<span class="sourceLineNo">054</span><a id="line.54"></a>
+<span class="sourceLineNo">055</span><a id="line.55">import org.jfree.chart.axis.ValueAxis;</a>
+<span class="sourceLineNo">056</span><a id="line.56">import org.jfree.chart.event.RendererChangeEvent;</a>
+<span class="sourceLineNo">057</span><a id="line.57">import org.jfree.chart.plot.CrosshairState;</a>
+<span class="sourceLineNo">058</span><a id="line.58">import org.jfree.chart.plot.PlotOrientation;</a>
+<span class="sourceLineNo">059</span><a id="line.59">import org.jfree.chart.plot.PlotRenderingInfo;</a>
+<span class="sourceLineNo">060</span><a id="line.60">import org.jfree.chart.plot.XYPlot;</a>
+<span class="sourceLineNo">061</span><a id="line.61">import org.jfree.data.Range;</a>
+<span class="sourceLineNo">062</span><a id="line.62">import org.jfree.data.xy.IntervalXYDataset;</a>
+<span class="sourceLineNo">063</span><a id="line.63">import org.jfree.data.xy.XYDataset;</a>
+<span class="sourceLineNo">064</span><a id="line.64">import org.jfree.io.SerialUtilities;</a>
+<span class="sourceLineNo">065</span><a id="line.65">import org.jfree.ui.RectangleEdge;</a>
+<span class="sourceLineNo">066</span><a id="line.66">import org.jfree.util.ObjectUtilities;</a>
+<span class="sourceLineNo">067</span><a id="line.67">import org.jfree.util.PaintUtilities;</a>
+<span class="sourceLineNo">068</span><a id="line.68"></a>
+<span class="sourceLineNo">069</span><a id="line.69">/**</a>
+<span class="sourceLineNo">070</span><a id="line.70"> * A line and shape renderer that can also display x and/or y-error values.</a>
+<span class="sourceLineNo">071</span><a id="line.71"> * This renderer expects an {@link IntervalXYDataset}, otherwise it reverts</a>
+<span class="sourceLineNo">072</span><a id="line.72"> * to the behaviour of the super class.  The example shown here is generated by</a>
+<span class="sourceLineNo">073</span><a id="line.73"> * the &lt;code&gt;XYErrorRendererDemo1.java&lt;/code&gt; program included in the</a>
+<span class="sourceLineNo">074</span><a id="line.74"> * JFreeChart demo collection:</a>
+<span class="sourceLineNo">075</span><a id="line.75"> * &lt;br&gt;&lt;br&gt;</a>
+<span class="sourceLineNo">076</span><a id="line.76"> * &lt;img src="../../../../../images/XYErrorRendererSample.png"</a>
+<span class="sourceLineNo">077</span><a id="line.77"> * alt="XYErrorRendererSample.png"&gt;</a>
+<span class="sourceLineNo">078</span><a id="line.78"> *</a>
+<span class="sourceLineNo">079</span><a id="line.79"> * @since 1.0.3</a>
+<span class="sourceLineNo">080</span><a id="line.80"> */</a>
+<span class="sourceLineNo">081</span><a id="line.81">public class XYErrorRenderer extends XYLineAndShapeRenderer {</a>
+<span class="sourceLineNo">082</span><a id="line.82"></a>
+<span class="sourceLineNo">083</span><a id="line.83">    /** For serialization. */</a>
+<span class="sourceLineNo">084</span><a id="line.84">    static final long serialVersionUID = 5162283570955172424L;</a>
+<span class="sourceLineNo">085</span><a id="line.85"></a>
+<span class="sourceLineNo">086</span><a id="line.86">    /** A flag that controls whether or not the x-error bars are drawn. */</a>
+<span class="sourceLineNo">087</span><a id="line.87">    private boolean drawXError;</a>
+<span class="sourceLineNo">088</span><a id="line.88"></a>
+<span class="sourceLineNo">089</span><a id="line.89">    /** A flag that controls whether or not the y-error bars are drawn. */</a>
+<span class="sourceLineNo">090</span><a id="line.90">    private boolean drawYError;</a>
+<span class="sourceLineNo">091</span><a id="line.91"></a>
+<span class="sourceLineNo">092</span><a id="line.92">    /** The length of the cap at the end of the error bars. */</a>
+<span class="sourceLineNo">093</span><a id="line.93">    private double capLength;</a>
+<span class="sourceLineNo">094</span><a id="line.94"></a>
+<span class="sourceLineNo">095</span><a id="line.95">    /**</a>
+<span class="sourceLineNo">096</span><a id="line.96">     * The paint used to draw the error bars (if &lt;code&gt;null&lt;/code&gt; we use the</a>
+<span class="sourceLineNo">097</span><a id="line.97">     * series paint).</a>
+<span class="sourceLineNo">098</span><a id="line.98">     */</a>
+<span class="sourceLineNo">099</span><a id="line.99">    private transient Paint errorPaint;</a>
+<span class="sourceLineNo">100</span><a id="line.100"></a>
+<span class="sourceLineNo">101</span><a id="line.101">    /**</a>
+<span class="sourceLineNo">102</span><a id="line.102">     * The stroke used to draw the error bars (if &lt;code&gt;null&lt;/code&gt; we use the</a>
+<span class="sourceLineNo">103</span><a id="line.103">     * series outline stroke).</a>
+<span class="sourceLineNo">104</span><a id="line.104">     *</a>
+<span class="sourceLineNo">105</span><a id="line.105">     * @since 1.0.13</a>
+<span class="sourceLineNo">106</span><a id="line.106">     */</a>
+<span class="sourceLineNo">107</span><a id="line.107">    private transient Stroke errorStroke;</a>
+<span class="sourceLineNo">108</span><a id="line.108"></a>
+<span class="sourceLineNo">109</span><a id="line.109">    /**</a>
+<span class="sourceLineNo">110</span><a id="line.110">     * Creates a new &lt;code&gt;XYErrorRenderer&lt;/code&gt; instance.</a>
+<span class="sourceLineNo">111</span><a id="line.111">     */</a>
+<span class="sourceLineNo">112</span><a id="line.112">    public XYErrorRenderer() {</a>
+<span class="sourceLineNo">113</span><a id="line.113">        super(false, true);</a>
+<span class="sourceLineNo">114</span><a id="line.114">        this.drawXError = true;</a>
+<span class="sourceLineNo">115</span><a id="line.115">        this.drawYError = true;</a>
+<span class="sourceLineNo">116</span><a id="line.116">        this.errorPaint = null;</a>
+<span class="sourceLineNo">117</span><a id="line.117">        this.errorStroke = null;</a>
+<span class="sourceLineNo">118</span><a id="line.118">        this.capLength = 4.0;</a>
+<span class="sourceLineNo">119</span><a id="line.119">    }</a>
+<span class="sourceLineNo">120</span><a id="line.120"></a>
+<span class="sourceLineNo">121</span><a id="line.121">    /**</a>
+<span class="sourceLineNo">122</span><a id="line.122">     * Returns the flag that controls whether or not the renderer draws error</a>
+<span class="sourceLineNo">123</span><a id="line.123">     * bars for the x-values.</a>
+<span class="sourceLineNo">124</span><a id="line.124">     *</a>
+<span class="sourceLineNo">125</span><a id="line.125">     * @return A boolean.</a>
+<span class="sourceLineNo">126</span><a id="line.126">     *</a>
+<span class="sourceLineNo">127</span><a id="line.127">     * @see #setDrawXError(boolean)</a>
+<span class="sourceLineNo">128</span><a id="line.128">     */</a>
+<span class="sourceLineNo">129</span><a id="line.129">    public boolean getDrawXError() {</a>
+<span class="sourceLineNo">130</span><a id="line.130">        return this.drawXError;</a>
+<span class="sourceLineNo">131</span><a id="line.131">    }</a>
+<span class="sourceLineNo">132</span><a id="line.132"></a>
+<span class="sourceLineNo">133</span><a id="line.133">    /**</a>
+<span class="sourceLineNo">134</span><a id="line.134">     * Sets the flag that controls whether or not the renderer draws error</a>
+<span class="sourceLineNo">135</span><a id="line.135">     * bars for the x-values and, if the flag changes, sends a</a>
+<span class="sourceLineNo">136</span><a id="line.136">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">137</span><a id="line.137">     *</a>
+<span class="sourceLineNo">138</span><a id="line.138">     * @param draw  the flag value.</a>
+<span class="sourceLineNo">139</span><a id="line.139">     *</a>
+<span class="sourceLineNo">140</span><a id="line.140">     * @see #getDrawXError()</a>
+<span class="sourceLineNo">141</span><a id="line.141">     */</a>
+<span class="sourceLineNo">142</span><a id="line.142">    public void setDrawXError(boolean draw) {</a>
+<span class="sourceLineNo">143</span><a id="line.143">        if (this.drawXError != draw) {</a>
+<span class="sourceLineNo">144</span><a id="line.144">            this.drawXError = draw;</a>
+<span class="sourceLineNo">145</span><a id="line.145">            fireChangeEvent();</a>
+<span class="sourceLineNo">146</span><a id="line.146">        }</a>
+<span class="sourceLineNo">147</span><a id="line.147">    }</a>
+<span class="sourceLineNo">148</span><a id="line.148"></a>
+<span class="sourceLineNo">149</span><a id="line.149">    /**</a>
+<span class="sourceLineNo">150</span><a id="line.150">     * Returns the flag that controls whether or not the renderer draws error</a>
+<span class="sourceLineNo">151</span><a id="line.151">     * bars for the y-values.</a>
+<span class="sourceLineNo">152</span><a id="line.152">     *</a>
+<span class="sourceLineNo">153</span><a id="line.153">     * @return A boolean.</a>
+<span class="sourceLineNo">154</span><a id="line.154">     *</a>
+<span class="sourceLineNo">155</span><a id="line.155">     * @see #setDrawYError(boolean)</a>
+<span class="sourceLineNo">156</span><a id="line.156">     */</a>
+<span class="sourceLineNo">157</span><a id="line.157">    public boolean getDrawYError() {</a>
+<span class="sourceLineNo">158</span><a id="line.158">        return this.drawYError;</a>
+<span class="sourceLineNo">159</span><a id="line.159">    }</a>
+<span class="sourceLineNo">160</span><a id="line.160"></a>
+<span class="sourceLineNo">161</span><a id="line.161">    /**</a>
+<span class="sourceLineNo">162</span><a id="line.162">     * Sets the flag that controls whether or not the renderer draws error</a>
+<span class="sourceLineNo">163</span><a id="line.163">     * bars for the y-values and, if the flag changes, sends a</a>
+<span class="sourceLineNo">164</span><a id="line.164">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">165</span><a id="line.165">     *</a>
+<span class="sourceLineNo">166</span><a id="line.166">     * @param draw  the flag value.</a>
+<span class="sourceLineNo">167</span><a id="line.167">     *</a>
+<span class="sourceLineNo">168</span><a id="line.168">     * @see #getDrawYError()</a>
+<span class="sourceLineNo">169</span><a id="line.169">     */</a>
+<span class="sourceLineNo">170</span><a id="line.170">    public void setDrawYError(boolean draw) {</a>
+<span class="sourceLineNo">171</span><a id="line.171">        if (this.drawYError != draw) {</a>
+<span class="sourceLineNo">172</span><a id="line.172">            this.drawYError = draw;</a>
+<span class="sourceLineNo">173</span><a id="line.173">            fireChangeEvent();</a>
+<span class="sourceLineNo">174</span><a id="line.174">        }</a>
+<span class="sourceLineNo">175</span><a id="line.175">    }</a>
+<span class="sourceLineNo">176</span><a id="line.176"></a>
+<span class="sourceLineNo">177</span><a id="line.177">    /**</a>
+<span class="sourceLineNo">178</span><a id="line.178">     * Returns the length (in Java2D units) of the cap at the end of the error</a>
+<span class="sourceLineNo">179</span><a id="line.179">     * bars.</a>
+<span class="sourceLineNo">180</span><a id="line.180">     *</a>
+<span class="sourceLineNo">181</span><a id="line.181">     * @return The cap length.</a>
+<span class="sourceLineNo">182</span><a id="line.182">     *</a>
+<span class="sourceLineNo">183</span><a id="line.183">     * @see #setCapLength(double)</a>
+<span class="sourceLineNo">184</span><a id="line.184">     */</a>
+<span class="sourceLineNo">185</span><a id="line.185">    public double getCapLength() {</a>
+<span class="sourceLineNo">186</span><a id="line.186">        return this.capLength;</a>
+<span class="sourceLineNo">187</span><a id="line.187">    }</a>
+<span class="sourceLineNo">188</span><a id="line.188"></a>
+<span class="sourceLineNo">189</span><a id="line.189">    /**</a>
+<span class="sourceLineNo">190</span><a id="line.190">     * Sets the length of the cap at the end of the error bars, and sends a</a>
+<span class="sourceLineNo">191</span><a id="line.191">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">192</span><a id="line.192">     *</a>
+<span class="sourceLineNo">193</span><a id="line.193">     * @param length  the length (in Java2D units).</a>
+<span class="sourceLineNo">194</span><a id="line.194">     *</a>
+<span class="sourceLineNo">195</span><a id="line.195">     * @see #getCapLength()</a>
+<span class="sourceLineNo">196</span><a id="line.196">     */</a>
+<span class="sourceLineNo">197</span><a id="line.197">    public void setCapLength(double length) {</a>
+<span class="sourceLineNo">198</span><a id="line.198">        this.capLength = length;</a>
+<span class="sourceLineNo">199</span><a id="line.199">        fireChangeEvent();</a>
+<span class="sourceLineNo">200</span><a id="line.200">    }</a>
+<span class="sourceLineNo">201</span><a id="line.201"></a>
+<span class="sourceLineNo">202</span><a id="line.202">    /**</a>
+<span class="sourceLineNo">203</span><a id="line.203">     * Returns the paint used to draw the error bars.  If this is</a>
+<span class="sourceLineNo">204</span><a id="line.204">     * &lt;code&gt;null&lt;/code&gt; (the default), the item paint is used instead.</a>
+<span class="sourceLineNo">205</span><a id="line.205">     *</a>
+<span class="sourceLineNo">206</span><a id="line.206">     * @return The paint (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">207</span><a id="line.207">     *</a>
+<span class="sourceLineNo">208</span><a id="line.208">     * @see #setErrorPaint(Paint)</a>
+<span class="sourceLineNo">209</span><a id="line.209">     */</a>
+<span class="sourceLineNo">210</span><a id="line.210">    public Paint getErrorPaint() {</a>
+<span class="sourceLineNo">211</span><a id="line.211">        return this.errorPaint;</a>
+<span class="sourceLineNo">212</span><a id="line.212">    }</a>
+<span class="sourceLineNo">213</span><a id="line.213"></a>
+<span class="sourceLineNo">214</span><a id="line.214">    /**</a>
+<span class="sourceLineNo">215</span><a id="line.215">     * Sets the paint used to draw the error bars and sends a</a>
+<span class="sourceLineNo">216</span><a id="line.216">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">217</span><a id="line.217">     *</a>
+<span class="sourceLineNo">218</span><a id="line.218">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">219</span><a id="line.219">     *</a>
+<span class="sourceLineNo">220</span><a id="line.220">     * @see #getErrorPaint()</a>
+<span class="sourceLineNo">221</span><a id="line.221">     */</a>
+<span class="sourceLineNo">222</span><a id="line.222">    public void setErrorPaint(Paint paint) {</a>
+<span class="sourceLineNo">223</span><a id="line.223">        this.errorPaint = paint;</a>
+<span class="sourceLineNo">224</span><a id="line.224">        fireChangeEvent();</a>
+<span class="sourceLineNo">225</span><a id="line.225">    }</a>
+<span class="sourceLineNo">226</span><a id="line.226"></a>
+<span class="sourceLineNo">227</span><a id="line.227">    /**</a>
+<span class="sourceLineNo">228</span><a id="line.228">     * Returns the stroke used to draw the error bars.  If this is </a>
+<span class="sourceLineNo">229</span><a id="line.229">     * &lt;code&gt;null&lt;/code&gt; (the default), the item outline stroke is used </a>
+<span class="sourceLineNo">230</span><a id="line.230">     * instead.</a>
+<span class="sourceLineNo">231</span><a id="line.231">     * </a>
+<span class="sourceLineNo">232</span><a id="line.232">     * @return The stroke (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">233</span><a id="line.233">     *</a>
+<span class="sourceLineNo">234</span><a id="line.234">     * @see #setErrorStroke(Stroke)</a>
+<span class="sourceLineNo">235</span><a id="line.235">     * </a>
+<span class="sourceLineNo">236</span><a id="line.236">     * @since 1.0.13</a>
+<span class="sourceLineNo">237</span><a id="line.237">     */</a>
+<span class="sourceLineNo">238</span><a id="line.238">    public Stroke getErrorStroke() {</a>
+<span class="sourceLineNo">239</span><a id="line.239">        return this.errorStroke;</a>
+<span class="sourceLineNo">240</span><a id="line.240">    }</a>
+<span class="sourceLineNo">241</span><a id="line.241"></a>
+<span class="sourceLineNo">242</span><a id="line.242">    /**</a>
+<span class="sourceLineNo">243</span><a id="line.243">     * Sets the stroke used to draw the error bars and sends a</a>
+<span class="sourceLineNo">244</span><a id="line.244">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">245</span><a id="line.245">     *</a>
+<span class="sourceLineNo">246</span><a id="line.246">     * @param stroke   the stroke (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">247</span><a id="line.247">     *</a>
+<span class="sourceLineNo">248</span><a id="line.248">     * @see #getErrorStroke()</a>
+<span class="sourceLineNo">249</span><a id="line.249">     *</a>
+<span class="sourceLineNo">250</span><a id="line.250">     * @since 1.0.13</a>
+<span class="sourceLineNo">251</span><a id="line.251">     */</a>
+<span class="sourceLineNo">252</span><a id="line.252">    public void setErrorStroke(Stroke stroke) {</a>
+<span class="sourceLineNo">253</span><a id="line.253">        this.errorStroke = stroke;</a>
+<span class="sourceLineNo">254</span><a id="line.254">        fireChangeEvent();</a>
+<span class="sourceLineNo">255</span><a id="line.255">    }</a>
+<span class="sourceLineNo">256</span><a id="line.256"></a>
+<span class="sourceLineNo">257</span><a id="line.257">    /**</a>
+<span class="sourceLineNo">258</span><a id="line.258">     * Returns the range required by this renderer to display all the domain</a>
+<span class="sourceLineNo">259</span><a id="line.259">     * values in the specified dataset.</a>
+<span class="sourceLineNo">260</span><a id="line.260">     *</a>
+<span class="sourceLineNo">261</span><a id="line.261">     * @param dataset  the dataset (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">262</span><a id="line.262">     *</a>
+<span class="sourceLineNo">263</span><a id="line.263">     * @return The range, or &lt;code&gt;null&lt;/code&gt; if the dataset is</a>
+<span class="sourceLineNo">264</span><a id="line.264">     *     &lt;code&gt;null&lt;/code&gt;.</a>
+<span class="sourceLineNo">265</span><a id="line.265">     */</a>
+<span class="sourceLineNo">266</span><a id="line.266">    @Override</a>
+<span class="sourceLineNo">267</span><a id="line.267">    public Range findDomainBounds(XYDataset dataset) {</a>
+<span class="sourceLineNo">268</span><a id="line.268">        // include the interval if there is one</a>
+<span class="sourceLineNo">269</span><a id="line.269">        return findDomainBounds(dataset, true);</a>
+<span class="sourceLineNo">270</span><a id="line.270">    }</a>
+<span class="sourceLineNo">271</span><a id="line.271"></a>
+<span class="sourceLineNo">272</span><a id="line.272">    /**</a>
+<span class="sourceLineNo">273</span><a id="line.273">     * Returns the range required by this renderer to display all the range</a>
+<span class="sourceLineNo">274</span><a id="line.274">     * values in the specified dataset.</a>
+<span class="sourceLineNo">275</span><a id="line.275">     *</a>
+<span class="sourceLineNo">276</span><a id="line.276">     * @param dataset  the dataset (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">277</span><a id="line.277">     *</a>
+<span class="sourceLineNo">278</span><a id="line.278">     * @return The range, or &lt;code&gt;null&lt;/code&gt; if the dataset is</a>
+<span class="sourceLineNo">279</span><a id="line.279">     *     &lt;code&gt;null&lt;/code&gt;.</a>
+<span class="sourceLineNo">280</span><a id="line.280">     */</a>
+<span class="sourceLineNo">281</span><a id="line.281">    @Override</a>
+<span class="sourceLineNo">282</span><a id="line.282">    public Range findRangeBounds(XYDataset dataset) {</a>
+<span class="sourceLineNo">283</span><a id="line.283">        // include the interval if there is one</a>
+<span class="sourceLineNo">284</span><a id="line.284">        return findRangeBounds(dataset, true);</a>
+<span class="sourceLineNo">285</span><a id="line.285">    }</a>
+<span class="sourceLineNo">286</span><a id="line.286"></a>
+<span class="sourceLineNo">287</span><a id="line.287">    /**</a>
+<span class="sourceLineNo">288</span><a id="line.288">     * Draws the visual representation for one data item.</a>
+<span class="sourceLineNo">289</span><a id="line.289">     *</a>
+<span class="sourceLineNo">290</span><a id="line.290">     * @param g2  the graphics output target.</a>
+<span class="sourceLineNo">291</span><a id="line.291">     * @param state  the renderer state.</a>
+<span class="sourceLineNo">292</span><a id="line.292">     * @param dataArea  the data area.</a>
+<span class="sourceLineNo">293</span><a id="line.293">     * @param info  the plot rendering info.</a>
+<span class="sourceLineNo">294</span><a id="line.294">     * @param plot  the plot.</a>
+<span class="sourceLineNo">295</span><a id="line.295">     * @param domainAxis  the domain axis.</a>
+<span class="sourceLineNo">296</span><a id="line.296">     * @param rangeAxis  the range axis.</a>
+<span class="sourceLineNo">297</span><a id="line.297">     * @param dataset  the dataset.</a>
+<span class="sourceLineNo">298</span><a id="line.298">     * @param series  the series index.</a>
+<span class="sourceLineNo">299</span><a id="line.299">     * @param item  the item index.</a>
+<span class="sourceLineNo">300</span><a id="line.300">     * @param crosshairState  the crosshair state.</a>
+<span class="sourceLineNo">301</span><a id="line.301">     * @param pass  the pass index.</a>
+<span class="sourceLineNo">302</span><a id="line.302">     */</a>
+<span class="sourceLineNo">303</span><a id="line.303">    @Override</a>
+<span class="sourceLineNo">304</span><a id="line.304">    public void drawItem(Graphics2D g2, XYItemRendererState state,</a>
+<span class="sourceLineNo">305</span><a id="line.305">            Rectangle2D dataArea, PlotRenderingInfo info, XYPlot plot,</a>
+<span class="sourceLineNo">306</span><a id="line.306">            ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset,</a>
+<span class="sourceLineNo">307</span><a id="line.307">            int series, int item, CrosshairState crosshairState, int pass) {</a>
+<span class="sourceLineNo">308</span><a id="line.308"></a>
+<span class="sourceLineNo">309</span><a id="line.309">        if (pass == 0 &amp;&amp; dataset instanceof IntervalXYDataset</a>
+<span class="sourceLineNo">310</span><a id="line.310">                &amp;&amp; getItemVisible(series, item)) {</a>
+<span class="sourceLineNo">311</span><a id="line.311">            IntervalXYDataset ixyd = (IntervalXYDataset) dataset;</a>
+<span class="sourceLineNo">312</span><a id="line.312">            PlotOrientation orientation = plot.getOrientation();</a>
+<span class="sourceLineNo">313</span><a id="line.313">            if (this.drawXError) {</a>
+<span class="sourceLineNo">314</span><a id="line.314">                // draw the error bar for the x-interval</a>
+<span class="sourceLineNo">315</span><a id="line.315">                double x0 = ixyd.getStartXValue(series, item);</a>
+<span class="sourceLineNo">316</span><a id="line.316">                double x1 = ixyd.getEndXValue(series, item);</a>
+<span class="sourceLineNo">317</span><a id="line.317">                double y = ixyd.getYValue(series, item);</a>
+<span class="sourceLineNo">318</span><a id="line.318">                RectangleEdge edge = plot.getDomainAxisEdge();</a>
+<span class="sourceLineNo">319</span><a id="line.319">                double xx0 = domainAxis.valueToJava2D(x0, dataArea, edge);</a>
+<span class="sourceLineNo">320</span><a id="line.320">                double xx1 = domainAxis.valueToJava2D(x1, dataArea, edge);</a>
+<span class="sourceLineNo">321</span><a id="line.321">                double yy = rangeAxis.valueToJava2D(y, dataArea,</a>
+<span class="sourceLineNo">322</span><a id="line.322">                        plot.getRangeAxisEdge());</a>
+<span class="sourceLineNo">323</span><a id="line.323">                Line2D line;</a>
+<span class="sourceLineNo">324</span><a id="line.324">                Line2D cap1;</a>
+<span class="sourceLineNo">325</span><a id="line.325">                Line2D cap2;</a>
+<span class="sourceLineNo">326</span><a id="line.326">                double adj = this.capLength / 2.0;</a>
+<span class="sourceLineNo">327</span><a id="line.327">                if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">328</span><a id="line.328">                    line = new Line2D.Double(xx0, yy, xx1, yy);</a>
+<span class="sourceLineNo">329</span><a id="line.329">                    cap1 = new Line2D.Double(xx0, yy - adj, xx0, yy + adj);</a>
+<span class="sourceLineNo">330</span><a id="line.330">                    cap2 = new Line2D.Double(xx1, yy - adj, xx1, yy + adj);</a>
+<span class="sourceLineNo">331</span><a id="line.331">                }</a>
+<span class="sourceLineNo">332</span><a id="line.332">                else {  // PlotOrientation.HORIZONTAL</a>
+<span class="sourceLineNo">333</span><a id="line.333">                    line = new Line2D.Double(yy, xx0, yy, xx1);</a>
+<span class="sourceLineNo">334</span><a id="line.334">                    cap1 = new Line2D.Double(yy - adj, xx0, yy + adj, xx0);</a>
+<span class="sourceLineNo">335</span><a id="line.335">                    cap2 = new Line2D.Double(yy - adj, xx1, yy + adj, xx1);</a>
+<span class="sourceLineNo">336</span><a id="line.336">                }</a>
+<span class="sourceLineNo">337</span><a id="line.337">                if (this.errorPaint != null) {</a>
+<span class="sourceLineNo">338</span><a id="line.338">                    g2.setPaint(this.errorPaint);</a>
+<span class="sourceLineNo">339</span><a id="line.339">                }</a>
+<span class="sourceLineNo">340</span><a id="line.340">                else {</a>
+<span class="sourceLineNo">341</span><a id="line.341">                    g2.setPaint(getItemPaint(series, item));</a>
+<span class="sourceLineNo">342</span><a id="line.342">                }</a>
+<span class="sourceLineNo">343</span><a id="line.343">                if (this.errorStroke != null) {</a>
+<span class="sourceLineNo">344</span><a id="line.344">                    g2.setStroke(this.errorStroke);</a>
+<span class="sourceLineNo">345</span><a id="line.345">                }</a>
+<span class="sourceLineNo">346</span><a id="line.346">                else {</a>
+<span class="sourceLineNo">347</span><a id="line.347">                    g2.setStroke(getItemStroke(series, item));</a>
+<span class="sourceLineNo">348</span><a id="line.348">                }</a>
+<span class="sourceLineNo">349</span><a id="line.349">                g2.draw(line);</a>
+<span class="sourceLineNo">350</span><a id="line.350">                g2.draw(cap1);</a>
+<span class="sourceLineNo">351</span><a id="line.351">                g2.draw(cap2);</a>
+<span class="sourceLineNo">352</span><a id="line.352">            }</a>
+<span class="sourceLineNo">353</span><a id="line.353">            if (this.drawYError) {</a>
+<span class="sourceLineNo">354</span><a id="line.354">                // draw the error bar for the y-interval</a>
+<span class="sourceLineNo">355</span><a id="line.355">                double y0 = ixyd.getStartYValue(series, item);</a>
+<span class="sourceLineNo">356</span><a id="line.356">                double y1 = ixyd.getEndYValue(series, item);</a>
+<span class="sourceLineNo">357</span><a id="line.357">                double x = ixyd.getXValue(series, item);</a>
+<span class="sourceLineNo">358</span><a id="line.358">                RectangleEdge edge = plot.getRangeAxisEdge();</a>
+<span class="sourceLineNo">359</span><a id="line.359">                double yy0 = rangeAxis.valueToJava2D(y0, dataArea, edge);</a>
+<span class="sourceLineNo">360</span><a id="line.360">                double yy1 = rangeAxis.valueToJava2D(y1, dataArea, edge);</a>
+<span class="sourceLineNo">361</span><a id="line.361">                double xx = domainAxis.valueToJava2D(x, dataArea,</a>
+<span class="sourceLineNo">362</span><a id="line.362">                        plot.getDomainAxisEdge());</a>
+<span class="sourceLineNo">363</span><a id="line.363">                Line2D line;</a>
+<span class="sourceLineNo">364</span><a id="line.364">                Line2D cap1;</a>
+<span class="sourceLineNo">365</span><a id="line.365">                Line2D cap2;</a>
+<span class="sourceLineNo">366</span><a id="line.366">                double adj = this.capLength / 2.0;</a>
+<span class="sourceLineNo">367</span><a id="line.367">                if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">368</span><a id="line.368">                    line = new Line2D.Double(xx, yy0, xx, yy1);</a>
+<span class="sourceLineNo">369</span><a id="line.369">                    cap1 = new Line2D.Double(xx - adj, yy0, xx + adj, yy0);</a>
+<span class="sourceLineNo">370</span><a id="line.370">                    cap2 = new Line2D.Double(xx - adj, yy1, xx + adj, yy1);</a>
+<span class="sourceLineNo">371</span><a id="line.371">                }</a>
+<span class="sourceLineNo">372</span><a id="line.372">                else {  // PlotOrientation.HORIZONTAL</a>
+<span class="sourceLineNo">373</span><a id="line.373">                    line = new Line2D.Double(yy0, xx, yy1, xx);</a>
+<span class="sourceLineNo">374</span><a id="line.374">                    cap1 = new Line2D.Double(yy0, xx - adj, yy0, xx + adj);</a>
+<span class="sourceLineNo">375</span><a id="line.375">                    cap2 = new Line2D.Double(yy1, xx - adj, yy1, xx + adj);</a>
+<span class="sourceLineNo">376</span><a id="line.376">                }</a>
+<span class="sourceLineNo">377</span><a id="line.377">                if (this.errorPaint != null) {</a>
+<span class="sourceLineNo">378</span><a id="line.378">                    g2.setPaint(this.errorPaint);</a>
+<span class="sourceLineNo">379</span><a id="line.379">                }</a>
+<span class="sourceLineNo">380</span><a id="line.380">                else {</a>
+<span class="sourceLineNo">381</span><a id="line.381">                    g2.setPaint(getItemPaint(series, item));</a>
+<span class="sourceLineNo">382</span><a id="line.382">                }</a>
+<span class="sourceLineNo">383</span><a id="line.383">                if (this.errorStroke != null) {</a>
+<span class="sourceLineNo">384</span><a id="line.384">                    g2.setStroke(this.errorStroke);</a>
+<span class="sourceLineNo">385</span><a id="line.385">                }</a>
+<span class="sourceLineNo">386</span><a id="line.386">                else {</a>
+<span class="sourceLineNo">387</span><a id="line.387">                    g2.setStroke(getItemStroke(series, item));</a>
+<span class="sourceLineNo">388</span><a id="line.388">                }</a>
+<span class="sourceLineNo">389</span><a id="line.389">                g2.draw(line);</a>
+<span class="sourceLineNo">390</span><a id="line.390">                g2.draw(cap1);</a>
+<span class="sourceLineNo">391</span><a id="line.391">                g2.draw(cap2);</a>
+<span class="sourceLineNo">392</span><a id="line.392">            }</a>
+<span class="sourceLineNo">393</span><a id="line.393">        }</a>
+<span class="sourceLineNo">394</span><a id="line.394">        super.drawItem(g2, state, dataArea, info, plot, domainAxis, rangeAxis,</a>
+<span class="sourceLineNo">395</span><a id="line.395">                dataset, series, item, crosshairState, pass);</a>
+<span class="sourceLineNo">396</span><a id="line.396">    }</a>
+<span class="sourceLineNo">397</span><a id="line.397"></a>
+<span class="sourceLineNo">398</span><a id="line.398">    /**</a>
+<span class="sourceLineNo">399</span><a id="line.399">     * Tests this instance for equality with an arbitrary object.</a>
+<span class="sourceLineNo">400</span><a id="line.400">     *</a>
+<span class="sourceLineNo">401</span><a id="line.401">     * @param obj  the object (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">402</span><a id="line.402">     *</a>
+<span class="sourceLineNo">403</span><a id="line.403">     * @return A boolean.</a>
+<span class="sourceLineNo">404</span><a id="line.404">     */</a>
+<span class="sourceLineNo">405</span><a id="line.405">    @Override</a>
+<span class="sourceLineNo">406</span><a id="line.406">    public boolean equals(Object obj) {</a>
+<span class="sourceLineNo">407</span><a id="line.407">        if (obj == this) {</a>
+<span class="sourceLineNo">408</span><a id="line.408">            return true;</a>
+<span class="sourceLineNo">409</span><a id="line.409">        }</a>
+<span class="sourceLineNo">410</span><a id="line.410">        if (!(obj instanceof XYErrorRenderer)) {</a>
+<span class="sourceLineNo">411</span><a id="line.411">            return false;</a>
+<span class="sourceLineNo">412</span><a id="line.412">        }</a>
+<span class="sourceLineNo">413</span><a id="line.413">        XYErrorRenderer that = (XYErrorRenderer) obj;</a>
+<span class="sourceLineNo">414</span><a id="line.414">        if (this.drawXError != that.drawXError) {</a>
+<span class="sourceLineNo">415</span><a id="line.415">            return false;</a>
+<span class="sourceLineNo">416</span><a id="line.416">        }</a>
+<span class="sourceLineNo">417</span><a id="line.417">        if (this.drawYError != that.drawYError) {</a>
+<span class="sourceLineNo">418</span><a id="line.418">            return false;</a>
+<span class="sourceLineNo">419</span><a id="line.419">        }</a>
+<span class="sourceLineNo">420</span><a id="line.420">        if (this.capLength != that.capLength) {</a>
+<span class="sourceLineNo">421</span><a id="line.421">            return false;</a>
+<span class="sourceLineNo">422</span><a id="line.422">        }</a>
+<span class="sourceLineNo">423</span><a id="line.423">        if (!PaintUtilities.equal(this.errorPaint, that.errorPaint)) {</a>
+<span class="sourceLineNo">424</span><a id="line.424">            return false;</a>
+<span class="sourceLineNo">425</span><a id="line.425">        }</a>
+<span class="sourceLineNo">426</span><a id="line.426">        if (!ObjectUtilities.equal(this.errorStroke, that.errorStroke)) {</a>
+<span class="sourceLineNo">427</span><a id="line.427">            return false;</a>
+<span class="sourceLineNo">428</span><a id="line.428">        }</a>
+<span class="sourceLineNo">429</span><a id="line.429">        return super.equals(obj);</a>
+<span class="sourceLineNo">430</span><a id="line.430">    }</a>
+<span class="sourceLineNo">431</span><a id="line.431"></a>
+<span class="sourceLineNo">432</span><a id="line.432">    /**</a>
+<span class="sourceLineNo">433</span><a id="line.433">     * Provides serialization support.</a>
+<span class="sourceLineNo">434</span><a id="line.434">     *</a>
+<span class="sourceLineNo">435</span><a id="line.435">     * @param stream  the input stream.</a>
+<span class="sourceLineNo">436</span><a id="line.436">     *</a>
+<span class="sourceLineNo">437</span><a id="line.437">     * @throws IOException  if there is an I/O error.</a>
+<span class="sourceLineNo">438</span><a id="line.438">     * @throws ClassNotFoundException  if there is a classpath problem.</a>
+<span class="sourceLineNo">439</span><a id="line.439">     */</a>
+<span class="sourceLineNo">440</span><a id="line.440">    private void readObject(ObjectInputStream stream)</a>
+<span class="sourceLineNo">441</span><a id="line.441">            throws IOException, ClassNotFoundException {</a>
+<span class="sourceLineNo">442</span><a id="line.442">        stream.defaultReadObject();</a>
+<span class="sourceLineNo">443</span><a id="line.443">        this.errorPaint = SerialUtilities.readPaint(stream);</a>
+<span class="sourceLineNo">444</span><a id="line.444">        this.errorStroke = SerialUtilities.readStroke(stream);</a>
+<span class="sourceLineNo">445</span><a id="line.445">    }</a>
+<span class="sourceLineNo">446</span><a id="line.446"></a>
+<span class="sourceLineNo">447</span><a id="line.447">    /**</a>
+<span class="sourceLineNo">448</span><a id="line.448">     * Provides serialization support.</a>
+<span class="sourceLineNo">449</span><a id="line.449">     *</a>
+<span class="sourceLineNo">450</span><a id="line.450">     * @param stream  the output stream.</a>
+<span class="sourceLineNo">451</span><a id="line.451">     *</a>
+<span class="sourceLineNo">452</span><a id="line.452">     * @throws IOException  if there is an I/O error.</a>
+<span class="sourceLineNo">453</span><a id="line.453">     */</a>
+<span class="sourceLineNo">454</span><a id="line.454">    private void writeObject(ObjectOutputStream stream) throws IOException {</a>
+<span class="sourceLineNo">455</span><a id="line.455">        stream.defaultWriteObject();</a>
+<span class="sourceLineNo">456</span><a id="line.456">        SerialUtilities.writePaint(this.errorPaint, stream);</a>
+<span class="sourceLineNo">457</span><a id="line.457">        SerialUtilities.writeStroke(this.errorStroke, stream);</a>
+<span class="sourceLineNo">458</span><a id="line.458">    }</a>
+<span class="sourceLineNo">459</span><a id="line.459"></a>
+<span class="sourceLineNo">460</span><a id="line.460">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

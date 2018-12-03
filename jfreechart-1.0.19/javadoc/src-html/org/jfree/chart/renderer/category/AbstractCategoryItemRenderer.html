@@ -1,0 +1,1930 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * ---------------------------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * AbstractCategoryItemRenderer.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * ---------------------------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2002-2014, by Object Refinery Limited.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   Richard Atkinson;</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *                   Peter Kolb (patch 2497611);</a>
+<span class="sourceLineNo">035</span><a id="line.35"> *</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * Changes:</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * --------</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * 29-May-2002 : Version 1 (DG);</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * 06-Jun-2002 : Added accessor methods for the tool tip generator (DG);</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 11-Jun-2002 : Made constructors protected (DG);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * 26-Jun-2002 : Added axis to initialise method (DG);</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * 05-Aug-2002 : Added urlGenerator member variable plus accessors (RA);</a>
+<span class="sourceLineNo">043</span><a id="line.43"> * 22-Aug-2002 : Added categoriesPaint attribute, based on code submitted by</a>
+<span class="sourceLineNo">044</span><a id="line.44"> *               Janet Banks.  This can be used when there is only one series,</a>
+<span class="sourceLineNo">045</span><a id="line.45"> *               and you want each category item to have a different color (DG);</a>
+<span class="sourceLineNo">046</span><a id="line.46"> * 01-Oct-2002 : Fixed errors reported by Checkstyle (DG);</a>
+<span class="sourceLineNo">047</span><a id="line.47"> * 29-Oct-2002 : Fixed bug where background image for plot was not being</a>
+<span class="sourceLineNo">048</span><a id="line.48"> *               drawn (DG);</a>
+<span class="sourceLineNo">049</span><a id="line.49"> * 05-Nov-2002 : Replaced references to CategoryDataset with TableDataset (DG);</a>
+<span class="sourceLineNo">050</span><a id="line.50"> * 26-Nov 2002 : Replaced the isStacked() method with getRangeType() (DG);</a>
+<span class="sourceLineNo">051</span><a id="line.51"> * 09-Jan-2003 : Renamed grid-line methods (DG);</a>
+<span class="sourceLineNo">052</span><a id="line.52"> * 17-Jan-2003 : Moved plot classes into separate package (DG);</a>
+<span class="sourceLineNo">053</span><a id="line.53"> * 25-Mar-2003 : Implemented Serializable (DG);</a>
+<span class="sourceLineNo">054</span><a id="line.54"> * 12-May-2003 : Modified to take into account the plot orientation (DG);</a>
+<span class="sourceLineNo">055</span><a id="line.55"> * 12-Aug-2003 : Very minor javadoc corrections (DB)</a>
+<span class="sourceLineNo">056</span><a id="line.56"> * 13-Aug-2003 : Implemented Cloneable (DG);</a>
+<span class="sourceLineNo">057</span><a id="line.57"> * 16-Sep-2003 : Changed ChartRenderingInfo --&gt; PlotRenderingInfo (DG);</a>
+<span class="sourceLineNo">058</span><a id="line.58"> * 05-Nov-2003 : Fixed marker rendering bug (833623) (DG);</a>
+<span class="sourceLineNo">059</span><a id="line.59"> * 21-Jan-2004 : Update for renamed method in ValueAxis (DG);</a>
+<span class="sourceLineNo">060</span><a id="line.60"> * 11-Feb-2004 : Modified labelling for markers (DG);</a>
+<span class="sourceLineNo">061</span><a id="line.61"> * 12-Feb-2004 : Updated clone() method (DG);</a>
+<span class="sourceLineNo">062</span><a id="line.62"> * 15-Apr-2004 : Created a new CategoryToolTipGenerator interface (DG);</a>
+<span class="sourceLineNo">063</span><a id="line.63"> * 05-May-2004 : Fixed bug (948310) where interval markers extend outside axis</a>
+<span class="sourceLineNo">064</span><a id="line.64"> *               range (DG);</a>
+<span class="sourceLineNo">065</span><a id="line.65"> * 14-Jun-2004 : Fixed bug in drawRangeMarker() method - now uses 'paint' and</a>
+<span class="sourceLineNo">066</span><a id="line.66"> *               'stroke' rather than 'outlinePaint' and 'outlineStroke' (DG);</a>
+<span class="sourceLineNo">067</span><a id="line.67"> * 15-Jun-2004 : Interval markers can now use GradientPaint (DG);</a>
+<span class="sourceLineNo">068</span><a id="line.68"> * 30-Sep-2004 : Moved drawRotatedString() from RefineryUtilities</a>
+<span class="sourceLineNo">069</span><a id="line.69"> *               --&gt; TextUtilities (DG);</a>
+<span class="sourceLineNo">070</span><a id="line.70"> * 01-Oct-2004 : Fixed bug 1029697, problem with label alignment in</a>
+<span class="sourceLineNo">071</span><a id="line.71"> *               drawRangeMarker() method (DG);</a>
+<span class="sourceLineNo">072</span><a id="line.72"> * 07-Jan-2005 : Renamed getRangeExtent() --&gt; findRangeBounds() (DG);</a>
+<span class="sourceLineNo">073</span><a id="line.73"> * 21-Jan-2005 : Modified return type of calculateRangeMarkerTextAnchorPoint()</a>
+<span class="sourceLineNo">074</span><a id="line.74"> *               method (DG);</a>
+<span class="sourceLineNo">075</span><a id="line.75"> * 08-Mar-2005 : Fixed positioning of marker labels (DG);</a>
+<span class="sourceLineNo">076</span><a id="line.76"> * 20-Apr-2005 : Added legend label, tooltip and URL generators (DG);</a>
+<span class="sourceLineNo">077</span><a id="line.77"> * 01-Jun-2005 : Handle one dimension of the marker label adjustment</a>
+<span class="sourceLineNo">078</span><a id="line.78"> *               automatically (DG);</a>
+<span class="sourceLineNo">079</span><a id="line.79"> * 09-Jun-2005 : Added utility method for adding an item entity (DG);</a>
+<span class="sourceLineNo">080</span><a id="line.80"> * ------------- JFREECHART 1.0.x ---------------------------------------------</a>
+<span class="sourceLineNo">081</span><a id="line.81"> * 01-Mar-2006 : Updated getLegendItems() to check seriesVisibleInLegend</a>
+<span class="sourceLineNo">082</span><a id="line.82"> *               flags (DG);</a>
+<span class="sourceLineNo">083</span><a id="line.83"> * 20-Jul-2006 : Set dataset and series indices in LegendItem (DG);</a>
+<span class="sourceLineNo">084</span><a id="line.84"> * 23-Oct-2006 : Draw outlines for interval markers (DG);</a>
+<span class="sourceLineNo">085</span><a id="line.85"> * 24-Oct-2006 : Respect alpha setting in markers, as suggested by Sergei</a>
+<span class="sourceLineNo">086</span><a id="line.86"> *               Ivanov in patch 1567843 (DG);</a>
+<span class="sourceLineNo">087</span><a id="line.87"> * 30-Nov-2006 : Added a check for series visibility in the getLegendItem()</a>
+<span class="sourceLineNo">088</span><a id="line.88"> *               method (DG);</a>
+<span class="sourceLineNo">089</span><a id="line.89"> * 07-Dec-2006 : Fix for equals() method (DG);</a>
+<span class="sourceLineNo">090</span><a id="line.90"> * 22-Feb-2007 : Added createState() method (DG);</a>
+<span class="sourceLineNo">091</span><a id="line.91"> * 01-Mar-2007 : Fixed interval marker drawing (patch 1670686 thanks to</a>
+<span class="sourceLineNo">092</span><a id="line.92"> *               Sergei Ivanov) (DG);</a>
+<span class="sourceLineNo">093</span><a id="line.93"> * 20-Apr-2007 : Updated getLegendItem() for renderer change, and deprecated</a>
+<span class="sourceLineNo">094</span><a id="line.94"> *               itemLabelGenerator, toolTipGenerator and itemURLGenerator</a>
+<span class="sourceLineNo">095</span><a id="line.95"> *               override fields (DG);</a>
+<span class="sourceLineNo">096</span><a id="line.96"> * 18-May-2007 : Set dataset and seriesKey for LegendItem (DG);</a>
+<span class="sourceLineNo">097</span><a id="line.97"> * 17-Jun-2008 : Apply legend shape, font and paint attributes (DG);</a>
+<span class="sourceLineNo">098</span><a id="line.98"> * 26-Jun-2008 : Added crosshair support (DG);</a>
+<span class="sourceLineNo">099</span><a id="line.99"> * 25-Nov-2008 : Fixed bug in findRangeBounds() method (DG);</a>
+<span class="sourceLineNo">100</span><a id="line.100"> * 14-Jan-2009 : Update initialise() to store visible series indices (PK);</a>
+<span class="sourceLineNo">101</span><a id="line.101"> * 21-Jan-2009 : Added drawRangeLine() method (DG);</a>
+<span class="sourceLineNo">102</span><a id="line.102"> * 27-Mar-2009 : Added new findRangeBounds() method to account for hidden</a>
+<span class="sourceLineNo">103</span><a id="line.103"> *               series (DG);</a>
+<span class="sourceLineNo">104</span><a id="line.104"> * 01-Apr-2009 : Added new addEntity() method (DG);</a>
+<span class="sourceLineNo">105</span><a id="line.105"> * 09-Feb-2010 : Fixed bug 2947660 (DG);</a>
+<span class="sourceLineNo">106</span><a id="line.106"> * 02-Jul-2013 : Use ParamChecks (DG);</a>
+<span class="sourceLineNo">107</span><a id="line.107"> * 08-Apr-2014 : Remove use of ObjectList (DG);</a>
+<span class="sourceLineNo">108</span><a id="line.108"> * 29-Jul-2014 : Add rendering hints to normalise range lines (DG);</a>
+<span class="sourceLineNo">109</span><a id="line.109"> * </a>
+<span class="sourceLineNo">110</span><a id="line.110"> */</a>
+<span class="sourceLineNo">111</span><a id="line.111"></a>
+<span class="sourceLineNo">112</span><a id="line.112">package org.jfree.chart.renderer.category;</a>
+<span class="sourceLineNo">113</span><a id="line.113"></a>
+<span class="sourceLineNo">114</span><a id="line.114">import java.awt.AlphaComposite;</a>
+<span class="sourceLineNo">115</span><a id="line.115">import java.awt.Composite;</a>
+<span class="sourceLineNo">116</span><a id="line.116">import java.awt.Font;</a>
+<span class="sourceLineNo">117</span><a id="line.117">import java.awt.GradientPaint;</a>
+<span class="sourceLineNo">118</span><a id="line.118">import java.awt.Graphics2D;</a>
+<span class="sourceLineNo">119</span><a id="line.119">import java.awt.Paint;</a>
+<span class="sourceLineNo">120</span><a id="line.120">import java.awt.RenderingHints;</a>
+<span class="sourceLineNo">121</span><a id="line.121">import java.awt.Shape;</a>
+<span class="sourceLineNo">122</span><a id="line.122">import java.awt.Stroke;</a>
+<span class="sourceLineNo">123</span><a id="line.123">import java.awt.geom.Ellipse2D;</a>
+<span class="sourceLineNo">124</span><a id="line.124">import java.awt.geom.Line2D;</a>
+<span class="sourceLineNo">125</span><a id="line.125">import java.awt.geom.Point2D;</a>
+<span class="sourceLineNo">126</span><a id="line.126">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">127</span><a id="line.127">import java.io.Serializable;</a>
+<span class="sourceLineNo">128</span><a id="line.128"></a>
+<span class="sourceLineNo">129</span><a id="line.129">import java.util.ArrayList;</a>
+<span class="sourceLineNo">130</span><a id="line.130">import java.util.HashMap;</a>
+<span class="sourceLineNo">131</span><a id="line.131">import java.util.List;</a>
+<span class="sourceLineNo">132</span><a id="line.132">import java.util.Map;</a>
+<span class="sourceLineNo">133</span><a id="line.133">import org.jfree.chart.LegendItem;</a>
+<span class="sourceLineNo">134</span><a id="line.134">import org.jfree.chart.LegendItemCollection;</a>
+<span class="sourceLineNo">135</span><a id="line.135">import org.jfree.chart.axis.CategoryAxis;</a>
+<span class="sourceLineNo">136</span><a id="line.136">import org.jfree.chart.axis.ValueAxis;</a>
+<span class="sourceLineNo">137</span><a id="line.137">import org.jfree.chart.entity.CategoryItemEntity;</a>
+<span class="sourceLineNo">138</span><a id="line.138">import org.jfree.chart.entity.EntityCollection;</a>
+<span class="sourceLineNo">139</span><a id="line.139">import org.jfree.chart.event.RendererChangeEvent;</a>
+<span class="sourceLineNo">140</span><a id="line.140">import org.jfree.chart.labels.CategoryItemLabelGenerator;</a>
+<span class="sourceLineNo">141</span><a id="line.141">import org.jfree.chart.labels.CategorySeriesLabelGenerator;</a>
+<span class="sourceLineNo">142</span><a id="line.142">import org.jfree.chart.labels.CategoryToolTipGenerator;</a>
+<span class="sourceLineNo">143</span><a id="line.143">import org.jfree.chart.labels.ItemLabelPosition;</a>
+<span class="sourceLineNo">144</span><a id="line.144">import org.jfree.chart.labels.StandardCategorySeriesLabelGenerator;</a>
+<span class="sourceLineNo">145</span><a id="line.145">import org.jfree.chart.plot.CategoryCrosshairState;</a>
+<span class="sourceLineNo">146</span><a id="line.146">import org.jfree.chart.plot.CategoryMarker;</a>
+<span class="sourceLineNo">147</span><a id="line.147">import org.jfree.chart.plot.CategoryPlot;</a>
+<span class="sourceLineNo">148</span><a id="line.148">import org.jfree.chart.plot.DrawingSupplier;</a>
+<span class="sourceLineNo">149</span><a id="line.149">import org.jfree.chart.plot.IntervalMarker;</a>
+<span class="sourceLineNo">150</span><a id="line.150">import org.jfree.chart.plot.Marker;</a>
+<span class="sourceLineNo">151</span><a id="line.151">import org.jfree.chart.plot.PlotOrientation;</a>
+<span class="sourceLineNo">152</span><a id="line.152">import org.jfree.chart.plot.PlotRenderingInfo;</a>
+<span class="sourceLineNo">153</span><a id="line.153">import org.jfree.chart.plot.ValueMarker;</a>
+<span class="sourceLineNo">154</span><a id="line.154">import org.jfree.chart.renderer.AbstractRenderer;</a>
+<span class="sourceLineNo">155</span><a id="line.155">import org.jfree.chart.urls.CategoryURLGenerator;</a>
+<span class="sourceLineNo">156</span><a id="line.156">import org.jfree.chart.util.CloneUtils;</a>
+<span class="sourceLineNo">157</span><a id="line.157">import org.jfree.chart.util.ParamChecks;</a>
+<span class="sourceLineNo">158</span><a id="line.158">import org.jfree.chart.util.TextUtils;</a>
+<span class="sourceLineNo">159</span><a id="line.159">import org.jfree.data.Range;</a>
+<span class="sourceLineNo">160</span><a id="line.160">import org.jfree.data.category.CategoryDataset;</a>
+<span class="sourceLineNo">161</span><a id="line.161">import org.jfree.data.general.DatasetUtilities;</a>
+<span class="sourceLineNo">162</span><a id="line.162">import org.jfree.text.TextUtilities;</a>
+<span class="sourceLineNo">163</span><a id="line.163">import org.jfree.ui.GradientPaintTransformer;</a>
+<span class="sourceLineNo">164</span><a id="line.164">import org.jfree.ui.LengthAdjustmentType;</a>
+<span class="sourceLineNo">165</span><a id="line.165">import org.jfree.ui.RectangleAnchor;</a>
+<span class="sourceLineNo">166</span><a id="line.166">import org.jfree.ui.RectangleEdge;</a>
+<span class="sourceLineNo">167</span><a id="line.167">import org.jfree.ui.RectangleInsets;</a>
+<span class="sourceLineNo">168</span><a id="line.168">import org.jfree.util.ObjectUtilities;</a>
+<span class="sourceLineNo">169</span><a id="line.169">import org.jfree.util.PublicCloneable;</a>
+<span class="sourceLineNo">170</span><a id="line.170">import org.jfree.util.SortOrder;</a>
+<span class="sourceLineNo">171</span><a id="line.171"></a>
+<span class="sourceLineNo">172</span><a id="line.172">/**</a>
+<span class="sourceLineNo">173</span><a id="line.173"> * An abstract base class that you can use to implement a new</a>
+<span class="sourceLineNo">174</span><a id="line.174"> * {@link CategoryItemRenderer}.  When you create a new</a>
+<span class="sourceLineNo">175</span><a id="line.175"> * {@link CategoryItemRenderer} you are not required to extend this class,</a>
+<span class="sourceLineNo">176</span><a id="line.176"> * but it makes the job easier.</a>
+<span class="sourceLineNo">177</span><a id="line.177"> */</a>
+<span class="sourceLineNo">178</span><a id="line.178">public abstract class AbstractCategoryItemRenderer extends AbstractRenderer</a>
+<span class="sourceLineNo">179</span><a id="line.179">        implements CategoryItemRenderer, Cloneable, PublicCloneable,</a>
+<span class="sourceLineNo">180</span><a id="line.180">        Serializable {</a>
+<span class="sourceLineNo">181</span><a id="line.181"></a>
+<span class="sourceLineNo">182</span><a id="line.182">    /** For serialization. */</a>
+<span class="sourceLineNo">183</span><a id="line.183">    private static final long serialVersionUID = 1247553218442497391L;</a>
+<span class="sourceLineNo">184</span><a id="line.184"></a>
+<span class="sourceLineNo">185</span><a id="line.185">    /** The plot that the renderer is assigned to. */</a>
+<span class="sourceLineNo">186</span><a id="line.186">    private CategoryPlot plot;</a>
+<span class="sourceLineNo">187</span><a id="line.187"></a>
+<span class="sourceLineNo">188</span><a id="line.188">    /** A list of item label generators (one per series). */</a>
+<span class="sourceLineNo">189</span><a id="line.189">    private Map&lt;Integer, CategoryItemLabelGenerator&gt; itemLabelGeneratorMap;</a>
+<span class="sourceLineNo">190</span><a id="line.190"></a>
+<span class="sourceLineNo">191</span><a id="line.191">    /** The base item label generator. */</a>
+<span class="sourceLineNo">192</span><a id="line.192">    private CategoryItemLabelGenerator baseItemLabelGenerator;</a>
+<span class="sourceLineNo">193</span><a id="line.193"></a>
+<span class="sourceLineNo">194</span><a id="line.194">    /** A list of tool tip generators (one per series). */</a>
+<span class="sourceLineNo">195</span><a id="line.195">    private Map&lt;Integer, CategoryToolTipGenerator&gt; toolTipGeneratorMap;</a>
+<span class="sourceLineNo">196</span><a id="line.196"></a>
+<span class="sourceLineNo">197</span><a id="line.197">    /** The base tool tip generator. */</a>
+<span class="sourceLineNo">198</span><a id="line.198">    private CategoryToolTipGenerator baseToolTipGenerator;</a>
+<span class="sourceLineNo">199</span><a id="line.199"></a>
+<span class="sourceLineNo">200</span><a id="line.200">    /** A list of item label generators (one per series). */</a>
+<span class="sourceLineNo">201</span><a id="line.201">    private Map&lt;Integer, CategoryURLGenerator&gt; itemURLGeneratorMap;</a>
+<span class="sourceLineNo">202</span><a id="line.202"></a>
+<span class="sourceLineNo">203</span><a id="line.203">    /** The base item label generator. */</a>
+<span class="sourceLineNo">204</span><a id="line.204">    private CategoryURLGenerator baseItemURLGenerator;</a>
+<span class="sourceLineNo">205</span><a id="line.205"></a>
+<span class="sourceLineNo">206</span><a id="line.206">    /** The legend item label generator. */</a>
+<span class="sourceLineNo">207</span><a id="line.207">    private CategorySeriesLabelGenerator legendItemLabelGenerator;</a>
+<span class="sourceLineNo">208</span><a id="line.208"></a>
+<span class="sourceLineNo">209</span><a id="line.209">    /** The legend item tool tip generator. */</a>
+<span class="sourceLineNo">210</span><a id="line.210">    private CategorySeriesLabelGenerator legendItemToolTipGenerator;</a>
+<span class="sourceLineNo">211</span><a id="line.211"></a>
+<span class="sourceLineNo">212</span><a id="line.212">    /** The legend item URL generator. */</a>
+<span class="sourceLineNo">213</span><a id="line.213">    private CategorySeriesLabelGenerator legendItemURLGenerator;</a>
+<span class="sourceLineNo">214</span><a id="line.214"></a>
+<span class="sourceLineNo">215</span><a id="line.215">    /** The number of rows in the dataset (temporary record). */</a>
+<span class="sourceLineNo">216</span><a id="line.216">    private transient int rowCount;</a>
+<span class="sourceLineNo">217</span><a id="line.217"></a>
+<span class="sourceLineNo">218</span><a id="line.218">    /** The number of columns in the dataset (temporary record). */</a>
+<span class="sourceLineNo">219</span><a id="line.219">    private transient int columnCount;</a>
+<span class="sourceLineNo">220</span><a id="line.220"></a>
+<span class="sourceLineNo">221</span><a id="line.221">    /**</a>
+<span class="sourceLineNo">222</span><a id="line.222">     * Creates a new renderer with no tool tip generator and no URL generator.</a>
+<span class="sourceLineNo">223</span><a id="line.223">     * The defaults (no tool tip or URL generators) have been chosen to</a>
+<span class="sourceLineNo">224</span><a id="line.224">     * minimise the processing required to generate a default chart.  If you</a>
+<span class="sourceLineNo">225</span><a id="line.225">     * require tool tips or URLs, then you can easily add the required</a>
+<span class="sourceLineNo">226</span><a id="line.226">     * generators.</a>
+<span class="sourceLineNo">227</span><a id="line.227">     */</a>
+<span class="sourceLineNo">228</span><a id="line.228">    protected AbstractCategoryItemRenderer() {</a>
+<span class="sourceLineNo">229</span><a id="line.229">        this.itemLabelGenerator = null;</a>
+<span class="sourceLineNo">230</span><a id="line.230">        this.itemLabelGeneratorMap </a>
+<span class="sourceLineNo">231</span><a id="line.231">                = new HashMap&lt;Integer, CategoryItemLabelGenerator&gt;();</a>
+<span class="sourceLineNo">232</span><a id="line.232">        this.toolTipGenerator = null;</a>
+<span class="sourceLineNo">233</span><a id="line.233">        this.toolTipGeneratorMap </a>
+<span class="sourceLineNo">234</span><a id="line.234">                = new HashMap&lt;Integer, CategoryToolTipGenerator&gt;();</a>
+<span class="sourceLineNo">235</span><a id="line.235">        this.itemURLGenerator = null;</a>
+<span class="sourceLineNo">236</span><a id="line.236">        this.itemURLGeneratorMap = new HashMap&lt;Integer, CategoryURLGenerator&gt;();</a>
+<span class="sourceLineNo">237</span><a id="line.237">        this.legendItemLabelGenerator</a>
+<span class="sourceLineNo">238</span><a id="line.238">                = new StandardCategorySeriesLabelGenerator();</a>
+<span class="sourceLineNo">239</span><a id="line.239">    }</a>
+<span class="sourceLineNo">240</span><a id="line.240"></a>
+<span class="sourceLineNo">241</span><a id="line.241">    /**</a>
+<span class="sourceLineNo">242</span><a id="line.242">     * Returns the number of passes through the dataset required by the</a>
+<span class="sourceLineNo">243</span><a id="line.243">     * renderer.  This method returns &lt;code&gt;1&lt;/code&gt;, subclasses should</a>
+<span class="sourceLineNo">244</span><a id="line.244">     * override if they need more passes.</a>
+<span class="sourceLineNo">245</span><a id="line.245">     *</a>
+<span class="sourceLineNo">246</span><a id="line.246">     * @return The pass count.</a>
+<span class="sourceLineNo">247</span><a id="line.247">     */</a>
+<span class="sourceLineNo">248</span><a id="line.248">    @Override</a>
+<span class="sourceLineNo">249</span><a id="line.249">    public int getPassCount() {</a>
+<span class="sourceLineNo">250</span><a id="line.250">        return 1;</a>
+<span class="sourceLineNo">251</span><a id="line.251">    }</a>
+<span class="sourceLineNo">252</span><a id="line.252"></a>
+<span class="sourceLineNo">253</span><a id="line.253">    /**</a>
+<span class="sourceLineNo">254</span><a id="line.254">     * Returns the plot that the renderer has been assigned to (where</a>
+<span class="sourceLineNo">255</span><a id="line.255">     * &lt;code&gt;null&lt;/code&gt; indicates that the renderer is not currently assigned</a>
+<span class="sourceLineNo">256</span><a id="line.256">     * to a plot).</a>
+<span class="sourceLineNo">257</span><a id="line.257">     *</a>
+<span class="sourceLineNo">258</span><a id="line.258">     * @return The plot (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">259</span><a id="line.259">     *</a>
+<span class="sourceLineNo">260</span><a id="line.260">     * @see #setPlot(CategoryPlot)</a>
+<span class="sourceLineNo">261</span><a id="line.261">     */</a>
+<span class="sourceLineNo">262</span><a id="line.262">    @Override</a>
+<span class="sourceLineNo">263</span><a id="line.263">    public CategoryPlot getPlot() {</a>
+<span class="sourceLineNo">264</span><a id="line.264">        return this.plot;</a>
+<span class="sourceLineNo">265</span><a id="line.265">    }</a>
+<span class="sourceLineNo">266</span><a id="line.266"></a>
+<span class="sourceLineNo">267</span><a id="line.267">    /**</a>
+<span class="sourceLineNo">268</span><a id="line.268">     * Sets the plot that the renderer has been assigned to.  This method is</a>
+<span class="sourceLineNo">269</span><a id="line.269">     * usually called by the {@link CategoryPlot}, in normal usage you</a>
+<span class="sourceLineNo">270</span><a id="line.270">     * shouldn't need to call this method directly.</a>
+<span class="sourceLineNo">271</span><a id="line.271">     *</a>
+<span class="sourceLineNo">272</span><a id="line.272">     * @param plot  the plot (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">273</span><a id="line.273">     *</a>
+<span class="sourceLineNo">274</span><a id="line.274">     * @see #getPlot()</a>
+<span class="sourceLineNo">275</span><a id="line.275">     */</a>
+<span class="sourceLineNo">276</span><a id="line.276">    @Override</a>
+<span class="sourceLineNo">277</span><a id="line.277">    public void setPlot(CategoryPlot plot) {</a>
+<span class="sourceLineNo">278</span><a id="line.278">        ParamChecks.nullNotPermitted(plot, "plot");</a>
+<span class="sourceLineNo">279</span><a id="line.279">        this.plot = plot;</a>
+<span class="sourceLineNo">280</span><a id="line.280">    }</a>
+<span class="sourceLineNo">281</span><a id="line.281"></a>
+<span class="sourceLineNo">282</span><a id="line.282">    // ITEM LABEL GENERATOR</a>
+<span class="sourceLineNo">283</span><a id="line.283"></a>
+<span class="sourceLineNo">284</span><a id="line.284">    /**</a>
+<span class="sourceLineNo">285</span><a id="line.285">     * Returns the item label generator for a data item.  This implementation</a>
+<span class="sourceLineNo">286</span><a id="line.286">     * simply passes control to the {@link #getSeriesItemLabelGenerator(int)}</a>
+<span class="sourceLineNo">287</span><a id="line.287">     * method.  If, for some reason, you want a different generator for</a>
+<span class="sourceLineNo">288</span><a id="line.288">     * individual items, you can override this method.</a>
+<span class="sourceLineNo">289</span><a id="line.289">     *</a>
+<span class="sourceLineNo">290</span><a id="line.290">     * @param row  the row index (zero based).</a>
+<span class="sourceLineNo">291</span><a id="line.291">     * @param column  the column index (zero based).</a>
+<span class="sourceLineNo">292</span><a id="line.292">     *</a>
+<span class="sourceLineNo">293</span><a id="line.293">     * @return The generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">294</span><a id="line.294">     */</a>
+<span class="sourceLineNo">295</span><a id="line.295">    @Override</a>
+<span class="sourceLineNo">296</span><a id="line.296">    public CategoryItemLabelGenerator getItemLabelGenerator(int row,</a>
+<span class="sourceLineNo">297</span><a id="line.297">            int column) {</a>
+<span class="sourceLineNo">298</span><a id="line.298">        return getSeriesItemLabelGenerator(row);</a>
+<span class="sourceLineNo">299</span><a id="line.299">    }</a>
+<span class="sourceLineNo">300</span><a id="line.300"></a>
+<span class="sourceLineNo">301</span><a id="line.301">    /**</a>
+<span class="sourceLineNo">302</span><a id="line.302">     * Returns the item label generator for a series.</a>
+<span class="sourceLineNo">303</span><a id="line.303">     *</a>
+<span class="sourceLineNo">304</span><a id="line.304">     * @param series  the series index (zero based).</a>
+<span class="sourceLineNo">305</span><a id="line.305">     *</a>
+<span class="sourceLineNo">306</span><a id="line.306">     * @return The generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">307</span><a id="line.307">     *</a>
+<span class="sourceLineNo">308</span><a id="line.308">     * @see #setSeriesItemLabelGenerator(int, CategoryItemLabelGenerator)</a>
+<span class="sourceLineNo">309</span><a id="line.309">     */</a>
+<span class="sourceLineNo">310</span><a id="line.310">    @Override</a>
+<span class="sourceLineNo">311</span><a id="line.311">    public CategoryItemLabelGenerator getSeriesItemLabelGenerator(int series) {</a>
+<span class="sourceLineNo">312</span><a id="line.312"></a>
+<span class="sourceLineNo">313</span><a id="line.313">        // return the generator for ALL series, if there is one...</a>
+<span class="sourceLineNo">314</span><a id="line.314">        if (this.itemLabelGenerator != null) {</a>
+<span class="sourceLineNo">315</span><a id="line.315">            return this.itemLabelGenerator;</a>
+<span class="sourceLineNo">316</span><a id="line.316">        }</a>
+<span class="sourceLineNo">317</span><a id="line.317"></a>
+<span class="sourceLineNo">318</span><a id="line.318">        // otherwise look up the generator table</a>
+<span class="sourceLineNo">319</span><a id="line.319">        CategoryItemLabelGenerator generator = this.itemLabelGeneratorMap.get(</a>
+<span class="sourceLineNo">320</span><a id="line.320">                series);</a>
+<span class="sourceLineNo">321</span><a id="line.321">        if (generator == null) {</a>
+<span class="sourceLineNo">322</span><a id="line.322">            generator = this.baseItemLabelGenerator;</a>
+<span class="sourceLineNo">323</span><a id="line.323">        }</a>
+<span class="sourceLineNo">324</span><a id="line.324">        return generator;</a>
+<span class="sourceLineNo">325</span><a id="line.325">    }</a>
+<span class="sourceLineNo">326</span><a id="line.326"></a>
+<span class="sourceLineNo">327</span><a id="line.327">    /**</a>
+<span class="sourceLineNo">328</span><a id="line.328">     * Sets the item label generator for a series and sends a</a>
+<span class="sourceLineNo">329</span><a id="line.329">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">330</span><a id="line.330">     *</a>
+<span class="sourceLineNo">331</span><a id="line.331">     * @param series  the series index (zero based).</a>
+<span class="sourceLineNo">332</span><a id="line.332">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">333</span><a id="line.333">     *</a>
+<span class="sourceLineNo">334</span><a id="line.334">     * @see #getSeriesItemLabelGenerator(int)</a>
+<span class="sourceLineNo">335</span><a id="line.335">     */</a>
+<span class="sourceLineNo">336</span><a id="line.336">    @Override</a>
+<span class="sourceLineNo">337</span><a id="line.337">    public void setSeriesItemLabelGenerator(int series,</a>
+<span class="sourceLineNo">338</span><a id="line.338">            CategoryItemLabelGenerator generator) {</a>
+<span class="sourceLineNo">339</span><a id="line.339">        this.itemLabelGeneratorMap.put(series, generator);</a>
+<span class="sourceLineNo">340</span><a id="line.340">        fireChangeEvent();</a>
+<span class="sourceLineNo">341</span><a id="line.341">    }</a>
+<span class="sourceLineNo">342</span><a id="line.342"></a>
+<span class="sourceLineNo">343</span><a id="line.343">    /**</a>
+<span class="sourceLineNo">344</span><a id="line.344">     * Returns the base item label generator.</a>
+<span class="sourceLineNo">345</span><a id="line.345">     *</a>
+<span class="sourceLineNo">346</span><a id="line.346">     * @return The generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">347</span><a id="line.347">     *</a>
+<span class="sourceLineNo">348</span><a id="line.348">     * @see #setBaseItemLabelGenerator(CategoryItemLabelGenerator)</a>
+<span class="sourceLineNo">349</span><a id="line.349">     */</a>
+<span class="sourceLineNo">350</span><a id="line.350">    @Override</a>
+<span class="sourceLineNo">351</span><a id="line.351">    public CategoryItemLabelGenerator getBaseItemLabelGenerator() {</a>
+<span class="sourceLineNo">352</span><a id="line.352">        return this.baseItemLabelGenerator;</a>
+<span class="sourceLineNo">353</span><a id="line.353">    }</a>
+<span class="sourceLineNo">354</span><a id="line.354"></a>
+<span class="sourceLineNo">355</span><a id="line.355">    /**</a>
+<span class="sourceLineNo">356</span><a id="line.356">     * Sets the base item label generator and sends a</a>
+<span class="sourceLineNo">357</span><a id="line.357">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">358</span><a id="line.358">     *</a>
+<span class="sourceLineNo">359</span><a id="line.359">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">360</span><a id="line.360">     *</a>
+<span class="sourceLineNo">361</span><a id="line.361">     * @see #getBaseItemLabelGenerator()</a>
+<span class="sourceLineNo">362</span><a id="line.362">     */</a>
+<span class="sourceLineNo">363</span><a id="line.363">    @Override</a>
+<span class="sourceLineNo">364</span><a id="line.364">    public void setBaseItemLabelGenerator(</a>
+<span class="sourceLineNo">365</span><a id="line.365">            CategoryItemLabelGenerator generator) {</a>
+<span class="sourceLineNo">366</span><a id="line.366">        this.baseItemLabelGenerator = generator;</a>
+<span class="sourceLineNo">367</span><a id="line.367">        fireChangeEvent();</a>
+<span class="sourceLineNo">368</span><a id="line.368">    }</a>
+<span class="sourceLineNo">369</span><a id="line.369"></a>
+<span class="sourceLineNo">370</span><a id="line.370">    // TOOL TIP GENERATOR</a>
+<span class="sourceLineNo">371</span><a id="line.371"></a>
+<span class="sourceLineNo">372</span><a id="line.372">    /**</a>
+<span class="sourceLineNo">373</span><a id="line.373">     * Returns the tool tip generator that should be used for the specified</a>
+<span class="sourceLineNo">374</span><a id="line.374">     * item.  This method looks up the generator using the "three-layer"</a>
+<span class="sourceLineNo">375</span><a id="line.375">     * approach outlined in the general description of this interface.  You</a>
+<span class="sourceLineNo">376</span><a id="line.376">     * can override this method if you want to return a different generator per</a>
+<span class="sourceLineNo">377</span><a id="line.377">     * item.</a>
+<span class="sourceLineNo">378</span><a id="line.378">     *</a>
+<span class="sourceLineNo">379</span><a id="line.379">     * @param row  the row index (zero-based).</a>
+<span class="sourceLineNo">380</span><a id="line.380">     * @param column  the column index (zero-based).</a>
+<span class="sourceLineNo">381</span><a id="line.381">     *</a>
+<span class="sourceLineNo">382</span><a id="line.382">     * @return The generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">383</span><a id="line.383">     */</a>
+<span class="sourceLineNo">384</span><a id="line.384">    @Override</a>
+<span class="sourceLineNo">385</span><a id="line.385">    public CategoryToolTipGenerator getToolTipGenerator(int row, int column) {</a>
+<span class="sourceLineNo">386</span><a id="line.386"></a>
+<span class="sourceLineNo">387</span><a id="line.387">        CategoryToolTipGenerator result;</a>
+<span class="sourceLineNo">388</span><a id="line.388">        if (this.toolTipGenerator != null) {</a>
+<span class="sourceLineNo">389</span><a id="line.389">            result = this.toolTipGenerator;</a>
+<span class="sourceLineNo">390</span><a id="line.390">        }</a>
+<span class="sourceLineNo">391</span><a id="line.391">        else {</a>
+<span class="sourceLineNo">392</span><a id="line.392">            result = getSeriesToolTipGenerator(row);</a>
+<span class="sourceLineNo">393</span><a id="line.393">            if (result == null) {</a>
+<span class="sourceLineNo">394</span><a id="line.394">                result = this.baseToolTipGenerator;</a>
+<span class="sourceLineNo">395</span><a id="line.395">            }</a>
+<span class="sourceLineNo">396</span><a id="line.396">        }</a>
+<span class="sourceLineNo">397</span><a id="line.397">        return result;</a>
+<span class="sourceLineNo">398</span><a id="line.398">    }</a>
+<span class="sourceLineNo">399</span><a id="line.399"></a>
+<span class="sourceLineNo">400</span><a id="line.400">    /**</a>
+<span class="sourceLineNo">401</span><a id="line.401">     * Returns the tool tip generator for the specified series (a "layer 1"</a>
+<span class="sourceLineNo">402</span><a id="line.402">     * generator).</a>
+<span class="sourceLineNo">403</span><a id="line.403">     *</a>
+<span class="sourceLineNo">404</span><a id="line.404">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">405</span><a id="line.405">     *</a>
+<span class="sourceLineNo">406</span><a id="line.406">     * @return The tool tip generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">407</span><a id="line.407">     *</a>
+<span class="sourceLineNo">408</span><a id="line.408">     * @see #setSeriesToolTipGenerator(int, CategoryToolTipGenerator)</a>
+<span class="sourceLineNo">409</span><a id="line.409">     */</a>
+<span class="sourceLineNo">410</span><a id="line.410">    @Override</a>
+<span class="sourceLineNo">411</span><a id="line.411">    public CategoryToolTipGenerator getSeriesToolTipGenerator(int series) {</a>
+<span class="sourceLineNo">412</span><a id="line.412">        return this.toolTipGeneratorMap.get(series);</a>
+<span class="sourceLineNo">413</span><a id="line.413">    }</a>
+<span class="sourceLineNo">414</span><a id="line.414"></a>
+<span class="sourceLineNo">415</span><a id="line.415">    /**</a>
+<span class="sourceLineNo">416</span><a id="line.416">     * Sets the tool tip generator for a series and sends a</a>
+<span class="sourceLineNo">417</span><a id="line.417">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">418</span><a id="line.418">     *</a>
+<span class="sourceLineNo">419</span><a id="line.419">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">420</span><a id="line.420">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">421</span><a id="line.421">     *</a>
+<span class="sourceLineNo">422</span><a id="line.422">     * @see #getSeriesToolTipGenerator(int)</a>
+<span class="sourceLineNo">423</span><a id="line.423">     */</a>
+<span class="sourceLineNo">424</span><a id="line.424">    @Override</a>
+<span class="sourceLineNo">425</span><a id="line.425">    public void setSeriesToolTipGenerator(int series,</a>
+<span class="sourceLineNo">426</span><a id="line.426">            CategoryToolTipGenerator generator) {</a>
+<span class="sourceLineNo">427</span><a id="line.427">        this.toolTipGeneratorMap.put(series, generator);</a>
+<span class="sourceLineNo">428</span><a id="line.428">        fireChangeEvent();</a>
+<span class="sourceLineNo">429</span><a id="line.429">    }</a>
+<span class="sourceLineNo">430</span><a id="line.430"></a>
+<span class="sourceLineNo">431</span><a id="line.431">    /**</a>
+<span class="sourceLineNo">432</span><a id="line.432">     * Returns the base tool tip generator (the "layer 2" generator).</a>
+<span class="sourceLineNo">433</span><a id="line.433">     *</a>
+<span class="sourceLineNo">434</span><a id="line.434">     * @return The tool tip generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">435</span><a id="line.435">     *</a>
+<span class="sourceLineNo">436</span><a id="line.436">     * @see #setBaseToolTipGenerator(CategoryToolTipGenerator)</a>
+<span class="sourceLineNo">437</span><a id="line.437">     */</a>
+<span class="sourceLineNo">438</span><a id="line.438">    @Override</a>
+<span class="sourceLineNo">439</span><a id="line.439">    public CategoryToolTipGenerator getBaseToolTipGenerator() {</a>
+<span class="sourceLineNo">440</span><a id="line.440">        return this.baseToolTipGenerator;</a>
+<span class="sourceLineNo">441</span><a id="line.441">    }</a>
+<span class="sourceLineNo">442</span><a id="line.442"></a>
+<span class="sourceLineNo">443</span><a id="line.443">    /**</a>
+<span class="sourceLineNo">444</span><a id="line.444">     * Sets the base tool tip generator and sends a {@link RendererChangeEvent}</a>
+<span class="sourceLineNo">445</span><a id="line.445">     * to all registered listeners.</a>
+<span class="sourceLineNo">446</span><a id="line.446">     *</a>
+<span class="sourceLineNo">447</span><a id="line.447">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">448</span><a id="line.448">     *</a>
+<span class="sourceLineNo">449</span><a id="line.449">     * @see #getBaseToolTipGenerator()</a>
+<span class="sourceLineNo">450</span><a id="line.450">     */</a>
+<span class="sourceLineNo">451</span><a id="line.451">    @Override</a>
+<span class="sourceLineNo">452</span><a id="line.452">    public void setBaseToolTipGenerator(CategoryToolTipGenerator generator) {</a>
+<span class="sourceLineNo">453</span><a id="line.453">        this.baseToolTipGenerator = generator;</a>
+<span class="sourceLineNo">454</span><a id="line.454">        fireChangeEvent();</a>
+<span class="sourceLineNo">455</span><a id="line.455">    }</a>
+<span class="sourceLineNo">456</span><a id="line.456"></a>
+<span class="sourceLineNo">457</span><a id="line.457">    // URL GENERATOR</a>
+<span class="sourceLineNo">458</span><a id="line.458"></a>
+<span class="sourceLineNo">459</span><a id="line.459">    /**</a>
+<span class="sourceLineNo">460</span><a id="line.460">     * Returns the URL generator for a data item.  This method just calls the</a>
+<span class="sourceLineNo">461</span><a id="line.461">     * getSeriesItemURLGenerator method, but you can override this behaviour if</a>
+<span class="sourceLineNo">462</span><a id="line.462">     * you want to.</a>
+<span class="sourceLineNo">463</span><a id="line.463">     *</a>
+<span class="sourceLineNo">464</span><a id="line.464">     * @param row  the row index (zero based).</a>
+<span class="sourceLineNo">465</span><a id="line.465">     * @param column  the column index (zero based).</a>
+<span class="sourceLineNo">466</span><a id="line.466">     *</a>
+<span class="sourceLineNo">467</span><a id="line.467">     * @return The URL generator.</a>
+<span class="sourceLineNo">468</span><a id="line.468">     */</a>
+<span class="sourceLineNo">469</span><a id="line.469">    @Override</a>
+<span class="sourceLineNo">470</span><a id="line.470">    public CategoryURLGenerator getItemURLGenerator(int row, int column) {</a>
+<span class="sourceLineNo">471</span><a id="line.471">        return getSeriesItemURLGenerator(row);</a>
+<span class="sourceLineNo">472</span><a id="line.472">    }</a>
+<span class="sourceLineNo">473</span><a id="line.473"></a>
+<span class="sourceLineNo">474</span><a id="line.474">    /**</a>
+<span class="sourceLineNo">475</span><a id="line.475">     * Returns the URL generator for a series.</a>
+<span class="sourceLineNo">476</span><a id="line.476">     *</a>
+<span class="sourceLineNo">477</span><a id="line.477">     * @param series  the series index (zero based).</a>
+<span class="sourceLineNo">478</span><a id="line.478">     *</a>
+<span class="sourceLineNo">479</span><a id="line.479">     * @return The URL generator for the series.</a>
+<span class="sourceLineNo">480</span><a id="line.480">     *</a>
+<span class="sourceLineNo">481</span><a id="line.481">     * @see #setSeriesItemURLGenerator(int, CategoryURLGenerator)</a>
+<span class="sourceLineNo">482</span><a id="line.482">     */</a>
+<span class="sourceLineNo">483</span><a id="line.483">    @Override</a>
+<span class="sourceLineNo">484</span><a id="line.484">    public CategoryURLGenerator getSeriesItemURLGenerator(int series) {</a>
+<span class="sourceLineNo">485</span><a id="line.485">        // return the generator for ALL series, if there is one...</a>
+<span class="sourceLineNo">486</span><a id="line.486">        if (this.itemURLGenerator != null) {</a>
+<span class="sourceLineNo">487</span><a id="line.487">            return this.itemURLGenerator;</a>
+<span class="sourceLineNo">488</span><a id="line.488">        }</a>
+<span class="sourceLineNo">489</span><a id="line.489">        // otherwise look up the generator table</a>
+<span class="sourceLineNo">490</span><a id="line.490">        CategoryURLGenerator generator = this.itemURLGeneratorMap.get(series);</a>
+<span class="sourceLineNo">491</span><a id="line.491">        if (generator == null) {</a>
+<span class="sourceLineNo">492</span><a id="line.492">            generator = this.baseItemURLGenerator;</a>
+<span class="sourceLineNo">493</span><a id="line.493">        }</a>
+<span class="sourceLineNo">494</span><a id="line.494">        return generator;</a>
+<span class="sourceLineNo">495</span><a id="line.495">    }</a>
+<span class="sourceLineNo">496</span><a id="line.496"></a>
+<span class="sourceLineNo">497</span><a id="line.497">    /**</a>
+<span class="sourceLineNo">498</span><a id="line.498">     * Sets the URL generator for a series and sends a</a>
+<span class="sourceLineNo">499</span><a id="line.499">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">500</span><a id="line.500">     *</a>
+<span class="sourceLineNo">501</span><a id="line.501">     * @param series  the series index (zero based).</a>
+<span class="sourceLineNo">502</span><a id="line.502">     * @param generator  the generator.</a>
+<span class="sourceLineNo">503</span><a id="line.503">     *</a>
+<span class="sourceLineNo">504</span><a id="line.504">     * @see #getSeriesItemURLGenerator(int)</a>
+<span class="sourceLineNo">505</span><a id="line.505">     */</a>
+<span class="sourceLineNo">506</span><a id="line.506">    @Override</a>
+<span class="sourceLineNo">507</span><a id="line.507">    public void setSeriesItemURLGenerator(int series,</a>
+<span class="sourceLineNo">508</span><a id="line.508">            CategoryURLGenerator generator) {</a>
+<span class="sourceLineNo">509</span><a id="line.509">        this.itemURLGeneratorMap.put(series, generator);</a>
+<span class="sourceLineNo">510</span><a id="line.510">        fireChangeEvent();</a>
+<span class="sourceLineNo">511</span><a id="line.511">    }</a>
+<span class="sourceLineNo">512</span><a id="line.512"></a>
+<span class="sourceLineNo">513</span><a id="line.513">    /**</a>
+<span class="sourceLineNo">514</span><a id="line.514">     * Returns the base item URL generator.</a>
+<span class="sourceLineNo">515</span><a id="line.515">     *</a>
+<span class="sourceLineNo">516</span><a id="line.516">     * @return The item URL generator.</a>
+<span class="sourceLineNo">517</span><a id="line.517">     *</a>
+<span class="sourceLineNo">518</span><a id="line.518">     * @see #setBaseItemURLGenerator(CategoryURLGenerator)</a>
+<span class="sourceLineNo">519</span><a id="line.519">     */</a>
+<span class="sourceLineNo">520</span><a id="line.520">    @Override</a>
+<span class="sourceLineNo">521</span><a id="line.521">    public CategoryURLGenerator getBaseItemURLGenerator() {</a>
+<span class="sourceLineNo">522</span><a id="line.522">        return this.baseItemURLGenerator;</a>
+<span class="sourceLineNo">523</span><a id="line.523">    }</a>
+<span class="sourceLineNo">524</span><a id="line.524"></a>
+<span class="sourceLineNo">525</span><a id="line.525">    /**</a>
+<span class="sourceLineNo">526</span><a id="line.526">     * Sets the base item URL generator and sends a</a>
+<span class="sourceLineNo">527</span><a id="line.527">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">528</span><a id="line.528">     *</a>
+<span class="sourceLineNo">529</span><a id="line.529">     * @param generator  the item URL generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">530</span><a id="line.530">     *</a>
+<span class="sourceLineNo">531</span><a id="line.531">     * @see #getBaseItemURLGenerator()</a>
+<span class="sourceLineNo">532</span><a id="line.532">     */</a>
+<span class="sourceLineNo">533</span><a id="line.533">    @Override</a>
+<span class="sourceLineNo">534</span><a id="line.534">    public void setBaseItemURLGenerator(CategoryURLGenerator generator) {</a>
+<span class="sourceLineNo">535</span><a id="line.535">        this.baseItemURLGenerator = generator;</a>
+<span class="sourceLineNo">536</span><a id="line.536">        fireChangeEvent();</a>
+<span class="sourceLineNo">537</span><a id="line.537">    }</a>
+<span class="sourceLineNo">538</span><a id="line.538"></a>
+<span class="sourceLineNo">539</span><a id="line.539">    /**</a>
+<span class="sourceLineNo">540</span><a id="line.540">     * Returns the number of rows in the dataset.  This value is updated in the</a>
+<span class="sourceLineNo">541</span><a id="line.541">     * {@link AbstractCategoryItemRenderer#initialise} method.</a>
+<span class="sourceLineNo">542</span><a id="line.542">     *</a>
+<span class="sourceLineNo">543</span><a id="line.543">     * @return The row count.</a>
+<span class="sourceLineNo">544</span><a id="line.544">     */</a>
+<span class="sourceLineNo">545</span><a id="line.545">    public int getRowCount() {</a>
+<span class="sourceLineNo">546</span><a id="line.546">        return this.rowCount;</a>
+<span class="sourceLineNo">547</span><a id="line.547">    }</a>
+<span class="sourceLineNo">548</span><a id="line.548"></a>
+<span class="sourceLineNo">549</span><a id="line.549">    /**</a>
+<span class="sourceLineNo">550</span><a id="line.550">     * Returns the number of columns in the dataset.  This value is updated in</a>
+<span class="sourceLineNo">551</span><a id="line.551">     * the {@link AbstractCategoryItemRenderer#initialise} method.</a>
+<span class="sourceLineNo">552</span><a id="line.552">     *</a>
+<span class="sourceLineNo">553</span><a id="line.553">     * @return The column count.</a>
+<span class="sourceLineNo">554</span><a id="line.554">     */</a>
+<span class="sourceLineNo">555</span><a id="line.555">    public int getColumnCount() {</a>
+<span class="sourceLineNo">556</span><a id="line.556">        return this.columnCount;</a>
+<span class="sourceLineNo">557</span><a id="line.557">    }</a>
+<span class="sourceLineNo">558</span><a id="line.558"></a>
+<span class="sourceLineNo">559</span><a id="line.559">    /**</a>
+<span class="sourceLineNo">560</span><a id="line.560">     * Creates a new state instance---this method is called from the</a>
+<span class="sourceLineNo">561</span><a id="line.561">     * {@link #initialise(Graphics2D, Rectangle2D, CategoryPlot, int,</a>
+<span class="sourceLineNo">562</span><a id="line.562">     * PlotRenderingInfo)} method.  Subclasses can override this method if</a>
+<span class="sourceLineNo">563</span><a id="line.563">     * they need to use a subclass of {@link CategoryItemRendererState}.</a>
+<span class="sourceLineNo">564</span><a id="line.564">     *</a>
+<span class="sourceLineNo">565</span><a id="line.565">     * @param info  collects plot rendering info (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">566</span><a id="line.566">     *</a>
+<span class="sourceLineNo">567</span><a id="line.567">     * @return The new state instance (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">568</span><a id="line.568">     *</a>
+<span class="sourceLineNo">569</span><a id="line.569">     * @since 1.0.5</a>
+<span class="sourceLineNo">570</span><a id="line.570">     */</a>
+<span class="sourceLineNo">571</span><a id="line.571">    protected CategoryItemRendererState createState(PlotRenderingInfo info) {</a>
+<span class="sourceLineNo">572</span><a id="line.572">        return new CategoryItemRendererState(info);</a>
+<span class="sourceLineNo">573</span><a id="line.573">    }</a>
+<span class="sourceLineNo">574</span><a id="line.574"></a>
+<span class="sourceLineNo">575</span><a id="line.575">    /**</a>
+<span class="sourceLineNo">576</span><a id="line.576">     * Initialises the renderer and returns a state object that will be used</a>
+<span class="sourceLineNo">577</span><a id="line.577">     * for the remainder of the drawing process for a single chart.  The state</a>
+<span class="sourceLineNo">578</span><a id="line.578">     * object allows for the fact that the renderer may be used simultaneously</a>
+<span class="sourceLineNo">579</span><a id="line.579">     * by multiple threads (each thread will work with a separate state object).</a>
+<span class="sourceLineNo">580</span><a id="line.580">     *</a>
+<span class="sourceLineNo">581</span><a id="line.581">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">582</span><a id="line.582">     * @param dataArea  the data area.</a>
+<span class="sourceLineNo">583</span><a id="line.583">     * @param plot  the plot.</a>
+<span class="sourceLineNo">584</span><a id="line.584">     * @param rendererIndex  the renderer index.</a>
+<span class="sourceLineNo">585</span><a id="line.585">     * @param info  an object for returning information about the structure of</a>
+<span class="sourceLineNo">586</span><a id="line.586">     *              the plot (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">587</span><a id="line.587">     *</a>
+<span class="sourceLineNo">588</span><a id="line.588">     * @return The renderer state.</a>
+<span class="sourceLineNo">589</span><a id="line.589">     */</a>
+<span class="sourceLineNo">590</span><a id="line.590">    @Override</a>
+<span class="sourceLineNo">591</span><a id="line.591">    public CategoryItemRendererState initialise(Graphics2D g2,</a>
+<span class="sourceLineNo">592</span><a id="line.592">            Rectangle2D dataArea, CategoryPlot plot, int rendererIndex,</a>
+<span class="sourceLineNo">593</span><a id="line.593">            PlotRenderingInfo info) {</a>
+<span class="sourceLineNo">594</span><a id="line.594"></a>
+<span class="sourceLineNo">595</span><a id="line.595">        setPlot(plot);</a>
+<span class="sourceLineNo">596</span><a id="line.596">        CategoryDataset data = plot.getDataset(rendererIndex);</a>
+<span class="sourceLineNo">597</span><a id="line.597">        if (data != null) {</a>
+<span class="sourceLineNo">598</span><a id="line.598">            this.rowCount = data.getRowCount();</a>
+<span class="sourceLineNo">599</span><a id="line.599">            this.columnCount = data.getColumnCount();</a>
+<span class="sourceLineNo">600</span><a id="line.600">        }</a>
+<span class="sourceLineNo">601</span><a id="line.601">        else {</a>
+<span class="sourceLineNo">602</span><a id="line.602">            this.rowCount = 0;</a>
+<span class="sourceLineNo">603</span><a id="line.603">            this.columnCount = 0;</a>
+<span class="sourceLineNo">604</span><a id="line.604">        }</a>
+<span class="sourceLineNo">605</span><a id="line.605">        CategoryItemRendererState state = createState(info);</a>
+<span class="sourceLineNo">606</span><a id="line.606">        int[] visibleSeriesTemp = new int[this.rowCount];</a>
+<span class="sourceLineNo">607</span><a id="line.607">        int visibleSeriesCount = 0;</a>
+<span class="sourceLineNo">608</span><a id="line.608">        for (int row = 0; row &lt; this.rowCount; row++) {</a>
+<span class="sourceLineNo">609</span><a id="line.609">            if (isSeriesVisible(row)) {</a>
+<span class="sourceLineNo">610</span><a id="line.610">                visibleSeriesTemp[visibleSeriesCount] = row;</a>
+<span class="sourceLineNo">611</span><a id="line.611">                visibleSeriesCount++;</a>
+<span class="sourceLineNo">612</span><a id="line.612">            }</a>
+<span class="sourceLineNo">613</span><a id="line.613">        }</a>
+<span class="sourceLineNo">614</span><a id="line.614">        int[] visibleSeries = new int[visibleSeriesCount];</a>
+<span class="sourceLineNo">615</span><a id="line.615">        System.arraycopy(visibleSeriesTemp, 0, visibleSeries, 0,</a>
+<span class="sourceLineNo">616</span><a id="line.616">                visibleSeriesCount);</a>
+<span class="sourceLineNo">617</span><a id="line.617">        state.setVisibleSeriesArray(visibleSeries);</a>
+<span class="sourceLineNo">618</span><a id="line.618">        return state;</a>
+<span class="sourceLineNo">619</span><a id="line.619">    }</a>
+<span class="sourceLineNo">620</span><a id="line.620"></a>
+<span class="sourceLineNo">621</span><a id="line.621">    /**</a>
+<span class="sourceLineNo">622</span><a id="line.622">     * Returns the range of values the renderer requires to display all the</a>
+<span class="sourceLineNo">623</span><a id="line.623">     * items from the specified dataset.</a>
+<span class="sourceLineNo">624</span><a id="line.624">     *</a>
+<span class="sourceLineNo">625</span><a id="line.625">     * @param dataset  the dataset (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">626</span><a id="line.626">     *</a>
+<span class="sourceLineNo">627</span><a id="line.627">     * @return The range (or &lt;code&gt;null&lt;/code&gt; if the dataset is</a>
+<span class="sourceLineNo">628</span><a id="line.628">     *         &lt;code&gt;null&lt;/code&gt; or empty).</a>
+<span class="sourceLineNo">629</span><a id="line.629">     */</a>
+<span class="sourceLineNo">630</span><a id="line.630">    @Override</a>
+<span class="sourceLineNo">631</span><a id="line.631">    public Range findRangeBounds(CategoryDataset dataset) {</a>
+<span class="sourceLineNo">632</span><a id="line.632">        return findRangeBounds(dataset, false);</a>
+<span class="sourceLineNo">633</span><a id="line.633">    }</a>
+<span class="sourceLineNo">634</span><a id="line.634"></a>
+<span class="sourceLineNo">635</span><a id="line.635">    /**</a>
+<span class="sourceLineNo">636</span><a id="line.636">     * Returns the range of values the renderer requires to display all the</a>
+<span class="sourceLineNo">637</span><a id="line.637">     * items from the specified dataset.</a>
+<span class="sourceLineNo">638</span><a id="line.638">     *</a>
+<span class="sourceLineNo">639</span><a id="line.639">     * @param dataset  the dataset (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">640</span><a id="line.640">     * @param includeInterval  include the y-interval if the dataset has one.</a>
+<span class="sourceLineNo">641</span><a id="line.641">     *</a>
+<span class="sourceLineNo">642</span><a id="line.642">     * @return The range (&lt;code&gt;null&lt;/code&gt; if the dataset is &lt;code&gt;null&lt;/code&gt;</a>
+<span class="sourceLineNo">643</span><a id="line.643">     *         or empty).</a>
+<span class="sourceLineNo">644</span><a id="line.644">     *</a>
+<span class="sourceLineNo">645</span><a id="line.645">     * @since 1.0.13</a>
+<span class="sourceLineNo">646</span><a id="line.646">     */</a>
+<span class="sourceLineNo">647</span><a id="line.647">    protected Range findRangeBounds(CategoryDataset dataset,</a>
+<span class="sourceLineNo">648</span><a id="line.648">            boolean includeInterval) {</a>
+<span class="sourceLineNo">649</span><a id="line.649">        if (dataset == null) {</a>
+<span class="sourceLineNo">650</span><a id="line.650">            return null;</a>
+<span class="sourceLineNo">651</span><a id="line.651">        }</a>
+<span class="sourceLineNo">652</span><a id="line.652">        if (getDataBoundsIncludesVisibleSeriesOnly()) {</a>
+<span class="sourceLineNo">653</span><a id="line.653">            List visibleSeriesKeys = new ArrayList();</a>
+<span class="sourceLineNo">654</span><a id="line.654">            int seriesCount = dataset.getRowCount();</a>
+<span class="sourceLineNo">655</span><a id="line.655">            for (int s = 0; s &lt; seriesCount; s++) {</a>
+<span class="sourceLineNo">656</span><a id="line.656">                if (isSeriesVisible(s)) {</a>
+<span class="sourceLineNo">657</span><a id="line.657">                    visibleSeriesKeys.add(dataset.getRowKey(s));</a>
+<span class="sourceLineNo">658</span><a id="line.658">                }</a>
+<span class="sourceLineNo">659</span><a id="line.659">            }</a>
+<span class="sourceLineNo">660</span><a id="line.660">            return DatasetUtilities.findRangeBounds(dataset,</a>
+<span class="sourceLineNo">661</span><a id="line.661">                    visibleSeriesKeys, includeInterval);</a>
+<span class="sourceLineNo">662</span><a id="line.662">        }</a>
+<span class="sourceLineNo">663</span><a id="line.663">        else {</a>
+<span class="sourceLineNo">664</span><a id="line.664">            return DatasetUtilities.findRangeBounds(dataset, includeInterval);</a>
+<span class="sourceLineNo">665</span><a id="line.665">        }</a>
+<span class="sourceLineNo">666</span><a id="line.666">    }</a>
+<span class="sourceLineNo">667</span><a id="line.667"></a>
+<span class="sourceLineNo">668</span><a id="line.668">    /**</a>
+<span class="sourceLineNo">669</span><a id="line.669">     * Returns the Java2D coordinate for the middle of the specified data item.</a>
+<span class="sourceLineNo">670</span><a id="line.670">     *</a>
+<span class="sourceLineNo">671</span><a id="line.671">     * @param rowKey  the row key.</a>
+<span class="sourceLineNo">672</span><a id="line.672">     * @param columnKey  the column key.</a>
+<span class="sourceLineNo">673</span><a id="line.673">     * @param dataset  the dataset.</a>
+<span class="sourceLineNo">674</span><a id="line.674">     * @param axis  the axis.</a>
+<span class="sourceLineNo">675</span><a id="line.675">     * @param area  the data area.</a>
+<span class="sourceLineNo">676</span><a id="line.676">     * @param edge  the edge along which the axis lies.</a>
+<span class="sourceLineNo">677</span><a id="line.677">     *</a>
+<span class="sourceLineNo">678</span><a id="line.678">     * @return The Java2D coordinate for the middle of the item.</a>
+<span class="sourceLineNo">679</span><a id="line.679">     *</a>
+<span class="sourceLineNo">680</span><a id="line.680">     * @since 1.0.11</a>
+<span class="sourceLineNo">681</span><a id="line.681">     */</a>
+<span class="sourceLineNo">682</span><a id="line.682">    @Override</a>
+<span class="sourceLineNo">683</span><a id="line.683">    public double getItemMiddle(Comparable rowKey, Comparable columnKey,</a>
+<span class="sourceLineNo">684</span><a id="line.684">            CategoryDataset dataset, CategoryAxis axis, Rectangle2D area,</a>
+<span class="sourceLineNo">685</span><a id="line.685">            RectangleEdge edge) {</a>
+<span class="sourceLineNo">686</span><a id="line.686">        return axis.getCategoryMiddle(columnKey, dataset.getColumnKeys(), area,</a>
+<span class="sourceLineNo">687</span><a id="line.687">                edge);</a>
+<span class="sourceLineNo">688</span><a id="line.688">    }</a>
+<span class="sourceLineNo">689</span><a id="line.689"></a>
+<span class="sourceLineNo">690</span><a id="line.690">    /**</a>
+<span class="sourceLineNo">691</span><a id="line.691">     * Draws a background for the data area.  The default implementation just</a>
+<span class="sourceLineNo">692</span><a id="line.692">     * gets the plot to draw the background, but some renderers will override</a>
+<span class="sourceLineNo">693</span><a id="line.693">     * this behaviour.</a>
+<span class="sourceLineNo">694</span><a id="line.694">     *</a>
+<span class="sourceLineNo">695</span><a id="line.695">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">696</span><a id="line.696">     * @param plot  the plot.</a>
+<span class="sourceLineNo">697</span><a id="line.697">     * @param dataArea  the data area.</a>
+<span class="sourceLineNo">698</span><a id="line.698">     */</a>
+<span class="sourceLineNo">699</span><a id="line.699">    @Override</a>
+<span class="sourceLineNo">700</span><a id="line.700">    public void drawBackground(Graphics2D g2, CategoryPlot plot,</a>
+<span class="sourceLineNo">701</span><a id="line.701">            Rectangle2D dataArea) {</a>
+<span class="sourceLineNo">702</span><a id="line.702">        plot.drawBackground(g2, dataArea);</a>
+<span class="sourceLineNo">703</span><a id="line.703">    }</a>
+<span class="sourceLineNo">704</span><a id="line.704"></a>
+<span class="sourceLineNo">705</span><a id="line.705">    /**</a>
+<span class="sourceLineNo">706</span><a id="line.706">     * Draws an outline for the data area.  The default implementation just</a>
+<span class="sourceLineNo">707</span><a id="line.707">     * gets the plot to draw the outline, but some renderers will override this</a>
+<span class="sourceLineNo">708</span><a id="line.708">     * behaviour.</a>
+<span class="sourceLineNo">709</span><a id="line.709">     *</a>
+<span class="sourceLineNo">710</span><a id="line.710">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">711</span><a id="line.711">     * @param plot  the plot.</a>
+<span class="sourceLineNo">712</span><a id="line.712">     * @param dataArea  the data area.</a>
+<span class="sourceLineNo">713</span><a id="line.713">     */</a>
+<span class="sourceLineNo">714</span><a id="line.714">    @Override</a>
+<span class="sourceLineNo">715</span><a id="line.715">    public void drawOutline(Graphics2D g2, CategoryPlot plot,</a>
+<span class="sourceLineNo">716</span><a id="line.716">            Rectangle2D dataArea) {</a>
+<span class="sourceLineNo">717</span><a id="line.717">        plot.drawOutline(g2, dataArea);</a>
+<span class="sourceLineNo">718</span><a id="line.718">    }</a>
+<span class="sourceLineNo">719</span><a id="line.719"></a>
+<span class="sourceLineNo">720</span><a id="line.720">    /**</a>
+<span class="sourceLineNo">721</span><a id="line.721">     * Draws a grid line against the domain axis.</a>
+<span class="sourceLineNo">722</span><a id="line.722">     * &lt;P&gt;</a>
+<span class="sourceLineNo">723</span><a id="line.723">     * Note that this default implementation assumes that the horizontal axis</a>
+<span class="sourceLineNo">724</span><a id="line.724">     * is the domain axis. If this is not the case, you will need to override</a>
+<span class="sourceLineNo">725</span><a id="line.725">     * this method.</a>
+<span class="sourceLineNo">726</span><a id="line.726">     *</a>
+<span class="sourceLineNo">727</span><a id="line.727">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">728</span><a id="line.728">     * @param plot  the plot.</a>
+<span class="sourceLineNo">729</span><a id="line.729">     * @param dataArea  the area for plotting data (not yet adjusted for any</a>
+<span class="sourceLineNo">730</span><a id="line.730">     *                  3D effect).</a>
+<span class="sourceLineNo">731</span><a id="line.731">     * @param value  the Java2D value at which the grid line should be drawn.</a>
+<span class="sourceLineNo">732</span><a id="line.732">     *</a>
+<span class="sourceLineNo">733</span><a id="line.733">     * @see #drawRangeGridline(Graphics2D, CategoryPlot, ValueAxis,</a>
+<span class="sourceLineNo">734</span><a id="line.734">     *     Rectangle2D, double)</a>
+<span class="sourceLineNo">735</span><a id="line.735">     */</a>
+<span class="sourceLineNo">736</span><a id="line.736">    @Override</a>
+<span class="sourceLineNo">737</span><a id="line.737">    public void drawDomainGridline(Graphics2D g2, CategoryPlot plot,</a>
+<span class="sourceLineNo">738</span><a id="line.738">           Rectangle2D dataArea, double value) {</a>
+<span class="sourceLineNo">739</span><a id="line.739"></a>
+<span class="sourceLineNo">740</span><a id="line.740">        Line2D line = null;</a>
+<span class="sourceLineNo">741</span><a id="line.741">        PlotOrientation orientation = plot.getOrientation();</a>
+<span class="sourceLineNo">742</span><a id="line.742"></a>
+<span class="sourceLineNo">743</span><a id="line.743">        if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">744</span><a id="line.744">            line = new Line2D.Double(dataArea.getMinX(), value,</a>
+<span class="sourceLineNo">745</span><a id="line.745">                    dataArea.getMaxX(), value);</a>
+<span class="sourceLineNo">746</span><a id="line.746">        }</a>
+<span class="sourceLineNo">747</span><a id="line.747">        else if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">748</span><a id="line.748">            line = new Line2D.Double(value, dataArea.getMinY(), value,</a>
+<span class="sourceLineNo">749</span><a id="line.749">                    dataArea.getMaxY());</a>
+<span class="sourceLineNo">750</span><a id="line.750">        }</a>
+<span class="sourceLineNo">751</span><a id="line.751"></a>
+<span class="sourceLineNo">752</span><a id="line.752">        Paint paint = plot.getDomainGridlinePaint();</a>
+<span class="sourceLineNo">753</span><a id="line.753">        if (paint == null) {</a>
+<span class="sourceLineNo">754</span><a id="line.754">            paint = CategoryPlot.DEFAULT_GRIDLINE_PAINT;</a>
+<span class="sourceLineNo">755</span><a id="line.755">        }</a>
+<span class="sourceLineNo">756</span><a id="line.756">        g2.setPaint(paint);</a>
+<span class="sourceLineNo">757</span><a id="line.757"></a>
+<span class="sourceLineNo">758</span><a id="line.758">        Stroke stroke = plot.getDomainGridlineStroke();</a>
+<span class="sourceLineNo">759</span><a id="line.759">        if (stroke == null) {</a>
+<span class="sourceLineNo">760</span><a id="line.760">            stroke = CategoryPlot.DEFAULT_GRIDLINE_STROKE;</a>
+<span class="sourceLineNo">761</span><a id="line.761">        }</a>
+<span class="sourceLineNo">762</span><a id="line.762">        g2.setStroke(stroke);</a>
+<span class="sourceLineNo">763</span><a id="line.763"></a>
+<span class="sourceLineNo">764</span><a id="line.764">        g2.draw(line);</a>
+<span class="sourceLineNo">765</span><a id="line.765">    }</a>
+<span class="sourceLineNo">766</span><a id="line.766"></a>
+<span class="sourceLineNo">767</span><a id="line.767">    /**</a>
+<span class="sourceLineNo">768</span><a id="line.768">     * Draws a grid line against the range axis.</a>
+<span class="sourceLineNo">769</span><a id="line.769">     *</a>
+<span class="sourceLineNo">770</span><a id="line.770">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">771</span><a id="line.771">     * @param plot  the plot.</a>
+<span class="sourceLineNo">772</span><a id="line.772">     * @param axis  the value axis.</a>
+<span class="sourceLineNo">773</span><a id="line.773">     * @param dataArea  the area for plotting data (not yet adjusted for any</a>
+<span class="sourceLineNo">774</span><a id="line.774">     *                  3D effect).</a>
+<span class="sourceLineNo">775</span><a id="line.775">     * @param value  the value at which the grid line should be drawn.</a>
+<span class="sourceLineNo">776</span><a id="line.776">     *</a>
+<span class="sourceLineNo">777</span><a id="line.777">     * @see #drawDomainGridline(Graphics2D, CategoryPlot, Rectangle2D, double)</a>
+<span class="sourceLineNo">778</span><a id="line.778">     */</a>
+<span class="sourceLineNo">779</span><a id="line.779">    @Override</a>
+<span class="sourceLineNo">780</span><a id="line.780">    public void drawRangeGridline(Graphics2D g2, CategoryPlot plot,</a>
+<span class="sourceLineNo">781</span><a id="line.781">            ValueAxis axis, Rectangle2D dataArea, double value) {</a>
+<span class="sourceLineNo">782</span><a id="line.782"></a>
+<span class="sourceLineNo">783</span><a id="line.783">        Range range = axis.getRange();</a>
+<span class="sourceLineNo">784</span><a id="line.784">        if (!range.contains(value)) {</a>
+<span class="sourceLineNo">785</span><a id="line.785">            return;</a>
+<span class="sourceLineNo">786</span><a id="line.786">        }</a>
+<span class="sourceLineNo">787</span><a id="line.787"></a>
+<span class="sourceLineNo">788</span><a id="line.788">        PlotOrientation orientation = plot.getOrientation();</a>
+<span class="sourceLineNo">789</span><a id="line.789">        double v = axis.valueToJava2D(value, dataArea, plot.getRangeAxisEdge());</a>
+<span class="sourceLineNo">790</span><a id="line.790">        Line2D line = null;</a>
+<span class="sourceLineNo">791</span><a id="line.791">        if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">792</span><a id="line.792">            line = new Line2D.Double(v, dataArea.getMinY(), v,</a>
+<span class="sourceLineNo">793</span><a id="line.793">                    dataArea.getMaxY());</a>
+<span class="sourceLineNo">794</span><a id="line.794">        }</a>
+<span class="sourceLineNo">795</span><a id="line.795">        else if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">796</span><a id="line.796">            line = new Line2D.Double(dataArea.getMinX(), v,</a>
+<span class="sourceLineNo">797</span><a id="line.797">                    dataArea.getMaxX(), v);</a>
+<span class="sourceLineNo">798</span><a id="line.798">        }</a>
+<span class="sourceLineNo">799</span><a id="line.799"></a>
+<span class="sourceLineNo">800</span><a id="line.800">        Paint paint = plot.getRangeGridlinePaint();</a>
+<span class="sourceLineNo">801</span><a id="line.801">        if (paint == null) {</a>
+<span class="sourceLineNo">802</span><a id="line.802">            paint = CategoryPlot.DEFAULT_GRIDLINE_PAINT;</a>
+<span class="sourceLineNo">803</span><a id="line.803">        }</a>
+<span class="sourceLineNo">804</span><a id="line.804">        g2.setPaint(paint);</a>
+<span class="sourceLineNo">805</span><a id="line.805"></a>
+<span class="sourceLineNo">806</span><a id="line.806">        Stroke stroke = plot.getRangeGridlineStroke();</a>
+<span class="sourceLineNo">807</span><a id="line.807">        if (stroke == null) {</a>
+<span class="sourceLineNo">808</span><a id="line.808">            stroke = CategoryPlot.DEFAULT_GRIDLINE_STROKE;</a>
+<span class="sourceLineNo">809</span><a id="line.809">        }</a>
+<span class="sourceLineNo">810</span><a id="line.810">        g2.setStroke(stroke);</a>
+<span class="sourceLineNo">811</span><a id="line.811"></a>
+<span class="sourceLineNo">812</span><a id="line.812">        g2.draw(line);</a>
+<span class="sourceLineNo">813</span><a id="line.813"></a>
+<span class="sourceLineNo">814</span><a id="line.814">    }</a>
+<span class="sourceLineNo">815</span><a id="line.815"></a>
+<span class="sourceLineNo">816</span><a id="line.816">    /**</a>
+<span class="sourceLineNo">817</span><a id="line.817">     * Draws a line perpendicular to the range axis.</a>
+<span class="sourceLineNo">818</span><a id="line.818">     *</a>
+<span class="sourceLineNo">819</span><a id="line.819">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">820</span><a id="line.820">     * @param plot  the plot.</a>
+<span class="sourceLineNo">821</span><a id="line.821">     * @param axis  the value axis.</a>
+<span class="sourceLineNo">822</span><a id="line.822">     * @param dataArea  the area for plotting data (not yet adjusted for any 3D</a>
+<span class="sourceLineNo">823</span><a id="line.823">     *                  effect).</a>
+<span class="sourceLineNo">824</span><a id="line.824">     * @param value  the value at which the grid line should be drawn.</a>
+<span class="sourceLineNo">825</span><a id="line.825">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">826</span><a id="line.826">     * @param stroke  the stroke (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">827</span><a id="line.827">     *</a>
+<span class="sourceLineNo">828</span><a id="line.828">     * @see #drawRangeGridline</a>
+<span class="sourceLineNo">829</span><a id="line.829">     *</a>
+<span class="sourceLineNo">830</span><a id="line.830">     * @since 1.0.13</a>
+<span class="sourceLineNo">831</span><a id="line.831">     */</a>
+<span class="sourceLineNo">832</span><a id="line.832">    public void drawRangeLine(Graphics2D g2, CategoryPlot plot, ValueAxis axis,</a>
+<span class="sourceLineNo">833</span><a id="line.833">            Rectangle2D dataArea, double value, Paint paint, Stroke stroke) {</a>
+<span class="sourceLineNo">834</span><a id="line.834"></a>
+<span class="sourceLineNo">835</span><a id="line.835">        // TODO: In JFreeChart 1.2.0, put this method in the</a>
+<span class="sourceLineNo">836</span><a id="line.836">        // CategoryItemRenderer interface</a>
+<span class="sourceLineNo">837</span><a id="line.837">        Range range = axis.getRange();</a>
+<span class="sourceLineNo">838</span><a id="line.838">        if (!range.contains(value)) {</a>
+<span class="sourceLineNo">839</span><a id="line.839">            return;</a>
+<span class="sourceLineNo">840</span><a id="line.840">        }</a>
+<span class="sourceLineNo">841</span><a id="line.841"></a>
+<span class="sourceLineNo">842</span><a id="line.842">        PlotOrientation orientation = plot.getOrientation();</a>
+<span class="sourceLineNo">843</span><a id="line.843">        Line2D line = null;</a>
+<span class="sourceLineNo">844</span><a id="line.844">        double v = axis.valueToJava2D(value, dataArea, plot.getRangeAxisEdge());</a>
+<span class="sourceLineNo">845</span><a id="line.845">        if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">846</span><a id="line.846">            line = new Line2D.Double(v, dataArea.getMinY(), v,</a>
+<span class="sourceLineNo">847</span><a id="line.847">                    dataArea.getMaxY());</a>
+<span class="sourceLineNo">848</span><a id="line.848">        } else if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">849</span><a id="line.849">            line = new Line2D.Double(dataArea.getMinX(), v,</a>
+<span class="sourceLineNo">850</span><a id="line.850">                    dataArea.getMaxX(), v);</a>
+<span class="sourceLineNo">851</span><a id="line.851">        }</a>
+<span class="sourceLineNo">852</span><a id="line.852"></a>
+<span class="sourceLineNo">853</span><a id="line.853">        g2.setPaint(paint);</a>
+<span class="sourceLineNo">854</span><a id="line.854">        g2.setStroke(stroke);</a>
+<span class="sourceLineNo">855</span><a id="line.855">        Object saved = g2.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);</a>
+<span class="sourceLineNo">856</span><a id="line.856">        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, </a>
+<span class="sourceLineNo">857</span><a id="line.857">                RenderingHints.VALUE_STROKE_NORMALIZE);</a>
+<span class="sourceLineNo">858</span><a id="line.858">        g2.draw(line);</a>
+<span class="sourceLineNo">859</span><a id="line.859">        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, saved);</a>
+<span class="sourceLineNo">860</span><a id="line.860">    }</a>
+<span class="sourceLineNo">861</span><a id="line.861"></a>
+<span class="sourceLineNo">862</span><a id="line.862">    /**</a>
+<span class="sourceLineNo">863</span><a id="line.863">     * Draws a marker for the domain axis.</a>
+<span class="sourceLineNo">864</span><a id="line.864">     *</a>
+<span class="sourceLineNo">865</span><a id="line.865">     * @param g2  the graphics device (not &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">866</span><a id="line.866">     * @param plot  the plot (not &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">867</span><a id="line.867">     * @param axis  the range axis (not &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">868</span><a id="line.868">     * @param marker  the marker to be drawn (not &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">869</span><a id="line.869">     * @param dataArea  the area inside the axes (not &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">870</span><a id="line.870">     *</a>
+<span class="sourceLineNo">871</span><a id="line.871">     * @see #drawRangeMarker(Graphics2D, CategoryPlot, ValueAxis, Marker,</a>
+<span class="sourceLineNo">872</span><a id="line.872">     *     Rectangle2D)</a>
+<span class="sourceLineNo">873</span><a id="line.873">     */</a>
+<span class="sourceLineNo">874</span><a id="line.874">    @Override</a>
+<span class="sourceLineNo">875</span><a id="line.875">    public void drawDomainMarker(Graphics2D g2, CategoryPlot plot,</a>
+<span class="sourceLineNo">876</span><a id="line.876">            CategoryAxis axis, CategoryMarker marker, Rectangle2D dataArea) {</a>
+<span class="sourceLineNo">877</span><a id="line.877"></a>
+<span class="sourceLineNo">878</span><a id="line.878">        Comparable category = marker.getKey();</a>
+<span class="sourceLineNo">879</span><a id="line.879">        CategoryDataset dataset = plot.getDataset(plot.getIndexOf(this));</a>
+<span class="sourceLineNo">880</span><a id="line.880">        int columnIndex = dataset.getColumnIndex(category);</a>
+<span class="sourceLineNo">881</span><a id="line.881">        if (columnIndex &lt; 0) {</a>
+<span class="sourceLineNo">882</span><a id="line.882">            return;</a>
+<span class="sourceLineNo">883</span><a id="line.883">        }</a>
+<span class="sourceLineNo">884</span><a id="line.884"></a>
+<span class="sourceLineNo">885</span><a id="line.885">        final Composite savedComposite = g2.getComposite();</a>
+<span class="sourceLineNo">886</span><a id="line.886">        g2.setComposite(AlphaComposite.getInstance(</a>
+<span class="sourceLineNo">887</span><a id="line.887">                AlphaComposite.SRC_OVER, marker.getAlpha()));</a>
+<span class="sourceLineNo">888</span><a id="line.888"></a>
+<span class="sourceLineNo">889</span><a id="line.889">        PlotOrientation orientation = plot.getOrientation();</a>
+<span class="sourceLineNo">890</span><a id="line.890">        Rectangle2D bounds;</a>
+<span class="sourceLineNo">891</span><a id="line.891">        if (marker.getDrawAsLine()) {</a>
+<span class="sourceLineNo">892</span><a id="line.892">            double v = axis.getCategoryMiddle(columnIndex,</a>
+<span class="sourceLineNo">893</span><a id="line.893">                    dataset.getColumnCount(), dataArea,</a>
+<span class="sourceLineNo">894</span><a id="line.894">                    plot.getDomainAxisEdge());</a>
+<span class="sourceLineNo">895</span><a id="line.895">            Line2D line = null;</a>
+<span class="sourceLineNo">896</span><a id="line.896">            if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">897</span><a id="line.897">                line = new Line2D.Double(dataArea.getMinX(), v,</a>
+<span class="sourceLineNo">898</span><a id="line.898">                        dataArea.getMaxX(), v);</a>
+<span class="sourceLineNo">899</span><a id="line.899">            }</a>
+<span class="sourceLineNo">900</span><a id="line.900">            else if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">901</span><a id="line.901">                line = new Line2D.Double(v, dataArea.getMinY(), v,</a>
+<span class="sourceLineNo">902</span><a id="line.902">                        dataArea.getMaxY());</a>
+<span class="sourceLineNo">903</span><a id="line.903">            } else {</a>
+<span class="sourceLineNo">904</span><a id="line.904">                throw new IllegalStateException();</a>
+<span class="sourceLineNo">905</span><a id="line.905">            }</a>
+<span class="sourceLineNo">906</span><a id="line.906">            g2.setPaint(marker.getPaint());</a>
+<span class="sourceLineNo">907</span><a id="line.907">            g2.setStroke(marker.getStroke());</a>
+<span class="sourceLineNo">908</span><a id="line.908">            g2.draw(line);</a>
+<span class="sourceLineNo">909</span><a id="line.909">            bounds = line.getBounds2D();</a>
+<span class="sourceLineNo">910</span><a id="line.910">        }</a>
+<span class="sourceLineNo">911</span><a id="line.911">        else {</a>
+<span class="sourceLineNo">912</span><a id="line.912">            double v0 = axis.getCategoryStart(columnIndex,</a>
+<span class="sourceLineNo">913</span><a id="line.913">                    dataset.getColumnCount(), dataArea,</a>
+<span class="sourceLineNo">914</span><a id="line.914">                    plot.getDomainAxisEdge());</a>
+<span class="sourceLineNo">915</span><a id="line.915">            double v1 = axis.getCategoryEnd(columnIndex,</a>
+<span class="sourceLineNo">916</span><a id="line.916">                    dataset.getColumnCount(), dataArea,</a>
+<span class="sourceLineNo">917</span><a id="line.917">                    plot.getDomainAxisEdge());</a>
+<span class="sourceLineNo">918</span><a id="line.918">            Rectangle2D area = null;</a>
+<span class="sourceLineNo">919</span><a id="line.919">            if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">920</span><a id="line.920">                area = new Rectangle2D.Double(dataArea.getMinX(), v0,</a>
+<span class="sourceLineNo">921</span><a id="line.921">                        dataArea.getWidth(), (v1 - v0));</a>
+<span class="sourceLineNo">922</span><a id="line.922">            }</a>
+<span class="sourceLineNo">923</span><a id="line.923">            else if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">924</span><a id="line.924">                area = new Rectangle2D.Double(v0, dataArea.getMinY(),</a>
+<span class="sourceLineNo">925</span><a id="line.925">                        (v1 - v0), dataArea.getHeight());</a>
+<span class="sourceLineNo">926</span><a id="line.926">            }</a>
+<span class="sourceLineNo">927</span><a id="line.927">            g2.setPaint(marker.getPaint());</a>
+<span class="sourceLineNo">928</span><a id="line.928">            g2.fill(area);</a>
+<span class="sourceLineNo">929</span><a id="line.929">            bounds = area;</a>
+<span class="sourceLineNo">930</span><a id="line.930">        }</a>
+<span class="sourceLineNo">931</span><a id="line.931"></a>
+<span class="sourceLineNo">932</span><a id="line.932">        String label = marker.getLabel();</a>
+<span class="sourceLineNo">933</span><a id="line.933">        RectangleAnchor anchor = marker.getLabelAnchor();</a>
+<span class="sourceLineNo">934</span><a id="line.934">        if (label != null) {</a>
+<span class="sourceLineNo">935</span><a id="line.935">            Font labelFont = marker.getLabelFont();</a>
+<span class="sourceLineNo">936</span><a id="line.936">            g2.setFont(labelFont);</a>
+<span class="sourceLineNo">937</span><a id="line.937">            g2.setPaint(marker.getLabelPaint());</a>
+<span class="sourceLineNo">938</span><a id="line.938">            Point2D coordinates = calculateDomainMarkerTextAnchorPoint(</a>
+<span class="sourceLineNo">939</span><a id="line.939">                    g2, orientation, dataArea, bounds, marker.getLabelOffset(),</a>
+<span class="sourceLineNo">940</span><a id="line.940">                    marker.getLabelOffsetType(), anchor);</a>
+<span class="sourceLineNo">941</span><a id="line.941">            TextUtilities.drawAlignedString(label, g2,</a>
+<span class="sourceLineNo">942</span><a id="line.942">                    (float) coordinates.getX(), (float) coordinates.getY(),</a>
+<span class="sourceLineNo">943</span><a id="line.943">                    marker.getLabelTextAnchor());</a>
+<span class="sourceLineNo">944</span><a id="line.944">        }</a>
+<span class="sourceLineNo">945</span><a id="line.945">        g2.setComposite(savedComposite);</a>
+<span class="sourceLineNo">946</span><a id="line.946">    }</a>
+<span class="sourceLineNo">947</span><a id="line.947"></a>
+<span class="sourceLineNo">948</span><a id="line.948">    /**</a>
+<span class="sourceLineNo">949</span><a id="line.949">     * Draws a marker for the range axis.</a>
+<span class="sourceLineNo">950</span><a id="line.950">     *</a>
+<span class="sourceLineNo">951</span><a id="line.951">     * @param g2  the graphics device (not &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">952</span><a id="line.952">     * @param plot  the plot (not &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">953</span><a id="line.953">     * @param axis  the range axis (not &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">954</span><a id="line.954">     * @param marker  the marker to be drawn (not &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">955</span><a id="line.955">     * @param dataArea  the area inside the axes (not &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">956</span><a id="line.956">     *</a>
+<span class="sourceLineNo">957</span><a id="line.957">     * @see #drawDomainMarker(Graphics2D, CategoryPlot, CategoryAxis,</a>
+<span class="sourceLineNo">958</span><a id="line.958">     *     CategoryMarker, Rectangle2D)</a>
+<span class="sourceLineNo">959</span><a id="line.959">     */</a>
+<span class="sourceLineNo">960</span><a id="line.960">    @Override</a>
+<span class="sourceLineNo">961</span><a id="line.961">    public void drawRangeMarker(Graphics2D g2, CategoryPlot plot,</a>
+<span class="sourceLineNo">962</span><a id="line.962">            ValueAxis axis, Marker marker, Rectangle2D dataArea) {</a>
+<span class="sourceLineNo">963</span><a id="line.963"></a>
+<span class="sourceLineNo">964</span><a id="line.964">        if (marker instanceof ValueMarker) {</a>
+<span class="sourceLineNo">965</span><a id="line.965">            ValueMarker vm = (ValueMarker) marker;</a>
+<span class="sourceLineNo">966</span><a id="line.966">            double value = vm.getValue();</a>
+<span class="sourceLineNo">967</span><a id="line.967">            Range range = axis.getRange();</a>
+<span class="sourceLineNo">968</span><a id="line.968"></a>
+<span class="sourceLineNo">969</span><a id="line.969">            if (!range.contains(value)) {</a>
+<span class="sourceLineNo">970</span><a id="line.970">                return;</a>
+<span class="sourceLineNo">971</span><a id="line.971">            }</a>
+<span class="sourceLineNo">972</span><a id="line.972"></a>
+<span class="sourceLineNo">973</span><a id="line.973">            final Composite savedComposite = g2.getComposite();</a>
+<span class="sourceLineNo">974</span><a id="line.974">            g2.setComposite(AlphaComposite.getInstance(</a>
+<span class="sourceLineNo">975</span><a id="line.975">                    AlphaComposite.SRC_OVER, marker.getAlpha()));</a>
+<span class="sourceLineNo">976</span><a id="line.976"></a>
+<span class="sourceLineNo">977</span><a id="line.977">            PlotOrientation orientation = plot.getOrientation();</a>
+<span class="sourceLineNo">978</span><a id="line.978">            double v = axis.valueToJava2D(value, dataArea,</a>
+<span class="sourceLineNo">979</span><a id="line.979">                    plot.getRangeAxisEdge());</a>
+<span class="sourceLineNo">980</span><a id="line.980">            Line2D line = null;</a>
+<span class="sourceLineNo">981</span><a id="line.981">            if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">982</span><a id="line.982">                line = new Line2D.Double(v, dataArea.getMinY(), v,</a>
+<span class="sourceLineNo">983</span><a id="line.983">                        dataArea.getMaxY());</a>
+<span class="sourceLineNo">984</span><a id="line.984">            }</a>
+<span class="sourceLineNo">985</span><a id="line.985">            else if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">986</span><a id="line.986">                line = new Line2D.Double(dataArea.getMinX(), v,</a>
+<span class="sourceLineNo">987</span><a id="line.987">                        dataArea.getMaxX(), v);</a>
+<span class="sourceLineNo">988</span><a id="line.988">            } else {</a>
+<span class="sourceLineNo">989</span><a id="line.989">                throw new IllegalStateException();</a>
+<span class="sourceLineNo">990</span><a id="line.990">            }</a>
+<span class="sourceLineNo">991</span><a id="line.991"></a>
+<span class="sourceLineNo">992</span><a id="line.992">            g2.setPaint(marker.getPaint());</a>
+<span class="sourceLineNo">993</span><a id="line.993">            g2.setStroke(marker.getStroke());</a>
+<span class="sourceLineNo">994</span><a id="line.994">            g2.draw(line);</a>
+<span class="sourceLineNo">995</span><a id="line.995"></a>
+<span class="sourceLineNo">996</span><a id="line.996">            String label = marker.getLabel();</a>
+<span class="sourceLineNo">997</span><a id="line.997">            RectangleAnchor anchor = marker.getLabelAnchor();</a>
+<span class="sourceLineNo">998</span><a id="line.998">            if (label != null) {</a>
+<span class="sourceLineNo">999</span><a id="line.999">                Font labelFont = marker.getLabelFont();</a>
+<span class="sourceLineNo">1000</span><a id="line.1000">                g2.setFont(labelFont);</a>
+<span class="sourceLineNo">1001</span><a id="line.1001">                Point2D coordinates = calculateRangeMarkerTextAnchorPoint(</a>
+<span class="sourceLineNo">1002</span><a id="line.1002">                        g2, orientation, dataArea, line.getBounds2D(),</a>
+<span class="sourceLineNo">1003</span><a id="line.1003">                        marker.getLabelOffset(), LengthAdjustmentType.EXPAND,</a>
+<span class="sourceLineNo">1004</span><a id="line.1004">                        anchor);</a>
+<span class="sourceLineNo">1005</span><a id="line.1005">                Rectangle2D rect = TextUtils.calcAlignedStringBounds(label, g2, </a>
+<span class="sourceLineNo">1006</span><a id="line.1006">                        (float) coordinates.getX(), (float) coordinates.getY(), </a>
+<span class="sourceLineNo">1007</span><a id="line.1007">                        marker.getLabelTextAnchor());</a>
+<span class="sourceLineNo">1008</span><a id="line.1008">                g2.setPaint(marker.getLabelBackgroundColor());</a>
+<span class="sourceLineNo">1009</span><a id="line.1009">                g2.fill(rect);</a>
+<span class="sourceLineNo">1010</span><a id="line.1010">                g2.setPaint(marker.getLabelPaint());</a>
+<span class="sourceLineNo">1011</span><a id="line.1011">                TextUtils.drawAlignedString(label, g2, </a>
+<span class="sourceLineNo">1012</span><a id="line.1012">                        (float) coordinates.getX(), (float) coordinates.getY(),</a>
+<span class="sourceLineNo">1013</span><a id="line.1013">                        marker.getLabelTextAnchor());</a>
+<span class="sourceLineNo">1014</span><a id="line.1014">            }</a>
+<span class="sourceLineNo">1015</span><a id="line.1015">            g2.setComposite(savedComposite);</a>
+<span class="sourceLineNo">1016</span><a id="line.1016">        }</a>
+<span class="sourceLineNo">1017</span><a id="line.1017">        else if (marker instanceof IntervalMarker) {</a>
+<span class="sourceLineNo">1018</span><a id="line.1018">            IntervalMarker im = (IntervalMarker) marker;</a>
+<span class="sourceLineNo">1019</span><a id="line.1019">            double start = im.getStartValue();</a>
+<span class="sourceLineNo">1020</span><a id="line.1020">            double end = im.getEndValue();</a>
+<span class="sourceLineNo">1021</span><a id="line.1021">            Range range = axis.getRange();</a>
+<span class="sourceLineNo">1022</span><a id="line.1022">            if (!(range.intersects(start, end))) {</a>
+<span class="sourceLineNo">1023</span><a id="line.1023">                return;</a>
+<span class="sourceLineNo">1024</span><a id="line.1024">            }</a>
+<span class="sourceLineNo">1025</span><a id="line.1025"></a>
+<span class="sourceLineNo">1026</span><a id="line.1026">            final Composite savedComposite = g2.getComposite();</a>
+<span class="sourceLineNo">1027</span><a id="line.1027">            g2.setComposite(AlphaComposite.getInstance(</a>
+<span class="sourceLineNo">1028</span><a id="line.1028">                    AlphaComposite.SRC_OVER, marker.getAlpha()));</a>
+<span class="sourceLineNo">1029</span><a id="line.1029"></a>
+<span class="sourceLineNo">1030</span><a id="line.1030">            double start2d = axis.valueToJava2D(start, dataArea,</a>
+<span class="sourceLineNo">1031</span><a id="line.1031">                    plot.getRangeAxisEdge());</a>
+<span class="sourceLineNo">1032</span><a id="line.1032">            double end2d = axis.valueToJava2D(end, dataArea,</a>
+<span class="sourceLineNo">1033</span><a id="line.1033">                    plot.getRangeAxisEdge());</a>
+<span class="sourceLineNo">1034</span><a id="line.1034">            double low = Math.min(start2d, end2d);</a>
+<span class="sourceLineNo">1035</span><a id="line.1035">            double high = Math.max(start2d, end2d);</a>
+<span class="sourceLineNo">1036</span><a id="line.1036"></a>
+<span class="sourceLineNo">1037</span><a id="line.1037">            PlotOrientation orientation = plot.getOrientation();</a>
+<span class="sourceLineNo">1038</span><a id="line.1038">            Rectangle2D rect = null;</a>
+<span class="sourceLineNo">1039</span><a id="line.1039">            if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">1040</span><a id="line.1040">                // clip left and right bounds to data area</a>
+<span class="sourceLineNo">1041</span><a id="line.1041">                low = Math.max(low, dataArea.getMinX());</a>
+<span class="sourceLineNo">1042</span><a id="line.1042">                high = Math.min(high, dataArea.getMaxX());</a>
+<span class="sourceLineNo">1043</span><a id="line.1043">                rect = new Rectangle2D.Double(low,</a>
+<span class="sourceLineNo">1044</span><a id="line.1044">                        dataArea.getMinY(), high - low,</a>
+<span class="sourceLineNo">1045</span><a id="line.1045">                        dataArea.getHeight());</a>
+<span class="sourceLineNo">1046</span><a id="line.1046">            }</a>
+<span class="sourceLineNo">1047</span><a id="line.1047">            else if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">1048</span><a id="line.1048">                // clip top and bottom bounds to data area</a>
+<span class="sourceLineNo">1049</span><a id="line.1049">                low = Math.max(low, dataArea.getMinY());</a>
+<span class="sourceLineNo">1050</span><a id="line.1050">                high = Math.min(high, dataArea.getMaxY());</a>
+<span class="sourceLineNo">1051</span><a id="line.1051">                rect = new Rectangle2D.Double(dataArea.getMinX(),</a>
+<span class="sourceLineNo">1052</span><a id="line.1052">                        low, dataArea.getWidth(),</a>
+<span class="sourceLineNo">1053</span><a id="line.1053">                        high - low);</a>
+<span class="sourceLineNo">1054</span><a id="line.1054">            }</a>
+<span class="sourceLineNo">1055</span><a id="line.1055">            Paint p = marker.getPaint();</a>
+<span class="sourceLineNo">1056</span><a id="line.1056">            if (p instanceof GradientPaint) {</a>
+<span class="sourceLineNo">1057</span><a id="line.1057">                GradientPaint gp = (GradientPaint) p;</a>
+<span class="sourceLineNo">1058</span><a id="line.1058">                GradientPaintTransformer t = im.getGradientPaintTransformer();</a>
+<span class="sourceLineNo">1059</span><a id="line.1059">                if (t != null) {</a>
+<span class="sourceLineNo">1060</span><a id="line.1060">                    gp = t.transform(gp, rect);</a>
+<span class="sourceLineNo">1061</span><a id="line.1061">                }</a>
+<span class="sourceLineNo">1062</span><a id="line.1062">                g2.setPaint(gp);</a>
+<span class="sourceLineNo">1063</span><a id="line.1063">            }</a>
+<span class="sourceLineNo">1064</span><a id="line.1064">            else {</a>
+<span class="sourceLineNo">1065</span><a id="line.1065">                g2.setPaint(p);</a>
+<span class="sourceLineNo">1066</span><a id="line.1066">            }</a>
+<span class="sourceLineNo">1067</span><a id="line.1067">            g2.fill(rect);</a>
+<span class="sourceLineNo">1068</span><a id="line.1068"></a>
+<span class="sourceLineNo">1069</span><a id="line.1069">            // now draw the outlines, if visible...</a>
+<span class="sourceLineNo">1070</span><a id="line.1070">            if (im.getOutlinePaint() != null &amp;&amp; im.getOutlineStroke() != null) {</a>
+<span class="sourceLineNo">1071</span><a id="line.1071">                if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">1072</span><a id="line.1072">                    Line2D line = new Line2D.Double();</a>
+<span class="sourceLineNo">1073</span><a id="line.1073">                    double x0 = dataArea.getMinX();</a>
+<span class="sourceLineNo">1074</span><a id="line.1074">                    double x1 = dataArea.getMaxX();</a>
+<span class="sourceLineNo">1075</span><a id="line.1075">                    g2.setPaint(im.getOutlinePaint());</a>
+<span class="sourceLineNo">1076</span><a id="line.1076">                    g2.setStroke(im.getOutlineStroke());</a>
+<span class="sourceLineNo">1077</span><a id="line.1077">                    if (range.contains(start)) {</a>
+<span class="sourceLineNo">1078</span><a id="line.1078">                        line.setLine(x0, start2d, x1, start2d);</a>
+<span class="sourceLineNo">1079</span><a id="line.1079">                        g2.draw(line);</a>
+<span class="sourceLineNo">1080</span><a id="line.1080">                    }</a>
+<span class="sourceLineNo">1081</span><a id="line.1081">                    if (range.contains(end)) {</a>
+<span class="sourceLineNo">1082</span><a id="line.1082">                        line.setLine(x0, end2d, x1, end2d);</a>
+<span class="sourceLineNo">1083</span><a id="line.1083">                        g2.draw(line);</a>
+<span class="sourceLineNo">1084</span><a id="line.1084">                    }</a>
+<span class="sourceLineNo">1085</span><a id="line.1085">                }</a>
+<span class="sourceLineNo">1086</span><a id="line.1086">                else { // PlotOrientation.HORIZONTAL</a>
+<span class="sourceLineNo">1087</span><a id="line.1087">                    Line2D line = new Line2D.Double();</a>
+<span class="sourceLineNo">1088</span><a id="line.1088">                    double y0 = dataArea.getMinY();</a>
+<span class="sourceLineNo">1089</span><a id="line.1089">                    double y1 = dataArea.getMaxY();</a>
+<span class="sourceLineNo">1090</span><a id="line.1090">                    g2.setPaint(im.getOutlinePaint());</a>
+<span class="sourceLineNo">1091</span><a id="line.1091">                    g2.setStroke(im.getOutlineStroke());</a>
+<span class="sourceLineNo">1092</span><a id="line.1092">                    if (range.contains(start)) {</a>
+<span class="sourceLineNo">1093</span><a id="line.1093">                        line.setLine(start2d, y0, start2d, y1);</a>
+<span class="sourceLineNo">1094</span><a id="line.1094">                        g2.draw(line);</a>
+<span class="sourceLineNo">1095</span><a id="line.1095">                    }</a>
+<span class="sourceLineNo">1096</span><a id="line.1096">                    if (range.contains(end)) {</a>
+<span class="sourceLineNo">1097</span><a id="line.1097">                        line.setLine(end2d, y0, end2d, y1);</a>
+<span class="sourceLineNo">1098</span><a id="line.1098">                        g2.draw(line);</a>
+<span class="sourceLineNo">1099</span><a id="line.1099">                    }</a>
+<span class="sourceLineNo">1100</span><a id="line.1100">                }</a>
+<span class="sourceLineNo">1101</span><a id="line.1101">            }</a>
+<span class="sourceLineNo">1102</span><a id="line.1102"></a>
+<span class="sourceLineNo">1103</span><a id="line.1103">            String label = marker.getLabel();</a>
+<span class="sourceLineNo">1104</span><a id="line.1104">            RectangleAnchor anchor = marker.getLabelAnchor();</a>
+<span class="sourceLineNo">1105</span><a id="line.1105">            if (label != null) {</a>
+<span class="sourceLineNo">1106</span><a id="line.1106">                Font labelFont = marker.getLabelFont();</a>
+<span class="sourceLineNo">1107</span><a id="line.1107">                g2.setFont(labelFont);</a>
+<span class="sourceLineNo">1108</span><a id="line.1108">                g2.setPaint(marker.getLabelPaint());</a>
+<span class="sourceLineNo">1109</span><a id="line.1109">                Point2D coordinates = calculateRangeMarkerTextAnchorPoint(</a>
+<span class="sourceLineNo">1110</span><a id="line.1110">                        g2, orientation, dataArea, rect,</a>
+<span class="sourceLineNo">1111</span><a id="line.1111">                        marker.getLabelOffset(), marker.getLabelOffsetType(),</a>
+<span class="sourceLineNo">1112</span><a id="line.1112">                        anchor);</a>
+<span class="sourceLineNo">1113</span><a id="line.1113">                TextUtilities.drawAlignedString(label, g2,</a>
+<span class="sourceLineNo">1114</span><a id="line.1114">                        (float) coordinates.getX(), (float) coordinates.getY(),</a>
+<span class="sourceLineNo">1115</span><a id="line.1115">                        marker.getLabelTextAnchor());</a>
+<span class="sourceLineNo">1116</span><a id="line.1116">            }</a>
+<span class="sourceLineNo">1117</span><a id="line.1117">            g2.setComposite(savedComposite);</a>
+<span class="sourceLineNo">1118</span><a id="line.1118">        }</a>
+<span class="sourceLineNo">1119</span><a id="line.1119">    }</a>
+<span class="sourceLineNo">1120</span><a id="line.1120"></a>
+<span class="sourceLineNo">1121</span><a id="line.1121">    /**</a>
+<span class="sourceLineNo">1122</span><a id="line.1122">     * Calculates the (x, y) coordinates for drawing the label for a marker on</a>
+<span class="sourceLineNo">1123</span><a id="line.1123">     * the range axis.</a>
+<span class="sourceLineNo">1124</span><a id="line.1124">     *</a>
+<span class="sourceLineNo">1125</span><a id="line.1125">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1126</span><a id="line.1126">     * @param orientation  the plot orientation.</a>
+<span class="sourceLineNo">1127</span><a id="line.1127">     * @param dataArea  the data area.</a>
+<span class="sourceLineNo">1128</span><a id="line.1128">     * @param markerArea  the rectangle surrounding the marker.</a>
+<span class="sourceLineNo">1129</span><a id="line.1129">     * @param markerOffset  the marker offset.</a>
+<span class="sourceLineNo">1130</span><a id="line.1130">     * @param labelOffsetType  the label offset type.</a>
+<span class="sourceLineNo">1131</span><a id="line.1131">     * @param anchor  the label anchor.</a>
+<span class="sourceLineNo">1132</span><a id="line.1132">     *</a>
+<span class="sourceLineNo">1133</span><a id="line.1133">     * @return The coordinates for drawing the marker label.</a>
+<span class="sourceLineNo">1134</span><a id="line.1134">     */</a>
+<span class="sourceLineNo">1135</span><a id="line.1135">    protected Point2D calculateDomainMarkerTextAnchorPoint(Graphics2D g2,</a>
+<span class="sourceLineNo">1136</span><a id="line.1136">            PlotOrientation orientation, Rectangle2D dataArea,</a>
+<span class="sourceLineNo">1137</span><a id="line.1137">            Rectangle2D markerArea, RectangleInsets markerOffset,</a>
+<span class="sourceLineNo">1138</span><a id="line.1138">            LengthAdjustmentType labelOffsetType, RectangleAnchor anchor) {</a>
+<span class="sourceLineNo">1139</span><a id="line.1139"></a>
+<span class="sourceLineNo">1140</span><a id="line.1140">        Rectangle2D anchorRect = null;</a>
+<span class="sourceLineNo">1141</span><a id="line.1141">        if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">1142</span><a id="line.1142">            anchorRect = markerOffset.createAdjustedRectangle(markerArea,</a>
+<span class="sourceLineNo">1143</span><a id="line.1143">                    LengthAdjustmentType.CONTRACT, labelOffsetType);</a>
+<span class="sourceLineNo">1144</span><a id="line.1144">        }</a>
+<span class="sourceLineNo">1145</span><a id="line.1145">        else if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">1146</span><a id="line.1146">            anchorRect = markerOffset.createAdjustedRectangle(markerArea,</a>
+<span class="sourceLineNo">1147</span><a id="line.1147">                    labelOffsetType, LengthAdjustmentType.CONTRACT);</a>
+<span class="sourceLineNo">1148</span><a id="line.1148">        }</a>
+<span class="sourceLineNo">1149</span><a id="line.1149">        return RectangleAnchor.coordinates(anchorRect, anchor);</a>
+<span class="sourceLineNo">1150</span><a id="line.1150"></a>
+<span class="sourceLineNo">1151</span><a id="line.1151">    }</a>
+<span class="sourceLineNo">1152</span><a id="line.1152"></a>
+<span class="sourceLineNo">1153</span><a id="line.1153">    /**</a>
+<span class="sourceLineNo">1154</span><a id="line.1154">     * Calculates the (x, y) coordinates for drawing a marker label.</a>
+<span class="sourceLineNo">1155</span><a id="line.1155">     *</a>
+<span class="sourceLineNo">1156</span><a id="line.1156">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1157</span><a id="line.1157">     * @param orientation  the plot orientation.</a>
+<span class="sourceLineNo">1158</span><a id="line.1158">     * @param dataArea  the data area.</a>
+<span class="sourceLineNo">1159</span><a id="line.1159">     * @param markerArea  the rectangle surrounding the marker.</a>
+<span class="sourceLineNo">1160</span><a id="line.1160">     * @param markerOffset  the marker offset.</a>
+<span class="sourceLineNo">1161</span><a id="line.1161">     * @param labelOffsetType  the label offset type.</a>
+<span class="sourceLineNo">1162</span><a id="line.1162">     * @param anchor  the label anchor.</a>
+<span class="sourceLineNo">1163</span><a id="line.1163">     *</a>
+<span class="sourceLineNo">1164</span><a id="line.1164">     * @return The coordinates for drawing the marker label.</a>
+<span class="sourceLineNo">1165</span><a id="line.1165">     */</a>
+<span class="sourceLineNo">1166</span><a id="line.1166">    protected Point2D calculateRangeMarkerTextAnchorPoint(Graphics2D g2,</a>
+<span class="sourceLineNo">1167</span><a id="line.1167">            PlotOrientation orientation, Rectangle2D dataArea,</a>
+<span class="sourceLineNo">1168</span><a id="line.1168">            Rectangle2D markerArea, RectangleInsets markerOffset,</a>
+<span class="sourceLineNo">1169</span><a id="line.1169">            LengthAdjustmentType labelOffsetType, RectangleAnchor anchor) {</a>
+<span class="sourceLineNo">1170</span><a id="line.1170"></a>
+<span class="sourceLineNo">1171</span><a id="line.1171">        Rectangle2D anchorRect = null;</a>
+<span class="sourceLineNo">1172</span><a id="line.1172">        if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">1173</span><a id="line.1173">            anchorRect = markerOffset.createAdjustedRectangle(markerArea,</a>
+<span class="sourceLineNo">1174</span><a id="line.1174">                    labelOffsetType, LengthAdjustmentType.CONTRACT);</a>
+<span class="sourceLineNo">1175</span><a id="line.1175">        }</a>
+<span class="sourceLineNo">1176</span><a id="line.1176">        else if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">1177</span><a id="line.1177">            anchorRect = markerOffset.createAdjustedRectangle(markerArea,</a>
+<span class="sourceLineNo">1178</span><a id="line.1178">                    LengthAdjustmentType.CONTRACT, labelOffsetType);</a>
+<span class="sourceLineNo">1179</span><a id="line.1179">        }</a>
+<span class="sourceLineNo">1180</span><a id="line.1180">        return RectangleAnchor.coordinates(anchorRect, anchor);</a>
+<span class="sourceLineNo">1181</span><a id="line.1181"></a>
+<span class="sourceLineNo">1182</span><a id="line.1182">    }</a>
+<span class="sourceLineNo">1183</span><a id="line.1183"></a>
+<span class="sourceLineNo">1184</span><a id="line.1184">    /**</a>
+<span class="sourceLineNo">1185</span><a id="line.1185">     * Returns a legend item for a series.  This default implementation will</a>
+<span class="sourceLineNo">1186</span><a id="line.1186">     * return &lt;code&gt;null&lt;/code&gt; if {@link #isSeriesVisible(int)} or</a>
+<span class="sourceLineNo">1187</span><a id="line.1187">     * {@link #isSeriesVisibleInLegend(int)} returns &lt;code&gt;false&lt;/code&gt;.</a>
+<span class="sourceLineNo">1188</span><a id="line.1188">     *</a>
+<span class="sourceLineNo">1189</span><a id="line.1189">     * @param datasetIndex  the dataset index (zero-based).</a>
+<span class="sourceLineNo">1190</span><a id="line.1190">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1191</span><a id="line.1191">     *</a>
+<span class="sourceLineNo">1192</span><a id="line.1192">     * @return The legend item (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1193</span><a id="line.1193">     *</a>
+<span class="sourceLineNo">1194</span><a id="line.1194">     * @see #getLegendItems()</a>
+<span class="sourceLineNo">1195</span><a id="line.1195">     */</a>
+<span class="sourceLineNo">1196</span><a id="line.1196">    @Override</a>
+<span class="sourceLineNo">1197</span><a id="line.1197">    public LegendItem getLegendItem(int datasetIndex, int series) {</a>
+<span class="sourceLineNo">1198</span><a id="line.1198"></a>
+<span class="sourceLineNo">1199</span><a id="line.1199">        CategoryPlot p = getPlot();</a>
+<span class="sourceLineNo">1200</span><a id="line.1200">        if (p == null) {</a>
+<span class="sourceLineNo">1201</span><a id="line.1201">            return null;</a>
+<span class="sourceLineNo">1202</span><a id="line.1202">        }</a>
+<span class="sourceLineNo">1203</span><a id="line.1203"></a>
+<span class="sourceLineNo">1204</span><a id="line.1204">        // check that a legend item needs to be displayed...</a>
+<span class="sourceLineNo">1205</span><a id="line.1205">        if (!isSeriesVisible(series) || !isSeriesVisibleInLegend(series)) {</a>
+<span class="sourceLineNo">1206</span><a id="line.1206">            return null;</a>
+<span class="sourceLineNo">1207</span><a id="line.1207">        }</a>
+<span class="sourceLineNo">1208</span><a id="line.1208"></a>
+<span class="sourceLineNo">1209</span><a id="line.1209">        CategoryDataset dataset = p.getDataset(datasetIndex);</a>
+<span class="sourceLineNo">1210</span><a id="line.1210">        String label = this.legendItemLabelGenerator.generateLabel(dataset,</a>
+<span class="sourceLineNo">1211</span><a id="line.1211">                series);</a>
+<span class="sourceLineNo">1212</span><a id="line.1212">        String description = label;</a>
+<span class="sourceLineNo">1213</span><a id="line.1213">        String toolTipText = null;</a>
+<span class="sourceLineNo">1214</span><a id="line.1214">        if (this.legendItemToolTipGenerator != null) {</a>
+<span class="sourceLineNo">1215</span><a id="line.1215">            toolTipText = this.legendItemToolTipGenerator.generateLabel(</a>
+<span class="sourceLineNo">1216</span><a id="line.1216">                    dataset, series);</a>
+<span class="sourceLineNo">1217</span><a id="line.1217">        }</a>
+<span class="sourceLineNo">1218</span><a id="line.1218">        String urlText = null;</a>
+<span class="sourceLineNo">1219</span><a id="line.1219">        if (this.legendItemURLGenerator != null) {</a>
+<span class="sourceLineNo">1220</span><a id="line.1220">            urlText = this.legendItemURLGenerator.generateLabel(dataset,</a>
+<span class="sourceLineNo">1221</span><a id="line.1221">                    series);</a>
+<span class="sourceLineNo">1222</span><a id="line.1222">        }</a>
+<span class="sourceLineNo">1223</span><a id="line.1223">        Shape shape = lookupLegendShape(series);</a>
+<span class="sourceLineNo">1224</span><a id="line.1224">        Paint paint = lookupSeriesPaint(series);</a>
+<span class="sourceLineNo">1225</span><a id="line.1225">        Paint outlinePaint = lookupSeriesOutlinePaint(series);</a>
+<span class="sourceLineNo">1226</span><a id="line.1226">        Stroke outlineStroke = lookupSeriesOutlineStroke(series);</a>
+<span class="sourceLineNo">1227</span><a id="line.1227"></a>
+<span class="sourceLineNo">1228</span><a id="line.1228">        LegendItem item = new LegendItem(label, description, toolTipText,</a>
+<span class="sourceLineNo">1229</span><a id="line.1229">                urlText, shape, paint, outlineStroke, outlinePaint);</a>
+<span class="sourceLineNo">1230</span><a id="line.1230">        item.setLabelFont(lookupLegendTextFont(series));</a>
+<span class="sourceLineNo">1231</span><a id="line.1231">        Paint labelPaint = lookupLegendTextPaint(series);</a>
+<span class="sourceLineNo">1232</span><a id="line.1232">        if (labelPaint != null) {</a>
+<span class="sourceLineNo">1233</span><a id="line.1233">            item.setLabelPaint(labelPaint);</a>
+<span class="sourceLineNo">1234</span><a id="line.1234">        }</a>
+<span class="sourceLineNo">1235</span><a id="line.1235">        item.setSeriesKey(dataset.getRowKey(series));</a>
+<span class="sourceLineNo">1236</span><a id="line.1236">        item.setSeriesIndex(series);</a>
+<span class="sourceLineNo">1237</span><a id="line.1237">        item.setDataset(dataset);</a>
+<span class="sourceLineNo">1238</span><a id="line.1238">        item.setDatasetIndex(datasetIndex);</a>
+<span class="sourceLineNo">1239</span><a id="line.1239">        return item;</a>
+<span class="sourceLineNo">1240</span><a id="line.1240">    }</a>
+<span class="sourceLineNo">1241</span><a id="line.1241"></a>
+<span class="sourceLineNo">1242</span><a id="line.1242">    /**</a>
+<span class="sourceLineNo">1243</span><a id="line.1243">     * Tests this renderer for equality with another object.</a>
+<span class="sourceLineNo">1244</span><a id="line.1244">     *</a>
+<span class="sourceLineNo">1245</span><a id="line.1245">     * @param obj  the object.</a>
+<span class="sourceLineNo">1246</span><a id="line.1246">     *</a>
+<span class="sourceLineNo">1247</span><a id="line.1247">     * @return &lt;code&gt;true&lt;/code&gt; or &lt;code&gt;false&lt;/code&gt;.</a>
+<span class="sourceLineNo">1248</span><a id="line.1248">     */</a>
+<span class="sourceLineNo">1249</span><a id="line.1249">    @Override</a>
+<span class="sourceLineNo">1250</span><a id="line.1250">    public boolean equals(Object obj) {</a>
+<span class="sourceLineNo">1251</span><a id="line.1251">        if (obj == this) {</a>
+<span class="sourceLineNo">1252</span><a id="line.1252">            return true;</a>
+<span class="sourceLineNo">1253</span><a id="line.1253">        }</a>
+<span class="sourceLineNo">1254</span><a id="line.1254">        if (!(obj instanceof AbstractCategoryItemRenderer)) {</a>
+<span class="sourceLineNo">1255</span><a id="line.1255">            return false;</a>
+<span class="sourceLineNo">1256</span><a id="line.1256">        }</a>
+<span class="sourceLineNo">1257</span><a id="line.1257">        AbstractCategoryItemRenderer that = (AbstractCategoryItemRenderer) obj;</a>
+<span class="sourceLineNo">1258</span><a id="line.1258"></a>
+<span class="sourceLineNo">1259</span><a id="line.1259">        if (!ObjectUtilities.equal(this.itemLabelGenerator,</a>
+<span class="sourceLineNo">1260</span><a id="line.1260">                that.itemLabelGenerator)) {</a>
+<span class="sourceLineNo">1261</span><a id="line.1261">            return false;</a>
+<span class="sourceLineNo">1262</span><a id="line.1262">        }</a>
+<span class="sourceLineNo">1263</span><a id="line.1263">        if (!ObjectUtilities.equal(this.itemLabelGeneratorMap,</a>
+<span class="sourceLineNo">1264</span><a id="line.1264">                that.itemLabelGeneratorMap)) {</a>
+<span class="sourceLineNo">1265</span><a id="line.1265">            return false;</a>
+<span class="sourceLineNo">1266</span><a id="line.1266">        }</a>
+<span class="sourceLineNo">1267</span><a id="line.1267">        if (!ObjectUtilities.equal(this.baseItemLabelGenerator,</a>
+<span class="sourceLineNo">1268</span><a id="line.1268">                that.baseItemLabelGenerator)) {</a>
+<span class="sourceLineNo">1269</span><a id="line.1269">            return false;</a>
+<span class="sourceLineNo">1270</span><a id="line.1270">        }</a>
+<span class="sourceLineNo">1271</span><a id="line.1271">        if (!ObjectUtilities.equal(this.toolTipGenerator,</a>
+<span class="sourceLineNo">1272</span><a id="line.1272">                that.toolTipGenerator)) {</a>
+<span class="sourceLineNo">1273</span><a id="line.1273">            return false;</a>
+<span class="sourceLineNo">1274</span><a id="line.1274">        }</a>
+<span class="sourceLineNo">1275</span><a id="line.1275">        if (!ObjectUtilities.equal(this.toolTipGeneratorMap,</a>
+<span class="sourceLineNo">1276</span><a id="line.1276">                that.toolTipGeneratorMap)) {</a>
+<span class="sourceLineNo">1277</span><a id="line.1277">            return false;</a>
+<span class="sourceLineNo">1278</span><a id="line.1278">        }</a>
+<span class="sourceLineNo">1279</span><a id="line.1279">        if (!ObjectUtilities.equal(this.baseToolTipGenerator,</a>
+<span class="sourceLineNo">1280</span><a id="line.1280">                that.baseToolTipGenerator)) {</a>
+<span class="sourceLineNo">1281</span><a id="line.1281">            return false;</a>
+<span class="sourceLineNo">1282</span><a id="line.1282">        }</a>
+<span class="sourceLineNo">1283</span><a id="line.1283">        if (!ObjectUtilities.equal(this.itemURLGenerator,</a>
+<span class="sourceLineNo">1284</span><a id="line.1284">                that.itemURLGenerator)) {</a>
+<span class="sourceLineNo">1285</span><a id="line.1285">            return false;</a>
+<span class="sourceLineNo">1286</span><a id="line.1286">        }</a>
+<span class="sourceLineNo">1287</span><a id="line.1287">        if (!ObjectUtilities.equal(this.itemURLGeneratorMap,</a>
+<span class="sourceLineNo">1288</span><a id="line.1288">                that.itemURLGeneratorMap)) {</a>
+<span class="sourceLineNo">1289</span><a id="line.1289">            return false;</a>
+<span class="sourceLineNo">1290</span><a id="line.1290">        }</a>
+<span class="sourceLineNo">1291</span><a id="line.1291">        if (!ObjectUtilities.equal(this.baseItemURLGenerator,</a>
+<span class="sourceLineNo">1292</span><a id="line.1292">                that.baseItemURLGenerator)) {</a>
+<span class="sourceLineNo">1293</span><a id="line.1293">            return false;</a>
+<span class="sourceLineNo">1294</span><a id="line.1294">        }</a>
+<span class="sourceLineNo">1295</span><a id="line.1295">        if (!ObjectUtilities.equal(this.legendItemLabelGenerator,</a>
+<span class="sourceLineNo">1296</span><a id="line.1296">                that.legendItemLabelGenerator)) {</a>
+<span class="sourceLineNo">1297</span><a id="line.1297">            return false;</a>
+<span class="sourceLineNo">1298</span><a id="line.1298">        }</a>
+<span class="sourceLineNo">1299</span><a id="line.1299">        if (!ObjectUtilities.equal(this.legendItemToolTipGenerator,</a>
+<span class="sourceLineNo">1300</span><a id="line.1300">                that.legendItemToolTipGenerator)) {</a>
+<span class="sourceLineNo">1301</span><a id="line.1301">            return false;</a>
+<span class="sourceLineNo">1302</span><a id="line.1302">        }</a>
+<span class="sourceLineNo">1303</span><a id="line.1303">        if (!ObjectUtilities.equal(this.legendItemURLGenerator,</a>
+<span class="sourceLineNo">1304</span><a id="line.1304">                that.legendItemURLGenerator)) {</a>
+<span class="sourceLineNo">1305</span><a id="line.1305">            return false;</a>
+<span class="sourceLineNo">1306</span><a id="line.1306">        }</a>
+<span class="sourceLineNo">1307</span><a id="line.1307">        return super.equals(obj);</a>
+<span class="sourceLineNo">1308</span><a id="line.1308">    }</a>
+<span class="sourceLineNo">1309</span><a id="line.1309"></a>
+<span class="sourceLineNo">1310</span><a id="line.1310">    /**</a>
+<span class="sourceLineNo">1311</span><a id="line.1311">     * Returns a hash code for the renderer.</a>
+<span class="sourceLineNo">1312</span><a id="line.1312">     *</a>
+<span class="sourceLineNo">1313</span><a id="line.1313">     * @return The hash code.</a>
+<span class="sourceLineNo">1314</span><a id="line.1314">     */</a>
+<span class="sourceLineNo">1315</span><a id="line.1315">    @Override</a>
+<span class="sourceLineNo">1316</span><a id="line.1316">    public int hashCode() {</a>
+<span class="sourceLineNo">1317</span><a id="line.1317">        int result = super.hashCode();</a>
+<span class="sourceLineNo">1318</span><a id="line.1318">        return result;</a>
+<span class="sourceLineNo">1319</span><a id="line.1319">    }</a>
+<span class="sourceLineNo">1320</span><a id="line.1320"></a>
+<span class="sourceLineNo">1321</span><a id="line.1321">    /**</a>
+<span class="sourceLineNo">1322</span><a id="line.1322">     * Returns the drawing supplier from the plot.</a>
+<span class="sourceLineNo">1323</span><a id="line.1323">     *</a>
+<span class="sourceLineNo">1324</span><a id="line.1324">     * @return The drawing supplier (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1325</span><a id="line.1325">     */</a>
+<span class="sourceLineNo">1326</span><a id="line.1326">    @Override</a>
+<span class="sourceLineNo">1327</span><a id="line.1327">    public DrawingSupplier getDrawingSupplier() {</a>
+<span class="sourceLineNo">1328</span><a id="line.1328">        DrawingSupplier result = null;</a>
+<span class="sourceLineNo">1329</span><a id="line.1329">        CategoryPlot cp = getPlot();</a>
+<span class="sourceLineNo">1330</span><a id="line.1330">        if (cp != null) {</a>
+<span class="sourceLineNo">1331</span><a id="line.1331">            result = cp.getDrawingSupplier();</a>
+<span class="sourceLineNo">1332</span><a id="line.1332">        }</a>
+<span class="sourceLineNo">1333</span><a id="line.1333">        return result;</a>
+<span class="sourceLineNo">1334</span><a id="line.1334">    }</a>
+<span class="sourceLineNo">1335</span><a id="line.1335"></a>
+<span class="sourceLineNo">1336</span><a id="line.1336">    /**</a>
+<span class="sourceLineNo">1337</span><a id="line.1337">     * Considers the current (x, y) coordinate and updates the crosshair point</a>
+<span class="sourceLineNo">1338</span><a id="line.1338">     * if it meets the criteria (usually means the (x, y) coordinate is the</a>
+<span class="sourceLineNo">1339</span><a id="line.1339">     * closest to the anchor point so far).</a>
+<span class="sourceLineNo">1340</span><a id="line.1340">     *</a>
+<span class="sourceLineNo">1341</span><a id="line.1341">     * @param crosshairState  the crosshair state (&lt;code&gt;null&lt;/code&gt; permitted,</a>
+<span class="sourceLineNo">1342</span><a id="line.1342">     *                        but the method does nothing in that case).</a>
+<span class="sourceLineNo">1343</span><a id="line.1343">     * @param rowKey  the row key.</a>
+<span class="sourceLineNo">1344</span><a id="line.1344">     * @param columnKey  the column key.</a>
+<span class="sourceLineNo">1345</span><a id="line.1345">     * @param value  the data value.</a>
+<span class="sourceLineNo">1346</span><a id="line.1346">     * @param datasetIndex  the dataset index.</a>
+<span class="sourceLineNo">1347</span><a id="line.1347">     * @param transX  the x-value translated to Java2D space.</a>
+<span class="sourceLineNo">1348</span><a id="line.1348">     * @param transY  the y-value translated to Java2D space.</a>
+<span class="sourceLineNo">1349</span><a id="line.1349">     * @param orientation  the plot orientation (&lt;code&gt;null&lt;/code&gt; not</a>
+<span class="sourceLineNo">1350</span><a id="line.1350">     *                     permitted).</a>
+<span class="sourceLineNo">1351</span><a id="line.1351">     *</a>
+<span class="sourceLineNo">1352</span><a id="line.1352">     * @since 1.0.11</a>
+<span class="sourceLineNo">1353</span><a id="line.1353">     */</a>
+<span class="sourceLineNo">1354</span><a id="line.1354">    protected void updateCrosshairValues(CategoryCrosshairState crosshairState,</a>
+<span class="sourceLineNo">1355</span><a id="line.1355">            Comparable rowKey, Comparable columnKey, double value,</a>
+<span class="sourceLineNo">1356</span><a id="line.1356">            int datasetIndex,</a>
+<span class="sourceLineNo">1357</span><a id="line.1357">            double transX, double transY, PlotOrientation orientation) {</a>
+<span class="sourceLineNo">1358</span><a id="line.1358"></a>
+<span class="sourceLineNo">1359</span><a id="line.1359">        ParamChecks.nullNotPermitted(orientation, "orientation");</a>
+<span class="sourceLineNo">1360</span><a id="line.1360"></a>
+<span class="sourceLineNo">1361</span><a id="line.1361">        if (crosshairState != null) {</a>
+<span class="sourceLineNo">1362</span><a id="line.1362">            if (this.plot.isRangeCrosshairLockedOnData()) {</a>
+<span class="sourceLineNo">1363</span><a id="line.1363">                // both axes</a>
+<span class="sourceLineNo">1364</span><a id="line.1364">                crosshairState.updateCrosshairPoint(rowKey, columnKey, value,</a>
+<span class="sourceLineNo">1365</span><a id="line.1365">                        datasetIndex, transX, transY, orientation);</a>
+<span class="sourceLineNo">1366</span><a id="line.1366">            }</a>
+<span class="sourceLineNo">1367</span><a id="line.1367">            else {</a>
+<span class="sourceLineNo">1368</span><a id="line.1368">                crosshairState.updateCrosshairX(rowKey, columnKey,</a>
+<span class="sourceLineNo">1369</span><a id="line.1369">                        datasetIndex, transX, orientation);</a>
+<span class="sourceLineNo">1370</span><a id="line.1370">            }</a>
+<span class="sourceLineNo">1371</span><a id="line.1371">        }</a>
+<span class="sourceLineNo">1372</span><a id="line.1372">    }</a>
+<span class="sourceLineNo">1373</span><a id="line.1373"></a>
+<span class="sourceLineNo">1374</span><a id="line.1374">    /**</a>
+<span class="sourceLineNo">1375</span><a id="line.1375">     * Draws an item label.</a>
+<span class="sourceLineNo">1376</span><a id="line.1376">     *</a>
+<span class="sourceLineNo">1377</span><a id="line.1377">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1378</span><a id="line.1378">     * @param orientation  the orientation.</a>
+<span class="sourceLineNo">1379</span><a id="line.1379">     * @param dataset  the dataset.</a>
+<span class="sourceLineNo">1380</span><a id="line.1380">     * @param row  the row.</a>
+<span class="sourceLineNo">1381</span><a id="line.1381">     * @param column  the column.</a>
+<span class="sourceLineNo">1382</span><a id="line.1382">     * @param x  the x coordinate (in Java2D space).</a>
+<span class="sourceLineNo">1383</span><a id="line.1383">     * @param y  the y coordinate (in Java2D space).</a>
+<span class="sourceLineNo">1384</span><a id="line.1384">     * @param negative  indicates a negative value (which affects the item</a>
+<span class="sourceLineNo">1385</span><a id="line.1385">     *                  label position).</a>
+<span class="sourceLineNo">1386</span><a id="line.1386">     */</a>
+<span class="sourceLineNo">1387</span><a id="line.1387">    protected void drawItemLabel(Graphics2D g2, PlotOrientation orientation,</a>
+<span class="sourceLineNo">1388</span><a id="line.1388">            CategoryDataset dataset, int row, int column,</a>
+<span class="sourceLineNo">1389</span><a id="line.1389">            double x, double y, boolean negative) {</a>
+<span class="sourceLineNo">1390</span><a id="line.1390"></a>
+<span class="sourceLineNo">1391</span><a id="line.1391">        CategoryItemLabelGenerator generator = getItemLabelGenerator(row,</a>
+<span class="sourceLineNo">1392</span><a id="line.1392">                column);</a>
+<span class="sourceLineNo">1393</span><a id="line.1393">        if (generator != null) {</a>
+<span class="sourceLineNo">1394</span><a id="line.1394">            Font labelFont = getItemLabelFont(row, column);</a>
+<span class="sourceLineNo">1395</span><a id="line.1395">            Paint paint = getItemLabelPaint(row, column);</a>
+<span class="sourceLineNo">1396</span><a id="line.1396">            g2.setFont(labelFont);</a>
+<span class="sourceLineNo">1397</span><a id="line.1397">            g2.setPaint(paint);</a>
+<span class="sourceLineNo">1398</span><a id="line.1398">            String label = generator.generateLabel(dataset, row, column);</a>
+<span class="sourceLineNo">1399</span><a id="line.1399">            ItemLabelPosition position;</a>
+<span class="sourceLineNo">1400</span><a id="line.1400">            if (!negative) {</a>
+<span class="sourceLineNo">1401</span><a id="line.1401">                position = getPositiveItemLabelPosition(row, column);</a>
+<span class="sourceLineNo">1402</span><a id="line.1402">            }</a>
+<span class="sourceLineNo">1403</span><a id="line.1403">            else {</a>
+<span class="sourceLineNo">1404</span><a id="line.1404">                position = getNegativeItemLabelPosition(row, column);</a>
+<span class="sourceLineNo">1405</span><a id="line.1405">            }</a>
+<span class="sourceLineNo">1406</span><a id="line.1406">            Point2D anchorPoint = calculateLabelAnchorPoint(</a>
+<span class="sourceLineNo">1407</span><a id="line.1407">                    position.getItemLabelAnchor(), x, y, orientation);</a>
+<span class="sourceLineNo">1408</span><a id="line.1408">            TextUtilities.drawRotatedString(label, g2,</a>
+<span class="sourceLineNo">1409</span><a id="line.1409">                    (float) anchorPoint.getX(), (float) anchorPoint.getY(),</a>
+<span class="sourceLineNo">1410</span><a id="line.1410">                    position.getTextAnchor(),</a>
+<span class="sourceLineNo">1411</span><a id="line.1411">                    position.getAngle(), position.getRotationAnchor());</a>
+<span class="sourceLineNo">1412</span><a id="line.1412">        }</a>
+<span class="sourceLineNo">1413</span><a id="line.1413"></a>
+<span class="sourceLineNo">1414</span><a id="line.1414">    }</a>
+<span class="sourceLineNo">1415</span><a id="line.1415"></a>
+<span class="sourceLineNo">1416</span><a id="line.1416">    /**</a>
+<span class="sourceLineNo">1417</span><a id="line.1417">     * Returns an independent copy of the renderer.  The &lt;code&gt;plot&lt;/code&gt;</a>
+<span class="sourceLineNo">1418</span><a id="line.1418">     * reference is shallow copied.</a>
+<span class="sourceLineNo">1419</span><a id="line.1419">     *</a>
+<span class="sourceLineNo">1420</span><a id="line.1420">     * @return A clone.</a>
+<span class="sourceLineNo">1421</span><a id="line.1421">     *</a>
+<span class="sourceLineNo">1422</span><a id="line.1422">     * @throws CloneNotSupportedException  can be thrown if one of the objects</a>
+<span class="sourceLineNo">1423</span><a id="line.1423">     *         belonging to the renderer does not support cloning (for example,</a>
+<span class="sourceLineNo">1424</span><a id="line.1424">     *         an item label generator).</a>
+<span class="sourceLineNo">1425</span><a id="line.1425">     */</a>
+<span class="sourceLineNo">1426</span><a id="line.1426">    @Override</a>
+<span class="sourceLineNo">1427</span><a id="line.1427">    public Object clone() throws CloneNotSupportedException {</a>
+<span class="sourceLineNo">1428</span><a id="line.1428">        AbstractCategoryItemRenderer clone</a>
+<span class="sourceLineNo">1429</span><a id="line.1429">            = (AbstractCategoryItemRenderer) super.clone();</a>
+<span class="sourceLineNo">1430</span><a id="line.1430"></a>
+<span class="sourceLineNo">1431</span><a id="line.1431">        if (this.itemLabelGenerator != null) {</a>
+<span class="sourceLineNo">1432</span><a id="line.1432">            if (this.itemLabelGenerator instanceof PublicCloneable) {</a>
+<span class="sourceLineNo">1433</span><a id="line.1433">                PublicCloneable pc = (PublicCloneable) this.itemLabelGenerator;</a>
+<span class="sourceLineNo">1434</span><a id="line.1434">                clone.itemLabelGenerator</a>
+<span class="sourceLineNo">1435</span><a id="line.1435">                        = (CategoryItemLabelGenerator) pc.clone();</a>
+<span class="sourceLineNo">1436</span><a id="line.1436">            }</a>
+<span class="sourceLineNo">1437</span><a id="line.1437">            else {</a>
+<span class="sourceLineNo">1438</span><a id="line.1438">                throw new CloneNotSupportedException(</a>
+<span class="sourceLineNo">1439</span><a id="line.1439">                        "ItemLabelGenerator not cloneable.");</a>
+<span class="sourceLineNo">1440</span><a id="line.1440">            }</a>
+<span class="sourceLineNo">1441</span><a id="line.1441">        }</a>
+<span class="sourceLineNo">1442</span><a id="line.1442"></a>
+<span class="sourceLineNo">1443</span><a id="line.1443">        if (this.itemLabelGeneratorMap != null) {</a>
+<span class="sourceLineNo">1444</span><a id="line.1444">            clone.itemLabelGeneratorMap = CloneUtils.cloneMapValues(</a>
+<span class="sourceLineNo">1445</span><a id="line.1445">                    this.itemLabelGeneratorMap);</a>
+<span class="sourceLineNo">1446</span><a id="line.1446">        }</a>
+<span class="sourceLineNo">1447</span><a id="line.1447"></a>
+<span class="sourceLineNo">1448</span><a id="line.1448">        if (this.baseItemLabelGenerator != null) {</a>
+<span class="sourceLineNo">1449</span><a id="line.1449">            if (this.baseItemLabelGenerator instanceof PublicCloneable) {</a>
+<span class="sourceLineNo">1450</span><a id="line.1450">                PublicCloneable pc</a>
+<span class="sourceLineNo">1451</span><a id="line.1451">                        = (PublicCloneable) this.baseItemLabelGenerator;</a>
+<span class="sourceLineNo">1452</span><a id="line.1452">                clone.baseItemLabelGenerator</a>
+<span class="sourceLineNo">1453</span><a id="line.1453">                        = (CategoryItemLabelGenerator) pc.clone();</a>
+<span class="sourceLineNo">1454</span><a id="line.1454">            }</a>
+<span class="sourceLineNo">1455</span><a id="line.1455">            else {</a>
+<span class="sourceLineNo">1456</span><a id="line.1456">                throw new CloneNotSupportedException(</a>
+<span class="sourceLineNo">1457</span><a id="line.1457">                        "ItemLabelGenerator not cloneable.");</a>
+<span class="sourceLineNo">1458</span><a id="line.1458">            }</a>
+<span class="sourceLineNo">1459</span><a id="line.1459">        }</a>
+<span class="sourceLineNo">1460</span><a id="line.1460"></a>
+<span class="sourceLineNo">1461</span><a id="line.1461">        if (this.toolTipGenerator != null) {</a>
+<span class="sourceLineNo">1462</span><a id="line.1462">            if (this.toolTipGenerator instanceof PublicCloneable) {</a>
+<span class="sourceLineNo">1463</span><a id="line.1463">                PublicCloneable pc = (PublicCloneable) this.toolTipGenerator;</a>
+<span class="sourceLineNo">1464</span><a id="line.1464">                clone.toolTipGenerator = (CategoryToolTipGenerator) pc.clone();</a>
+<span class="sourceLineNo">1465</span><a id="line.1465">            }</a>
+<span class="sourceLineNo">1466</span><a id="line.1466">            else {</a>
+<span class="sourceLineNo">1467</span><a id="line.1467">                throw new CloneNotSupportedException(</a>
+<span class="sourceLineNo">1468</span><a id="line.1468">                        "Tool tip generator not cloneable.");</a>
+<span class="sourceLineNo">1469</span><a id="line.1469">            }</a>
+<span class="sourceLineNo">1470</span><a id="line.1470">        }</a>
+<span class="sourceLineNo">1471</span><a id="line.1471"></a>
+<span class="sourceLineNo">1472</span><a id="line.1472">        if (this.toolTipGeneratorMap != null) {</a>
+<span class="sourceLineNo">1473</span><a id="line.1473">            clone.toolTipGeneratorMap = CloneUtils.cloneMapValues(</a>
+<span class="sourceLineNo">1474</span><a id="line.1474">                    this.toolTipGeneratorMap);</a>
+<span class="sourceLineNo">1475</span><a id="line.1475">        }</a>
+<span class="sourceLineNo">1476</span><a id="line.1476"></a>
+<span class="sourceLineNo">1477</span><a id="line.1477">        if (this.baseToolTipGenerator != null) {</a>
+<span class="sourceLineNo">1478</span><a id="line.1478">            if (this.baseToolTipGenerator instanceof PublicCloneable) {</a>
+<span class="sourceLineNo">1479</span><a id="line.1479">                PublicCloneable pc</a>
+<span class="sourceLineNo">1480</span><a id="line.1480">                        = (PublicCloneable) this.baseToolTipGenerator;</a>
+<span class="sourceLineNo">1481</span><a id="line.1481">                clone.baseToolTipGenerator</a>
+<span class="sourceLineNo">1482</span><a id="line.1482">                        = (CategoryToolTipGenerator) pc.clone();</a>
+<span class="sourceLineNo">1483</span><a id="line.1483">            }</a>
+<span class="sourceLineNo">1484</span><a id="line.1484">            else {</a>
+<span class="sourceLineNo">1485</span><a id="line.1485">                throw new CloneNotSupportedException(</a>
+<span class="sourceLineNo">1486</span><a id="line.1486">                        "Base tool tip generator not cloneable.");</a>
+<span class="sourceLineNo">1487</span><a id="line.1487">            }</a>
+<span class="sourceLineNo">1488</span><a id="line.1488">        }</a>
+<span class="sourceLineNo">1489</span><a id="line.1489"></a>
+<span class="sourceLineNo">1490</span><a id="line.1490">        if (this.itemURLGenerator != null) {</a>
+<span class="sourceLineNo">1491</span><a id="line.1491">            if (this.itemURLGenerator instanceof PublicCloneable) {</a>
+<span class="sourceLineNo">1492</span><a id="line.1492">                PublicCloneable pc = (PublicCloneable) this.itemURLGenerator;</a>
+<span class="sourceLineNo">1493</span><a id="line.1493">                clone.itemURLGenerator = (CategoryURLGenerator) pc.clone();</a>
+<span class="sourceLineNo">1494</span><a id="line.1494">            }</a>
+<span class="sourceLineNo">1495</span><a id="line.1495">            else {</a>
+<span class="sourceLineNo">1496</span><a id="line.1496">                throw new CloneNotSupportedException(</a>
+<span class="sourceLineNo">1497</span><a id="line.1497">                        "Item URL generator not cloneable.");</a>
+<span class="sourceLineNo">1498</span><a id="line.1498">            }</a>
+<span class="sourceLineNo">1499</span><a id="line.1499">        }</a>
+<span class="sourceLineNo">1500</span><a id="line.1500"></a>
+<span class="sourceLineNo">1501</span><a id="line.1501">        if (this.itemURLGeneratorMap != null) {</a>
+<span class="sourceLineNo">1502</span><a id="line.1502">            clone.itemURLGeneratorMap = CloneUtils.cloneMapValues(</a>
+<span class="sourceLineNo">1503</span><a id="line.1503">                    this.itemURLGeneratorMap);</a>
+<span class="sourceLineNo">1504</span><a id="line.1504">        }</a>
+<span class="sourceLineNo">1505</span><a id="line.1505"></a>
+<span class="sourceLineNo">1506</span><a id="line.1506">        if (this.baseItemURLGenerator != null) {</a>
+<span class="sourceLineNo">1507</span><a id="line.1507">            if (this.baseItemURLGenerator instanceof PublicCloneable) {</a>
+<span class="sourceLineNo">1508</span><a id="line.1508">                PublicCloneable pc</a>
+<span class="sourceLineNo">1509</span><a id="line.1509">                        = (PublicCloneable) this.baseItemURLGenerator;</a>
+<span class="sourceLineNo">1510</span><a id="line.1510">                clone.baseItemURLGenerator = (CategoryURLGenerator) pc.clone();</a>
+<span class="sourceLineNo">1511</span><a id="line.1511">            }</a>
+<span class="sourceLineNo">1512</span><a id="line.1512">            else {</a>
+<span class="sourceLineNo">1513</span><a id="line.1513">                throw new CloneNotSupportedException(</a>
+<span class="sourceLineNo">1514</span><a id="line.1514">                        "Base item URL generator not cloneable.");</a>
+<span class="sourceLineNo">1515</span><a id="line.1515">            }</a>
+<span class="sourceLineNo">1516</span><a id="line.1516">        }</a>
+<span class="sourceLineNo">1517</span><a id="line.1517"></a>
+<span class="sourceLineNo">1518</span><a id="line.1518">        if (this.legendItemLabelGenerator instanceof PublicCloneable) {</a>
+<span class="sourceLineNo">1519</span><a id="line.1519">            clone.legendItemLabelGenerator = (CategorySeriesLabelGenerator)</a>
+<span class="sourceLineNo">1520</span><a id="line.1520">                    ObjectUtilities.clone(this.legendItemLabelGenerator);</a>
+<span class="sourceLineNo">1521</span><a id="line.1521">        }</a>
+<span class="sourceLineNo">1522</span><a id="line.1522">        if (this.legendItemToolTipGenerator instanceof PublicCloneable) {</a>
+<span class="sourceLineNo">1523</span><a id="line.1523">            clone.legendItemToolTipGenerator = (CategorySeriesLabelGenerator)</a>
+<span class="sourceLineNo">1524</span><a id="line.1524">                    ObjectUtilities.clone(this.legendItemToolTipGenerator);</a>
+<span class="sourceLineNo">1525</span><a id="line.1525">        }</a>
+<span class="sourceLineNo">1526</span><a id="line.1526">        if (this.legendItemURLGenerator instanceof PublicCloneable) {</a>
+<span class="sourceLineNo">1527</span><a id="line.1527">            clone.legendItemURLGenerator = (CategorySeriesLabelGenerator)</a>
+<span class="sourceLineNo">1528</span><a id="line.1528">                    ObjectUtilities.clone(this.legendItemURLGenerator);</a>
+<span class="sourceLineNo">1529</span><a id="line.1529">        }</a>
+<span class="sourceLineNo">1530</span><a id="line.1530">        return clone;</a>
+<span class="sourceLineNo">1531</span><a id="line.1531">    }</a>
+<span class="sourceLineNo">1532</span><a id="line.1532"></a>
+<span class="sourceLineNo">1533</span><a id="line.1533">    /**</a>
+<span class="sourceLineNo">1534</span><a id="line.1534">     * Returns a domain axis for a plot.</a>
+<span class="sourceLineNo">1535</span><a id="line.1535">     *</a>
+<span class="sourceLineNo">1536</span><a id="line.1536">     * @param plot  the plot.</a>
+<span class="sourceLineNo">1537</span><a id="line.1537">     * @param index  the axis index.</a>
+<span class="sourceLineNo">1538</span><a id="line.1538">     *</a>
+<span class="sourceLineNo">1539</span><a id="line.1539">     * @return A domain axis.</a>
+<span class="sourceLineNo">1540</span><a id="line.1540">     */</a>
+<span class="sourceLineNo">1541</span><a id="line.1541">    protected CategoryAxis getDomainAxis(CategoryPlot plot, int index) {</a>
+<span class="sourceLineNo">1542</span><a id="line.1542">        CategoryAxis result = plot.getDomainAxis(index);</a>
+<span class="sourceLineNo">1543</span><a id="line.1543">        if (result == null) {</a>
+<span class="sourceLineNo">1544</span><a id="line.1544">            result = plot.getDomainAxis();</a>
+<span class="sourceLineNo">1545</span><a id="line.1545">        }</a>
+<span class="sourceLineNo">1546</span><a id="line.1546">        return result;</a>
+<span class="sourceLineNo">1547</span><a id="line.1547">    }</a>
+<span class="sourceLineNo">1548</span><a id="line.1548"></a>
+<span class="sourceLineNo">1549</span><a id="line.1549">    /**</a>
+<span class="sourceLineNo">1550</span><a id="line.1550">     * Returns a range axis for a plot.</a>
+<span class="sourceLineNo">1551</span><a id="line.1551">     *</a>
+<span class="sourceLineNo">1552</span><a id="line.1552">     * @param plot  the plot.</a>
+<span class="sourceLineNo">1553</span><a id="line.1553">     * @param index  the axis index.</a>
+<span class="sourceLineNo">1554</span><a id="line.1554">     *</a>
+<span class="sourceLineNo">1555</span><a id="line.1555">     * @return A range axis.</a>
+<span class="sourceLineNo">1556</span><a id="line.1556">     */</a>
+<span class="sourceLineNo">1557</span><a id="line.1557">    protected ValueAxis getRangeAxis(CategoryPlot plot, int index) {</a>
+<span class="sourceLineNo">1558</span><a id="line.1558">        ValueAxis result = plot.getRangeAxis(index);</a>
+<span class="sourceLineNo">1559</span><a id="line.1559">        if (result == null) {</a>
+<span class="sourceLineNo">1560</span><a id="line.1560">            result = plot.getRangeAxis();</a>
+<span class="sourceLineNo">1561</span><a id="line.1561">        }</a>
+<span class="sourceLineNo">1562</span><a id="line.1562">        return result;</a>
+<span class="sourceLineNo">1563</span><a id="line.1563">    }</a>
+<span class="sourceLineNo">1564</span><a id="line.1564"></a>
+<span class="sourceLineNo">1565</span><a id="line.1565">    /**</a>
+<span class="sourceLineNo">1566</span><a id="line.1566">     * Returns a (possibly empty) collection of legend items for the series</a>
+<span class="sourceLineNo">1567</span><a id="line.1567">     * that this renderer is responsible for drawing.</a>
+<span class="sourceLineNo">1568</span><a id="line.1568">     *</a>
+<span class="sourceLineNo">1569</span><a id="line.1569">     * @return The legend item collection (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1570</span><a id="line.1570">     *</a>
+<span class="sourceLineNo">1571</span><a id="line.1571">     * @see #getLegendItem(int, int)</a>
+<span class="sourceLineNo">1572</span><a id="line.1572">     */</a>
+<span class="sourceLineNo">1573</span><a id="line.1573">    @Override</a>
+<span class="sourceLineNo">1574</span><a id="line.1574">    public LegendItemCollection getLegendItems() {</a>
+<span class="sourceLineNo">1575</span><a id="line.1575">        LegendItemCollection result = new LegendItemCollection();</a>
+<span class="sourceLineNo">1576</span><a id="line.1576">        if (this.plot == null) {</a>
+<span class="sourceLineNo">1577</span><a id="line.1577">            return result;</a>
+<span class="sourceLineNo">1578</span><a id="line.1578">        }</a>
+<span class="sourceLineNo">1579</span><a id="line.1579">        int index = this.plot.getIndexOf(this);</a>
+<span class="sourceLineNo">1580</span><a id="line.1580">        CategoryDataset dataset = this.plot.getDataset(index);</a>
+<span class="sourceLineNo">1581</span><a id="line.1581">        if (dataset == null) {</a>
+<span class="sourceLineNo">1582</span><a id="line.1582">            return result;</a>
+<span class="sourceLineNo">1583</span><a id="line.1583">        }</a>
+<span class="sourceLineNo">1584</span><a id="line.1584">        int seriesCount = dataset.getRowCount();</a>
+<span class="sourceLineNo">1585</span><a id="line.1585">        if (plot.getRowRenderingOrder().equals(SortOrder.ASCENDING)) {</a>
+<span class="sourceLineNo">1586</span><a id="line.1586">            for (int i = 0; i &lt; seriesCount; i++) {</a>
+<span class="sourceLineNo">1587</span><a id="line.1587">                if (isSeriesVisibleInLegend(i)) {</a>
+<span class="sourceLineNo">1588</span><a id="line.1588">                    LegendItem item = getLegendItem(index, i);</a>
+<span class="sourceLineNo">1589</span><a id="line.1589">                    if (item != null) {</a>
+<span class="sourceLineNo">1590</span><a id="line.1590">                        result.add(item);</a>
+<span class="sourceLineNo">1591</span><a id="line.1591">                    }</a>
+<span class="sourceLineNo">1592</span><a id="line.1592">                }</a>
+<span class="sourceLineNo">1593</span><a id="line.1593">            }</a>
+<span class="sourceLineNo">1594</span><a id="line.1594">        }</a>
+<span class="sourceLineNo">1595</span><a id="line.1595">        else {</a>
+<span class="sourceLineNo">1596</span><a id="line.1596">            for (int i = seriesCount - 1; i &gt;= 0; i--) {</a>
+<span class="sourceLineNo">1597</span><a id="line.1597">                if (isSeriesVisibleInLegend(i)) {</a>
+<span class="sourceLineNo">1598</span><a id="line.1598">                    LegendItem item = getLegendItem(index, i);</a>
+<span class="sourceLineNo">1599</span><a id="line.1599">                    if (item != null) {</a>
+<span class="sourceLineNo">1600</span><a id="line.1600">                        result.add(item);</a>
+<span class="sourceLineNo">1601</span><a id="line.1601">                    }</a>
+<span class="sourceLineNo">1602</span><a id="line.1602">                }</a>
+<span class="sourceLineNo">1603</span><a id="line.1603">            }</a>
+<span class="sourceLineNo">1604</span><a id="line.1604">        }</a>
+<span class="sourceLineNo">1605</span><a id="line.1605">        return result;</a>
+<span class="sourceLineNo">1606</span><a id="line.1606">    }</a>
+<span class="sourceLineNo">1607</span><a id="line.1607"></a>
+<span class="sourceLineNo">1608</span><a id="line.1608">    /**</a>
+<span class="sourceLineNo">1609</span><a id="line.1609">     * Returns the legend item label generator.</a>
+<span class="sourceLineNo">1610</span><a id="line.1610">     *</a>
+<span class="sourceLineNo">1611</span><a id="line.1611">     * @return The label generator (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1612</span><a id="line.1612">     *</a>
+<span class="sourceLineNo">1613</span><a id="line.1613">     * @see #setLegendItemLabelGenerator(CategorySeriesLabelGenerator)</a>
+<span class="sourceLineNo">1614</span><a id="line.1614">     */</a>
+<span class="sourceLineNo">1615</span><a id="line.1615">    public CategorySeriesLabelGenerator getLegendItemLabelGenerator() {</a>
+<span class="sourceLineNo">1616</span><a id="line.1616">        return this.legendItemLabelGenerator;</a>
+<span class="sourceLineNo">1617</span><a id="line.1617">    }</a>
+<span class="sourceLineNo">1618</span><a id="line.1618"></a>
+<span class="sourceLineNo">1619</span><a id="line.1619">    /**</a>
+<span class="sourceLineNo">1620</span><a id="line.1620">     * Sets the legend item label generator and sends a</a>
+<span class="sourceLineNo">1621</span><a id="line.1621">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1622</span><a id="line.1622">     *</a>
+<span class="sourceLineNo">1623</span><a id="line.1623">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">1624</span><a id="line.1624">     *</a>
+<span class="sourceLineNo">1625</span><a id="line.1625">     * @see #getLegendItemLabelGenerator()</a>
+<span class="sourceLineNo">1626</span><a id="line.1626">     */</a>
+<span class="sourceLineNo">1627</span><a id="line.1627">    public void setLegendItemLabelGenerator(</a>
+<span class="sourceLineNo">1628</span><a id="line.1628">            CategorySeriesLabelGenerator generator) {</a>
+<span class="sourceLineNo">1629</span><a id="line.1629">        ParamChecks.nullNotPermitted(generator, "generator");</a>
+<span class="sourceLineNo">1630</span><a id="line.1630">        this.legendItemLabelGenerator = generator;</a>
+<span class="sourceLineNo">1631</span><a id="line.1631">        fireChangeEvent();</a>
+<span class="sourceLineNo">1632</span><a id="line.1632">    }</a>
+<span class="sourceLineNo">1633</span><a id="line.1633"></a>
+<span class="sourceLineNo">1634</span><a id="line.1634">    /**</a>
+<span class="sourceLineNo">1635</span><a id="line.1635">     * Returns the legend item tool tip generator.</a>
+<span class="sourceLineNo">1636</span><a id="line.1636">     *</a>
+<span class="sourceLineNo">1637</span><a id="line.1637">     * @return The tool tip generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1638</span><a id="line.1638">     *</a>
+<span class="sourceLineNo">1639</span><a id="line.1639">     * @see #setLegendItemToolTipGenerator(CategorySeriesLabelGenerator)</a>
+<span class="sourceLineNo">1640</span><a id="line.1640">     */</a>
+<span class="sourceLineNo">1641</span><a id="line.1641">    public CategorySeriesLabelGenerator getLegendItemToolTipGenerator() {</a>
+<span class="sourceLineNo">1642</span><a id="line.1642">        return this.legendItemToolTipGenerator;</a>
+<span class="sourceLineNo">1643</span><a id="line.1643">    }</a>
+<span class="sourceLineNo">1644</span><a id="line.1644"></a>
+<span class="sourceLineNo">1645</span><a id="line.1645">    /**</a>
+<span class="sourceLineNo">1646</span><a id="line.1646">     * Sets the legend item tool tip generator and sends a</a>
+<span class="sourceLineNo">1647</span><a id="line.1647">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1648</span><a id="line.1648">     *</a>
+<span class="sourceLineNo">1649</span><a id="line.1649">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1650</span><a id="line.1650">     *</a>
+<span class="sourceLineNo">1651</span><a id="line.1651">     * @see #setLegendItemToolTipGenerator(CategorySeriesLabelGenerator)</a>
+<span class="sourceLineNo">1652</span><a id="line.1652">     */</a>
+<span class="sourceLineNo">1653</span><a id="line.1653">    public void setLegendItemToolTipGenerator(</a>
+<span class="sourceLineNo">1654</span><a id="line.1654">            CategorySeriesLabelGenerator generator) {</a>
+<span class="sourceLineNo">1655</span><a id="line.1655">        this.legendItemToolTipGenerator = generator;</a>
+<span class="sourceLineNo">1656</span><a id="line.1656">        fireChangeEvent();</a>
+<span class="sourceLineNo">1657</span><a id="line.1657">    }</a>
+<span class="sourceLineNo">1658</span><a id="line.1658"></a>
+<span class="sourceLineNo">1659</span><a id="line.1659">    /**</a>
+<span class="sourceLineNo">1660</span><a id="line.1660">     * Returns the legend item URL generator.</a>
+<span class="sourceLineNo">1661</span><a id="line.1661">     *</a>
+<span class="sourceLineNo">1662</span><a id="line.1662">     * @return The URL generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1663</span><a id="line.1663">     *</a>
+<span class="sourceLineNo">1664</span><a id="line.1664">     * @see #setLegendItemURLGenerator(CategorySeriesLabelGenerator)</a>
+<span class="sourceLineNo">1665</span><a id="line.1665">     */</a>
+<span class="sourceLineNo">1666</span><a id="line.1666">    public CategorySeriesLabelGenerator getLegendItemURLGenerator() {</a>
+<span class="sourceLineNo">1667</span><a id="line.1667">        return this.legendItemURLGenerator;</a>
+<span class="sourceLineNo">1668</span><a id="line.1668">    }</a>
+<span class="sourceLineNo">1669</span><a id="line.1669"></a>
+<span class="sourceLineNo">1670</span><a id="line.1670">    /**</a>
+<span class="sourceLineNo">1671</span><a id="line.1671">     * Sets the legend item URL generator and sends a</a>
+<span class="sourceLineNo">1672</span><a id="line.1672">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1673</span><a id="line.1673">     *</a>
+<span class="sourceLineNo">1674</span><a id="line.1674">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1675</span><a id="line.1675">     *</a>
+<span class="sourceLineNo">1676</span><a id="line.1676">     * @see #getLegendItemURLGenerator()</a>
+<span class="sourceLineNo">1677</span><a id="line.1677">     */</a>
+<span class="sourceLineNo">1678</span><a id="line.1678">    public void setLegendItemURLGenerator(</a>
+<span class="sourceLineNo">1679</span><a id="line.1679">            CategorySeriesLabelGenerator generator) {</a>
+<span class="sourceLineNo">1680</span><a id="line.1680">        this.legendItemURLGenerator = generator;</a>
+<span class="sourceLineNo">1681</span><a id="line.1681">        fireChangeEvent();</a>
+<span class="sourceLineNo">1682</span><a id="line.1682">    }</a>
+<span class="sourceLineNo">1683</span><a id="line.1683"></a>
+<span class="sourceLineNo">1684</span><a id="line.1684">    /**</a>
+<span class="sourceLineNo">1685</span><a id="line.1685">     * Adds an entity with the specified hotspot.</a>
+<span class="sourceLineNo">1686</span><a id="line.1686">     *</a>
+<span class="sourceLineNo">1687</span><a id="line.1687">     * @param entities  the entity collection.</a>
+<span class="sourceLineNo">1688</span><a id="line.1688">     * @param dataset  the dataset.</a>
+<span class="sourceLineNo">1689</span><a id="line.1689">     * @param row  the row index.</a>
+<span class="sourceLineNo">1690</span><a id="line.1690">     * @param column  the column index.</a>
+<span class="sourceLineNo">1691</span><a id="line.1691">     * @param hotspot  the hotspot (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">1692</span><a id="line.1692">     */</a>
+<span class="sourceLineNo">1693</span><a id="line.1693">    protected void addItemEntity(EntityCollection entities,</a>
+<span class="sourceLineNo">1694</span><a id="line.1694">            CategoryDataset dataset, int row, int column, Shape hotspot) {</a>
+<span class="sourceLineNo">1695</span><a id="line.1695">        ParamChecks.nullNotPermitted(hotspot, "hotspot");</a>
+<span class="sourceLineNo">1696</span><a id="line.1696">        if (!getItemCreateEntity(row, column)) {</a>
+<span class="sourceLineNo">1697</span><a id="line.1697">            return;</a>
+<span class="sourceLineNo">1698</span><a id="line.1698">        }</a>
+<span class="sourceLineNo">1699</span><a id="line.1699">        String tip = null;</a>
+<span class="sourceLineNo">1700</span><a id="line.1700">        CategoryToolTipGenerator tipster = getToolTipGenerator(row, column);</a>
+<span class="sourceLineNo">1701</span><a id="line.1701">        if (tipster != null) {</a>
+<span class="sourceLineNo">1702</span><a id="line.1702">            tip = tipster.generateToolTip(dataset, row, column);</a>
+<span class="sourceLineNo">1703</span><a id="line.1703">        }</a>
+<span class="sourceLineNo">1704</span><a id="line.1704">        String url = null;</a>
+<span class="sourceLineNo">1705</span><a id="line.1705">        CategoryURLGenerator urlster = getItemURLGenerator(row, column);</a>
+<span class="sourceLineNo">1706</span><a id="line.1706">        if (urlster != null) {</a>
+<span class="sourceLineNo">1707</span><a id="line.1707">            url = urlster.generateURL(dataset, row, column);</a>
+<span class="sourceLineNo">1708</span><a id="line.1708">        }</a>
+<span class="sourceLineNo">1709</span><a id="line.1709">        CategoryItemEntity entity = new CategoryItemEntity(hotspot, tip, url,</a>
+<span class="sourceLineNo">1710</span><a id="line.1710">                dataset, dataset.getRowKey(row), dataset.getColumnKey(column));</a>
+<span class="sourceLineNo">1711</span><a id="line.1711">        entities.add(entity);</a>
+<span class="sourceLineNo">1712</span><a id="line.1712">    }</a>
+<span class="sourceLineNo">1713</span><a id="line.1713"></a>
+<span class="sourceLineNo">1714</span><a id="line.1714">    /**</a>
+<span class="sourceLineNo">1715</span><a id="line.1715">     * Adds an entity to the collection.</a>
+<span class="sourceLineNo">1716</span><a id="line.1716">     *</a>
+<span class="sourceLineNo">1717</span><a id="line.1717">     * @param entities  the entity collection being populated.</a>
+<span class="sourceLineNo">1718</span><a id="line.1718">     * @param hotspot  the entity area (if &lt;code&gt;null&lt;/code&gt; a default will be</a>
+<span class="sourceLineNo">1719</span><a id="line.1719">     *              used).</a>
+<span class="sourceLineNo">1720</span><a id="line.1720">     * @param dataset  the dataset.</a>
+<span class="sourceLineNo">1721</span><a id="line.1721">     * @param row  the series.</a>
+<span class="sourceLineNo">1722</span><a id="line.1722">     * @param column  the item.</a>
+<span class="sourceLineNo">1723</span><a id="line.1723">     * @param entityX  the entity's center x-coordinate in user space (only</a>
+<span class="sourceLineNo">1724</span><a id="line.1724">     *                 used if &lt;code&gt;area&lt;/code&gt; is &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1725</span><a id="line.1725">     * @param entityY  the entity's center y-coordinate in user space (only</a>
+<span class="sourceLineNo">1726</span><a id="line.1726">     *                 used if &lt;code&gt;area&lt;/code&gt; is &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1727</span><a id="line.1727">     *</a>
+<span class="sourceLineNo">1728</span><a id="line.1728">     * @since 1.0.13</a>
+<span class="sourceLineNo">1729</span><a id="line.1729">     */</a>
+<span class="sourceLineNo">1730</span><a id="line.1730">    protected void addEntity(EntityCollection entities, Shape hotspot,</a>
+<span class="sourceLineNo">1731</span><a id="line.1731">                             CategoryDataset dataset, int row, int column,</a>
+<span class="sourceLineNo">1732</span><a id="line.1732">                             double entityX, double entityY) {</a>
+<span class="sourceLineNo">1733</span><a id="line.1733">        if (!getItemCreateEntity(row, column)) {</a>
+<span class="sourceLineNo">1734</span><a id="line.1734">            return;</a>
+<span class="sourceLineNo">1735</span><a id="line.1735">        }</a>
+<span class="sourceLineNo">1736</span><a id="line.1736">        Shape s = hotspot;</a>
+<span class="sourceLineNo">1737</span><a id="line.1737">        if (hotspot == null) {</a>
+<span class="sourceLineNo">1738</span><a id="line.1738">            double r = getDefaultEntityRadius();</a>
+<span class="sourceLineNo">1739</span><a id="line.1739">            double w = r * 2;</a>
+<span class="sourceLineNo">1740</span><a id="line.1740">            if (getPlot().getOrientation() == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">1741</span><a id="line.1741">                s = new Ellipse2D.Double(entityX - r, entityY - r, w, w);</a>
+<span class="sourceLineNo">1742</span><a id="line.1742">            }</a>
+<span class="sourceLineNo">1743</span><a id="line.1743">            else {</a>
+<span class="sourceLineNo">1744</span><a id="line.1744">                s = new Ellipse2D.Double(entityY - r, entityX - r, w, w);</a>
+<span class="sourceLineNo">1745</span><a id="line.1745">            }</a>
+<span class="sourceLineNo">1746</span><a id="line.1746">        }</a>
+<span class="sourceLineNo">1747</span><a id="line.1747">        String tip = null;</a>
+<span class="sourceLineNo">1748</span><a id="line.1748">        CategoryToolTipGenerator generator = getToolTipGenerator(row, column);</a>
+<span class="sourceLineNo">1749</span><a id="line.1749">        if (generator != null) {</a>
+<span class="sourceLineNo">1750</span><a id="line.1750">            tip = generator.generateToolTip(dataset, row, column);</a>
+<span class="sourceLineNo">1751</span><a id="line.1751">        }</a>
+<span class="sourceLineNo">1752</span><a id="line.1752">        String url = null;</a>
+<span class="sourceLineNo">1753</span><a id="line.1753">        CategoryURLGenerator urlster = getItemURLGenerator(row, column);</a>
+<span class="sourceLineNo">1754</span><a id="line.1754">        if (urlster != null) {</a>
+<span class="sourceLineNo">1755</span><a id="line.1755">            url = urlster.generateURL(dataset, row, column);</a>
+<span class="sourceLineNo">1756</span><a id="line.1756">        }</a>
+<span class="sourceLineNo">1757</span><a id="line.1757">        CategoryItemEntity entity = new CategoryItemEntity(s, tip, url,</a>
+<span class="sourceLineNo">1758</span><a id="line.1758">                dataset, dataset.getRowKey(row), dataset.getColumnKey(column));</a>
+<span class="sourceLineNo">1759</span><a id="line.1759">        entities.add(entity);</a>
+<span class="sourceLineNo">1760</span><a id="line.1760">    }</a>
+<span class="sourceLineNo">1761</span><a id="line.1761"></a>
+<span class="sourceLineNo">1762</span><a id="line.1762">    // === DEPRECATED CODE ===</a>
+<span class="sourceLineNo">1763</span><a id="line.1763"></a>
+<span class="sourceLineNo">1764</span><a id="line.1764">    /**</a>
+<span class="sourceLineNo">1765</span><a id="line.1765">     * The item label generator for ALL series.</a>
+<span class="sourceLineNo">1766</span><a id="line.1766">     *</a>
+<span class="sourceLineNo">1767</span><a id="line.1767">     * @deprecated This field is redundant and deprecated as of version 1.0.6.</a>
+<span class="sourceLineNo">1768</span><a id="line.1768">     */</a>
+<span class="sourceLineNo">1769</span><a id="line.1769">    private CategoryItemLabelGenerator itemLabelGenerator;</a>
+<span class="sourceLineNo">1770</span><a id="line.1770"></a>
+<span class="sourceLineNo">1771</span><a id="line.1771">    /**</a>
+<span class="sourceLineNo">1772</span><a id="line.1772">     * The tool tip generator for ALL series.</a>
+<span class="sourceLineNo">1773</span><a id="line.1773">     *</a>
+<span class="sourceLineNo">1774</span><a id="line.1774">     * @deprecated This field is redundant and deprecated as of version 1.0.6.</a>
+<span class="sourceLineNo">1775</span><a id="line.1775">     */</a>
+<span class="sourceLineNo">1776</span><a id="line.1776">    private CategoryToolTipGenerator toolTipGenerator;</a>
+<span class="sourceLineNo">1777</span><a id="line.1777"></a>
+<span class="sourceLineNo">1778</span><a id="line.1778">    /**</a>
+<span class="sourceLineNo">1779</span><a id="line.1779">     * The URL generator.</a>
+<span class="sourceLineNo">1780</span><a id="line.1780">     *</a>
+<span class="sourceLineNo">1781</span><a id="line.1781">     * @deprecated This field is redundant and deprecated as of version 1.0.6.</a>
+<span class="sourceLineNo">1782</span><a id="line.1782">     */</a>
+<span class="sourceLineNo">1783</span><a id="line.1783">    private CategoryURLGenerator itemURLGenerator;</a>
+<span class="sourceLineNo">1784</span><a id="line.1784"></a>
+<span class="sourceLineNo">1785</span><a id="line.1785">    /**</a>
+<span class="sourceLineNo">1786</span><a id="line.1786">     * Sets the item label generator for ALL series and sends a</a>
+<span class="sourceLineNo">1787</span><a id="line.1787">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1788</span><a id="line.1788">     *</a>
+<span class="sourceLineNo">1789</span><a id="line.1789">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1790</span><a id="line.1790">     *</a>
+<span class="sourceLineNo">1791</span><a id="line.1791">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1792</span><a id="line.1792">     *     It is sufficient to rely on {@link #setSeriesItemLabelGenerator(int,</a>
+<span class="sourceLineNo">1793</span><a id="line.1793">     *     CategoryItemLabelGenerator)} and</a>
+<span class="sourceLineNo">1794</span><a id="line.1794">     *     {@link #setBaseItemLabelGenerator(CategoryItemLabelGenerator)}.</a>
+<span class="sourceLineNo">1795</span><a id="line.1795">     */</a>
+<span class="sourceLineNo">1796</span><a id="line.1796">    @Override</a>
+<span class="sourceLineNo">1797</span><a id="line.1797">    public void setItemLabelGenerator(CategoryItemLabelGenerator generator) {</a>
+<span class="sourceLineNo">1798</span><a id="line.1798">        this.itemLabelGenerator = generator;</a>
+<span class="sourceLineNo">1799</span><a id="line.1799">        fireChangeEvent();</a>
+<span class="sourceLineNo">1800</span><a id="line.1800">    }</a>
+<span class="sourceLineNo">1801</span><a id="line.1801"></a>
+<span class="sourceLineNo">1802</span><a id="line.1802">    /**</a>
+<span class="sourceLineNo">1803</span><a id="line.1803">     * Returns the tool tip generator that will be used for ALL items in the</a>
+<span class="sourceLineNo">1804</span><a id="line.1804">     * dataset (the "layer 0" generator).</a>
+<span class="sourceLineNo">1805</span><a id="line.1805">     *</a>
+<span class="sourceLineNo">1806</span><a id="line.1806">     * @return A tool tip generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1807</span><a id="line.1807">     *</a>
+<span class="sourceLineNo">1808</span><a id="line.1808">     * @see #setToolTipGenerator(CategoryToolTipGenerator)</a>
+<span class="sourceLineNo">1809</span><a id="line.1809">     *</a>
+<span class="sourceLineNo">1810</span><a id="line.1810">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1811</span><a id="line.1811">     *     It is sufficient to rely on {@link #getSeriesToolTipGenerator(int)}</a>
+<span class="sourceLineNo">1812</span><a id="line.1812">     *     and {@link #getBaseToolTipGenerator()}.</a>
+<span class="sourceLineNo">1813</span><a id="line.1813">     */</a>
+<span class="sourceLineNo">1814</span><a id="line.1814">    @Override</a>
+<span class="sourceLineNo">1815</span><a id="line.1815">    public CategoryToolTipGenerator getToolTipGenerator() {</a>
+<span class="sourceLineNo">1816</span><a id="line.1816">        return this.toolTipGenerator;</a>
+<span class="sourceLineNo">1817</span><a id="line.1817">    }</a>
+<span class="sourceLineNo">1818</span><a id="line.1818"></a>
+<span class="sourceLineNo">1819</span><a id="line.1819">    /**</a>
+<span class="sourceLineNo">1820</span><a id="line.1820">     * Sets the tool tip generator for ALL series and sends a</a>
+<span class="sourceLineNo">1821</span><a id="line.1821">     * {@link org.jfree.chart.event.RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">1822</span><a id="line.1822">     * listeners.</a>
+<span class="sourceLineNo">1823</span><a id="line.1823">     *</a>
+<span class="sourceLineNo">1824</span><a id="line.1824">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1825</span><a id="line.1825">     *</a>
+<span class="sourceLineNo">1826</span><a id="line.1826">     * @see #getToolTipGenerator()</a>
+<span class="sourceLineNo">1827</span><a id="line.1827">     *</a>
+<span class="sourceLineNo">1828</span><a id="line.1828">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1829</span><a id="line.1829">     *     It is sufficient to rely on {@link #setSeriesToolTipGenerator(int,</a>
+<span class="sourceLineNo">1830</span><a id="line.1830">     *     CategoryToolTipGenerator)} and</a>
+<span class="sourceLineNo">1831</span><a id="line.1831">     *     {@link #setBaseToolTipGenerator(CategoryToolTipGenerator)}.</a>
+<span class="sourceLineNo">1832</span><a id="line.1832">     */</a>
+<span class="sourceLineNo">1833</span><a id="line.1833">    @Override</a>
+<span class="sourceLineNo">1834</span><a id="line.1834">    public void setToolTipGenerator(CategoryToolTipGenerator generator) {</a>
+<span class="sourceLineNo">1835</span><a id="line.1835">        this.toolTipGenerator = generator;</a>
+<span class="sourceLineNo">1836</span><a id="line.1836">        fireChangeEvent();</a>
+<span class="sourceLineNo">1837</span><a id="line.1837">    }</a>
+<span class="sourceLineNo">1838</span><a id="line.1838"></a>
+<span class="sourceLineNo">1839</span><a id="line.1839">    /**</a>
+<span class="sourceLineNo">1840</span><a id="line.1840">     * Sets the item URL generator for ALL series and sends a</a>
+<span class="sourceLineNo">1841</span><a id="line.1841">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1842</span><a id="line.1842">     *</a>
+<span class="sourceLineNo">1843</span><a id="line.1843">     * @param generator  the generator.</a>
+<span class="sourceLineNo">1844</span><a id="line.1844">     *</a>
+<span class="sourceLineNo">1845</span><a id="line.1845">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1846</span><a id="line.1846">     *     It is sufficient to rely on {@link #setSeriesItemURLGenerator(int,</a>
+<span class="sourceLineNo">1847</span><a id="line.1847">     *     CategoryURLGenerator)} and</a>
+<span class="sourceLineNo">1848</span><a id="line.1848">     *     {@link #setBaseItemURLGenerator(CategoryURLGenerator)}.</a>
+<span class="sourceLineNo">1849</span><a id="line.1849">     */</a>
+<span class="sourceLineNo">1850</span><a id="line.1850">    @Override</a>
+<span class="sourceLineNo">1851</span><a id="line.1851">    public void setItemURLGenerator(CategoryURLGenerator generator) {</a>
+<span class="sourceLineNo">1852</span><a id="line.1852">        this.itemURLGenerator = generator;</a>
+<span class="sourceLineNo">1853</span><a id="line.1853">        fireChangeEvent();</a>
+<span class="sourceLineNo">1854</span><a id="line.1854">    }</a>
+<span class="sourceLineNo">1855</span><a id="line.1855"></a>
+<span class="sourceLineNo">1856</span><a id="line.1856">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * -------------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * HeatMapDataset.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * -------------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2009-2014, by Object Refinery Limited.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   -;</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *</a>
+<span class="sourceLineNo">035</span><a id="line.35"> * Changes:</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * --------</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * 28-Jan-2009 : Version 1 (DG);</a>
+<span class="sourceLineNo">038</span><a id="line.38"> *</a>
+<span class="sourceLineNo">039</span><a id="line.39"> */</a>
+<span class="sourceLineNo">040</span><a id="line.40"></a>
+<span class="sourceLineNo">041</span><a id="line.41">package org.jfree.data.general;</a>
+<span class="sourceLineNo">042</span><a id="line.42"></a>
+<span class="sourceLineNo">043</span><a id="line.43">/**</a>
+<span class="sourceLineNo">044</span><a id="line.44"> * A dataset that represents a rectangular grid of (x, y, z) values.  The x</a>
+<span class="sourceLineNo">045</span><a id="line.45"> * and y values appear at regular intervals in the dataset, while the z-values</a>
+<span class="sourceLineNo">046</span><a id="line.46"> * can take any value (including &lt;code&gt;null&lt;/code&gt; for unknown values).</a>
+<span class="sourceLineNo">047</span><a id="line.47"> *</a>
+<span class="sourceLineNo">048</span><a id="line.48"> * @since 1.0.13</a>
+<span class="sourceLineNo">049</span><a id="line.49"> */</a>
+<span class="sourceLineNo">050</span><a id="line.50">public interface HeatMapDataset {</a>
+<span class="sourceLineNo">051</span><a id="line.51"></a>
+<span class="sourceLineNo">052</span><a id="line.52">    /**</a>
+<span class="sourceLineNo">053</span><a id="line.53">     * Returns the number of x values across the width of the dataset.  The</a>
+<span class="sourceLineNo">054</span><a id="line.54">     * values are evenly spaced between {@link #getMinimumXValue()} and</a>
+<span class="sourceLineNo">055</span><a id="line.55">     * {@link #getMaximumXValue()}.</a>
+<span class="sourceLineNo">056</span><a id="line.56">     * </a>
+<span class="sourceLineNo">057</span><a id="line.57">     * @return The number of x-values (always &amp;gt; 0).</a>
+<span class="sourceLineNo">058</span><a id="line.58">     */</a>
+<span class="sourceLineNo">059</span><a id="line.59">    public int getXSampleCount();</a>
+<span class="sourceLineNo">060</span><a id="line.60"></a>
+<span class="sourceLineNo">061</span><a id="line.61">    /**</a>
+<span class="sourceLineNo">062</span><a id="line.62">     * Returns the number of y values (or samples) for the dataset.  The</a>
+<span class="sourceLineNo">063</span><a id="line.63">     * values are evenly spaced between {@link #getMinimumYValue()} and</a>
+<span class="sourceLineNo">064</span><a id="line.64">     * {@link #getMaximumYValue()}.</a>
+<span class="sourceLineNo">065</span><a id="line.65">     *</a>
+<span class="sourceLineNo">066</span><a id="line.66">     * @return The number of y-values (always &amp;gt; 0).</a>
+<span class="sourceLineNo">067</span><a id="line.67">     */</a>
+<span class="sourceLineNo">068</span><a id="line.68">    public int getYSampleCount();</a>
+<span class="sourceLineNo">069</span><a id="line.69"></a>
+<span class="sourceLineNo">070</span><a id="line.70">    /**</a>
+<span class="sourceLineNo">071</span><a id="line.71">     * Returns the lowest x-value represented in this dataset.  A requirement</a>
+<span class="sourceLineNo">072</span><a id="line.72">     * of this interface is that this method must never return infinite or</a>
+<span class="sourceLineNo">073</span><a id="line.73">     * Double.NAN values.</a>
+<span class="sourceLineNo">074</span><a id="line.74">     *</a>
+<span class="sourceLineNo">075</span><a id="line.75">     * @return The lowest x-value represented in this dataset.</a>
+<span class="sourceLineNo">076</span><a id="line.76">     */</a>
+<span class="sourceLineNo">077</span><a id="line.77">    public double getMinimumXValue();</a>
+<span class="sourceLineNo">078</span><a id="line.78"></a>
+<span class="sourceLineNo">079</span><a id="line.79">    /**</a>
+<span class="sourceLineNo">080</span><a id="line.80">     * Returns the highest x-value represented in this dataset.  A requirement</a>
+<span class="sourceLineNo">081</span><a id="line.81">     * of this interface is that this method must never return infinite or</a>
+<span class="sourceLineNo">082</span><a id="line.82">     * Double.NAN values.</a>
+<span class="sourceLineNo">083</span><a id="line.83">     *</a>
+<span class="sourceLineNo">084</span><a id="line.84">     * @return The highest x-value represented in this dataset.</a>
+<span class="sourceLineNo">085</span><a id="line.85">     */</a>
+<span class="sourceLineNo">086</span><a id="line.86">    public double getMaximumXValue();</a>
+<span class="sourceLineNo">087</span><a id="line.87"></a>
+<span class="sourceLineNo">088</span><a id="line.88">    /**</a>
+<span class="sourceLineNo">089</span><a id="line.89">     * Returns the lowest y-value represented in this dataset.  A requirement</a>
+<span class="sourceLineNo">090</span><a id="line.90">     * of this interface is that this method must never return infinite or</a>
+<span class="sourceLineNo">091</span><a id="line.91">     * Double.NAN values.</a>
+<span class="sourceLineNo">092</span><a id="line.92">     *</a>
+<span class="sourceLineNo">093</span><a id="line.93">     * @return The lowest y-value represented in this dataset.</a>
+<span class="sourceLineNo">094</span><a id="line.94">     */</a>
+<span class="sourceLineNo">095</span><a id="line.95">    public double getMinimumYValue();</a>
+<span class="sourceLineNo">096</span><a id="line.96"></a>
+<span class="sourceLineNo">097</span><a id="line.97">    /**</a>
+<span class="sourceLineNo">098</span><a id="line.98">     * Returns the highest y-value represented in this dataset.  A requirement</a>
+<span class="sourceLineNo">099</span><a id="line.99">     * of this interface is that this method must never return infinite or</a>
+<span class="sourceLineNo">100</span><a id="line.100">     * Double.NAN values.</a>
+<span class="sourceLineNo">101</span><a id="line.101">     *</a>
+<span class="sourceLineNo">102</span><a id="line.102">     * @return The highest y-value represented in this dataset.</a>
+<span class="sourceLineNo">103</span><a id="line.103">     */</a>
+<span class="sourceLineNo">104</span><a id="line.104">    public double getMaximumYValue();</a>
+<span class="sourceLineNo">105</span><a id="line.105"></a>
+<span class="sourceLineNo">106</span><a id="line.106">    /**</a>
+<span class="sourceLineNo">107</span><a id="line.107">     * A convenience method that returns the x-value for the given index.</a>
+<span class="sourceLineNo">108</span><a id="line.108">     * </a>
+<span class="sourceLineNo">109</span><a id="line.109">     * @param xIndex  the xIndex.</a>
+<span class="sourceLineNo">110</span><a id="line.110">     * </a>
+<span class="sourceLineNo">111</span><a id="line.111">     * @return The x-value.</a>
+<span class="sourceLineNo">112</span><a id="line.112">     */</a>
+<span class="sourceLineNo">113</span><a id="line.113">    public double getXValue(int xIndex);</a>
+<span class="sourceLineNo">114</span><a id="line.114"></a>
+<span class="sourceLineNo">115</span><a id="line.115">    /**</a>
+<span class="sourceLineNo">116</span><a id="line.116">     * A convenience method that returns the y-value for the given index.</a>
+<span class="sourceLineNo">117</span><a id="line.117">     * </a>
+<span class="sourceLineNo">118</span><a id="line.118">     * @param yIndex  the yIndex.</a>
+<span class="sourceLineNo">119</span><a id="line.119">     * </a>
+<span class="sourceLineNo">120</span><a id="line.120">     * @return The y-value.</a>
+<span class="sourceLineNo">121</span><a id="line.121">     */</a>
+<span class="sourceLineNo">122</span><a id="line.122">    public double getYValue(int yIndex);</a>
+<span class="sourceLineNo">123</span><a id="line.123"></a>
+<span class="sourceLineNo">124</span><a id="line.124">    /**</a>
+<span class="sourceLineNo">125</span><a id="line.125">     * Returns the z-value at the specified sample position in the dataset.</a>
+<span class="sourceLineNo">126</span><a id="line.126">     * For a missing or unknown value, this method should return Double.NAN.</a>
+<span class="sourceLineNo">127</span><a id="line.127">     *</a>
+<span class="sourceLineNo">128</span><a id="line.128">     * @param xIndex  the position of the x sample in the dataset.</a>
+<span class="sourceLineNo">129</span><a id="line.129">     * @param yIndex  the position of the y sample in the dataset.</a>
+<span class="sourceLineNo">130</span><a id="line.130">     *</a>
+<span class="sourceLineNo">131</span><a id="line.131">     * @return The z-value.</a>
+<span class="sourceLineNo">132</span><a id="line.132">     */</a>
+<span class="sourceLineNo">133</span><a id="line.133">    public double getZValue(int xIndex, int yIndex);</a>
+<span class="sourceLineNo">134</span><a id="line.134"></a>
+<span class="sourceLineNo">135</span><a id="line.135">    /**</a>
+<span class="sourceLineNo">136</span><a id="line.136">     * Returns the z-value at the specified sample position in the dataset.</a>
+<span class="sourceLineNo">137</span><a id="line.137">     * This method can return &lt;code&gt;null&lt;/code&gt; to indicate a missing/unknown</a>
+<span class="sourceLineNo">138</span><a id="line.138">     * value.</a>
+<span class="sourceLineNo">139</span><a id="line.139">     * &lt;br&gt;&lt;br&gt;</a>
+<span class="sourceLineNo">140</span><a id="line.140">     * Bear in mind that the class implementing this interface may</a>
+<span class="sourceLineNo">141</span><a id="line.141">     * store its data using primitives rather than objects, so calling this</a>
+<span class="sourceLineNo">142</span><a id="line.142">     * method may require a new &lt;code&gt;Number&lt;/code&gt; object to be allocated...</a>
+<span class="sourceLineNo">143</span><a id="line.143">     * for this reason, it is generally preferable to use the</a>
+<span class="sourceLineNo">144</span><a id="line.144">     * {@link #getZValue(int, int)} method unless you *know* that the dataset</a>
+<span class="sourceLineNo">145</span><a id="line.145">     * implementation stores the z-values using objects.</a>
+<span class="sourceLineNo">146</span><a id="line.146">     *</a>
+<span class="sourceLineNo">147</span><a id="line.147">     * @param xIndex  the position of the x sample in the dataset.</a>
+<span class="sourceLineNo">148</span><a id="line.148">     * @param yIndex  the position of the y sample in the dataset.</a>
+<span class="sourceLineNo">149</span><a id="line.149">     *</a>
+<span class="sourceLineNo">150</span><a id="line.150">     * @return The z-value (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">151</span><a id="line.151">     */</a>
+<span class="sourceLineNo">152</span><a id="line.152">    public Number getZ(int xIndex, int yIndex);</a>
+<span class="sourceLineNo">153</span><a id="line.153"></a>
+<span class="sourceLineNo">154</span><a id="line.154">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

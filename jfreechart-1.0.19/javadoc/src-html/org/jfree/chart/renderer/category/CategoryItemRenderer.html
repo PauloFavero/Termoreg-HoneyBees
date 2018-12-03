@@ -1,0 +1,1944 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2013, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * -------------------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * CategoryItemRenderer.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * -------------------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> *</a>
+<span class="sourceLineNo">031</span><a id="line.31"> * (C) Copyright 2001-2011, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">032</span><a id="line.32"> *</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Original Author:  David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">034</span><a id="line.34"> * Contributor(s):   Mark Watson (www.markwatson.com);</a>
+<span class="sourceLineNo">035</span><a id="line.35"> *</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * Changes</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * -------</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * 23-Oct-2001 : Version 1 (DG);</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * 16-Jan-2002 : Renamed HorizontalCategoryItemRenderer.java</a>
+<span class="sourceLineNo">040</span><a id="line.40"> *               --&gt; CategoryItemRenderer.java (DG);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * 05-Feb-2002 : Changed return type of the drawCategoryItem method from void</a>
+<span class="sourceLineNo">042</span><a id="line.42"> *               to Shape, as part of the tooltips implementation (DG)</a>
+<span class="sourceLineNo">043</span><a id="line.43"> *</a>
+<span class="sourceLineNo">044</span><a id="line.44"> *               NOTE (30-May-2002) : this has subsequently been changed back</a>
+<span class="sourceLineNo">045</span><a id="line.45"> *               to void, tooltips are now collected along with entities in</a>
+<span class="sourceLineNo">046</span><a id="line.46"> *               ChartRenderingInfo (DG);</a>
+<span class="sourceLineNo">047</span><a id="line.47"> *</a>
+<span class="sourceLineNo">048</span><a id="line.48"> * 14-Mar-2002 : Added the initialise method, and changed all bar plots to use</a>
+<span class="sourceLineNo">049</span><a id="line.49"> *               this renderer (DG);</a>
+<span class="sourceLineNo">050</span><a id="line.50"> * 23-May-2002 : Added ChartRenderingInfo to the initialise method (DG);</a>
+<span class="sourceLineNo">051</span><a id="line.51"> * 29-May-2002 : Added the getAxisArea(Rectangle2D) method (DG);</a>
+<span class="sourceLineNo">052</span><a id="line.52"> * 06-Jun-2002 : Updated Javadoc comments (DG);</a>
+<span class="sourceLineNo">053</span><a id="line.53"> * 26-Jun-2002 : Added range axis to the initialise method (DG);</a>
+<span class="sourceLineNo">054</span><a id="line.54"> * 24-Sep-2002 : Added getLegendItem() method (DG);</a>
+<span class="sourceLineNo">055</span><a id="line.55"> * 23-Oct-2002 : Added methods to get/setToolTipGenerator (DG);</a>
+<span class="sourceLineNo">056</span><a id="line.56"> * 05-Nov-2002 : Replaced references to CategoryDataset with TableDataset (DG);</a>
+<span class="sourceLineNo">057</span><a id="line.57"> * 06-Nov-2002 : Added the domain axis to the drawCategoryItem method.  Renamed</a>
+<span class="sourceLineNo">058</span><a id="line.58"> *               drawCategoryItem() --&gt; drawItem() (DG);</a>
+<span class="sourceLineNo">059</span><a id="line.59"> * 20-Nov-2002 : Changed signature of drawItem() method to reflect use of</a>
+<span class="sourceLineNo">060</span><a id="line.60"> *               TableDataset (DG);</a>
+<span class="sourceLineNo">061</span><a id="line.61"> * 26-Nov-2002 : Replaced the isStacked() method with the getRangeType()</a>
+<span class="sourceLineNo">062</span><a id="line.62"> *               method (DG);</a>
+<span class="sourceLineNo">063</span><a id="line.63"> * 08-Jan-2003 : Changed getSeriesCount() --&gt; getRowCount() and</a>
+<span class="sourceLineNo">064</span><a id="line.64"> *               getCategoryCount() --&gt; getColumnCount() (DG);</a>
+<span class="sourceLineNo">065</span><a id="line.65"> * 09-Jan-2003 : Changed name of grid-line methods (DG);</a>
+<span class="sourceLineNo">066</span><a id="line.66"> * 21-Jan-2003 : Merged TableDataset with CategoryDataset (DG);</a>
+<span class="sourceLineNo">067</span><a id="line.67"> * 10-Apr-2003 : Changed CategoryDataset to KeyedValues2DDataset in</a>
+<span class="sourceLineNo">068</span><a id="line.68"> *               drawItem() method (DG);</a>
+<span class="sourceLineNo">069</span><a id="line.69"> * 29-Apr-2003 : Eliminated Renderer interface (DG);</a>
+<span class="sourceLineNo">070</span><a id="line.70"> * 02-Sep-2003 : Fix for bug 790407 (DG);</a>
+<span class="sourceLineNo">071</span><a id="line.71"> * 16-Sep-2003 : Changed ChartRenderingInfo --&gt; PlotRenderingInfo (DG);</a>
+<span class="sourceLineNo">072</span><a id="line.72"> * 20-Oct-2003 : Added setOutlinePaint() method (DG);</a>
+<span class="sourceLineNo">073</span><a id="line.73"> * 06-Feb-2004 : Added missing methods, and moved deprecated methods (DG);</a>
+<span class="sourceLineNo">074</span><a id="line.74"> * 19-Feb-2004 : Added extra setXXXLabelsVisible() methods (DG);</a>
+<span class="sourceLineNo">075</span><a id="line.75"> * 29-Apr-2004 : Changed Integer --&gt; int in initialise() method (DG);</a>
+<span class="sourceLineNo">076</span><a id="line.76"> * 18-May-2004 : Added methods for item label paint (DG);</a>
+<span class="sourceLineNo">077</span><a id="line.77"> * 05-Nov-2004 : Added getPassCount() method and 'pass' parameter to drawItem()</a>
+<span class="sourceLineNo">078</span><a id="line.78"> *               method (DG);</a>
+<span class="sourceLineNo">079</span><a id="line.79"> * 07-Jan-2005 : Renamed getRangeExtent() --&gt; findRangeBounds (DG);</a>
+<span class="sourceLineNo">080</span><a id="line.80"> * 11-Jan-2005 : Removed deprecated code in preparation for 1.0.0 release (DG);</a>
+<span class="sourceLineNo">081</span><a id="line.81"> * 23-Feb-2005 : Now extends LegendItemSource (DG);</a>
+<span class="sourceLineNo">082</span><a id="line.82"> * 20-Apr-2005 : Renamed CategoryLabelGenerator</a>
+<span class="sourceLineNo">083</span><a id="line.83"> *               --&gt; CategoryItemLabelGenerator (DG);</a>
+<span class="sourceLineNo">084</span><a id="line.84"> * 20-May-2005 : Added drawDomainMarker() method (DG);</a>
+<span class="sourceLineNo">085</span><a id="line.85"> * ------------- JFREECHART 1.0.x ---------------------------------------------</a>
+<span class="sourceLineNo">086</span><a id="line.86"> * 20-Feb-2007 : Updated API docs (DG);</a>
+<span class="sourceLineNo">087</span><a id="line.87"> * 19-Apr-2007 : Deprecated seriesVisible and seriesVisibleInLegend flags (DG);</a>
+<span class="sourceLineNo">088</span><a id="line.88"> * 20-Apr-2007 : Deprecated paint, fillPaint, outlinePaint, stroke,</a>
+<span class="sourceLineNo">089</span><a id="line.89"> *               outlineStroke, shape, itemLabelsVisible, itemLabelFont,</a>
+<span class="sourceLineNo">090</span><a id="line.90"> *               itemLabelPaint, positiveItemLabelPosition,</a>
+<span class="sourceLineNo">091</span><a id="line.91"> *               negativeItemLabelPosition and createEntities override</a>
+<span class="sourceLineNo">092</span><a id="line.92"> *               fields (DG);</a>
+<span class="sourceLineNo">093</span><a id="line.93"> * 26-Jun-2008 : Added new method required for crosshair support - THIS CHANGES</a>
+<span class="sourceLineNo">094</span><a id="line.94"> *               THE API as of version 1.0.11 (DG);</a>
+<span class="sourceLineNo">095</span><a id="line.95"> *</a>
+<span class="sourceLineNo">096</span><a id="line.96"> */</a>
+<span class="sourceLineNo">097</span><a id="line.97"></a>
+<span class="sourceLineNo">098</span><a id="line.98">package org.jfree.chart.renderer.category;</a>
+<span class="sourceLineNo">099</span><a id="line.99"></a>
+<span class="sourceLineNo">100</span><a id="line.100">import java.awt.Font;</a>
+<span class="sourceLineNo">101</span><a id="line.101">import java.awt.Graphics2D;</a>
+<span class="sourceLineNo">102</span><a id="line.102">import java.awt.Paint;</a>
+<span class="sourceLineNo">103</span><a id="line.103">import java.awt.Shape;</a>
+<span class="sourceLineNo">104</span><a id="line.104">import java.awt.Stroke;</a>
+<span class="sourceLineNo">105</span><a id="line.105">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">106</span><a id="line.106"></a>
+<span class="sourceLineNo">107</span><a id="line.107">import org.jfree.chart.LegendItem;</a>
+<span class="sourceLineNo">108</span><a id="line.108">import org.jfree.chart.LegendItemSource;</a>
+<span class="sourceLineNo">109</span><a id="line.109">import org.jfree.chart.axis.CategoryAxis;</a>
+<span class="sourceLineNo">110</span><a id="line.110">import org.jfree.chart.axis.ValueAxis;</a>
+<span class="sourceLineNo">111</span><a id="line.111">import org.jfree.chart.event.RendererChangeEvent;</a>
+<span class="sourceLineNo">112</span><a id="line.112">import org.jfree.chart.event.RendererChangeListener;</a>
+<span class="sourceLineNo">113</span><a id="line.113">import org.jfree.chart.labels.CategoryItemLabelGenerator;</a>
+<span class="sourceLineNo">114</span><a id="line.114">import org.jfree.chart.labels.CategoryToolTipGenerator;</a>
+<span class="sourceLineNo">115</span><a id="line.115">import org.jfree.chart.labels.ItemLabelPosition;</a>
+<span class="sourceLineNo">116</span><a id="line.116">import org.jfree.chart.plot.CategoryMarker;</a>
+<span class="sourceLineNo">117</span><a id="line.117">import org.jfree.chart.plot.CategoryPlot;</a>
+<span class="sourceLineNo">118</span><a id="line.118">import org.jfree.chart.plot.Marker;</a>
+<span class="sourceLineNo">119</span><a id="line.119">import org.jfree.chart.plot.PlotRenderingInfo;</a>
+<span class="sourceLineNo">120</span><a id="line.120">import org.jfree.chart.urls.CategoryURLGenerator;</a>
+<span class="sourceLineNo">121</span><a id="line.121">import org.jfree.data.Range;</a>
+<span class="sourceLineNo">122</span><a id="line.122">import org.jfree.data.category.CategoryDataset;</a>
+<span class="sourceLineNo">123</span><a id="line.123">import org.jfree.ui.RectangleEdge;</a>
+<span class="sourceLineNo">124</span><a id="line.124"></a>
+<span class="sourceLineNo">125</span><a id="line.125">/**</a>
+<span class="sourceLineNo">126</span><a id="line.126"> * A plug-in object that is used by the {@link CategoryPlot} class to display</a>
+<span class="sourceLineNo">127</span><a id="line.127"> * individual data items from a {@link CategoryDataset}.</a>
+<span class="sourceLineNo">128</span><a id="line.128"> * &lt;p&gt;</a>
+<span class="sourceLineNo">129</span><a id="line.129"> * This interface defines the methods that must be provided by all renderers.</a>
+<span class="sourceLineNo">130</span><a id="line.130"> * If you are implementing a custom renderer, you should consider extending the</a>
+<span class="sourceLineNo">131</span><a id="line.131"> * {@link AbstractCategoryItemRenderer} class.</a>
+<span class="sourceLineNo">132</span><a id="line.132"> * &lt;p&gt;</a>
+<span class="sourceLineNo">133</span><a id="line.133"> * Most renderer attributes are defined using a "three layer" approach.  When</a>
+<span class="sourceLineNo">134</span><a id="line.134"> * looking up an attribute (for example, the outline paint) the renderer first</a>
+<span class="sourceLineNo">135</span><a id="line.135"> * checks to see if there is a setting (in layer 0) that applies to ALL items</a>
+<span class="sourceLineNo">136</span><a id="line.136"> * that the renderer draws.  If there is, that setting is used, but if it is</a>
+<span class="sourceLineNo">137</span><a id="line.137"> * &lt;code&gt;null&lt;/code&gt; the renderer looks up the next layer, which contains</a>
+<span class="sourceLineNo">138</span><a id="line.138"> * "per series" settings for the attribute (many attributes are defined on a</a>
+<span class="sourceLineNo">139</span><a id="line.139"> * per series basis, so this is the layer that is most commonly used).  If the</a>
+<span class="sourceLineNo">140</span><a id="line.140"> * layer 1 setting is &lt;code&gt;null&lt;/code&gt;, the renderer will look up the final</a>
+<span class="sourceLineNo">141</span><a id="line.141"> * layer, which provides a default or "base" setting.  Some attributes allow</a>
+<span class="sourceLineNo">142</span><a id="line.142"> * the base setting to be &lt;code&gt;null&lt;/code&gt;, while other attributes enforce</a>
+<span class="sourceLineNo">143</span><a id="line.143"> * non-&lt;code&gt;null&lt;/code&gt; values.</a>
+<span class="sourceLineNo">144</span><a id="line.144"> */</a>
+<span class="sourceLineNo">145</span><a id="line.145">public interface CategoryItemRenderer extends LegendItemSource {</a>
+<span class="sourceLineNo">146</span><a id="line.146"></a>
+<span class="sourceLineNo">147</span><a id="line.147">    /**</a>
+<span class="sourceLineNo">148</span><a id="line.148">     * Returns the number of passes through the dataset required by the</a>
+<span class="sourceLineNo">149</span><a id="line.149">     * renderer.  Usually this will be one, but some renderers may use</a>
+<span class="sourceLineNo">150</span><a id="line.150">     * a second or third pass to overlay items on top of things that were</a>
+<span class="sourceLineNo">151</span><a id="line.151">     * drawn in an earlier pass.</a>
+<span class="sourceLineNo">152</span><a id="line.152">     *</a>
+<span class="sourceLineNo">153</span><a id="line.153">     * @return The pass count.</a>
+<span class="sourceLineNo">154</span><a id="line.154">     */</a>
+<span class="sourceLineNo">155</span><a id="line.155">    public int getPassCount();</a>
+<span class="sourceLineNo">156</span><a id="line.156"></a>
+<span class="sourceLineNo">157</span><a id="line.157">    /**</a>
+<span class="sourceLineNo">158</span><a id="line.158">     * Returns the plot that the renderer has been assigned to (where</a>
+<span class="sourceLineNo">159</span><a id="line.159">     * &lt;code&gt;null&lt;/code&gt; indicates that the renderer is not currently assigned</a>
+<span class="sourceLineNo">160</span><a id="line.160">     * to a plot).</a>
+<span class="sourceLineNo">161</span><a id="line.161">     *</a>
+<span class="sourceLineNo">162</span><a id="line.162">     * @return The plot (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">163</span><a id="line.163">     *</a>
+<span class="sourceLineNo">164</span><a id="line.164">     * @see #setPlot(CategoryPlot)</a>
+<span class="sourceLineNo">165</span><a id="line.165">     */</a>
+<span class="sourceLineNo">166</span><a id="line.166">    public CategoryPlot getPlot();</a>
+<span class="sourceLineNo">167</span><a id="line.167"></a>
+<span class="sourceLineNo">168</span><a id="line.168">    /**</a>
+<span class="sourceLineNo">169</span><a id="line.169">     * Sets the plot that the renderer has been assigned to.  This method is</a>
+<span class="sourceLineNo">170</span><a id="line.170">     * usually called by the {@link CategoryPlot}, in normal usage you</a>
+<span class="sourceLineNo">171</span><a id="line.171">     * shouldn't need to call this method directly.</a>
+<span class="sourceLineNo">172</span><a id="line.172">     *</a>
+<span class="sourceLineNo">173</span><a id="line.173">     * @param plot  the plot (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">174</span><a id="line.174">     *</a>
+<span class="sourceLineNo">175</span><a id="line.175">     * @see #getPlot()</a>
+<span class="sourceLineNo">176</span><a id="line.176">     */</a>
+<span class="sourceLineNo">177</span><a id="line.177">    public void setPlot(CategoryPlot plot);</a>
+<span class="sourceLineNo">178</span><a id="line.178"></a>
+<span class="sourceLineNo">179</span><a id="line.179">    /**</a>
+<span class="sourceLineNo">180</span><a id="line.180">     * Adds a change listener.</a>
+<span class="sourceLineNo">181</span><a id="line.181">     *</a>
+<span class="sourceLineNo">182</span><a id="line.182">     * @param listener  the listener.</a>
+<span class="sourceLineNo">183</span><a id="line.183">     *</a>
+<span class="sourceLineNo">184</span><a id="line.184">     * @see #removeChangeListener(RendererChangeListener)</a>
+<span class="sourceLineNo">185</span><a id="line.185">     */</a>
+<span class="sourceLineNo">186</span><a id="line.186">    public void addChangeListener(RendererChangeListener listener);</a>
+<span class="sourceLineNo">187</span><a id="line.187"></a>
+<span class="sourceLineNo">188</span><a id="line.188">    /**</a>
+<span class="sourceLineNo">189</span><a id="line.189">     * Removes a change listener.</a>
+<span class="sourceLineNo">190</span><a id="line.190">     *</a>
+<span class="sourceLineNo">191</span><a id="line.191">     * @param listener  the listener.</a>
+<span class="sourceLineNo">192</span><a id="line.192">     *</a>
+<span class="sourceLineNo">193</span><a id="line.193">     * @see #addChangeListener(RendererChangeListener)</a>
+<span class="sourceLineNo">194</span><a id="line.194">     */</a>
+<span class="sourceLineNo">195</span><a id="line.195">    public void removeChangeListener(RendererChangeListener listener);</a>
+<span class="sourceLineNo">196</span><a id="line.196"></a>
+<span class="sourceLineNo">197</span><a id="line.197">    /**</a>
+<span class="sourceLineNo">198</span><a id="line.198">     * Returns the range of values the renderer requires to display all the</a>
+<span class="sourceLineNo">199</span><a id="line.199">     * items from the specified dataset.</a>
+<span class="sourceLineNo">200</span><a id="line.200">     *</a>
+<span class="sourceLineNo">201</span><a id="line.201">     * @param dataset  the dataset (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">202</span><a id="line.202">     *</a>
+<span class="sourceLineNo">203</span><a id="line.203">     * @return The range (or &lt;code&gt;null&lt;/code&gt; if the dataset is</a>
+<span class="sourceLineNo">204</span><a id="line.204">     *         &lt;code&gt;null&lt;/code&gt; or empty).</a>
+<span class="sourceLineNo">205</span><a id="line.205">     */</a>
+<span class="sourceLineNo">206</span><a id="line.206">    public Range findRangeBounds(CategoryDataset dataset);</a>
+<span class="sourceLineNo">207</span><a id="line.207"></a>
+<span class="sourceLineNo">208</span><a id="line.208">    /**</a>
+<span class="sourceLineNo">209</span><a id="line.209">     * Initialises the renderer.  This method will be called before the first</a>
+<span class="sourceLineNo">210</span><a id="line.210">     * item is rendered, giving the renderer an opportunity to initialise any</a>
+<span class="sourceLineNo">211</span><a id="line.211">     * state information it wants to maintain. The renderer can do nothing if</a>
+<span class="sourceLineNo">212</span><a id="line.212">     * it chooses.</a>
+<span class="sourceLineNo">213</span><a id="line.213">     *</a>
+<span class="sourceLineNo">214</span><a id="line.214">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">215</span><a id="line.215">     * @param dataArea  the area inside the axes.</a>
+<span class="sourceLineNo">216</span><a id="line.216">     * @param plot  the plot.</a>
+<span class="sourceLineNo">217</span><a id="line.217">     * @param rendererIndex  the renderer index.</a>
+<span class="sourceLineNo">218</span><a id="line.218">     * @param info  collects chart rendering information for return to caller.</a>
+<span class="sourceLineNo">219</span><a id="line.219">     *</a>
+<span class="sourceLineNo">220</span><a id="line.220">     * @return A state object (maintains state information relevant to one</a>
+<span class="sourceLineNo">221</span><a id="line.221">     *         chart drawing).</a>
+<span class="sourceLineNo">222</span><a id="line.222">     */</a>
+<span class="sourceLineNo">223</span><a id="line.223">    public CategoryItemRendererState initialise(Graphics2D g2,</a>
+<span class="sourceLineNo">224</span><a id="line.224">                                                Rectangle2D dataArea,</a>
+<span class="sourceLineNo">225</span><a id="line.225">                                                CategoryPlot plot,</a>
+<span class="sourceLineNo">226</span><a id="line.226">                                                int rendererIndex,</a>
+<span class="sourceLineNo">227</span><a id="line.227">                                                PlotRenderingInfo info);</a>
+<span class="sourceLineNo">228</span><a id="line.228"></a>
+<span class="sourceLineNo">229</span><a id="line.229">    /**</a>
+<span class="sourceLineNo">230</span><a id="line.230">     * Returns a boolean that indicates whether or not the specified item</a>
+<span class="sourceLineNo">231</span><a id="line.231">     * should be drawn (this is typically used to hide an entire series).</a>
+<span class="sourceLineNo">232</span><a id="line.232">     *</a>
+<span class="sourceLineNo">233</span><a id="line.233">     * @param series  the series index.</a>
+<span class="sourceLineNo">234</span><a id="line.234">     * @param item  the item index.</a>
+<span class="sourceLineNo">235</span><a id="line.235">     *</a>
+<span class="sourceLineNo">236</span><a id="line.236">     * @return A boolean.</a>
+<span class="sourceLineNo">237</span><a id="line.237">     */</a>
+<span class="sourceLineNo">238</span><a id="line.238">    public boolean getItemVisible(int series, int item);</a>
+<span class="sourceLineNo">239</span><a id="line.239"></a>
+<span class="sourceLineNo">240</span><a id="line.240">    /**</a>
+<span class="sourceLineNo">241</span><a id="line.241">     * Returns a boolean that indicates whether or not the specified series</a>
+<span class="sourceLineNo">242</span><a id="line.242">     * should be drawn (this is typically used to hide an entire series).</a>
+<span class="sourceLineNo">243</span><a id="line.243">     *</a>
+<span class="sourceLineNo">244</span><a id="line.244">     * @param series  the series index.</a>
+<span class="sourceLineNo">245</span><a id="line.245">     *</a>
+<span class="sourceLineNo">246</span><a id="line.246">     * @return A boolean.</a>
+<span class="sourceLineNo">247</span><a id="line.247">     */</a>
+<span class="sourceLineNo">248</span><a id="line.248">    public boolean isSeriesVisible(int series);</a>
+<span class="sourceLineNo">249</span><a id="line.249"></a>
+<span class="sourceLineNo">250</span><a id="line.250">    /**</a>
+<span class="sourceLineNo">251</span><a id="line.251">     * Returns the flag that controls the visibility of ALL series.  This flag</a>
+<span class="sourceLineNo">252</span><a id="line.252">     * overrides the per series and default settings - you must set it to</a>
+<span class="sourceLineNo">253</span><a id="line.253">     * &lt;code&gt;null&lt;/code&gt; if you want the other settings to apply.</a>
+<span class="sourceLineNo">254</span><a id="line.254">     *</a>
+<span class="sourceLineNo">255</span><a id="line.255">     * @return The flag (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">256</span><a id="line.256">     *</a>
+<span class="sourceLineNo">257</span><a id="line.257">     * @see #setSeriesVisible(Boolean)</a>
+<span class="sourceLineNo">258</span><a id="line.258">     *</a>
+<span class="sourceLineNo">259</span><a id="line.259">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">260</span><a id="line.260">     *     It is sufficient to rely on {@link #getSeriesVisible(int)} and</a>
+<span class="sourceLineNo">261</span><a id="line.261">     *     {@link #getBaseSeriesVisible()}.</a>
+<span class="sourceLineNo">262</span><a id="line.262">     */</a>
+<span class="sourceLineNo">263</span><a id="line.263">    public Boolean getSeriesVisible();</a>
+<span class="sourceLineNo">264</span><a id="line.264"></a>
+<span class="sourceLineNo">265</span><a id="line.265">    /**</a>
+<span class="sourceLineNo">266</span><a id="line.266">     * Sets the flag that controls the visibility of ALL series and sends a</a>
+<span class="sourceLineNo">267</span><a id="line.267">     * {@link RendererChangeEvent} to all registered listeners.  This flag</a>
+<span class="sourceLineNo">268</span><a id="line.268">     * overrides the per series and default settings - you must set it to</a>
+<span class="sourceLineNo">269</span><a id="line.269">     * &lt;code&gt;null&lt;/code&gt; if you want the other settings to apply.</a>
+<span class="sourceLineNo">270</span><a id="line.270">     *</a>
+<span class="sourceLineNo">271</span><a id="line.271">     * @param visible  the flag (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">272</span><a id="line.272">     *</a>
+<span class="sourceLineNo">273</span><a id="line.273">     * @see #getSeriesVisible()</a>
+<span class="sourceLineNo">274</span><a id="line.274">     *</a>
+<span class="sourceLineNo">275</span><a id="line.275">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">276</span><a id="line.276">     *     It is sufficient to rely on {@link #setSeriesVisible(int, Boolean)}</a>
+<span class="sourceLineNo">277</span><a id="line.277">     *     and {@link #setBaseSeriesVisible(boolean)}.</a>
+<span class="sourceLineNo">278</span><a id="line.278">     */</a>
+<span class="sourceLineNo">279</span><a id="line.279">    public void setSeriesVisible(Boolean visible);</a>
+<span class="sourceLineNo">280</span><a id="line.280"></a>
+<span class="sourceLineNo">281</span><a id="line.281">    /**</a>
+<span class="sourceLineNo">282</span><a id="line.282">     * Sets the flag that controls the visibility of ALL series and sends a</a>
+<span class="sourceLineNo">283</span><a id="line.283">     * {@link RendererChangeEvent} to all registered listeners.  This flag</a>
+<span class="sourceLineNo">284</span><a id="line.284">     * overrides the per series and default settings - you must set it to</a>
+<span class="sourceLineNo">285</span><a id="line.285">     * &lt;code&gt;null&lt;/code&gt; if you want the other settings to apply.</a>
+<span class="sourceLineNo">286</span><a id="line.286">     *</a>
+<span class="sourceLineNo">287</span><a id="line.287">     * @param visible  the flag (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">288</span><a id="line.288">     * @param notify  notify listeners?</a>
+<span class="sourceLineNo">289</span><a id="line.289">     *</a>
+<span class="sourceLineNo">290</span><a id="line.290">     * @see #getSeriesVisible()</a>
+<span class="sourceLineNo">291</span><a id="line.291">     *</a>
+<span class="sourceLineNo">292</span><a id="line.292">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">293</span><a id="line.293">     *     It is sufficient to rely on {@link #setSeriesVisible(int, Boolean,</a>
+<span class="sourceLineNo">294</span><a id="line.294">     *     boolean)} and {@link #setBaseSeriesVisible(boolean, boolean)}.</a>
+<span class="sourceLineNo">295</span><a id="line.295">     */</a>
+<span class="sourceLineNo">296</span><a id="line.296">    public void setSeriesVisible(Boolean visible, boolean notify);</a>
+<span class="sourceLineNo">297</span><a id="line.297"></a>
+<span class="sourceLineNo">298</span><a id="line.298">    /**</a>
+<span class="sourceLineNo">299</span><a id="line.299">     * Returns the flag that controls whether a series is visible.</a>
+<span class="sourceLineNo">300</span><a id="line.300">     *</a>
+<span class="sourceLineNo">301</span><a id="line.301">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">302</span><a id="line.302">     *</a>
+<span class="sourceLineNo">303</span><a id="line.303">     * @return The flag (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">304</span><a id="line.304">     *</a>
+<span class="sourceLineNo">305</span><a id="line.305">     * @see #setSeriesVisible(int, Boolean)</a>
+<span class="sourceLineNo">306</span><a id="line.306">     */</a>
+<span class="sourceLineNo">307</span><a id="line.307">    public Boolean getSeriesVisible(int series);</a>
+<span class="sourceLineNo">308</span><a id="line.308"></a>
+<span class="sourceLineNo">309</span><a id="line.309">    /**</a>
+<span class="sourceLineNo">310</span><a id="line.310">     * Sets the flag that controls whether a series is visible and sends a</a>
+<span class="sourceLineNo">311</span><a id="line.311">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">312</span><a id="line.312">     *</a>
+<span class="sourceLineNo">313</span><a id="line.313">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">314</span><a id="line.314">     * @param visible  the flag (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">315</span><a id="line.315">     *</a>
+<span class="sourceLineNo">316</span><a id="line.316">     * @see #getSeriesVisible(int)</a>
+<span class="sourceLineNo">317</span><a id="line.317">     */</a>
+<span class="sourceLineNo">318</span><a id="line.318">    public void setSeriesVisible(int series, Boolean visible);</a>
+<span class="sourceLineNo">319</span><a id="line.319"></a>
+<span class="sourceLineNo">320</span><a id="line.320">    /**</a>
+<span class="sourceLineNo">321</span><a id="line.321">     * Sets the flag that controls whether a series is visible and, if</a>
+<span class="sourceLineNo">322</span><a id="line.322">     * requested, sends a {@link RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">323</span><a id="line.323">     * listeners.</a>
+<span class="sourceLineNo">324</span><a id="line.324">     *</a>
+<span class="sourceLineNo">325</span><a id="line.325">     * @param series  the series index.</a>
+<span class="sourceLineNo">326</span><a id="line.326">     * @param visible  the flag (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">327</span><a id="line.327">     * @param notify  notify listeners?</a>
+<span class="sourceLineNo">328</span><a id="line.328">     *</a>
+<span class="sourceLineNo">329</span><a id="line.329">     * @see #getSeriesVisible(int)</a>
+<span class="sourceLineNo">330</span><a id="line.330">     */</a>
+<span class="sourceLineNo">331</span><a id="line.331">    public void setSeriesVisible(int series, Boolean visible, boolean notify);</a>
+<span class="sourceLineNo">332</span><a id="line.332"></a>
+<span class="sourceLineNo">333</span><a id="line.333">    /**</a>
+<span class="sourceLineNo">334</span><a id="line.334">     * Returns the base visibility for all series.</a>
+<span class="sourceLineNo">335</span><a id="line.335">     *</a>
+<span class="sourceLineNo">336</span><a id="line.336">     * @return The base visibility.</a>
+<span class="sourceLineNo">337</span><a id="line.337">     *</a>
+<span class="sourceLineNo">338</span><a id="line.338">     * @see #setBaseSeriesVisible(boolean)</a>
+<span class="sourceLineNo">339</span><a id="line.339">     */</a>
+<span class="sourceLineNo">340</span><a id="line.340">    public boolean getBaseSeriesVisible();</a>
+<span class="sourceLineNo">341</span><a id="line.341"></a>
+<span class="sourceLineNo">342</span><a id="line.342">    /**</a>
+<span class="sourceLineNo">343</span><a id="line.343">     * Sets the base visibility and sends a {@link RendererChangeEvent} to all</a>
+<span class="sourceLineNo">344</span><a id="line.344">     * registered listeners.</a>
+<span class="sourceLineNo">345</span><a id="line.345">     *</a>
+<span class="sourceLineNo">346</span><a id="line.346">     * @param visible  the flag.</a>
+<span class="sourceLineNo">347</span><a id="line.347">     *</a>
+<span class="sourceLineNo">348</span><a id="line.348">     * @see #getBaseSeriesVisible()</a>
+<span class="sourceLineNo">349</span><a id="line.349">     */</a>
+<span class="sourceLineNo">350</span><a id="line.350">    public void setBaseSeriesVisible(boolean visible);</a>
+<span class="sourceLineNo">351</span><a id="line.351"></a>
+<span class="sourceLineNo">352</span><a id="line.352">    /**</a>
+<span class="sourceLineNo">353</span><a id="line.353">     * Sets the base visibility and, if requested, sends</a>
+<span class="sourceLineNo">354</span><a id="line.354">     * a {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">355</span><a id="line.355">     *</a>
+<span class="sourceLineNo">356</span><a id="line.356">     * @param visible  the visibility.</a>
+<span class="sourceLineNo">357</span><a id="line.357">     * @param notify  notify listeners?</a>
+<span class="sourceLineNo">358</span><a id="line.358">     *</a>
+<span class="sourceLineNo">359</span><a id="line.359">     * @see #getBaseSeriesVisible()</a>
+<span class="sourceLineNo">360</span><a id="line.360">     */</a>
+<span class="sourceLineNo">361</span><a id="line.361">    public void setBaseSeriesVisible(boolean visible, boolean notify);</a>
+<span class="sourceLineNo">362</span><a id="line.362"></a>
+<span class="sourceLineNo">363</span><a id="line.363">    // SERIES VISIBLE IN LEGEND (not yet respected by all renderers)</a>
+<span class="sourceLineNo">364</span><a id="line.364"></a>
+<span class="sourceLineNo">365</span><a id="line.365">    /**</a>
+<span class="sourceLineNo">366</span><a id="line.366">     * Returns &lt;code&gt;true&lt;/code&gt; if the series should be shown in the legend,</a>
+<span class="sourceLineNo">367</span><a id="line.367">     * and &lt;code&gt;false&lt;/code&gt; otherwise.</a>
+<span class="sourceLineNo">368</span><a id="line.368">     *</a>
+<span class="sourceLineNo">369</span><a id="line.369">     * @param series  the series index.</a>
+<span class="sourceLineNo">370</span><a id="line.370">     *</a>
+<span class="sourceLineNo">371</span><a id="line.371">     * @return A boolean.</a>
+<span class="sourceLineNo">372</span><a id="line.372">     */</a>
+<span class="sourceLineNo">373</span><a id="line.373">    public boolean isSeriesVisibleInLegend(int series);</a>
+<span class="sourceLineNo">374</span><a id="line.374"></a>
+<span class="sourceLineNo">375</span><a id="line.375">    /**</a>
+<span class="sourceLineNo">376</span><a id="line.376">     * Returns the flag that controls the visibility of ALL series in the</a>
+<span class="sourceLineNo">377</span><a id="line.377">     * legend.  This flag overrides the per series and default settings - you</a>
+<span class="sourceLineNo">378</span><a id="line.378">     * must set it to &lt;code&gt;null&lt;/code&gt; if you want the other settings to</a>
+<span class="sourceLineNo">379</span><a id="line.379">     * apply.</a>
+<span class="sourceLineNo">380</span><a id="line.380">     *</a>
+<span class="sourceLineNo">381</span><a id="line.381">     * @return The flag (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">382</span><a id="line.382">     *</a>
+<span class="sourceLineNo">383</span><a id="line.383">     * @see #setSeriesVisibleInLegend(Boolean)</a>
+<span class="sourceLineNo">384</span><a id="line.384">     *</a>
+<span class="sourceLineNo">385</span><a id="line.385">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">386</span><a id="line.386">     *     It is sufficient to rely on {@link #getSeriesVisibleInLegend(int)}</a>
+<span class="sourceLineNo">387</span><a id="line.387">     *     and {@link #getBaseSeriesVisibleInLegend()}.</a>
+<span class="sourceLineNo">388</span><a id="line.388">     */</a>
+<span class="sourceLineNo">389</span><a id="line.389">    public Boolean getSeriesVisibleInLegend();</a>
+<span class="sourceLineNo">390</span><a id="line.390"></a>
+<span class="sourceLineNo">391</span><a id="line.391">    /**</a>
+<span class="sourceLineNo">392</span><a id="line.392">     * Sets the flag that controls the visibility of ALL series in the legend</a>
+<span class="sourceLineNo">393</span><a id="line.393">     * and sends a {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">394</span><a id="line.394">     * This flag overrides the per series and default settings - you must set</a>
+<span class="sourceLineNo">395</span><a id="line.395">     * it to &lt;code&gt;null&lt;/code&gt; if you want the other settings to apply.</a>
+<span class="sourceLineNo">396</span><a id="line.396">     *</a>
+<span class="sourceLineNo">397</span><a id="line.397">     * @param visible  the flag (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">398</span><a id="line.398">     *</a>
+<span class="sourceLineNo">399</span><a id="line.399">     * @see #getSeriesVisibleInLegend()</a>
+<span class="sourceLineNo">400</span><a id="line.400">     *</a>
+<span class="sourceLineNo">401</span><a id="line.401">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">402</span><a id="line.402">     *     It is sufficient to rely on {@link #setSeriesVisibleInLegend(int,</a>
+<span class="sourceLineNo">403</span><a id="line.403">     *     Boolean)} and {@link #setBaseSeriesVisibleInLegend(boolean)}.</a>
+<span class="sourceLineNo">404</span><a id="line.404">     */</a>
+<span class="sourceLineNo">405</span><a id="line.405">    public void setSeriesVisibleInLegend(Boolean visible);</a>
+<span class="sourceLineNo">406</span><a id="line.406"></a>
+<span class="sourceLineNo">407</span><a id="line.407">    /**</a>
+<span class="sourceLineNo">408</span><a id="line.408">     * Sets the flag that controls the visibility of ALL series in the legend</a>
+<span class="sourceLineNo">409</span><a id="line.409">     * and sends a {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">410</span><a id="line.410">     * This flag overrides the per series and default settings - you must set</a>
+<span class="sourceLineNo">411</span><a id="line.411">     * it to &lt;code&gt;null&lt;/code&gt; if you want the other settings to apply.</a>
+<span class="sourceLineNo">412</span><a id="line.412">     *</a>
+<span class="sourceLineNo">413</span><a id="line.413">     * @param visible  the flag (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">414</span><a id="line.414">     * @param notify  notify listeners?</a>
+<span class="sourceLineNo">415</span><a id="line.415">     *</a>
+<span class="sourceLineNo">416</span><a id="line.416">     * @see #getSeriesVisibleInLegend()</a>
+<span class="sourceLineNo">417</span><a id="line.417">     *</a>
+<span class="sourceLineNo">418</span><a id="line.418">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">419</span><a id="line.419">     *     It is sufficient to rely on {@link #setSeriesVisibleInLegend(int,</a>
+<span class="sourceLineNo">420</span><a id="line.420">     *     Boolean, boolean)} and {@link #setBaseSeriesVisibleInLegend(boolean,</a>
+<span class="sourceLineNo">421</span><a id="line.421">     *     boolean)}.</a>
+<span class="sourceLineNo">422</span><a id="line.422">     */</a>
+<span class="sourceLineNo">423</span><a id="line.423">    public void setSeriesVisibleInLegend(Boolean visible, boolean notify);</a>
+<span class="sourceLineNo">424</span><a id="line.424"></a>
+<span class="sourceLineNo">425</span><a id="line.425">    /**</a>
+<span class="sourceLineNo">426</span><a id="line.426">     * Returns the flag that controls whether a series is visible in the</a>
+<span class="sourceLineNo">427</span><a id="line.427">     * legend.  This method returns only the "per series" settings - to</a>
+<span class="sourceLineNo">428</span><a id="line.428">     * incorporate the override and base settings as well, you need to use the</a>
+<span class="sourceLineNo">429</span><a id="line.429">     * {@link #isSeriesVisibleInLegend(int)} method.</a>
+<span class="sourceLineNo">430</span><a id="line.430">     *</a>
+<span class="sourceLineNo">431</span><a id="line.431">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">432</span><a id="line.432">     *</a>
+<span class="sourceLineNo">433</span><a id="line.433">     * @return The flag (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">434</span><a id="line.434">     *</a>
+<span class="sourceLineNo">435</span><a id="line.435">     * @see #setSeriesVisibleInLegend(int, Boolean)</a>
+<span class="sourceLineNo">436</span><a id="line.436">     */</a>
+<span class="sourceLineNo">437</span><a id="line.437">    public Boolean getSeriesVisibleInLegend(int series);</a>
+<span class="sourceLineNo">438</span><a id="line.438"></a>
+<span class="sourceLineNo">439</span><a id="line.439">    /**</a>
+<span class="sourceLineNo">440</span><a id="line.440">     * Sets the flag that controls whether a series is visible in the legend</a>
+<span class="sourceLineNo">441</span><a id="line.441">     * and sends a {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">442</span><a id="line.442">     *</a>
+<span class="sourceLineNo">443</span><a id="line.443">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">444</span><a id="line.444">     * @param visible  the flag (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">445</span><a id="line.445">     *</a>
+<span class="sourceLineNo">446</span><a id="line.446">     * @see #getSeriesVisibleInLegend(int)</a>
+<span class="sourceLineNo">447</span><a id="line.447">     */</a>
+<span class="sourceLineNo">448</span><a id="line.448">    public void setSeriesVisibleInLegend(int series, Boolean visible);</a>
+<span class="sourceLineNo">449</span><a id="line.449"></a>
+<span class="sourceLineNo">450</span><a id="line.450">    /**</a>
+<span class="sourceLineNo">451</span><a id="line.451">     * Sets the flag that controls whether a series is visible in the legend</a>
+<span class="sourceLineNo">452</span><a id="line.452">     * and, if requested, sends a {@link RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">453</span><a id="line.453">     * listeners.</a>
+<span class="sourceLineNo">454</span><a id="line.454">     *</a>
+<span class="sourceLineNo">455</span><a id="line.455">     * @param series  the series index.</a>
+<span class="sourceLineNo">456</span><a id="line.456">     * @param visible  the flag (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">457</span><a id="line.457">     * @param notify  notify listeners?</a>
+<span class="sourceLineNo">458</span><a id="line.458">     *</a>
+<span class="sourceLineNo">459</span><a id="line.459">     * @see #getSeriesVisibleInLegend(int)</a>
+<span class="sourceLineNo">460</span><a id="line.460">     */</a>
+<span class="sourceLineNo">461</span><a id="line.461">    public void setSeriesVisibleInLegend(int series, Boolean visible,</a>
+<span class="sourceLineNo">462</span><a id="line.462">                                         boolean notify);</a>
+<span class="sourceLineNo">463</span><a id="line.463"></a>
+<span class="sourceLineNo">464</span><a id="line.464">    /**</a>
+<span class="sourceLineNo">465</span><a id="line.465">     * Returns the base visibility in the legend for all series.</a>
+<span class="sourceLineNo">466</span><a id="line.466">     *</a>
+<span class="sourceLineNo">467</span><a id="line.467">     * @return The base visibility.</a>
+<span class="sourceLineNo">468</span><a id="line.468">     *</a>
+<span class="sourceLineNo">469</span><a id="line.469">     * @see #setBaseSeriesVisibleInLegend(boolean)</a>
+<span class="sourceLineNo">470</span><a id="line.470">     */</a>
+<span class="sourceLineNo">471</span><a id="line.471">    public boolean getBaseSeriesVisibleInLegend();</a>
+<span class="sourceLineNo">472</span><a id="line.472"></a>
+<span class="sourceLineNo">473</span><a id="line.473">    /**</a>
+<span class="sourceLineNo">474</span><a id="line.474">     * Sets the base visibility in the legend and sends a</a>
+<span class="sourceLineNo">475</span><a id="line.475">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">476</span><a id="line.476">     *</a>
+<span class="sourceLineNo">477</span><a id="line.477">     * @param visible  the flag.</a>
+<span class="sourceLineNo">478</span><a id="line.478">     *</a>
+<span class="sourceLineNo">479</span><a id="line.479">     * @see #getBaseSeriesVisibleInLegend()</a>
+<span class="sourceLineNo">480</span><a id="line.480">     */</a>
+<span class="sourceLineNo">481</span><a id="line.481">    public void setBaseSeriesVisibleInLegend(boolean visible);</a>
+<span class="sourceLineNo">482</span><a id="line.482"></a>
+<span class="sourceLineNo">483</span><a id="line.483">    /**</a>
+<span class="sourceLineNo">484</span><a id="line.484">     * Sets the base visibility in the legend and, if requested, sends</a>
+<span class="sourceLineNo">485</span><a id="line.485">     * a {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">486</span><a id="line.486">     *</a>
+<span class="sourceLineNo">487</span><a id="line.487">     * @param visible  the visibility.</a>
+<span class="sourceLineNo">488</span><a id="line.488">     * @param notify  notify listeners?</a>
+<span class="sourceLineNo">489</span><a id="line.489">     *</a>
+<span class="sourceLineNo">490</span><a id="line.490">     * @see #getBaseSeriesVisibleInLegend()</a>
+<span class="sourceLineNo">491</span><a id="line.491">     */</a>
+<span class="sourceLineNo">492</span><a id="line.492">    public void setBaseSeriesVisibleInLegend(boolean visible, boolean notify);</a>
+<span class="sourceLineNo">493</span><a id="line.493"></a>
+<span class="sourceLineNo">494</span><a id="line.494"></a>
+<span class="sourceLineNo">495</span><a id="line.495">    //// PAINT /////////////////////////////////////////////////////////////////</a>
+<span class="sourceLineNo">496</span><a id="line.496"></a>
+<span class="sourceLineNo">497</span><a id="line.497">    /**</a>
+<span class="sourceLineNo">498</span><a id="line.498">     * Returns the paint used to fill data items as they are drawn.</a>
+<span class="sourceLineNo">499</span><a id="line.499">     *</a>
+<span class="sourceLineNo">500</span><a id="line.500">     * @param row  the row (or series) index (zero-based).</a>
+<span class="sourceLineNo">501</span><a id="line.501">     * @param column  the column (or category) index (zero-based).</a>
+<span class="sourceLineNo">502</span><a id="line.502">     *</a>
+<span class="sourceLineNo">503</span><a id="line.503">     * @return The paint (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">504</span><a id="line.504">     */</a>
+<span class="sourceLineNo">505</span><a id="line.505">    public Paint getItemPaint(int row, int column);</a>
+<span class="sourceLineNo">506</span><a id="line.506"></a>
+<span class="sourceLineNo">507</span><a id="line.507">    /**</a>
+<span class="sourceLineNo">508</span><a id="line.508">     * Sets the paint to be used for ALL series, and sends a</a>
+<span class="sourceLineNo">509</span><a id="line.509">     * {@link RendererChangeEvent} to all registered listeners.  If this is</a>
+<span class="sourceLineNo">510</span><a id="line.510">     * &lt;code&gt;null&lt;/code&gt;, the renderer will use the paint for the series.</a>
+<span class="sourceLineNo">511</span><a id="line.511">     *</a>
+<span class="sourceLineNo">512</span><a id="line.512">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">513</span><a id="line.513">     *</a>
+<span class="sourceLineNo">514</span><a id="line.514">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">515</span><a id="line.515">     *     It is sufficient to rely on {@link #setSeriesPaint(int, Paint)} and</a>
+<span class="sourceLineNo">516</span><a id="line.516">     *     {@link #setBasePaint(Paint)}.</a>
+<span class="sourceLineNo">517</span><a id="line.517">     */</a>
+<span class="sourceLineNo">518</span><a id="line.518">    public void setPaint(Paint paint);</a>
+<span class="sourceLineNo">519</span><a id="line.519"></a>
+<span class="sourceLineNo">520</span><a id="line.520">    /**</a>
+<span class="sourceLineNo">521</span><a id="line.521">     * Returns the paint used to fill an item drawn by the renderer.</a>
+<span class="sourceLineNo">522</span><a id="line.522">     *</a>
+<span class="sourceLineNo">523</span><a id="line.523">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">524</span><a id="line.524">     *</a>
+<span class="sourceLineNo">525</span><a id="line.525">     * @return The paint (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">526</span><a id="line.526">     *</a>
+<span class="sourceLineNo">527</span><a id="line.527">     * @see #setSeriesPaint(int, Paint)</a>
+<span class="sourceLineNo">528</span><a id="line.528">     */</a>
+<span class="sourceLineNo">529</span><a id="line.529">    public Paint getSeriesPaint(int series);</a>
+<span class="sourceLineNo">530</span><a id="line.530"></a>
+<span class="sourceLineNo">531</span><a id="line.531">    /**</a>
+<span class="sourceLineNo">532</span><a id="line.532">     * Sets the paint used for a series and sends a {@link RendererChangeEvent}</a>
+<span class="sourceLineNo">533</span><a id="line.533">     * to all registered listeners.</a>
+<span class="sourceLineNo">534</span><a id="line.534">     *</a>
+<span class="sourceLineNo">535</span><a id="line.535">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">536</span><a id="line.536">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">537</span><a id="line.537">     *</a>
+<span class="sourceLineNo">538</span><a id="line.538">     * @see #getSeriesPaint(int)</a>
+<span class="sourceLineNo">539</span><a id="line.539">     */</a>
+<span class="sourceLineNo">540</span><a id="line.540">    public void setSeriesPaint(int series, Paint paint);</a>
+<span class="sourceLineNo">541</span><a id="line.541"></a>
+<span class="sourceLineNo">542</span><a id="line.542">    // FIXME: add setSeriesPaint(int, Paint, boolean)?</a>
+<span class="sourceLineNo">543</span><a id="line.543"></a>
+<span class="sourceLineNo">544</span><a id="line.544">    /**</a>
+<span class="sourceLineNo">545</span><a id="line.545">     * Returns the base paint.</a>
+<span class="sourceLineNo">546</span><a id="line.546">     *</a>
+<span class="sourceLineNo">547</span><a id="line.547">     * @return The base paint (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">548</span><a id="line.548">     *</a>
+<span class="sourceLineNo">549</span><a id="line.549">     * @see #setBasePaint(Paint)</a>
+<span class="sourceLineNo">550</span><a id="line.550">     */</a>
+<span class="sourceLineNo">551</span><a id="line.551">    public Paint getBasePaint();</a>
+<span class="sourceLineNo">552</span><a id="line.552"></a>
+<span class="sourceLineNo">553</span><a id="line.553">    /**</a>
+<span class="sourceLineNo">554</span><a id="line.554">     * Sets the base paint and sends a {@link RendererChangeEvent} to all</a>
+<span class="sourceLineNo">555</span><a id="line.555">     * registered listeners.</a>
+<span class="sourceLineNo">556</span><a id="line.556">     *</a>
+<span class="sourceLineNo">557</span><a id="line.557">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">558</span><a id="line.558">     *</a>
+<span class="sourceLineNo">559</span><a id="line.559">     * @see #getBasePaint()</a>
+<span class="sourceLineNo">560</span><a id="line.560">     */</a>
+<span class="sourceLineNo">561</span><a id="line.561">    public void setBasePaint(Paint paint);</a>
+<span class="sourceLineNo">562</span><a id="line.562"></a>
+<span class="sourceLineNo">563</span><a id="line.563">    // FIXME: add setBasePaint(int, Paint, boolean)?</a>
+<span class="sourceLineNo">564</span><a id="line.564"></a>
+<span class="sourceLineNo">565</span><a id="line.565">    //// FILL PAINT /////////////////////////////////////////////////////////</a>
+<span class="sourceLineNo">566</span><a id="line.566"></a>
+<span class="sourceLineNo">567</span><a id="line.567">//    /**</a>
+<span class="sourceLineNo">568</span><a id="line.568">//     * Returns the paint used to fill data items as they are drawn.</a>
+<span class="sourceLineNo">569</span><a id="line.569">//     *</a>
+<span class="sourceLineNo">570</span><a id="line.570">//     * @param row  the row (or series) index (zero-based).</a>
+<span class="sourceLineNo">571</span><a id="line.571">//     * @param column  the column (or category) index (zero-based).</a>
+<span class="sourceLineNo">572</span><a id="line.572">//     *</a>
+<span class="sourceLineNo">573</span><a id="line.573">//     * @return The paint (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">574</span><a id="line.574">//     */</a>
+<span class="sourceLineNo">575</span><a id="line.575">//    public Paint getItemFillPaint(int row, int column);</a>
+<span class="sourceLineNo">576</span><a id="line.576">//</a>
+<span class="sourceLineNo">577</span><a id="line.577">//    /**</a>
+<span class="sourceLineNo">578</span><a id="line.578">//     * Returns the paint used to fill an item drawn by the renderer.</a>
+<span class="sourceLineNo">579</span><a id="line.579">//     *</a>
+<span class="sourceLineNo">580</span><a id="line.580">//     * @param series  the series (zero-based index).</a>
+<span class="sourceLineNo">581</span><a id="line.581">//     *</a>
+<span class="sourceLineNo">582</span><a id="line.582">//     * @return The paint (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">583</span><a id="line.583">//     *</a>
+<span class="sourceLineNo">584</span><a id="line.584">//     * @see #setSeriesFillPaint(int, Paint)</a>
+<span class="sourceLineNo">585</span><a id="line.585">//     */</a>
+<span class="sourceLineNo">586</span><a id="line.586">//    public Paint getSeriesFillPaint(int series);</a>
+<span class="sourceLineNo">587</span><a id="line.587">//</a>
+<span class="sourceLineNo">588</span><a id="line.588">//    /**</a>
+<span class="sourceLineNo">589</span><a id="line.589">//     * Sets the paint used for a series outline and sends a</a>
+<span class="sourceLineNo">590</span><a id="line.590">//     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">591</span><a id="line.591">//     *</a>
+<span class="sourceLineNo">592</span><a id="line.592">//     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">593</span><a id="line.593">//     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">594</span><a id="line.594">//     *</a>
+<span class="sourceLineNo">595</span><a id="line.595">//     * @see #getSeriesFillPaint(int)</a>
+<span class="sourceLineNo">596</span><a id="line.596">//     */</a>
+<span class="sourceLineNo">597</span><a id="line.597">//    public void setSeriesFillPaint(int series, Paint paint);</a>
+<span class="sourceLineNo">598</span><a id="line.598">//</a>
+<span class="sourceLineNo">599</span><a id="line.599">//    /**</a>
+<span class="sourceLineNo">600</span><a id="line.600">//     * Returns the base outline paint.</a>
+<span class="sourceLineNo">601</span><a id="line.601">//     *</a>
+<span class="sourceLineNo">602</span><a id="line.602">//     * @return The paint (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">603</span><a id="line.603">//     *</a>
+<span class="sourceLineNo">604</span><a id="line.604">//     * @see #setBaseFillPaint(Paint)</a>
+<span class="sourceLineNo">605</span><a id="line.605">//     */</a>
+<span class="sourceLineNo">606</span><a id="line.606">//    public Paint getBaseFillPaint();</a>
+<span class="sourceLineNo">607</span><a id="line.607">//</a>
+<span class="sourceLineNo">608</span><a id="line.608">//    /**</a>
+<span class="sourceLineNo">609</span><a id="line.609">//     * Sets the base outline paint and sends a {@link RendererChangeEvent} to</a>
+<span class="sourceLineNo">610</span><a id="line.610">//     * all registered listeners.</a>
+<span class="sourceLineNo">611</span><a id="line.611">//     *</a>
+<span class="sourceLineNo">612</span><a id="line.612">//     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">613</span><a id="line.613">//     *</a>
+<span class="sourceLineNo">614</span><a id="line.614">//     * @see #getBaseFillPaint()</a>
+<span class="sourceLineNo">615</span><a id="line.615">//     */</a>
+<span class="sourceLineNo">616</span><a id="line.616">//    public void setBaseFillPaint(Paint paint);</a>
+<span class="sourceLineNo">617</span><a id="line.617"></a>
+<span class="sourceLineNo">618</span><a id="line.618">    //// OUTLINE PAINT /////////////////////////////////////////////////////////</a>
+<span class="sourceLineNo">619</span><a id="line.619"></a>
+<span class="sourceLineNo">620</span><a id="line.620">    /**</a>
+<span class="sourceLineNo">621</span><a id="line.621">     * Returns the paint used to outline data items as they are drawn.</a>
+<span class="sourceLineNo">622</span><a id="line.622">     *</a>
+<span class="sourceLineNo">623</span><a id="line.623">     * @param row  the row (or series) index (zero-based).</a>
+<span class="sourceLineNo">624</span><a id="line.624">     * @param column  the column (or category) index (zero-based).</a>
+<span class="sourceLineNo">625</span><a id="line.625">     *</a>
+<span class="sourceLineNo">626</span><a id="line.626">     * @return The paint (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">627</span><a id="line.627">     */</a>
+<span class="sourceLineNo">628</span><a id="line.628">    public Paint getItemOutlinePaint(int row, int column);</a>
+<span class="sourceLineNo">629</span><a id="line.629"></a>
+<span class="sourceLineNo">630</span><a id="line.630">    /**</a>
+<span class="sourceLineNo">631</span><a id="line.631">     * Sets the outline paint for ALL series (optional).</a>
+<span class="sourceLineNo">632</span><a id="line.632">     *</a>
+<span class="sourceLineNo">633</span><a id="line.633">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">634</span><a id="line.634">     *</a>
+<span class="sourceLineNo">635</span><a id="line.635">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">636</span><a id="line.636">     *     It is sufficient to rely on {@link #setSeriesOutlinePaint(int,</a>
+<span class="sourceLineNo">637</span><a id="line.637">     *     Paint)} and {@link #setBaseOutlinePaint(Paint)}.</a>
+<span class="sourceLineNo">638</span><a id="line.638">     */</a>
+<span class="sourceLineNo">639</span><a id="line.639">    public void setOutlinePaint(Paint paint);</a>
+<span class="sourceLineNo">640</span><a id="line.640"></a>
+<span class="sourceLineNo">641</span><a id="line.641">    /**</a>
+<span class="sourceLineNo">642</span><a id="line.642">     * Returns the paint used to outline an item drawn by the renderer.</a>
+<span class="sourceLineNo">643</span><a id="line.643">     *</a>
+<span class="sourceLineNo">644</span><a id="line.644">     * @param series  the series (zero-based index).</a>
+<span class="sourceLineNo">645</span><a id="line.645">     *</a>
+<span class="sourceLineNo">646</span><a id="line.646">     * @return The paint (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">647</span><a id="line.647">     *</a>
+<span class="sourceLineNo">648</span><a id="line.648">     * @see #setSeriesOutlinePaint(int, Paint)</a>
+<span class="sourceLineNo">649</span><a id="line.649">     */</a>
+<span class="sourceLineNo">650</span><a id="line.650">    public Paint getSeriesOutlinePaint(int series);</a>
+<span class="sourceLineNo">651</span><a id="line.651"></a>
+<span class="sourceLineNo">652</span><a id="line.652">    /**</a>
+<span class="sourceLineNo">653</span><a id="line.653">     * Sets the paint used for a series outline and sends a</a>
+<span class="sourceLineNo">654</span><a id="line.654">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">655</span><a id="line.655">     *</a>
+<span class="sourceLineNo">656</span><a id="line.656">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">657</span><a id="line.657">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">658</span><a id="line.658">     *</a>
+<span class="sourceLineNo">659</span><a id="line.659">     * @see #getSeriesOutlinePaint(int)</a>
+<span class="sourceLineNo">660</span><a id="line.660">     */</a>
+<span class="sourceLineNo">661</span><a id="line.661">    public void setSeriesOutlinePaint(int series, Paint paint);</a>
+<span class="sourceLineNo">662</span><a id="line.662"></a>
+<span class="sourceLineNo">663</span><a id="line.663">    // FIXME: add setSeriesOutlinePaint(int, Paint, boolean)?</a>
+<span class="sourceLineNo">664</span><a id="line.664"></a>
+<span class="sourceLineNo">665</span><a id="line.665">    /**</a>
+<span class="sourceLineNo">666</span><a id="line.666">     * Returns the base outline paint.</a>
+<span class="sourceLineNo">667</span><a id="line.667">     *</a>
+<span class="sourceLineNo">668</span><a id="line.668">     * @return The paint (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">669</span><a id="line.669">     *</a>
+<span class="sourceLineNo">670</span><a id="line.670">     * @see #setBaseOutlinePaint(Paint)</a>
+<span class="sourceLineNo">671</span><a id="line.671">     */</a>
+<span class="sourceLineNo">672</span><a id="line.672">    public Paint getBaseOutlinePaint();</a>
+<span class="sourceLineNo">673</span><a id="line.673"></a>
+<span class="sourceLineNo">674</span><a id="line.674">    /**</a>
+<span class="sourceLineNo">675</span><a id="line.675">     * Sets the base outline paint and sends a {@link RendererChangeEvent} to</a>
+<span class="sourceLineNo">676</span><a id="line.676">     * all registered listeners.</a>
+<span class="sourceLineNo">677</span><a id="line.677">     *</a>
+<span class="sourceLineNo">678</span><a id="line.678">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">679</span><a id="line.679">     *</a>
+<span class="sourceLineNo">680</span><a id="line.680">     * @see #getBaseOutlinePaint()</a>
+<span class="sourceLineNo">681</span><a id="line.681">     */</a>
+<span class="sourceLineNo">682</span><a id="line.682">    public void setBaseOutlinePaint(Paint paint);</a>
+<span class="sourceLineNo">683</span><a id="line.683"></a>
+<span class="sourceLineNo">684</span><a id="line.684">    // FIXME: add setBaseOutlinePaint(Paint, boolean)?</a>
+<span class="sourceLineNo">685</span><a id="line.685"></a>
+<span class="sourceLineNo">686</span><a id="line.686">    //// STROKE ////////////////////////////////////////////////////////////////</a>
+<span class="sourceLineNo">687</span><a id="line.687"></a>
+<span class="sourceLineNo">688</span><a id="line.688">    /**</a>
+<span class="sourceLineNo">689</span><a id="line.689">     * Returns the stroke used to draw data items.</a>
+<span class="sourceLineNo">690</span><a id="line.690">     *</a>
+<span class="sourceLineNo">691</span><a id="line.691">     * @param row  the row (or series) index (zero-based).</a>
+<span class="sourceLineNo">692</span><a id="line.692">     * @param column  the column (or category) index (zero-based).</a>
+<span class="sourceLineNo">693</span><a id="line.693">     *</a>
+<span class="sourceLineNo">694</span><a id="line.694">     * @return The stroke (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">695</span><a id="line.695">     */</a>
+<span class="sourceLineNo">696</span><a id="line.696">    public Stroke getItemStroke(int row, int column);</a>
+<span class="sourceLineNo">697</span><a id="line.697"></a>
+<span class="sourceLineNo">698</span><a id="line.698">    /**</a>
+<span class="sourceLineNo">699</span><a id="line.699">     * Sets the stroke for ALL series and sends a {@link RendererChangeEvent}</a>
+<span class="sourceLineNo">700</span><a id="line.700">     * to all registered listeners.</a>
+<span class="sourceLineNo">701</span><a id="line.701">     *</a>
+<span class="sourceLineNo">702</span><a id="line.702">     * @param stroke  the stroke (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">703</span><a id="line.703">     *</a>
+<span class="sourceLineNo">704</span><a id="line.704">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">705</span><a id="line.705">     *     It is sufficient to rely on {@link #setSeriesStroke(int, Stroke)}</a>
+<span class="sourceLineNo">706</span><a id="line.706">     *     and {@link #setBaseStroke(Stroke)}.</a>
+<span class="sourceLineNo">707</span><a id="line.707">     */</a>
+<span class="sourceLineNo">708</span><a id="line.708">    public void setStroke(Stroke stroke);</a>
+<span class="sourceLineNo">709</span><a id="line.709"></a>
+<span class="sourceLineNo">710</span><a id="line.710">    /**</a>
+<span class="sourceLineNo">711</span><a id="line.711">     * Returns the stroke used to draw the items in a series.</a>
+<span class="sourceLineNo">712</span><a id="line.712">     *</a>
+<span class="sourceLineNo">713</span><a id="line.713">     * @param series  the series (zero-based index).</a>
+<span class="sourceLineNo">714</span><a id="line.714">     *</a>
+<span class="sourceLineNo">715</span><a id="line.715">     * @return The stroke (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">716</span><a id="line.716">     *</a>
+<span class="sourceLineNo">717</span><a id="line.717">     * @see #setSeriesStroke(int, Stroke)</a>
+<span class="sourceLineNo">718</span><a id="line.718">     */</a>
+<span class="sourceLineNo">719</span><a id="line.719">    public Stroke getSeriesStroke(int series);</a>
+<span class="sourceLineNo">720</span><a id="line.720"></a>
+<span class="sourceLineNo">721</span><a id="line.721">    /**</a>
+<span class="sourceLineNo">722</span><a id="line.722">     * Sets the stroke used for a series and sends a</a>
+<span class="sourceLineNo">723</span><a id="line.723">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">724</span><a id="line.724">     *</a>
+<span class="sourceLineNo">725</span><a id="line.725">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">726</span><a id="line.726">     * @param stroke  the stroke (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">727</span><a id="line.727">     *</a>
+<span class="sourceLineNo">728</span><a id="line.728">     * @see #getSeriesStroke(int)</a>
+<span class="sourceLineNo">729</span><a id="line.729">     */</a>
+<span class="sourceLineNo">730</span><a id="line.730">    public void setSeriesStroke(int series, Stroke stroke);</a>
+<span class="sourceLineNo">731</span><a id="line.731"></a>
+<span class="sourceLineNo">732</span><a id="line.732">    // FIXME: add setSeriesStroke(int, Stroke, boolean) ?</a>
+<span class="sourceLineNo">733</span><a id="line.733"></a>
+<span class="sourceLineNo">734</span><a id="line.734">    /**</a>
+<span class="sourceLineNo">735</span><a id="line.735">     * Returns the base stroke.</a>
+<span class="sourceLineNo">736</span><a id="line.736">     *</a>
+<span class="sourceLineNo">737</span><a id="line.737">     * @return The base stroke (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">738</span><a id="line.738">     *</a>
+<span class="sourceLineNo">739</span><a id="line.739">     * @see #setBaseStroke(Stroke)</a>
+<span class="sourceLineNo">740</span><a id="line.740">     */</a>
+<span class="sourceLineNo">741</span><a id="line.741">    public Stroke getBaseStroke();</a>
+<span class="sourceLineNo">742</span><a id="line.742"></a>
+<span class="sourceLineNo">743</span><a id="line.743">    /**</a>
+<span class="sourceLineNo">744</span><a id="line.744">     * Sets the base stroke and sends a {@link RendererChangeEvent} to all</a>
+<span class="sourceLineNo">745</span><a id="line.745">     * registered listeners.</a>
+<span class="sourceLineNo">746</span><a id="line.746">     *</a>
+<span class="sourceLineNo">747</span><a id="line.747">     * @param stroke  the stroke (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">748</span><a id="line.748">     *</a>
+<span class="sourceLineNo">749</span><a id="line.749">     * @see #getBaseStroke()</a>
+<span class="sourceLineNo">750</span><a id="line.750">     */</a>
+<span class="sourceLineNo">751</span><a id="line.751">    public void setBaseStroke(Stroke stroke);</a>
+<span class="sourceLineNo">752</span><a id="line.752"></a>
+<span class="sourceLineNo">753</span><a id="line.753">    // FIXME: add setBaseStroke(Stroke, boolean) ?</a>
+<span class="sourceLineNo">754</span><a id="line.754"></a>
+<span class="sourceLineNo">755</span><a id="line.755">    //// OUTLINE STROKE ////////////////////////////////////////////////////////</a>
+<span class="sourceLineNo">756</span><a id="line.756"></a>
+<span class="sourceLineNo">757</span><a id="line.757">    /**</a>
+<span class="sourceLineNo">758</span><a id="line.758">     * Returns the stroke used to outline data items.</a>
+<span class="sourceLineNo">759</span><a id="line.759">     * &lt;p&gt;</a>
+<span class="sourceLineNo">760</span><a id="line.760">     * The default implementation passes control to the</a>
+<span class="sourceLineNo">761</span><a id="line.761">     * lookupSeriesOutlineStroke method.  You can override this method if you</a>
+<span class="sourceLineNo">762</span><a id="line.762">     * require different behaviour.</a>
+<span class="sourceLineNo">763</span><a id="line.763">     *</a>
+<span class="sourceLineNo">764</span><a id="line.764">     * @param row  the row (or series) index (zero-based).</a>
+<span class="sourceLineNo">765</span><a id="line.765">     * @param column  the column (or category) index (zero-based).</a>
+<span class="sourceLineNo">766</span><a id="line.766">     *</a>
+<span class="sourceLineNo">767</span><a id="line.767">     * @return The stroke (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">768</span><a id="line.768">     */</a>
+<span class="sourceLineNo">769</span><a id="line.769">    public Stroke getItemOutlineStroke(int row, int column);</a>
+<span class="sourceLineNo">770</span><a id="line.770"></a>
+<span class="sourceLineNo">771</span><a id="line.771">    /**</a>
+<span class="sourceLineNo">772</span><a id="line.772">     * Sets the outline stroke for ALL series and sends a</a>
+<span class="sourceLineNo">773</span><a id="line.773">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">774</span><a id="line.774">     *</a>
+<span class="sourceLineNo">775</span><a id="line.775">     * @param stroke  the stroke (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">776</span><a id="line.776">     *</a>
+<span class="sourceLineNo">777</span><a id="line.777">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">778</span><a id="line.778">     *     It is sufficient to rely on {@link #setSeriesOutlineStroke(int,</a>
+<span class="sourceLineNo">779</span><a id="line.779">     *     Stroke)} and {@link #setBaseOutlineStroke(Stroke)}.</a>
+<span class="sourceLineNo">780</span><a id="line.780">     */</a>
+<span class="sourceLineNo">781</span><a id="line.781">    public void setOutlineStroke(Stroke stroke);</a>
+<span class="sourceLineNo">782</span><a id="line.782"></a>
+<span class="sourceLineNo">783</span><a id="line.783">    /**</a>
+<span class="sourceLineNo">784</span><a id="line.784">     * Returns the stroke used to outline the items in a series.</a>
+<span class="sourceLineNo">785</span><a id="line.785">     *</a>
+<span class="sourceLineNo">786</span><a id="line.786">     * @param series  the series (zero-based index).</a>
+<span class="sourceLineNo">787</span><a id="line.787">     *</a>
+<span class="sourceLineNo">788</span><a id="line.788">     * @return The stroke (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">789</span><a id="line.789">     *</a>
+<span class="sourceLineNo">790</span><a id="line.790">     * @see #setSeriesOutlineStroke(int, Stroke)</a>
+<span class="sourceLineNo">791</span><a id="line.791">     */</a>
+<span class="sourceLineNo">792</span><a id="line.792">    public Stroke getSeriesOutlineStroke(int series);</a>
+<span class="sourceLineNo">793</span><a id="line.793"></a>
+<span class="sourceLineNo">794</span><a id="line.794">    /**</a>
+<span class="sourceLineNo">795</span><a id="line.795">     * Sets the outline stroke used for a series and sends a</a>
+<span class="sourceLineNo">796</span><a id="line.796">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">797</span><a id="line.797">     *</a>
+<span class="sourceLineNo">798</span><a id="line.798">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">799</span><a id="line.799">     * @param stroke  the stroke (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">800</span><a id="line.800">     *</a>
+<span class="sourceLineNo">801</span><a id="line.801">     * @see #getSeriesOutlineStroke(int)</a>
+<span class="sourceLineNo">802</span><a id="line.802">     */</a>
+<span class="sourceLineNo">803</span><a id="line.803">    public void setSeriesOutlineStroke(int series, Stroke stroke);</a>
+<span class="sourceLineNo">804</span><a id="line.804"></a>
+<span class="sourceLineNo">805</span><a id="line.805">    // FIXME: add setSeriesOutlineStroke(int, Stroke, boolean) ?</a>
+<span class="sourceLineNo">806</span><a id="line.806"></a>
+<span class="sourceLineNo">807</span><a id="line.807">    /**</a>
+<span class="sourceLineNo">808</span><a id="line.808">     * Returns the base outline stroke.</a>
+<span class="sourceLineNo">809</span><a id="line.809">     *</a>
+<span class="sourceLineNo">810</span><a id="line.810">     * @return The stroke (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">811</span><a id="line.811">     *</a>
+<span class="sourceLineNo">812</span><a id="line.812">     * @see #setBaseOutlineStroke(Stroke)</a>
+<span class="sourceLineNo">813</span><a id="line.813">     */</a>
+<span class="sourceLineNo">814</span><a id="line.814">    public Stroke getBaseOutlineStroke();</a>
+<span class="sourceLineNo">815</span><a id="line.815"></a>
+<span class="sourceLineNo">816</span><a id="line.816">    /**</a>
+<span class="sourceLineNo">817</span><a id="line.817">     * Sets the base outline stroke and sends a {@link RendererChangeEvent} to</a>
+<span class="sourceLineNo">818</span><a id="line.818">     * all registered listeners.</a>
+<span class="sourceLineNo">819</span><a id="line.819">     *</a>
+<span class="sourceLineNo">820</span><a id="line.820">     * @param stroke  the stroke (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">821</span><a id="line.821">     *</a>
+<span class="sourceLineNo">822</span><a id="line.822">     * @see #getBaseOutlineStroke()</a>
+<span class="sourceLineNo">823</span><a id="line.823">     */</a>
+<span class="sourceLineNo">824</span><a id="line.824">    public void setBaseOutlineStroke(Stroke stroke);</a>
+<span class="sourceLineNo">825</span><a id="line.825"></a>
+<span class="sourceLineNo">826</span><a id="line.826">    // FIXME: add setBaseOutlineStroke(Stroke, boolean) ?</a>
+<span class="sourceLineNo">827</span><a id="line.827"></a>
+<span class="sourceLineNo">828</span><a id="line.828">    //// SHAPE /////////////////////////////////////////////////////////////////</a>
+<span class="sourceLineNo">829</span><a id="line.829"></a>
+<span class="sourceLineNo">830</span><a id="line.830">    /**</a>
+<span class="sourceLineNo">831</span><a id="line.831">     * Returns a shape used to represent a data item.</a>
+<span class="sourceLineNo">832</span><a id="line.832">     *</a>
+<span class="sourceLineNo">833</span><a id="line.833">     * @param row  the row (or series) index (zero-based).</a>
+<span class="sourceLineNo">834</span><a id="line.834">     * @param column  the column (or category) index (zero-based).</a>
+<span class="sourceLineNo">835</span><a id="line.835">     *</a>
+<span class="sourceLineNo">836</span><a id="line.836">     * @return The shape (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">837</span><a id="line.837">     */</a>
+<span class="sourceLineNo">838</span><a id="line.838">    public Shape getItemShape(int row, int column);</a>
+<span class="sourceLineNo">839</span><a id="line.839"></a>
+<span class="sourceLineNo">840</span><a id="line.840">    /**</a>
+<span class="sourceLineNo">841</span><a id="line.841">     * Sets the shape for ALL series (optional) and sends a</a>
+<span class="sourceLineNo">842</span><a id="line.842">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">843</span><a id="line.843">     *</a>
+<span class="sourceLineNo">844</span><a id="line.844">     * @param shape  the shape (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">845</span><a id="line.845">     *</a>
+<span class="sourceLineNo">846</span><a id="line.846">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">847</span><a id="line.847">     *     It is sufficient to rely on {@link #setSeriesShape(int, Shape)} and</a>
+<span class="sourceLineNo">848</span><a id="line.848">     *     {@link #setBaseShape(Shape)}.</a>
+<span class="sourceLineNo">849</span><a id="line.849">     */</a>
+<span class="sourceLineNo">850</span><a id="line.850">    public void setShape(Shape shape);</a>
+<span class="sourceLineNo">851</span><a id="line.851"></a>
+<span class="sourceLineNo">852</span><a id="line.852">    /**</a>
+<span class="sourceLineNo">853</span><a id="line.853">     * Returns a shape used to represent the items in a series.</a>
+<span class="sourceLineNo">854</span><a id="line.854">     *</a>
+<span class="sourceLineNo">855</span><a id="line.855">     * @param series  the series (zero-based index).</a>
+<span class="sourceLineNo">856</span><a id="line.856">     *</a>
+<span class="sourceLineNo">857</span><a id="line.857">     * @return The shape (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">858</span><a id="line.858">     *</a>
+<span class="sourceLineNo">859</span><a id="line.859">     * @see #setSeriesShape(int, Shape)</a>
+<span class="sourceLineNo">860</span><a id="line.860">     */</a>
+<span class="sourceLineNo">861</span><a id="line.861">    public Shape getSeriesShape(int series);</a>
+<span class="sourceLineNo">862</span><a id="line.862"></a>
+<span class="sourceLineNo">863</span><a id="line.863">    /**</a>
+<span class="sourceLineNo">864</span><a id="line.864">     * Sets the shape used for a series and sends a {@link RendererChangeEvent}</a>
+<span class="sourceLineNo">865</span><a id="line.865">     * to all registered listeners.</a>
+<span class="sourceLineNo">866</span><a id="line.866">     *</a>
+<span class="sourceLineNo">867</span><a id="line.867">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">868</span><a id="line.868">     * @param shape  the shape (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">869</span><a id="line.869">     *</a>
+<span class="sourceLineNo">870</span><a id="line.870">     * @see #getSeriesShape(int)</a>
+<span class="sourceLineNo">871</span><a id="line.871">     */</a>
+<span class="sourceLineNo">872</span><a id="line.872">    public void setSeriesShape(int series, Shape shape);</a>
+<span class="sourceLineNo">873</span><a id="line.873"></a>
+<span class="sourceLineNo">874</span><a id="line.874">    // FIXME: add setSeriesShape(int, Shape, boolean) ?</a>
+<span class="sourceLineNo">875</span><a id="line.875"></a>
+<span class="sourceLineNo">876</span><a id="line.876">    /**</a>
+<span class="sourceLineNo">877</span><a id="line.877">     * Returns the base shape.</a>
+<span class="sourceLineNo">878</span><a id="line.878">     *</a>
+<span class="sourceLineNo">879</span><a id="line.879">     * @return The shape (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">880</span><a id="line.880">     *</a>
+<span class="sourceLineNo">881</span><a id="line.881">     * @see #setBaseShape(Shape)</a>
+<span class="sourceLineNo">882</span><a id="line.882">     */</a>
+<span class="sourceLineNo">883</span><a id="line.883">    public Shape getBaseShape();</a>
+<span class="sourceLineNo">884</span><a id="line.884"></a>
+<span class="sourceLineNo">885</span><a id="line.885">    /**</a>
+<span class="sourceLineNo">886</span><a id="line.886">     * Sets the base shape and sends a {@link RendererChangeEvent} to all</a>
+<span class="sourceLineNo">887</span><a id="line.887">     * registered listeners.</a>
+<span class="sourceLineNo">888</span><a id="line.888">     *</a>
+<span class="sourceLineNo">889</span><a id="line.889">     * @param shape  the shape (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">890</span><a id="line.890">     *</a>
+<span class="sourceLineNo">891</span><a id="line.891">     * @see #getBaseShape()</a>
+<span class="sourceLineNo">892</span><a id="line.892">     */</a>
+<span class="sourceLineNo">893</span><a id="line.893">    public void setBaseShape(Shape shape);</a>
+<span class="sourceLineNo">894</span><a id="line.894"></a>
+<span class="sourceLineNo">895</span><a id="line.895">    // FIXME: add setBaseShape(Shape, boolean) ?</a>
+<span class="sourceLineNo">896</span><a id="line.896"></a>
+<span class="sourceLineNo">897</span><a id="line.897">    // ITEM LABELS VISIBLE</a>
+<span class="sourceLineNo">898</span><a id="line.898"></a>
+<span class="sourceLineNo">899</span><a id="line.899">    /**</a>
+<span class="sourceLineNo">900</span><a id="line.900">     * Returns &lt;code&gt;true&lt;/code&gt; if an item label is visible, and</a>
+<span class="sourceLineNo">901</span><a id="line.901">     * &lt;code&gt;false&lt;/code&gt; otherwise.</a>
+<span class="sourceLineNo">902</span><a id="line.902">     *</a>
+<span class="sourceLineNo">903</span><a id="line.903">     * @param row  the row index (zero-based).</a>
+<span class="sourceLineNo">904</span><a id="line.904">     * @param column  the column index (zero-based).</a>
+<span class="sourceLineNo">905</span><a id="line.905">     *</a>
+<span class="sourceLineNo">906</span><a id="line.906">     * @return A boolean.</a>
+<span class="sourceLineNo">907</span><a id="line.907">     */</a>
+<span class="sourceLineNo">908</span><a id="line.908">    public boolean isItemLabelVisible(int row, int column);</a>
+<span class="sourceLineNo">909</span><a id="line.909"></a>
+<span class="sourceLineNo">910</span><a id="line.910">    /**</a>
+<span class="sourceLineNo">911</span><a id="line.911">     * Sets a flag that controls whether or not the item labels for ALL series</a>
+<span class="sourceLineNo">912</span><a id="line.912">     * are visible.</a>
+<span class="sourceLineNo">913</span><a id="line.913">     *</a>
+<span class="sourceLineNo">914</span><a id="line.914">     * @param visible  the flag.</a>
+<span class="sourceLineNo">915</span><a id="line.915">     *</a>
+<span class="sourceLineNo">916</span><a id="line.916">     * @see #setItemLabelsVisible(Boolean)</a>
+<span class="sourceLineNo">917</span><a id="line.917">     *</a>
+<span class="sourceLineNo">918</span><a id="line.918">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">919</span><a id="line.919">     *     It is sufficient to rely on {@link #setSeriesItemLabelsVisible(int,</a>
+<span class="sourceLineNo">920</span><a id="line.920">     *     Boolean)} and {@link #setBaseItemLabelsVisible(boolean)}.</a>
+<span class="sourceLineNo">921</span><a id="line.921">     */</a>
+<span class="sourceLineNo">922</span><a id="line.922">    public void setItemLabelsVisible(boolean visible);</a>
+<span class="sourceLineNo">923</span><a id="line.923"></a>
+<span class="sourceLineNo">924</span><a id="line.924">    /**</a>
+<span class="sourceLineNo">925</span><a id="line.925">     * Sets a flag that controls whether or not the item labels for ALL series</a>
+<span class="sourceLineNo">926</span><a id="line.926">     * are visible.</a>
+<span class="sourceLineNo">927</span><a id="line.927">     *</a>
+<span class="sourceLineNo">928</span><a id="line.928">     * @param visible  the flag (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">929</span><a id="line.929">     *</a>
+<span class="sourceLineNo">930</span><a id="line.930">     * @see #setItemLabelsVisible(boolean)</a>
+<span class="sourceLineNo">931</span><a id="line.931">     *</a>
+<span class="sourceLineNo">932</span><a id="line.932">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">933</span><a id="line.933">     *     It is sufficient to rely on {@link #setSeriesItemLabelsVisible(int,</a>
+<span class="sourceLineNo">934</span><a id="line.934">     *     Boolean)} and {@link #setBaseItemLabelsVisible(boolean)}.</a>
+<span class="sourceLineNo">935</span><a id="line.935">     */</a>
+<span class="sourceLineNo">936</span><a id="line.936">    public void setItemLabelsVisible(Boolean visible);</a>
+<span class="sourceLineNo">937</span><a id="line.937"></a>
+<span class="sourceLineNo">938</span><a id="line.938">    /**</a>
+<span class="sourceLineNo">939</span><a id="line.939">     * Sets the visibility of item labels for ALL series and, if requested,</a>
+<span class="sourceLineNo">940</span><a id="line.940">     * sends a {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">941</span><a id="line.941">     *</a>
+<span class="sourceLineNo">942</span><a id="line.942">     * @param visible  a flag that controls whether or not the item labels are</a>
+<span class="sourceLineNo">943</span><a id="line.943">     *                 visible (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">944</span><a id="line.944">     * @param notify  a flag that controls whether or not listeners are</a>
+<span class="sourceLineNo">945</span><a id="line.945">     *                notified.</a>
+<span class="sourceLineNo">946</span><a id="line.946">     *</a>
+<span class="sourceLineNo">947</span><a id="line.947">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">948</span><a id="line.948">     *     It is sufficient to rely on {@link #setSeriesItemLabelsVisible(int,</a>
+<span class="sourceLineNo">949</span><a id="line.949">     *     Boolean, boolean)} and {@link #setBaseItemLabelsVisible(Boolean,</a>
+<span class="sourceLineNo">950</span><a id="line.950">     *     boolean)}.</a>
+<span class="sourceLineNo">951</span><a id="line.951">     */</a>
+<span class="sourceLineNo">952</span><a id="line.952">    public void setItemLabelsVisible(Boolean visible, boolean notify);</a>
+<span class="sourceLineNo">953</span><a id="line.953"></a>
+<span class="sourceLineNo">954</span><a id="line.954">    /**</a>
+<span class="sourceLineNo">955</span><a id="line.955">     * Returns &lt;code&gt;true&lt;/code&gt; if the item labels for a series are visible,</a>
+<span class="sourceLineNo">956</span><a id="line.956">     * and &lt;code&gt;false&lt;/code&gt; otherwise.</a>
+<span class="sourceLineNo">957</span><a id="line.957">     *</a>
+<span class="sourceLineNo">958</span><a id="line.958">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">959</span><a id="line.959">     *</a>
+<span class="sourceLineNo">960</span><a id="line.960">     * @return A boolean.</a>
+<span class="sourceLineNo">961</span><a id="line.961">     *</a>
+<span class="sourceLineNo">962</span><a id="line.962">     * @see #setSeriesItemLabelsVisible(int, Boolean)</a>
+<span class="sourceLineNo">963</span><a id="line.963">     */</a>
+<span class="sourceLineNo">964</span><a id="line.964">    public boolean isSeriesItemLabelsVisible(int series);</a>
+<span class="sourceLineNo">965</span><a id="line.965"></a>
+<span class="sourceLineNo">966</span><a id="line.966">    /**</a>
+<span class="sourceLineNo">967</span><a id="line.967">     * Sets a flag that controls the visibility of the item labels for a series.</a>
+<span class="sourceLineNo">968</span><a id="line.968">     *</a>
+<span class="sourceLineNo">969</span><a id="line.969">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">970</span><a id="line.970">     * @param visible  the flag.</a>
+<span class="sourceLineNo">971</span><a id="line.971">     *</a>
+<span class="sourceLineNo">972</span><a id="line.972">     * @see #isSeriesItemLabelsVisible(int)</a>
+<span class="sourceLineNo">973</span><a id="line.973">     */</a>
+<span class="sourceLineNo">974</span><a id="line.974">    public void setSeriesItemLabelsVisible(int series, boolean visible);</a>
+<span class="sourceLineNo">975</span><a id="line.975"></a>
+<span class="sourceLineNo">976</span><a id="line.976">    /**</a>
+<span class="sourceLineNo">977</span><a id="line.977">     * Sets a flag that controls the visibility of the item labels for a series.</a>
+<span class="sourceLineNo">978</span><a id="line.978">     *</a>
+<span class="sourceLineNo">979</span><a id="line.979">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">980</span><a id="line.980">     * @param visible  the flag (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">981</span><a id="line.981">     *</a>
+<span class="sourceLineNo">982</span><a id="line.982">     * @see #isSeriesItemLabelsVisible(int)</a>
+<span class="sourceLineNo">983</span><a id="line.983">     */</a>
+<span class="sourceLineNo">984</span><a id="line.984">    public void setSeriesItemLabelsVisible(int series, Boolean visible);</a>
+<span class="sourceLineNo">985</span><a id="line.985"></a>
+<span class="sourceLineNo">986</span><a id="line.986">    /**</a>
+<span class="sourceLineNo">987</span><a id="line.987">     * Sets the visibility of item labels for a series and, if requested, sends</a>
+<span class="sourceLineNo">988</span><a id="line.988">     * a {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">989</span><a id="line.989">     *</a>
+<span class="sourceLineNo">990</span><a id="line.990">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">991</span><a id="line.991">     * @param visible  the visible flag.</a>
+<span class="sourceLineNo">992</span><a id="line.992">     * @param notify  a flag that controls whether or not listeners are</a>
+<span class="sourceLineNo">993</span><a id="line.993">     *                notified.</a>
+<span class="sourceLineNo">994</span><a id="line.994">     *</a>
+<span class="sourceLineNo">995</span><a id="line.995">     * @see #isSeriesItemLabelsVisible(int)</a>
+<span class="sourceLineNo">996</span><a id="line.996">     */</a>
+<span class="sourceLineNo">997</span><a id="line.997">    public void setSeriesItemLabelsVisible(int series, Boolean visible,</a>
+<span class="sourceLineNo">998</span><a id="line.998">                                           boolean notify);</a>
+<span class="sourceLineNo">999</span><a id="line.999"></a>
+<span class="sourceLineNo">1000</span><a id="line.1000">    /**</a>
+<span class="sourceLineNo">1001</span><a id="line.1001">     * Returns the base setting for item label visibility.  A &lt;code&gt;null&lt;/code&gt;</a>
+<span class="sourceLineNo">1002</span><a id="line.1002">     * result should be interpreted as equivalent to &lt;code&gt;Boolean.FALSE&lt;/code&gt;</a>
+<span class="sourceLineNo">1003</span><a id="line.1003">     * (this is an error in the API design, the return value should have been</a>
+<span class="sourceLineNo">1004</span><a id="line.1004">     * a boolean primitive).</a>
+<span class="sourceLineNo">1005</span><a id="line.1005">     *</a>
+<span class="sourceLineNo">1006</span><a id="line.1006">     * @return A flag (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1007</span><a id="line.1007">     *</a>
+<span class="sourceLineNo">1008</span><a id="line.1008">     * @see #setBaseItemLabelsVisible(Boolean)</a>
+<span class="sourceLineNo">1009</span><a id="line.1009">     */</a>
+<span class="sourceLineNo">1010</span><a id="line.1010">    public Boolean getBaseItemLabelsVisible();</a>
+<span class="sourceLineNo">1011</span><a id="line.1011"></a>
+<span class="sourceLineNo">1012</span><a id="line.1012">    /**</a>
+<span class="sourceLineNo">1013</span><a id="line.1013">     * Sets the base flag that controls whether or not item labels are visible</a>
+<span class="sourceLineNo">1014</span><a id="line.1014">     * and sends a {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1015</span><a id="line.1015">     *</a>
+<span class="sourceLineNo">1016</span><a id="line.1016">     * @param visible  the flag.</a>
+<span class="sourceLineNo">1017</span><a id="line.1017">     *</a>
+<span class="sourceLineNo">1018</span><a id="line.1018">     * @see #getBaseItemLabelsVisible()</a>
+<span class="sourceLineNo">1019</span><a id="line.1019">     */</a>
+<span class="sourceLineNo">1020</span><a id="line.1020">    public void setBaseItemLabelsVisible(boolean visible);</a>
+<span class="sourceLineNo">1021</span><a id="line.1021"></a>
+<span class="sourceLineNo">1022</span><a id="line.1022">    /**</a>
+<span class="sourceLineNo">1023</span><a id="line.1023">     * Sets the base setting for item label visibility and sends a</a>
+<span class="sourceLineNo">1024</span><a id="line.1024">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1025</span><a id="line.1025">     *</a>
+<span class="sourceLineNo">1026</span><a id="line.1026">     * @param visible  the flag (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1027</span><a id="line.1027">     *</a>
+<span class="sourceLineNo">1028</span><a id="line.1028">     * @see #getBaseItemLabelsVisible()</a>
+<span class="sourceLineNo">1029</span><a id="line.1029">     */</a>
+<span class="sourceLineNo">1030</span><a id="line.1030">    public void setBaseItemLabelsVisible(Boolean visible);</a>
+<span class="sourceLineNo">1031</span><a id="line.1031"></a>
+<span class="sourceLineNo">1032</span><a id="line.1032">    /**</a>
+<span class="sourceLineNo">1033</span><a id="line.1033">     * Sets the base visibility for item labels and, if requested, sends a</a>
+<span class="sourceLineNo">1034</span><a id="line.1034">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1035</span><a id="line.1035">     *</a>
+<span class="sourceLineNo">1036</span><a id="line.1036">     * @param visible  the visibility flag.</a>
+<span class="sourceLineNo">1037</span><a id="line.1037">     * @param notify  a flag that controls whether or not listeners are</a>
+<span class="sourceLineNo">1038</span><a id="line.1038">     *                notified.</a>
+<span class="sourceLineNo">1039</span><a id="line.1039">     *</a>
+<span class="sourceLineNo">1040</span><a id="line.1040">     * @see #getBaseItemLabelsVisible()</a>
+<span class="sourceLineNo">1041</span><a id="line.1041">     */</a>
+<span class="sourceLineNo">1042</span><a id="line.1042">    public void setBaseItemLabelsVisible(Boolean visible, boolean notify);</a>
+<span class="sourceLineNo">1043</span><a id="line.1043"></a>
+<span class="sourceLineNo">1044</span><a id="line.1044">    // ITEM LABEL GENERATOR</a>
+<span class="sourceLineNo">1045</span><a id="line.1045"></a>
+<span class="sourceLineNo">1046</span><a id="line.1046">    /**</a>
+<span class="sourceLineNo">1047</span><a id="line.1047">     * Returns the item label generator for the specified data item.</a>
+<span class="sourceLineNo">1048</span><a id="line.1048">     *</a>
+<span class="sourceLineNo">1049</span><a id="line.1049">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1050</span><a id="line.1050">     * @param item  the item index (zero-based).</a>
+<span class="sourceLineNo">1051</span><a id="line.1051">     *</a>
+<span class="sourceLineNo">1052</span><a id="line.1052">     * @return The generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1053</span><a id="line.1053">     */</a>
+<span class="sourceLineNo">1054</span><a id="line.1054">    public CategoryItemLabelGenerator getItemLabelGenerator(int series,</a>
+<span class="sourceLineNo">1055</span><a id="line.1055">            int item);</a>
+<span class="sourceLineNo">1056</span><a id="line.1056"></a>
+<span class="sourceLineNo">1057</span><a id="line.1057">    /**</a>
+<span class="sourceLineNo">1058</span><a id="line.1058">     * Sets the item label generator for ALL series and sends a</a>
+<span class="sourceLineNo">1059</span><a id="line.1059">     * {@link RendererChangeEvent} to all registered listeners.  This overrides</a>
+<span class="sourceLineNo">1060</span><a id="line.1060">     * the per-series settings.</a>
+<span class="sourceLineNo">1061</span><a id="line.1061">     *</a>
+<span class="sourceLineNo">1062</span><a id="line.1062">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1063</span><a id="line.1063">     *</a>
+<span class="sourceLineNo">1064</span><a id="line.1064">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1065</span><a id="line.1065">     *     It is sufficient to rely on {@link #setSeriesItemLabelGenerator(int,</a>
+<span class="sourceLineNo">1066</span><a id="line.1066">     *     CategoryItemLabelGenerator)} and</a>
+<span class="sourceLineNo">1067</span><a id="line.1067">     *     {@link #setBaseItemLabelGenerator(CategoryItemLabelGenerator)}.</a>
+<span class="sourceLineNo">1068</span><a id="line.1068">     */</a>
+<span class="sourceLineNo">1069</span><a id="line.1069">    public void setItemLabelGenerator(CategoryItemLabelGenerator generator);</a>
+<span class="sourceLineNo">1070</span><a id="line.1070"></a>
+<span class="sourceLineNo">1071</span><a id="line.1071">    /**</a>
+<span class="sourceLineNo">1072</span><a id="line.1072">     * Returns the item label generator for a series.</a>
+<span class="sourceLineNo">1073</span><a id="line.1073">     *</a>
+<span class="sourceLineNo">1074</span><a id="line.1074">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1075</span><a id="line.1075">     *</a>
+<span class="sourceLineNo">1076</span><a id="line.1076">     * @return The label generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1077</span><a id="line.1077">     *</a>
+<span class="sourceLineNo">1078</span><a id="line.1078">     * @see #setSeriesItemLabelGenerator(int, CategoryItemLabelGenerator)</a>
+<span class="sourceLineNo">1079</span><a id="line.1079">     */</a>
+<span class="sourceLineNo">1080</span><a id="line.1080">    public CategoryItemLabelGenerator getSeriesItemLabelGenerator(int series);</a>
+<span class="sourceLineNo">1081</span><a id="line.1081"></a>
+<span class="sourceLineNo">1082</span><a id="line.1082">    /**</a>
+<span class="sourceLineNo">1083</span><a id="line.1083">     * Sets the item label generator for a series and sends a</a>
+<span class="sourceLineNo">1084</span><a id="line.1084">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1085</span><a id="line.1085">     *</a>
+<span class="sourceLineNo">1086</span><a id="line.1086">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1087</span><a id="line.1087">     * @param generator  the generator.</a>
+<span class="sourceLineNo">1088</span><a id="line.1088">     *</a>
+<span class="sourceLineNo">1089</span><a id="line.1089">     * @see #getSeriesItemLabelGenerator(int)</a>
+<span class="sourceLineNo">1090</span><a id="line.1090">     */</a>
+<span class="sourceLineNo">1091</span><a id="line.1091">    public void setSeriesItemLabelGenerator(int series,</a>
+<span class="sourceLineNo">1092</span><a id="line.1092">            CategoryItemLabelGenerator generator);</a>
+<span class="sourceLineNo">1093</span><a id="line.1093"></a>
+<span class="sourceLineNo">1094</span><a id="line.1094">    // FIXME: add setSeriesItemLabelGenerator(int, CategoryItemLabelGenerator,</a>
+<span class="sourceLineNo">1095</span><a id="line.1095">    //            boolean)</a>
+<span class="sourceLineNo">1096</span><a id="line.1096"></a>
+<span class="sourceLineNo">1097</span><a id="line.1097">    /**</a>
+<span class="sourceLineNo">1098</span><a id="line.1098">     * Returns the base item label generator.</a>
+<span class="sourceLineNo">1099</span><a id="line.1099">     *</a>
+<span class="sourceLineNo">1100</span><a id="line.1100">     * @return The generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1101</span><a id="line.1101">     *</a>
+<span class="sourceLineNo">1102</span><a id="line.1102">     * @see #setBaseItemLabelGenerator(CategoryItemLabelGenerator)</a>
+<span class="sourceLineNo">1103</span><a id="line.1103">     */</a>
+<span class="sourceLineNo">1104</span><a id="line.1104">    public CategoryItemLabelGenerator getBaseItemLabelGenerator();</a>
+<span class="sourceLineNo">1105</span><a id="line.1105"></a>
+<span class="sourceLineNo">1106</span><a id="line.1106">    /**</a>
+<span class="sourceLineNo">1107</span><a id="line.1107">     * Sets the base item label generator and sends a</a>
+<span class="sourceLineNo">1108</span><a id="line.1108">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1109</span><a id="line.1109">     *</a>
+<span class="sourceLineNo">1110</span><a id="line.1110">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1111</span><a id="line.1111">     *</a>
+<span class="sourceLineNo">1112</span><a id="line.1112">     * @see #getBaseItemLabelGenerator()</a>
+<span class="sourceLineNo">1113</span><a id="line.1113">     */</a>
+<span class="sourceLineNo">1114</span><a id="line.1114">    public void setBaseItemLabelGenerator(CategoryItemLabelGenerator generator);</a>
+<span class="sourceLineNo">1115</span><a id="line.1115"></a>
+<span class="sourceLineNo">1116</span><a id="line.1116">    // FIXME: add setBaseItemLabelGenerator(CategoryItemLabelGenerator,</a>
+<span class="sourceLineNo">1117</span><a id="line.1117">    //            boolean) ?</a>
+<span class="sourceLineNo">1118</span><a id="line.1118"></a>
+<span class="sourceLineNo">1119</span><a id="line.1119">    // TOOL TIP GENERATOR</a>
+<span class="sourceLineNo">1120</span><a id="line.1120"></a>
+<span class="sourceLineNo">1121</span><a id="line.1121">    /**</a>
+<span class="sourceLineNo">1122</span><a id="line.1122">     * Returns the tool tip generator that should be used for the specified</a>
+<span class="sourceLineNo">1123</span><a id="line.1123">     * item.  This method looks up the generator using the "three-layer"</a>
+<span class="sourceLineNo">1124</span><a id="line.1124">     * approach outlined in the general description of this interface.</a>
+<span class="sourceLineNo">1125</span><a id="line.1125">     *</a>
+<span class="sourceLineNo">1126</span><a id="line.1126">     * @param row  the row index (zero-based).</a>
+<span class="sourceLineNo">1127</span><a id="line.1127">     * @param column  the column index (zero-based).</a>
+<span class="sourceLineNo">1128</span><a id="line.1128">     *</a>
+<span class="sourceLineNo">1129</span><a id="line.1129">     * @return The generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1130</span><a id="line.1130">     */</a>
+<span class="sourceLineNo">1131</span><a id="line.1131">    public CategoryToolTipGenerator getToolTipGenerator(int row, int column);</a>
+<span class="sourceLineNo">1132</span><a id="line.1132"></a>
+<span class="sourceLineNo">1133</span><a id="line.1133">    /**</a>
+<span class="sourceLineNo">1134</span><a id="line.1134">     * Returns the tool tip generator that will be used for ALL items in the</a>
+<span class="sourceLineNo">1135</span><a id="line.1135">     * dataset (the "layer 0" generator).</a>
+<span class="sourceLineNo">1136</span><a id="line.1136">     *</a>
+<span class="sourceLineNo">1137</span><a id="line.1137">     * @return A tool tip generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1138</span><a id="line.1138">     *</a>
+<span class="sourceLineNo">1139</span><a id="line.1139">     * @see #setToolTipGenerator(CategoryToolTipGenerator)</a>
+<span class="sourceLineNo">1140</span><a id="line.1140">     *</a>
+<span class="sourceLineNo">1141</span><a id="line.1141">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1142</span><a id="line.1142">     *     It is sufficient to rely on {@link #getSeriesToolTipGenerator(int)}</a>
+<span class="sourceLineNo">1143</span><a id="line.1143">     *     and {@link #getBaseToolTipGenerator()}.</a>
+<span class="sourceLineNo">1144</span><a id="line.1144">     */</a>
+<span class="sourceLineNo">1145</span><a id="line.1145">    public CategoryToolTipGenerator getToolTipGenerator();</a>
+<span class="sourceLineNo">1146</span><a id="line.1146"></a>
+<span class="sourceLineNo">1147</span><a id="line.1147">    /**</a>
+<span class="sourceLineNo">1148</span><a id="line.1148">     * Sets the tool tip generator for ALL series and sends a</a>
+<span class="sourceLineNo">1149</span><a id="line.1149">     * {@link org.jfree.chart.event.RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">1150</span><a id="line.1150">     * listeners.</a>
+<span class="sourceLineNo">1151</span><a id="line.1151">     *</a>
+<span class="sourceLineNo">1152</span><a id="line.1152">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1153</span><a id="line.1153">     *</a>
+<span class="sourceLineNo">1154</span><a id="line.1154">     * @see #getToolTipGenerator()</a>
+<span class="sourceLineNo">1155</span><a id="line.1155">     *</a>
+<span class="sourceLineNo">1156</span><a id="line.1156">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1157</span><a id="line.1157">     *     It is sufficient to rely on {@link #setSeriesToolTipGenerator(int,</a>
+<span class="sourceLineNo">1158</span><a id="line.1158">     *     CategoryToolTipGenerator)} and</a>
+<span class="sourceLineNo">1159</span><a id="line.1159">     *     {@link #setBaseToolTipGenerator(CategoryToolTipGenerator)}.</a>
+<span class="sourceLineNo">1160</span><a id="line.1160">     */</a>
+<span class="sourceLineNo">1161</span><a id="line.1161">    public void setToolTipGenerator(CategoryToolTipGenerator generator);</a>
+<span class="sourceLineNo">1162</span><a id="line.1162"></a>
+<span class="sourceLineNo">1163</span><a id="line.1163">    /**</a>
+<span class="sourceLineNo">1164</span><a id="line.1164">     * Returns the tool tip generator for the specified series (a "layer 1"</a>
+<span class="sourceLineNo">1165</span><a id="line.1165">     * generator).</a>
+<span class="sourceLineNo">1166</span><a id="line.1166">     *</a>
+<span class="sourceLineNo">1167</span><a id="line.1167">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1168</span><a id="line.1168">     *</a>
+<span class="sourceLineNo">1169</span><a id="line.1169">     * @return The tool tip generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1170</span><a id="line.1170">     *</a>
+<span class="sourceLineNo">1171</span><a id="line.1171">     * @see #setSeriesToolTipGenerator(int, CategoryToolTipGenerator)</a>
+<span class="sourceLineNo">1172</span><a id="line.1172">     */</a>
+<span class="sourceLineNo">1173</span><a id="line.1173">    public CategoryToolTipGenerator getSeriesToolTipGenerator(int series);</a>
+<span class="sourceLineNo">1174</span><a id="line.1174"></a>
+<span class="sourceLineNo">1175</span><a id="line.1175">    /**</a>
+<span class="sourceLineNo">1176</span><a id="line.1176">     * Sets the tool tip generator for a series and sends a</a>
+<span class="sourceLineNo">1177</span><a id="line.1177">     * {@link org.jfree.chart.event.RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">1178</span><a id="line.1178">     * listeners.</a>
+<span class="sourceLineNo">1179</span><a id="line.1179">     *</a>
+<span class="sourceLineNo">1180</span><a id="line.1180">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1181</span><a id="line.1181">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1182</span><a id="line.1182">     *</a>
+<span class="sourceLineNo">1183</span><a id="line.1183">     * @see #getSeriesToolTipGenerator(int)</a>
+<span class="sourceLineNo">1184</span><a id="line.1184">     */</a>
+<span class="sourceLineNo">1185</span><a id="line.1185">    public void setSeriesToolTipGenerator(int series,</a>
+<span class="sourceLineNo">1186</span><a id="line.1186">                                          CategoryToolTipGenerator generator);</a>
+<span class="sourceLineNo">1187</span><a id="line.1187"></a>
+<span class="sourceLineNo">1188</span><a id="line.1188">    // FIXME: add setSeriesToolTipGenerator(int, CategoryToolTipGenerator,</a>
+<span class="sourceLineNo">1189</span><a id="line.1189">    //            boolean) ?</a>
+<span class="sourceLineNo">1190</span><a id="line.1190"></a>
+<span class="sourceLineNo">1191</span><a id="line.1191">    /**</a>
+<span class="sourceLineNo">1192</span><a id="line.1192">     * Returns the base tool tip generator (the "layer 2" generator).</a>
+<span class="sourceLineNo">1193</span><a id="line.1193">     *</a>
+<span class="sourceLineNo">1194</span><a id="line.1194">     * @return The tool tip generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1195</span><a id="line.1195">     *</a>
+<span class="sourceLineNo">1196</span><a id="line.1196">     * @see #setBaseToolTipGenerator(CategoryToolTipGenerator)</a>
+<span class="sourceLineNo">1197</span><a id="line.1197">     */</a>
+<span class="sourceLineNo">1198</span><a id="line.1198">    public CategoryToolTipGenerator getBaseToolTipGenerator();</a>
+<span class="sourceLineNo">1199</span><a id="line.1199"></a>
+<span class="sourceLineNo">1200</span><a id="line.1200">    /**</a>
+<span class="sourceLineNo">1201</span><a id="line.1201">     * Sets the base tool tip generator and sends a</a>
+<span class="sourceLineNo">1202</span><a id="line.1202">     * {@link org.jfree.chart.event.RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">1203</span><a id="line.1203">     * listeners.</a>
+<span class="sourceLineNo">1204</span><a id="line.1204">     *</a>
+<span class="sourceLineNo">1205</span><a id="line.1205">     * @param generator  the generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1206</span><a id="line.1206">     *</a>
+<span class="sourceLineNo">1207</span><a id="line.1207">     * @see #getBaseToolTipGenerator()</a>
+<span class="sourceLineNo">1208</span><a id="line.1208">     */</a>
+<span class="sourceLineNo">1209</span><a id="line.1209">    public void setBaseToolTipGenerator(CategoryToolTipGenerator generator);</a>
+<span class="sourceLineNo">1210</span><a id="line.1210"></a>
+<span class="sourceLineNo">1211</span><a id="line.1211">    // FIXME: add setBaseToolTipGenerator(CategoryToolTipGenerator, boolean) ?</a>
+<span class="sourceLineNo">1212</span><a id="line.1212"></a>
+<span class="sourceLineNo">1213</span><a id="line.1213">    //// ITEM LABEL FONT  //////////////////////////////////////////////////////</a>
+<span class="sourceLineNo">1214</span><a id="line.1214"></a>
+<span class="sourceLineNo">1215</span><a id="line.1215">    /**</a>
+<span class="sourceLineNo">1216</span><a id="line.1216">     * Returns the font for an item label.</a>
+<span class="sourceLineNo">1217</span><a id="line.1217">     *</a>
+<span class="sourceLineNo">1218</span><a id="line.1218">     * @param row  the row index (zero-based).</a>
+<span class="sourceLineNo">1219</span><a id="line.1219">     * @param column  the column index (zero-based).</a>
+<span class="sourceLineNo">1220</span><a id="line.1220">     *</a>
+<span class="sourceLineNo">1221</span><a id="line.1221">     * @return The font (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1222</span><a id="line.1222">     */</a>
+<span class="sourceLineNo">1223</span><a id="line.1223">    public Font getItemLabelFont(int row, int column);</a>
+<span class="sourceLineNo">1224</span><a id="line.1224"></a>
+<span class="sourceLineNo">1225</span><a id="line.1225">    /**</a>
+<span class="sourceLineNo">1226</span><a id="line.1226">     * Returns the font used for all item labels.  This may be</a>
+<span class="sourceLineNo">1227</span><a id="line.1227">     * &lt;code&gt;null&lt;/code&gt;, in which case the per series font settings will apply.</a>
+<span class="sourceLineNo">1228</span><a id="line.1228">     *</a>
+<span class="sourceLineNo">1229</span><a id="line.1229">     * @return The font (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1230</span><a id="line.1230">     *</a>
+<span class="sourceLineNo">1231</span><a id="line.1231">     * @see #setItemLabelFont(Font)</a>
+<span class="sourceLineNo">1232</span><a id="line.1232">     *</a>
+<span class="sourceLineNo">1233</span><a id="line.1233">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1234</span><a id="line.1234">     *     It is sufficient to rely on {@link #getSeriesItemLabelFont(int)} and</a>
+<span class="sourceLineNo">1235</span><a id="line.1235">     *     {@link #getBaseItemLabelFont()}.</a>
+<span class="sourceLineNo">1236</span><a id="line.1236">     */</a>
+<span class="sourceLineNo">1237</span><a id="line.1237">    public Font getItemLabelFont();</a>
+<span class="sourceLineNo">1238</span><a id="line.1238"></a>
+<span class="sourceLineNo">1239</span><a id="line.1239">    /**</a>
+<span class="sourceLineNo">1240</span><a id="line.1240">     * Sets the item label font for ALL series and sends a</a>
+<span class="sourceLineNo">1241</span><a id="line.1241">     * {@link RendererChangeEvent} to all registered listeners.  You can set</a>
+<span class="sourceLineNo">1242</span><a id="line.1242">     * this to &lt;code&gt;null&lt;/code&gt; if you prefer to set the font on a per series</a>
+<span class="sourceLineNo">1243</span><a id="line.1243">     * basis.</a>
+<span class="sourceLineNo">1244</span><a id="line.1244">     *</a>
+<span class="sourceLineNo">1245</span><a id="line.1245">     * @param font  the font (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1246</span><a id="line.1246">     *</a>
+<span class="sourceLineNo">1247</span><a id="line.1247">     * @see #getItemLabelFont()</a>
+<span class="sourceLineNo">1248</span><a id="line.1248">     *</a>
+<span class="sourceLineNo">1249</span><a id="line.1249">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1250</span><a id="line.1250">     *     It is sufficient to rely on {@link #setSeriesItemLabelFont(int,</a>
+<span class="sourceLineNo">1251</span><a id="line.1251">     *     Font)} and {@link #setBaseItemLabelFont(Font)}.</a>
+<span class="sourceLineNo">1252</span><a id="line.1252">     */</a>
+<span class="sourceLineNo">1253</span><a id="line.1253">    public void setItemLabelFont(Font font);</a>
+<span class="sourceLineNo">1254</span><a id="line.1254"></a>
+<span class="sourceLineNo">1255</span><a id="line.1255">    /**</a>
+<span class="sourceLineNo">1256</span><a id="line.1256">     * Returns the font for all the item labels in a series.</a>
+<span class="sourceLineNo">1257</span><a id="line.1257">     *</a>
+<span class="sourceLineNo">1258</span><a id="line.1258">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1259</span><a id="line.1259">     *</a>
+<span class="sourceLineNo">1260</span><a id="line.1260">     * @return The font (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1261</span><a id="line.1261">     *</a>
+<span class="sourceLineNo">1262</span><a id="line.1262">     * @see #setSeriesItemLabelFont(int, Font)</a>
+<span class="sourceLineNo">1263</span><a id="line.1263">     */</a>
+<span class="sourceLineNo">1264</span><a id="line.1264">    public Font getSeriesItemLabelFont(int series);</a>
+<span class="sourceLineNo">1265</span><a id="line.1265"></a>
+<span class="sourceLineNo">1266</span><a id="line.1266">    /**</a>
+<span class="sourceLineNo">1267</span><a id="line.1267">     * Sets the item label font for a series and sends a</a>
+<span class="sourceLineNo">1268</span><a id="line.1268">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1269</span><a id="line.1269">     *</a>
+<span class="sourceLineNo">1270</span><a id="line.1270">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1271</span><a id="line.1271">     * @param font  the font (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1272</span><a id="line.1272">     *</a>
+<span class="sourceLineNo">1273</span><a id="line.1273">     * @see #getSeriesItemLabelFont(int)</a>
+<span class="sourceLineNo">1274</span><a id="line.1274">     */</a>
+<span class="sourceLineNo">1275</span><a id="line.1275">    public void setSeriesItemLabelFont(int series, Font font);</a>
+<span class="sourceLineNo">1276</span><a id="line.1276"></a>
+<span class="sourceLineNo">1277</span><a id="line.1277">    // FIXME: add setSeriesItemLabelFont(int, Font, boolean) ?</a>
+<span class="sourceLineNo">1278</span><a id="line.1278"></a>
+<span class="sourceLineNo">1279</span><a id="line.1279">    /**</a>
+<span class="sourceLineNo">1280</span><a id="line.1280">     * Returns the base item label font (this is used when no other font</a>
+<span class="sourceLineNo">1281</span><a id="line.1281">     * setting is available).</a>
+<span class="sourceLineNo">1282</span><a id="line.1282">     *</a>
+<span class="sourceLineNo">1283</span><a id="line.1283">     * @return The font (&lt;code&gt;never&lt;/code&gt; null).</a>
+<span class="sourceLineNo">1284</span><a id="line.1284">     *</a>
+<span class="sourceLineNo">1285</span><a id="line.1285">     * @see #setBaseItemLabelFont(Font)</a>
+<span class="sourceLineNo">1286</span><a id="line.1286">     */</a>
+<span class="sourceLineNo">1287</span><a id="line.1287">    public Font getBaseItemLabelFont();</a>
+<span class="sourceLineNo">1288</span><a id="line.1288"></a>
+<span class="sourceLineNo">1289</span><a id="line.1289">    /**</a>
+<span class="sourceLineNo">1290</span><a id="line.1290">     * Sets the base item label font and sends a {@link RendererChangeEvent}</a>
+<span class="sourceLineNo">1291</span><a id="line.1291">     * to all registered listeners.</a>
+<span class="sourceLineNo">1292</span><a id="line.1292">     *</a>
+<span class="sourceLineNo">1293</span><a id="line.1293">     * @param font  the font (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">1294</span><a id="line.1294">     *</a>
+<span class="sourceLineNo">1295</span><a id="line.1295">     * @see #getBaseItemLabelFont()</a>
+<span class="sourceLineNo">1296</span><a id="line.1296">     */</a>
+<span class="sourceLineNo">1297</span><a id="line.1297">    public void setBaseItemLabelFont(Font font);</a>
+<span class="sourceLineNo">1298</span><a id="line.1298"></a>
+<span class="sourceLineNo">1299</span><a id="line.1299">    // FIXME: add setBaseItemLabelFont(Font, boolean) ?</a>
+<span class="sourceLineNo">1300</span><a id="line.1300"></a>
+<span class="sourceLineNo">1301</span><a id="line.1301">    //// ITEM LABEL PAINT  /////////////////////////////////////////////////////</a>
+<span class="sourceLineNo">1302</span><a id="line.1302"></a>
+<span class="sourceLineNo">1303</span><a id="line.1303">    /**</a>
+<span class="sourceLineNo">1304</span><a id="line.1304">     * Returns the paint used to draw an item label.</a>
+<span class="sourceLineNo">1305</span><a id="line.1305">     *</a>
+<span class="sourceLineNo">1306</span><a id="line.1306">     * @param row  the row index (zero based).</a>
+<span class="sourceLineNo">1307</span><a id="line.1307">     * @param column  the column index (zero based).</a>
+<span class="sourceLineNo">1308</span><a id="line.1308">     *</a>
+<span class="sourceLineNo">1309</span><a id="line.1309">     * @return The paint (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1310</span><a id="line.1310">     */</a>
+<span class="sourceLineNo">1311</span><a id="line.1311">    public Paint getItemLabelPaint(int row, int column);</a>
+<span class="sourceLineNo">1312</span><a id="line.1312"></a>
+<span class="sourceLineNo">1313</span><a id="line.1313">    /**</a>
+<span class="sourceLineNo">1314</span><a id="line.1314">     * Returns the paint used for all item labels.  This may be</a>
+<span class="sourceLineNo">1315</span><a id="line.1315">     * &lt;code&gt;null&lt;/code&gt;, in which case the per series paint settings will</a>
+<span class="sourceLineNo">1316</span><a id="line.1316">     * apply.</a>
+<span class="sourceLineNo">1317</span><a id="line.1317">     *</a>
+<span class="sourceLineNo">1318</span><a id="line.1318">     * @return The paint (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1319</span><a id="line.1319">     *</a>
+<span class="sourceLineNo">1320</span><a id="line.1320">     * @see #setItemLabelPaint(Paint)</a>
+<span class="sourceLineNo">1321</span><a id="line.1321">     *</a>
+<span class="sourceLineNo">1322</span><a id="line.1322">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1323</span><a id="line.1323">     *     It is sufficient to rely on {@link #getSeriesItemLabelPaint(int)}</a>
+<span class="sourceLineNo">1324</span><a id="line.1324">     *     and {@link #getBaseItemLabelPaint()}.</a>
+<span class="sourceLineNo">1325</span><a id="line.1325">     */</a>
+<span class="sourceLineNo">1326</span><a id="line.1326">    public Paint getItemLabelPaint();</a>
+<span class="sourceLineNo">1327</span><a id="line.1327"></a>
+<span class="sourceLineNo">1328</span><a id="line.1328">    /**</a>
+<span class="sourceLineNo">1329</span><a id="line.1329">     * Sets the item label paint for ALL series and sends a</a>
+<span class="sourceLineNo">1330</span><a id="line.1330">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1331</span><a id="line.1331">     *</a>
+<span class="sourceLineNo">1332</span><a id="line.1332">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1333</span><a id="line.1333">     *</a>
+<span class="sourceLineNo">1334</span><a id="line.1334">     * @see #getItemLabelPaint()</a>
+<span class="sourceLineNo">1335</span><a id="line.1335">     *</a>
+<span class="sourceLineNo">1336</span><a id="line.1336">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1337</span><a id="line.1337">     *     It is sufficient to rely on {@link #setSeriesItemLabelPaint(int,</a>
+<span class="sourceLineNo">1338</span><a id="line.1338">     *     Paint)} and {@link #setBaseItemLabelPaint(Paint)}.</a>
+<span class="sourceLineNo">1339</span><a id="line.1339">     */</a>
+<span class="sourceLineNo">1340</span><a id="line.1340">    public void setItemLabelPaint(Paint paint);</a>
+<span class="sourceLineNo">1341</span><a id="line.1341"></a>
+<span class="sourceLineNo">1342</span><a id="line.1342">    /**</a>
+<span class="sourceLineNo">1343</span><a id="line.1343">     * Returns the paint used to draw the item labels for a series.</a>
+<span class="sourceLineNo">1344</span><a id="line.1344">     *</a>
+<span class="sourceLineNo">1345</span><a id="line.1345">     * @param series  the series index (zero based).</a>
+<span class="sourceLineNo">1346</span><a id="line.1346">     *</a>
+<span class="sourceLineNo">1347</span><a id="line.1347">     * @return The paint (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1348</span><a id="line.1348">     *</a>
+<span class="sourceLineNo">1349</span><a id="line.1349">     * @see #setSeriesItemLabelPaint(int, Paint)</a>
+<span class="sourceLineNo">1350</span><a id="line.1350">     */</a>
+<span class="sourceLineNo">1351</span><a id="line.1351">    public Paint getSeriesItemLabelPaint(int series);</a>
+<span class="sourceLineNo">1352</span><a id="line.1352"></a>
+<span class="sourceLineNo">1353</span><a id="line.1353">    /**</a>
+<span class="sourceLineNo">1354</span><a id="line.1354">     * Sets the item label paint for a series and sends a</a>
+<span class="sourceLineNo">1355</span><a id="line.1355">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1356</span><a id="line.1356">     *</a>
+<span class="sourceLineNo">1357</span><a id="line.1357">     * @param series  the series (zero based index).</a>
+<span class="sourceLineNo">1358</span><a id="line.1358">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1359</span><a id="line.1359">     *</a>
+<span class="sourceLineNo">1360</span><a id="line.1360">     * @see #getSeriesItemLabelPaint(int)</a>
+<span class="sourceLineNo">1361</span><a id="line.1361">     */</a>
+<span class="sourceLineNo">1362</span><a id="line.1362">    public void setSeriesItemLabelPaint(int series, Paint paint);</a>
+<span class="sourceLineNo">1363</span><a id="line.1363"></a>
+<span class="sourceLineNo">1364</span><a id="line.1364">    // FIXME: add setSeriesItemLabelPaint(int, Paint, boolean) ?</a>
+<span class="sourceLineNo">1365</span><a id="line.1365"></a>
+<span class="sourceLineNo">1366</span><a id="line.1366">    /**</a>
+<span class="sourceLineNo">1367</span><a id="line.1367">     * Returns the base item label paint.</a>
+<span class="sourceLineNo">1368</span><a id="line.1368">     *</a>
+<span class="sourceLineNo">1369</span><a id="line.1369">     * @return The paint (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1370</span><a id="line.1370">     *</a>
+<span class="sourceLineNo">1371</span><a id="line.1371">     * @see #setBaseItemLabelPaint(Paint)</a>
+<span class="sourceLineNo">1372</span><a id="line.1372">     */</a>
+<span class="sourceLineNo">1373</span><a id="line.1373">    public Paint getBaseItemLabelPaint();</a>
+<span class="sourceLineNo">1374</span><a id="line.1374"></a>
+<span class="sourceLineNo">1375</span><a id="line.1375">    /**</a>
+<span class="sourceLineNo">1376</span><a id="line.1376">     * Sets the base item label paint and sends a {@link RendererChangeEvent}</a>
+<span class="sourceLineNo">1377</span><a id="line.1377">     * to all registered listeners.</a>
+<span class="sourceLineNo">1378</span><a id="line.1378">     *</a>
+<span class="sourceLineNo">1379</span><a id="line.1379">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">1380</span><a id="line.1380">     *</a>
+<span class="sourceLineNo">1381</span><a id="line.1381">     * @see #getBaseItemLabelPaint()</a>
+<span class="sourceLineNo">1382</span><a id="line.1382">     */</a>
+<span class="sourceLineNo">1383</span><a id="line.1383">    public void setBaseItemLabelPaint(Paint paint);</a>
+<span class="sourceLineNo">1384</span><a id="line.1384"></a>
+<span class="sourceLineNo">1385</span><a id="line.1385">    // FIXME: add setBaseItemLabelPaint(Paint, boolean) ?</a>
+<span class="sourceLineNo">1386</span><a id="line.1386"></a>
+<span class="sourceLineNo">1387</span><a id="line.1387">    // POSITIVE ITEM LABEL POSITION...</a>
+<span class="sourceLineNo">1388</span><a id="line.1388"></a>
+<span class="sourceLineNo">1389</span><a id="line.1389">    /**</a>
+<span class="sourceLineNo">1390</span><a id="line.1390">     * Returns the item label position for positive values.</a>
+<span class="sourceLineNo">1391</span><a id="line.1391">     *</a>
+<span class="sourceLineNo">1392</span><a id="line.1392">     * @param row  the row index (zero-based).</a>
+<span class="sourceLineNo">1393</span><a id="line.1393">     * @param column  the column index (zero-based).</a>
+<span class="sourceLineNo">1394</span><a id="line.1394">     *</a>
+<span class="sourceLineNo">1395</span><a id="line.1395">     * @return The item label position (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1396</span><a id="line.1396">     */</a>
+<span class="sourceLineNo">1397</span><a id="line.1397">    public ItemLabelPosition getPositiveItemLabelPosition(int row, int column);</a>
+<span class="sourceLineNo">1398</span><a id="line.1398"></a>
+<span class="sourceLineNo">1399</span><a id="line.1399">    /**</a>
+<span class="sourceLineNo">1400</span><a id="line.1400">     * Returns the item label position for positive values in ALL series.</a>
+<span class="sourceLineNo">1401</span><a id="line.1401">     *</a>
+<span class="sourceLineNo">1402</span><a id="line.1402">     * @return The item label position (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1403</span><a id="line.1403">     *</a>
+<span class="sourceLineNo">1404</span><a id="line.1404">     * @see #setPositiveItemLabelPosition(ItemLabelPosition)</a>
+<span class="sourceLineNo">1405</span><a id="line.1405">     *</a>
+<span class="sourceLineNo">1406</span><a id="line.1406">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1407</span><a id="line.1407">     *     It is sufficient to rely on</a>
+<span class="sourceLineNo">1408</span><a id="line.1408">     *     {@link #getSeriesPositiveItemLabelPosition(int)}</a>
+<span class="sourceLineNo">1409</span><a id="line.1409">     *     and {@link #getBasePositiveItemLabelPosition()}.</a>
+<span class="sourceLineNo">1410</span><a id="line.1410">     */</a>
+<span class="sourceLineNo">1411</span><a id="line.1411">    public ItemLabelPosition getPositiveItemLabelPosition();</a>
+<span class="sourceLineNo">1412</span><a id="line.1412"></a>
+<span class="sourceLineNo">1413</span><a id="line.1413">    /**</a>
+<span class="sourceLineNo">1414</span><a id="line.1414">     * Sets the item label position for positive values in ALL series, and</a>
+<span class="sourceLineNo">1415</span><a id="line.1415">     * sends a {@link RendererChangeEvent} to all registered listeners.  You</a>
+<span class="sourceLineNo">1416</span><a id="line.1416">     * need to set this to &lt;code&gt;null&lt;/code&gt; to expose the settings for</a>
+<span class="sourceLineNo">1417</span><a id="line.1417">     * individual series.</a>
+<span class="sourceLineNo">1418</span><a id="line.1418">     *</a>
+<span class="sourceLineNo">1419</span><a id="line.1419">     * @param position  the position (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1420</span><a id="line.1420">     *</a>
+<span class="sourceLineNo">1421</span><a id="line.1421">     * @see #getPositiveItemLabelPosition()</a>
+<span class="sourceLineNo">1422</span><a id="line.1422">     *</a>
+<span class="sourceLineNo">1423</span><a id="line.1423">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1424</span><a id="line.1424">     *     It is sufficient to rely on</a>
+<span class="sourceLineNo">1425</span><a id="line.1425">     *     {@link #setSeriesPositiveItemLabelPosition(int, ItemLabelPosition)}</a>
+<span class="sourceLineNo">1426</span><a id="line.1426">     *     and {@link #setBasePositiveItemLabelPosition(ItemLabelPosition)}.</a>
+<span class="sourceLineNo">1427</span><a id="line.1427">     */</a>
+<span class="sourceLineNo">1428</span><a id="line.1428">    public void setPositiveItemLabelPosition(ItemLabelPosition position);</a>
+<span class="sourceLineNo">1429</span><a id="line.1429"></a>
+<span class="sourceLineNo">1430</span><a id="line.1430">    /**</a>
+<span class="sourceLineNo">1431</span><a id="line.1431">     * Sets the positive item label position for ALL series and (if requested)</a>
+<span class="sourceLineNo">1432</span><a id="line.1432">     * sends a {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1433</span><a id="line.1433">     *</a>
+<span class="sourceLineNo">1434</span><a id="line.1434">     * @param position  the position (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1435</span><a id="line.1435">     * @param notify  notify registered listeners?</a>
+<span class="sourceLineNo">1436</span><a id="line.1436">     *</a>
+<span class="sourceLineNo">1437</span><a id="line.1437">     * @see #getPositiveItemLabelPosition()</a>
+<span class="sourceLineNo">1438</span><a id="line.1438">     *</a>
+<span class="sourceLineNo">1439</span><a id="line.1439">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1440</span><a id="line.1440">     *     It is sufficient to rely on</a>
+<span class="sourceLineNo">1441</span><a id="line.1441">     *     {@link #setSeriesPositiveItemLabelPosition(int, ItemLabelPosition,</a>
+<span class="sourceLineNo">1442</span><a id="line.1442">     *     boolean)} and {@link #setBasePositiveItemLabelPosition(</a>
+<span class="sourceLineNo">1443</span><a id="line.1443">     *     ItemLabelPosition, boolean)}.</a>
+<span class="sourceLineNo">1444</span><a id="line.1444">     */</a>
+<span class="sourceLineNo">1445</span><a id="line.1445">    public void setPositiveItemLabelPosition(ItemLabelPosition position,</a>
+<span class="sourceLineNo">1446</span><a id="line.1446">                                             boolean notify);</a>
+<span class="sourceLineNo">1447</span><a id="line.1447"></a>
+<span class="sourceLineNo">1448</span><a id="line.1448">    /**</a>
+<span class="sourceLineNo">1449</span><a id="line.1449">     * Returns the item label position for all positive values in a series.</a>
+<span class="sourceLineNo">1450</span><a id="line.1450">     *</a>
+<span class="sourceLineNo">1451</span><a id="line.1451">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1452</span><a id="line.1452">     *</a>
+<span class="sourceLineNo">1453</span><a id="line.1453">     * @return The item label position.</a>
+<span class="sourceLineNo">1454</span><a id="line.1454">     *</a>
+<span class="sourceLineNo">1455</span><a id="line.1455">     * @see #setSeriesPositiveItemLabelPosition(int, ItemLabelPosition)</a>
+<span class="sourceLineNo">1456</span><a id="line.1456">     */</a>
+<span class="sourceLineNo">1457</span><a id="line.1457">    public ItemLabelPosition getSeriesPositiveItemLabelPosition(int series);</a>
+<span class="sourceLineNo">1458</span><a id="line.1458"></a>
+<span class="sourceLineNo">1459</span><a id="line.1459">    /**</a>
+<span class="sourceLineNo">1460</span><a id="line.1460">     * Sets the item label position for all positive values in a series and</a>
+<span class="sourceLineNo">1461</span><a id="line.1461">     * sends a {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1462</span><a id="line.1462">     *</a>
+<span class="sourceLineNo">1463</span><a id="line.1463">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1464</span><a id="line.1464">     * @param position  the position (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1465</span><a id="line.1465">     *</a>
+<span class="sourceLineNo">1466</span><a id="line.1466">     * @see #getSeriesPositiveItemLabelPosition(int)</a>
+<span class="sourceLineNo">1467</span><a id="line.1467">     */</a>
+<span class="sourceLineNo">1468</span><a id="line.1468">    public void setSeriesPositiveItemLabelPosition(int series,</a>
+<span class="sourceLineNo">1469</span><a id="line.1469">                                                   ItemLabelPosition position);</a>
+<span class="sourceLineNo">1470</span><a id="line.1470"></a>
+<span class="sourceLineNo">1471</span><a id="line.1471">    /**</a>
+<span class="sourceLineNo">1472</span><a id="line.1472">     * Sets the item label position for all positive values in a series and (if</a>
+<span class="sourceLineNo">1473</span><a id="line.1473">     * requested) sends a {@link RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">1474</span><a id="line.1474">     * listeners.</a>
+<span class="sourceLineNo">1475</span><a id="line.1475">     *</a>
+<span class="sourceLineNo">1476</span><a id="line.1476">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1477</span><a id="line.1477">     * @param position  the position (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1478</span><a id="line.1478">     * @param notify  notify registered listeners?</a>
+<span class="sourceLineNo">1479</span><a id="line.1479">     *</a>
+<span class="sourceLineNo">1480</span><a id="line.1480">     * @see #getSeriesPositiveItemLabelPosition(int)</a>
+<span class="sourceLineNo">1481</span><a id="line.1481">     */</a>
+<span class="sourceLineNo">1482</span><a id="line.1482">    public void setSeriesPositiveItemLabelPosition(int series,</a>
+<span class="sourceLineNo">1483</span><a id="line.1483">            ItemLabelPosition position, boolean notify);</a>
+<span class="sourceLineNo">1484</span><a id="line.1484"></a>
+<span class="sourceLineNo">1485</span><a id="line.1485">    /**</a>
+<span class="sourceLineNo">1486</span><a id="line.1486">     * Returns the base positive item label position.</a>
+<span class="sourceLineNo">1487</span><a id="line.1487">     *</a>
+<span class="sourceLineNo">1488</span><a id="line.1488">     * @return The position.</a>
+<span class="sourceLineNo">1489</span><a id="line.1489">     *</a>
+<span class="sourceLineNo">1490</span><a id="line.1490">     * @see #setBasePositiveItemLabelPosition(ItemLabelPosition)</a>
+<span class="sourceLineNo">1491</span><a id="line.1491">     */</a>
+<span class="sourceLineNo">1492</span><a id="line.1492">    public ItemLabelPosition getBasePositiveItemLabelPosition();</a>
+<span class="sourceLineNo">1493</span><a id="line.1493"></a>
+<span class="sourceLineNo">1494</span><a id="line.1494">    /**</a>
+<span class="sourceLineNo">1495</span><a id="line.1495">     * Sets the base positive item label position.</a>
+<span class="sourceLineNo">1496</span><a id="line.1496">     *</a>
+<span class="sourceLineNo">1497</span><a id="line.1497">     * @param position  the position.</a>
+<span class="sourceLineNo">1498</span><a id="line.1498">     *</a>
+<span class="sourceLineNo">1499</span><a id="line.1499">     * @see #getBasePositiveItemLabelPosition()</a>
+<span class="sourceLineNo">1500</span><a id="line.1500">     */</a>
+<span class="sourceLineNo">1501</span><a id="line.1501">    public void setBasePositiveItemLabelPosition(ItemLabelPosition position);</a>
+<span class="sourceLineNo">1502</span><a id="line.1502"></a>
+<span class="sourceLineNo">1503</span><a id="line.1503">    /**</a>
+<span class="sourceLineNo">1504</span><a id="line.1504">     * Sets the base positive item label position and, if requested, sends a</a>
+<span class="sourceLineNo">1505</span><a id="line.1505">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1506</span><a id="line.1506">     *</a>
+<span class="sourceLineNo">1507</span><a id="line.1507">     * @param position  the position.</a>
+<span class="sourceLineNo">1508</span><a id="line.1508">     * @param notify  notify registered listeners?</a>
+<span class="sourceLineNo">1509</span><a id="line.1509">     *</a>
+<span class="sourceLineNo">1510</span><a id="line.1510">     * @see #getBasePositiveItemLabelPosition()</a>
+<span class="sourceLineNo">1511</span><a id="line.1511">     */</a>
+<span class="sourceLineNo">1512</span><a id="line.1512">    public void setBasePositiveItemLabelPosition(ItemLabelPosition position,</a>
+<span class="sourceLineNo">1513</span><a id="line.1513">                                                 boolean notify);</a>
+<span class="sourceLineNo">1514</span><a id="line.1514"></a>
+<span class="sourceLineNo">1515</span><a id="line.1515"></a>
+<span class="sourceLineNo">1516</span><a id="line.1516">    // NEGATIVE ITEM LABEL POSITION...</a>
+<span class="sourceLineNo">1517</span><a id="line.1517"></a>
+<span class="sourceLineNo">1518</span><a id="line.1518">    /**</a>
+<span class="sourceLineNo">1519</span><a id="line.1519">     * Returns the item label position for negative values.  This method can be</a>
+<span class="sourceLineNo">1520</span><a id="line.1520">     * overridden to provide customisation of the item label position for</a>
+<span class="sourceLineNo">1521</span><a id="line.1521">     * individual data items.</a>
+<span class="sourceLineNo">1522</span><a id="line.1522">     *</a>
+<span class="sourceLineNo">1523</span><a id="line.1523">     * @param row  the row index (zero-based).</a>
+<span class="sourceLineNo">1524</span><a id="line.1524">     * @param column  the column (zero-based).</a>
+<span class="sourceLineNo">1525</span><a id="line.1525">     *</a>
+<span class="sourceLineNo">1526</span><a id="line.1526">     * @return The item label position.</a>
+<span class="sourceLineNo">1527</span><a id="line.1527">     */</a>
+<span class="sourceLineNo">1528</span><a id="line.1528">    public ItemLabelPosition getNegativeItemLabelPosition(int row, int column);</a>
+<span class="sourceLineNo">1529</span><a id="line.1529"></a>
+<span class="sourceLineNo">1530</span><a id="line.1530">    /**</a>
+<span class="sourceLineNo">1531</span><a id="line.1531">     * Returns the item label position for negative values in ALL series.</a>
+<span class="sourceLineNo">1532</span><a id="line.1532">     *</a>
+<span class="sourceLineNo">1533</span><a id="line.1533">     * @return The item label position (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1534</span><a id="line.1534">     *</a>
+<span class="sourceLineNo">1535</span><a id="line.1535">     * @see #setNegativeItemLabelPosition(ItemLabelPosition)</a>
+<span class="sourceLineNo">1536</span><a id="line.1536">     *</a>
+<span class="sourceLineNo">1537</span><a id="line.1537">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1538</span><a id="line.1538">     *     It is sufficient to rely on</a>
+<span class="sourceLineNo">1539</span><a id="line.1539">     *     {@link #getSeriesNegativeItemLabelPosition(int)}</a>
+<span class="sourceLineNo">1540</span><a id="line.1540">     *     and {@link #getBaseNegativeItemLabelPosition()}.</a>
+<span class="sourceLineNo">1541</span><a id="line.1541">     */</a>
+<span class="sourceLineNo">1542</span><a id="line.1542">    public ItemLabelPosition getNegativeItemLabelPosition();</a>
+<span class="sourceLineNo">1543</span><a id="line.1543"></a>
+<span class="sourceLineNo">1544</span><a id="line.1544">    /**</a>
+<span class="sourceLineNo">1545</span><a id="line.1545">     * Sets the item label position for negative values in ALL series, and</a>
+<span class="sourceLineNo">1546</span><a id="line.1546">     * sends a {@link RendererChangeEvent} to all registered listeners.  You</a>
+<span class="sourceLineNo">1547</span><a id="line.1547">     * need to set this to &lt;code&gt;null&lt;/code&gt; to expose the settings for</a>
+<span class="sourceLineNo">1548</span><a id="line.1548">     * individual series.</a>
+<span class="sourceLineNo">1549</span><a id="line.1549">     *</a>
+<span class="sourceLineNo">1550</span><a id="line.1550">     * @param position  the position (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1551</span><a id="line.1551">     *</a>
+<span class="sourceLineNo">1552</span><a id="line.1552">     * @see #getNegativeItemLabelPosition()</a>
+<span class="sourceLineNo">1553</span><a id="line.1553">     *</a>
+<span class="sourceLineNo">1554</span><a id="line.1554">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1555</span><a id="line.1555">     *     It is sufficient to rely on</a>
+<span class="sourceLineNo">1556</span><a id="line.1556">     *     {@link #setSeriesNegativeItemLabelPosition(int, ItemLabelPosition)}</a>
+<span class="sourceLineNo">1557</span><a id="line.1557">     *     and {@link #setBaseNegativeItemLabelPosition(ItemLabelPosition)}.</a>
+<span class="sourceLineNo">1558</span><a id="line.1558">     */</a>
+<span class="sourceLineNo">1559</span><a id="line.1559">    public void setNegativeItemLabelPosition(ItemLabelPosition position);</a>
+<span class="sourceLineNo">1560</span><a id="line.1560"></a>
+<span class="sourceLineNo">1561</span><a id="line.1561">    /**</a>
+<span class="sourceLineNo">1562</span><a id="line.1562">     * Sets the item label position for negative values in ALL series and (if</a>
+<span class="sourceLineNo">1563</span><a id="line.1563">     * requested) sends a {@link RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">1564</span><a id="line.1564">     * listeners.</a>
+<span class="sourceLineNo">1565</span><a id="line.1565">     *</a>
+<span class="sourceLineNo">1566</span><a id="line.1566">     * @param position  the position (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1567</span><a id="line.1567">     * @param notify  notify registered listeners?</a>
+<span class="sourceLineNo">1568</span><a id="line.1568">     *</a>
+<span class="sourceLineNo">1569</span><a id="line.1569">     * @see #getNegativeItemLabelPosition()</a>
+<span class="sourceLineNo">1570</span><a id="line.1570">     *</a>
+<span class="sourceLineNo">1571</span><a id="line.1571">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1572</span><a id="line.1572">     *     It is sufficient to rely on</a>
+<span class="sourceLineNo">1573</span><a id="line.1573">     *     {@link #setSeriesNegativeItemLabelPosition(int, ItemLabelPosition,</a>
+<span class="sourceLineNo">1574</span><a id="line.1574">     *     boolean)} and {@link #setBaseNegativeItemLabelPosition(</a>
+<span class="sourceLineNo">1575</span><a id="line.1575">     *     ItemLabelPosition, boolean)}.</a>
+<span class="sourceLineNo">1576</span><a id="line.1576">     */</a>
+<span class="sourceLineNo">1577</span><a id="line.1577">    public void setNegativeItemLabelPosition(ItemLabelPosition position,</a>
+<span class="sourceLineNo">1578</span><a id="line.1578">                                             boolean notify);</a>
+<span class="sourceLineNo">1579</span><a id="line.1579"></a>
+<span class="sourceLineNo">1580</span><a id="line.1580">    /**</a>
+<span class="sourceLineNo">1581</span><a id="line.1581">     * Returns the item label position for all negative values in a series.</a>
+<span class="sourceLineNo">1582</span><a id="line.1582">     *</a>
+<span class="sourceLineNo">1583</span><a id="line.1583">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1584</span><a id="line.1584">     *</a>
+<span class="sourceLineNo">1585</span><a id="line.1585">     * @return The item label position.</a>
+<span class="sourceLineNo">1586</span><a id="line.1586">     *</a>
+<span class="sourceLineNo">1587</span><a id="line.1587">     * @see #setSeriesNegativeItemLabelPosition(int, ItemLabelPosition)</a>
+<span class="sourceLineNo">1588</span><a id="line.1588">     */</a>
+<span class="sourceLineNo">1589</span><a id="line.1589">    public ItemLabelPosition getSeriesNegativeItemLabelPosition(int series);</a>
+<span class="sourceLineNo">1590</span><a id="line.1590"></a>
+<span class="sourceLineNo">1591</span><a id="line.1591">    /**</a>
+<span class="sourceLineNo">1592</span><a id="line.1592">     * Sets the item label position for negative values in a series and sends a</a>
+<span class="sourceLineNo">1593</span><a id="line.1593">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1594</span><a id="line.1594">     *</a>
+<span class="sourceLineNo">1595</span><a id="line.1595">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1596</span><a id="line.1596">     * @param position  the position (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1597</span><a id="line.1597">     *</a>
+<span class="sourceLineNo">1598</span><a id="line.1598">     * @see #getSeriesNegativeItemLabelPosition(int)</a>
+<span class="sourceLineNo">1599</span><a id="line.1599">     */</a>
+<span class="sourceLineNo">1600</span><a id="line.1600">    public void setSeriesNegativeItemLabelPosition(int series,</a>
+<span class="sourceLineNo">1601</span><a id="line.1601">                                                   ItemLabelPosition position);</a>
+<span class="sourceLineNo">1602</span><a id="line.1602"></a>
+<span class="sourceLineNo">1603</span><a id="line.1603">    /**</a>
+<span class="sourceLineNo">1604</span><a id="line.1604">     * Sets the item label position for negative values in a series and (if</a>
+<span class="sourceLineNo">1605</span><a id="line.1605">     * requested) sends a {@link RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">1606</span><a id="line.1606">     * listeners.</a>
+<span class="sourceLineNo">1607</span><a id="line.1607">     *</a>
+<span class="sourceLineNo">1608</span><a id="line.1608">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1609</span><a id="line.1609">     * @param position  the position (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1610</span><a id="line.1610">     * @param notify  notify registered listeners?</a>
+<span class="sourceLineNo">1611</span><a id="line.1611">     *</a>
+<span class="sourceLineNo">1612</span><a id="line.1612">     * @see #getSeriesNegativeItemLabelPosition(int)</a>
+<span class="sourceLineNo">1613</span><a id="line.1613">     */</a>
+<span class="sourceLineNo">1614</span><a id="line.1614">    public void setSeriesNegativeItemLabelPosition(int series,</a>
+<span class="sourceLineNo">1615</span><a id="line.1615">                                                   ItemLabelPosition position,</a>
+<span class="sourceLineNo">1616</span><a id="line.1616">                                                   boolean notify);</a>
+<span class="sourceLineNo">1617</span><a id="line.1617"></a>
+<span class="sourceLineNo">1618</span><a id="line.1618">    /**</a>
+<span class="sourceLineNo">1619</span><a id="line.1619">     * Returns the base item label position for negative values.</a>
+<span class="sourceLineNo">1620</span><a id="line.1620">     *</a>
+<span class="sourceLineNo">1621</span><a id="line.1621">     * @return The position.</a>
+<span class="sourceLineNo">1622</span><a id="line.1622">     *</a>
+<span class="sourceLineNo">1623</span><a id="line.1623">     * @see #setBaseNegativeItemLabelPosition(ItemLabelPosition)</a>
+<span class="sourceLineNo">1624</span><a id="line.1624">     */</a>
+<span class="sourceLineNo">1625</span><a id="line.1625">    public ItemLabelPosition getBaseNegativeItemLabelPosition();</a>
+<span class="sourceLineNo">1626</span><a id="line.1626"></a>
+<span class="sourceLineNo">1627</span><a id="line.1627">    /**</a>
+<span class="sourceLineNo">1628</span><a id="line.1628">     * Sets the base item label position for negative values and sends a</a>
+<span class="sourceLineNo">1629</span><a id="line.1629">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1630</span><a id="line.1630">     *</a>
+<span class="sourceLineNo">1631</span><a id="line.1631">     * @param position  the position.</a>
+<span class="sourceLineNo">1632</span><a id="line.1632">     *</a>
+<span class="sourceLineNo">1633</span><a id="line.1633">     * @see #getBaseNegativeItemLabelPosition()</a>
+<span class="sourceLineNo">1634</span><a id="line.1634">     */</a>
+<span class="sourceLineNo">1635</span><a id="line.1635">    public void setBaseNegativeItemLabelPosition(ItemLabelPosition position);</a>
+<span class="sourceLineNo">1636</span><a id="line.1636"></a>
+<span class="sourceLineNo">1637</span><a id="line.1637">    /**</a>
+<span class="sourceLineNo">1638</span><a id="line.1638">     * Sets the base negative item label position and, if requested, sends a</a>
+<span class="sourceLineNo">1639</span><a id="line.1639">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1640</span><a id="line.1640">     *</a>
+<span class="sourceLineNo">1641</span><a id="line.1641">     * @param position  the position.</a>
+<span class="sourceLineNo">1642</span><a id="line.1642">     * @param notify  notify registered listeners?</a>
+<span class="sourceLineNo">1643</span><a id="line.1643">     *</a>
+<span class="sourceLineNo">1644</span><a id="line.1644">     * @see #getBaseNegativeItemLabelPosition()</a>
+<span class="sourceLineNo">1645</span><a id="line.1645">     */</a>
+<span class="sourceLineNo">1646</span><a id="line.1646">    public void setBaseNegativeItemLabelPosition(ItemLabelPosition position,</a>
+<span class="sourceLineNo">1647</span><a id="line.1647">                                                 boolean notify);</a>
+<span class="sourceLineNo">1648</span><a id="line.1648"></a>
+<span class="sourceLineNo">1649</span><a id="line.1649">    // CREATE ENTITIES</a>
+<span class="sourceLineNo">1650</span><a id="line.1650">    // FIXME:  these methods should be defined</a>
+<span class="sourceLineNo">1651</span><a id="line.1651"></a>
+<span class="sourceLineNo">1652</span><a id="line.1652">//    public boolean getItemCreateEntity(int series, int item);</a>
+<span class="sourceLineNo">1653</span><a id="line.1653">//</a>
+<span class="sourceLineNo">1654</span><a id="line.1654">//    public Boolean getSeriesCreateEntities(int series);</a>
+<span class="sourceLineNo">1655</span><a id="line.1655">//</a>
+<span class="sourceLineNo">1656</span><a id="line.1656">//    public void setSeriesCreateEntities(int series, Boolean create);</a>
+<span class="sourceLineNo">1657</span><a id="line.1657">//</a>
+<span class="sourceLineNo">1658</span><a id="line.1658">//    public void setSeriesCreateEntities(int series, Boolean create,</a>
+<span class="sourceLineNo">1659</span><a id="line.1659">//            boolean notify);</a>
+<span class="sourceLineNo">1660</span><a id="line.1660">//</a>
+<span class="sourceLineNo">1661</span><a id="line.1661">//    public boolean getBaseCreateEntities();</a>
+<span class="sourceLineNo">1662</span><a id="line.1662">//</a>
+<span class="sourceLineNo">1663</span><a id="line.1663">//    public void setBaseCreateEntities(boolean create);</a>
+<span class="sourceLineNo">1664</span><a id="line.1664">//</a>
+<span class="sourceLineNo">1665</span><a id="line.1665">//    public void setBaseCreateEntities(boolean create, boolean notify);</a>
+<span class="sourceLineNo">1666</span><a id="line.1666"></a>
+<span class="sourceLineNo">1667</span><a id="line.1667"></a>
+<span class="sourceLineNo">1668</span><a id="line.1668">    // ITEM URL GENERATOR</a>
+<span class="sourceLineNo">1669</span><a id="line.1669"></a>
+<span class="sourceLineNo">1670</span><a id="line.1670">    /**</a>
+<span class="sourceLineNo">1671</span><a id="line.1671">     * Returns the URL generator for an item.</a>
+<span class="sourceLineNo">1672</span><a id="line.1672">     *</a>
+<span class="sourceLineNo">1673</span><a id="line.1673">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1674</span><a id="line.1674">     * @param item  the item index (zero-based).</a>
+<span class="sourceLineNo">1675</span><a id="line.1675">     *</a>
+<span class="sourceLineNo">1676</span><a id="line.1676">     * @return The item URL generator.</a>
+<span class="sourceLineNo">1677</span><a id="line.1677">     */</a>
+<span class="sourceLineNo">1678</span><a id="line.1678">    public CategoryURLGenerator getItemURLGenerator(int series, int item);</a>
+<span class="sourceLineNo">1679</span><a id="line.1679"></a>
+<span class="sourceLineNo">1680</span><a id="line.1680">    /**</a>
+<span class="sourceLineNo">1681</span><a id="line.1681">     * Sets the item URL generator for ALL series.</a>
+<span class="sourceLineNo">1682</span><a id="line.1682">     *</a>
+<span class="sourceLineNo">1683</span><a id="line.1683">     * @param generator  the generator.</a>
+<span class="sourceLineNo">1684</span><a id="line.1684">     *</a>
+<span class="sourceLineNo">1685</span><a id="line.1685">     * @see #getSeriesItemURLGenerator(int)</a>
+<span class="sourceLineNo">1686</span><a id="line.1686">     *</a>
+<span class="sourceLineNo">1687</span><a id="line.1687">     * @deprecated This method should no longer be used (as of version 1.0.6).</a>
+<span class="sourceLineNo">1688</span><a id="line.1688">     *     It is sufficient to rely on {@link #setSeriesItemURLGenerator(int,</a>
+<span class="sourceLineNo">1689</span><a id="line.1689">     *     CategoryURLGenerator)} and</a>
+<span class="sourceLineNo">1690</span><a id="line.1690">     *     {@link #setBaseItemURLGenerator(CategoryURLGenerator)}.</a>
+<span class="sourceLineNo">1691</span><a id="line.1691">     */</a>
+<span class="sourceLineNo">1692</span><a id="line.1692">    public void setItemURLGenerator(CategoryURLGenerator generator);</a>
+<span class="sourceLineNo">1693</span><a id="line.1693"></a>
+<span class="sourceLineNo">1694</span><a id="line.1694">    /**</a>
+<span class="sourceLineNo">1695</span><a id="line.1695">     * Returns the item URL generator for a series.</a>
+<span class="sourceLineNo">1696</span><a id="line.1696">     *</a>
+<span class="sourceLineNo">1697</span><a id="line.1697">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1698</span><a id="line.1698">     *</a>
+<span class="sourceLineNo">1699</span><a id="line.1699">     * @return The URL generator.</a>
+<span class="sourceLineNo">1700</span><a id="line.1700">     *</a>
+<span class="sourceLineNo">1701</span><a id="line.1701">     * @see #setSeriesItemURLGenerator(int, CategoryURLGenerator)</a>
+<span class="sourceLineNo">1702</span><a id="line.1702">     */</a>
+<span class="sourceLineNo">1703</span><a id="line.1703">    public CategoryURLGenerator getSeriesItemURLGenerator(int series);</a>
+<span class="sourceLineNo">1704</span><a id="line.1704"></a>
+<span class="sourceLineNo">1705</span><a id="line.1705">    /**</a>
+<span class="sourceLineNo">1706</span><a id="line.1706">     * Sets the item URL generator for a series.</a>
+<span class="sourceLineNo">1707</span><a id="line.1707">     *</a>
+<span class="sourceLineNo">1708</span><a id="line.1708">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">1709</span><a id="line.1709">     * @param generator  the generator.</a>
+<span class="sourceLineNo">1710</span><a id="line.1710">     *</a>
+<span class="sourceLineNo">1711</span><a id="line.1711">     * @see #getSeriesItemURLGenerator(int)</a>
+<span class="sourceLineNo">1712</span><a id="line.1712">     */</a>
+<span class="sourceLineNo">1713</span><a id="line.1713">    public void setSeriesItemURLGenerator(int series,</a>
+<span class="sourceLineNo">1714</span><a id="line.1714">                                          CategoryURLGenerator generator);</a>
+<span class="sourceLineNo">1715</span><a id="line.1715"></a>
+<span class="sourceLineNo">1716</span><a id="line.1716">    // FIXME: add setSeriesItemURLGenerator(int, CategoryURLGenerator, boolean)?</a>
+<span class="sourceLineNo">1717</span><a id="line.1717"></a>
+<span class="sourceLineNo">1718</span><a id="line.1718">    /**</a>
+<span class="sourceLineNo">1719</span><a id="line.1719">     * Returns the base item URL generator.</a>
+<span class="sourceLineNo">1720</span><a id="line.1720">     *</a>
+<span class="sourceLineNo">1721</span><a id="line.1721">     * @return The item URL generator (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1722</span><a id="line.1722">     *</a>
+<span class="sourceLineNo">1723</span><a id="line.1723">     * @see #setBaseItemURLGenerator(CategoryURLGenerator)</a>
+<span class="sourceLineNo">1724</span><a id="line.1724">     */</a>
+<span class="sourceLineNo">1725</span><a id="line.1725">    public CategoryURLGenerator getBaseItemURLGenerator();</a>
+<span class="sourceLineNo">1726</span><a id="line.1726"></a>
+<span class="sourceLineNo">1727</span><a id="line.1727">    /**</a>
+<span class="sourceLineNo">1728</span><a id="line.1728">     * Sets the base item URL generator and sends a {@link RendererChangeEvent}</a>
+<span class="sourceLineNo">1729</span><a id="line.1729">     * to all registered listeners.</a>
+<span class="sourceLineNo">1730</span><a id="line.1730">     *</a>
+<span class="sourceLineNo">1731</span><a id="line.1731">     * @param generator  the item URL generator (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">1732</span><a id="line.1732">     *</a>
+<span class="sourceLineNo">1733</span><a id="line.1733">     * @see #getBaseItemURLGenerator()</a>
+<span class="sourceLineNo">1734</span><a id="line.1734">     */</a>
+<span class="sourceLineNo">1735</span><a id="line.1735">    public void setBaseItemURLGenerator(CategoryURLGenerator generator);</a>
+<span class="sourceLineNo">1736</span><a id="line.1736"></a>
+<span class="sourceLineNo">1737</span><a id="line.1737">    // FIXME: add setBaseItemURLGenerator(CategoryURLGenerator, boolean) ?</a>
+<span class="sourceLineNo">1738</span><a id="line.1738"></a>
+<span class="sourceLineNo">1739</span><a id="line.1739">    /**</a>
+<span class="sourceLineNo">1740</span><a id="line.1740">     * Returns a legend item for a series.  This method can return</a>
+<span class="sourceLineNo">1741</span><a id="line.1741">     * &lt;code&gt;null&lt;/code&gt;, in which case the series will have no entry in the</a>
+<span class="sourceLineNo">1742</span><a id="line.1742">     * legend.</a>
+<span class="sourceLineNo">1743</span><a id="line.1743">     *</a>
+<span class="sourceLineNo">1744</span><a id="line.1744">     * @param datasetIndex  the dataset index (zero-based).</a>
+<span class="sourceLineNo">1745</span><a id="line.1745">     * @param series  the series (zero-based index).</a>
+<span class="sourceLineNo">1746</span><a id="line.1746">     *</a>
+<span class="sourceLineNo">1747</span><a id="line.1747">     * @return The legend item (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">1748</span><a id="line.1748">     */</a>
+<span class="sourceLineNo">1749</span><a id="line.1749">    public LegendItem getLegendItem(int datasetIndex, int series);</a>
+<span class="sourceLineNo">1750</span><a id="line.1750"></a>
+<span class="sourceLineNo">1751</span><a id="line.1751">    /**</a>
+<span class="sourceLineNo">1752</span><a id="line.1752">     * Draws a background for the data area.</a>
+<span class="sourceLineNo">1753</span><a id="line.1753">     *</a>
+<span class="sourceLineNo">1754</span><a id="line.1754">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1755</span><a id="line.1755">     * @param plot  the plot.</a>
+<span class="sourceLineNo">1756</span><a id="line.1756">     * @param dataArea  the data area.</a>
+<span class="sourceLineNo">1757</span><a id="line.1757">     */</a>
+<span class="sourceLineNo">1758</span><a id="line.1758">    public void drawBackground(Graphics2D g2, CategoryPlot plot,</a>
+<span class="sourceLineNo">1759</span><a id="line.1759">            Rectangle2D dataArea);</a>
+<span class="sourceLineNo">1760</span><a id="line.1760"></a>
+<span class="sourceLineNo">1761</span><a id="line.1761">    /**</a>
+<span class="sourceLineNo">1762</span><a id="line.1762">     * Draws an outline for the data area.</a>
+<span class="sourceLineNo">1763</span><a id="line.1763">     *</a>
+<span class="sourceLineNo">1764</span><a id="line.1764">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1765</span><a id="line.1765">     * @param plot  the plot.</a>
+<span class="sourceLineNo">1766</span><a id="line.1766">     * @param dataArea  the data area.</a>
+<span class="sourceLineNo">1767</span><a id="line.1767">     */</a>
+<span class="sourceLineNo">1768</span><a id="line.1768">    public void drawOutline(Graphics2D g2, CategoryPlot plot,</a>
+<span class="sourceLineNo">1769</span><a id="line.1769">            Rectangle2D dataArea);</a>
+<span class="sourceLineNo">1770</span><a id="line.1770"></a>
+<span class="sourceLineNo">1771</span><a id="line.1771">    /**</a>
+<span class="sourceLineNo">1772</span><a id="line.1772">     * Draws a single data item.</a>
+<span class="sourceLineNo">1773</span><a id="line.1773">     *</a>
+<span class="sourceLineNo">1774</span><a id="line.1774">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1775</span><a id="line.1775">     * @param state  state information for one chart.</a>
+<span class="sourceLineNo">1776</span><a id="line.1776">     * @param dataArea  the data plot area.</a>
+<span class="sourceLineNo">1777</span><a id="line.1777">     * @param plot  the plot.</a>
+<span class="sourceLineNo">1778</span><a id="line.1778">     * @param domainAxis  the domain axis.</a>
+<span class="sourceLineNo">1779</span><a id="line.1779">     * @param rangeAxis  the range axis.</a>
+<span class="sourceLineNo">1780</span><a id="line.1780">     * @param dataset  the data.</a>
+<span class="sourceLineNo">1781</span><a id="line.1781">     * @param row  the row index (zero-based).</a>
+<span class="sourceLineNo">1782</span><a id="line.1782">     * @param column  the column index (zero-based).</a>
+<span class="sourceLineNo">1783</span><a id="line.1783">     * @param pass  the pass index.</a>
+<span class="sourceLineNo">1784</span><a id="line.1784">     */</a>
+<span class="sourceLineNo">1785</span><a id="line.1785">    public void drawItem(Graphics2D g2, CategoryItemRendererState state,</a>
+<span class="sourceLineNo">1786</span><a id="line.1786">            Rectangle2D dataArea, CategoryPlot plot, CategoryAxis domainAxis,</a>
+<span class="sourceLineNo">1787</span><a id="line.1787">            ValueAxis rangeAxis, CategoryDataset dataset, int row, int column,</a>
+<span class="sourceLineNo">1788</span><a id="line.1788">            int pass);</a>
+<span class="sourceLineNo">1789</span><a id="line.1789"></a>
+<span class="sourceLineNo">1790</span><a id="line.1790">    /**</a>
+<span class="sourceLineNo">1791</span><a id="line.1791">     * Draws a grid line against the domain axis.</a>
+<span class="sourceLineNo">1792</span><a id="line.1792">     *</a>
+<span class="sourceLineNo">1793</span><a id="line.1793">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1794</span><a id="line.1794">     * @param plot  the plot.</a>
+<span class="sourceLineNo">1795</span><a id="line.1795">     * @param dataArea  the area for plotting data (not yet adjusted for any</a>
+<span class="sourceLineNo">1796</span><a id="line.1796">     *                  3D effect).</a>
+<span class="sourceLineNo">1797</span><a id="line.1797">     * @param value  the value.</a>
+<span class="sourceLineNo">1798</span><a id="line.1798">     *</a>
+<span class="sourceLineNo">1799</span><a id="line.1799">     * @see #drawRangeGridline(Graphics2D, CategoryPlot, ValueAxis,</a>
+<span class="sourceLineNo">1800</span><a id="line.1800">     *     Rectangle2D, double)</a>
+<span class="sourceLineNo">1801</span><a id="line.1801">     */</a>
+<span class="sourceLineNo">1802</span><a id="line.1802">    public void drawDomainGridline(Graphics2D g2, CategoryPlot plot,</a>
+<span class="sourceLineNo">1803</span><a id="line.1803">            Rectangle2D dataArea, double value);</a>
+<span class="sourceLineNo">1804</span><a id="line.1804"></a>
+<span class="sourceLineNo">1805</span><a id="line.1805">    /**</a>
+<span class="sourceLineNo">1806</span><a id="line.1806">     * Draws a grid line against the range axis.</a>
+<span class="sourceLineNo">1807</span><a id="line.1807">     *</a>
+<span class="sourceLineNo">1808</span><a id="line.1808">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1809</span><a id="line.1809">     * @param plot  the plot.</a>
+<span class="sourceLineNo">1810</span><a id="line.1810">     * @param axis  the value axis.</a>
+<span class="sourceLineNo">1811</span><a id="line.1811">     * @param dataArea  the area for plotting data (not yet adjusted for any</a>
+<span class="sourceLineNo">1812</span><a id="line.1812">     *                  3D effect).</a>
+<span class="sourceLineNo">1813</span><a id="line.1813">     * @param value  the value.</a>
+<span class="sourceLineNo">1814</span><a id="line.1814">     *</a>
+<span class="sourceLineNo">1815</span><a id="line.1815">     * @see #drawDomainGridline(Graphics2D, CategoryPlot, Rectangle2D, double)</a>
+<span class="sourceLineNo">1816</span><a id="line.1816">     */</a>
+<span class="sourceLineNo">1817</span><a id="line.1817">    public void drawRangeGridline(Graphics2D g2, CategoryPlot plot,</a>
+<span class="sourceLineNo">1818</span><a id="line.1818">            ValueAxis axis, Rectangle2D dataArea, double value);</a>
+<span class="sourceLineNo">1819</span><a id="line.1819"></a>
+<span class="sourceLineNo">1820</span><a id="line.1820">    /**</a>
+<span class="sourceLineNo">1821</span><a id="line.1821">     * Draws a line (or some other marker) to indicate a particular category on</a>
+<span class="sourceLineNo">1822</span><a id="line.1822">     * the domain axis.</a>
+<span class="sourceLineNo">1823</span><a id="line.1823">     *</a>
+<span class="sourceLineNo">1824</span><a id="line.1824">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1825</span><a id="line.1825">     * @param plot  the plot.</a>
+<span class="sourceLineNo">1826</span><a id="line.1826">     * @param axis  the category axis.</a>
+<span class="sourceLineNo">1827</span><a id="line.1827">     * @param marker  the marker.</a>
+<span class="sourceLineNo">1828</span><a id="line.1828">     * @param dataArea  the area for plotting data (not including 3D effect).</a>
+<span class="sourceLineNo">1829</span><a id="line.1829">     *</a>
+<span class="sourceLineNo">1830</span><a id="line.1830">     * @see #drawRangeMarker(Graphics2D, CategoryPlot, ValueAxis, Marker,</a>
+<span class="sourceLineNo">1831</span><a id="line.1831">     *     Rectangle2D)</a>
+<span class="sourceLineNo">1832</span><a id="line.1832">     */</a>
+<span class="sourceLineNo">1833</span><a id="line.1833">    public void drawDomainMarker(Graphics2D g2, CategoryPlot plot,</a>
+<span class="sourceLineNo">1834</span><a id="line.1834">            CategoryAxis axis, CategoryMarker marker, Rectangle2D dataArea);</a>
+<span class="sourceLineNo">1835</span><a id="line.1835"></a>
+<span class="sourceLineNo">1836</span><a id="line.1836">    /**</a>
+<span class="sourceLineNo">1837</span><a id="line.1837">     * Draws a line (or some other marker) to indicate a particular value on</a>
+<span class="sourceLineNo">1838</span><a id="line.1838">     * the range axis.</a>
+<span class="sourceLineNo">1839</span><a id="line.1839">     *</a>
+<span class="sourceLineNo">1840</span><a id="line.1840">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1841</span><a id="line.1841">     * @param plot  the plot.</a>
+<span class="sourceLineNo">1842</span><a id="line.1842">     * @param axis  the value axis.</a>
+<span class="sourceLineNo">1843</span><a id="line.1843">     * @param marker  the marker.</a>
+<span class="sourceLineNo">1844</span><a id="line.1844">     * @param dataArea  the area for plotting data (not including 3D effect).</a>
+<span class="sourceLineNo">1845</span><a id="line.1845">     *</a>
+<span class="sourceLineNo">1846</span><a id="line.1846">     * @see #drawDomainMarker(Graphics2D, CategoryPlot, CategoryAxis,</a>
+<span class="sourceLineNo">1847</span><a id="line.1847">     *     CategoryMarker, Rectangle2D)</a>
+<span class="sourceLineNo">1848</span><a id="line.1848">     */</a>
+<span class="sourceLineNo">1849</span><a id="line.1849">    public void drawRangeMarker(Graphics2D g2, CategoryPlot plot,</a>
+<span class="sourceLineNo">1850</span><a id="line.1850">            ValueAxis axis, Marker marker, Rectangle2D dataArea);</a>
+<span class="sourceLineNo">1851</span><a id="line.1851"></a>
+<span class="sourceLineNo">1852</span><a id="line.1852">    /**</a>
+<span class="sourceLineNo">1853</span><a id="line.1853">     * Returns the Java2D coordinate for the middle of the specified data item.</a>
+<span class="sourceLineNo">1854</span><a id="line.1854">     *</a>
+<span class="sourceLineNo">1855</span><a id="line.1855">     * @param rowKey  the row key.</a>
+<span class="sourceLineNo">1856</span><a id="line.1856">     * @param columnKey  the column key.</a>
+<span class="sourceLineNo">1857</span><a id="line.1857">     * @param dataset  the dataset.</a>
+<span class="sourceLineNo">1858</span><a id="line.1858">     * @param axis  the axis.</a>
+<span class="sourceLineNo">1859</span><a id="line.1859">     * @param area  the data area.</a>
+<span class="sourceLineNo">1860</span><a id="line.1860">     * @param edge  the edge along which the axis lies.</a>
+<span class="sourceLineNo">1861</span><a id="line.1861">     *</a>
+<span class="sourceLineNo">1862</span><a id="line.1862">     * @return The Java2D coordinate for the middle of the item.</a>
+<span class="sourceLineNo">1863</span><a id="line.1863">     *</a>
+<span class="sourceLineNo">1864</span><a id="line.1864">     * @since 1.0.11</a>
+<span class="sourceLineNo">1865</span><a id="line.1865">     */</a>
+<span class="sourceLineNo">1866</span><a id="line.1866">    public double getItemMiddle(Comparable rowKey, Comparable columnKey,</a>
+<span class="sourceLineNo">1867</span><a id="line.1867">            CategoryDataset dataset, CategoryAxis axis, Rectangle2D area,</a>
+<span class="sourceLineNo">1868</span><a id="line.1868">            RectangleEdge edge);</a>
+<span class="sourceLineNo">1869</span><a id="line.1869"></a>
+<span class="sourceLineNo">1870</span><a id="line.1870">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

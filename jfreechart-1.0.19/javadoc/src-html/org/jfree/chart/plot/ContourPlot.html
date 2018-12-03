@@ -1,0 +1,1935 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * ----------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * ContourPlot.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * ----------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2002-2014, by David M. O'Donnell and Contributors.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  David M. O'Donnell;</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *                   Arnaud Lelievre;</a>
+<span class="sourceLineNo">035</span><a id="line.35"> *                   Nicolas Brodu;</a>
+<span class="sourceLineNo">036</span><a id="line.36"> *</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * Changes</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * -------</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * 26-Nov-2002 : Version 1 contributed by David M. O'Donnell (DG);</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 14-Jan-2003 : Added crosshair attributes (DG);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * 23-Jan-2003 : Removed two constructors (DG);</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * 21-Mar-2003 : Bug fix 701744 (DG);</a>
+<span class="sourceLineNo">043</span><a id="line.43"> * 26-Mar-2003 : Implemented Serializable (DG);</a>
+<span class="sourceLineNo">044</span><a id="line.44"> * 09-Jul-2003 : Changed ColorBar from extending axis classes to enclosing</a>
+<span class="sourceLineNo">045</span><a id="line.45"> *               them (DG);</a>
+<span class="sourceLineNo">046</span><a id="line.46"> * 05-Aug-2003 : Applied changes in bug report 780298 (DG);</a>
+<span class="sourceLineNo">047</span><a id="line.47"> * 08-Sep-2003 : Added internationalization via use of properties</a>
+<span class="sourceLineNo">048</span><a id="line.48"> *               resourceBundle (RFE 690236) (AL);</a>
+<span class="sourceLineNo">049</span><a id="line.49"> * 11-Sep-2003 : Cloning support (NB);</a>
+<span class="sourceLineNo">050</span><a id="line.50"> * 16-Sep-2003 : Changed ChartRenderingInfo --&gt; PlotRenderingInfo (DG);</a>
+<span class="sourceLineNo">051</span><a id="line.51"> * 17-Jan-2004 : Removed references to DefaultContourDataset class, replaced</a>
+<span class="sourceLineNo">052</span><a id="line.52"> *               with ContourDataset interface (with changes to the interface).</a>
+<span class="sourceLineNo">053</span><a id="line.53"> *               See bug 741048 (DG);</a>
+<span class="sourceLineNo">054</span><a id="line.54"> * 21-Jan-2004 : Update for renamed method in ValueAxis (DG);</a>
+<span class="sourceLineNo">055</span><a id="line.55"> * 25-Feb-2004 : Replaced CrosshairInfo with CrosshairState (DG);</a>
+<span class="sourceLineNo">056</span><a id="line.56"> * 06-Oct-2004 : Updated for changes in DatasetUtilities class (DG);</a>
+<span class="sourceLineNo">057</span><a id="line.57"> * 11-Nov-2004 : Renamed zoom methods to match ValueAxisPlot interface (DG);</a>
+<span class="sourceLineNo">058</span><a id="line.58"> * 25-Nov-2004 : Small update to clone() implementation (DG);</a>
+<span class="sourceLineNo">059</span><a id="line.59"> * 11-Jan-2005 : Removed deprecated code in preparation for 1.0.0 release (DG);</a>
+<span class="sourceLineNo">060</span><a id="line.60"> * 05-May-2005 : Updated draw() method parameters (DG);</a>
+<span class="sourceLineNo">061</span><a id="line.61"> * 16-Jun-2005 : Added default constructor (DG);</a>
+<span class="sourceLineNo">062</span><a id="line.62"> * 01-Sep-2005 : Moved dataAreaRatio from Plot to here (DG);</a>
+<span class="sourceLineNo">063</span><a id="line.63"> * ------------- JFREECHART 1.0.x ---------------------------------------------</a>
+<span class="sourceLineNo">064</span><a id="line.64"> * 31-Jan-2007 : Deprecated (DG);</a>
+<span class="sourceLineNo">065</span><a id="line.65"> * 18-Dec-2008 : Use ResourceBundleWrapper - see patch 1607918 by</a>
+<span class="sourceLineNo">066</span><a id="line.66"> *               Jess Thrysoee (DG);</a>
+<span class="sourceLineNo">067</span><a id="line.67"> * 19-May-2009 : Fixed FindBugs warnings, patch by Michal Wozniak (DG);</a>
+<span class="sourceLineNo">068</span><a id="line.68"> * 02-Jul-2013 : Fix NB warnings (DG);</a>
+<span class="sourceLineNo">069</span><a id="line.69"> *</a>
+<span class="sourceLineNo">070</span><a id="line.70"> */</a>
+<span class="sourceLineNo">071</span><a id="line.71"></a>
+<span class="sourceLineNo">072</span><a id="line.72">package org.jfree.chart.plot;</a>
+<span class="sourceLineNo">073</span><a id="line.73"></a>
+<span class="sourceLineNo">074</span><a id="line.74">import java.awt.AlphaComposite;</a>
+<span class="sourceLineNo">075</span><a id="line.75">import java.awt.Composite;</a>
+<span class="sourceLineNo">076</span><a id="line.76">import java.awt.Graphics2D;</a>
+<span class="sourceLineNo">077</span><a id="line.77">import java.awt.Paint;</a>
+<span class="sourceLineNo">078</span><a id="line.78">import java.awt.RenderingHints;</a>
+<span class="sourceLineNo">079</span><a id="line.79">import java.awt.Shape;</a>
+<span class="sourceLineNo">080</span><a id="line.80">import java.awt.Stroke;</a>
+<span class="sourceLineNo">081</span><a id="line.81">import java.awt.geom.Ellipse2D;</a>
+<span class="sourceLineNo">082</span><a id="line.82">import java.awt.geom.GeneralPath;</a>
+<span class="sourceLineNo">083</span><a id="line.83">import java.awt.geom.Line2D;</a>
+<span class="sourceLineNo">084</span><a id="line.84">import java.awt.geom.Point2D;</a>
+<span class="sourceLineNo">085</span><a id="line.85">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">086</span><a id="line.86">import java.awt.geom.RectangularShape;</a>
+<span class="sourceLineNo">087</span><a id="line.87">import java.beans.PropertyChangeEvent;</a>
+<span class="sourceLineNo">088</span><a id="line.88">import java.beans.PropertyChangeListener;</a>
+<span class="sourceLineNo">089</span><a id="line.89">import java.io.Serializable;</a>
+<span class="sourceLineNo">090</span><a id="line.90">import java.util.Iterator;</a>
+<span class="sourceLineNo">091</span><a id="line.91">import java.util.List;</a>
+<span class="sourceLineNo">092</span><a id="line.92">import java.util.ResourceBundle;</a>
+<span class="sourceLineNo">093</span><a id="line.93"></a>
+<span class="sourceLineNo">094</span><a id="line.94">import org.jfree.chart.ClipPath;</a>
+<span class="sourceLineNo">095</span><a id="line.95">import org.jfree.chart.annotations.XYAnnotation;</a>
+<span class="sourceLineNo">096</span><a id="line.96">import org.jfree.chart.axis.AxisSpace;</a>
+<span class="sourceLineNo">097</span><a id="line.97">import org.jfree.chart.axis.ColorBar;</a>
+<span class="sourceLineNo">098</span><a id="line.98">import org.jfree.chart.axis.NumberAxis;</a>
+<span class="sourceLineNo">099</span><a id="line.99">import org.jfree.chart.axis.ValueAxis;</a>
+<span class="sourceLineNo">100</span><a id="line.100">import org.jfree.chart.entity.ContourEntity;</a>
+<span class="sourceLineNo">101</span><a id="line.101">import org.jfree.chart.entity.EntityCollection;</a>
+<span class="sourceLineNo">102</span><a id="line.102">import org.jfree.chart.event.AxisChangeEvent;</a>
+<span class="sourceLineNo">103</span><a id="line.103">import org.jfree.chart.event.PlotChangeEvent;</a>
+<span class="sourceLineNo">104</span><a id="line.104">import org.jfree.chart.labels.ContourToolTipGenerator;</a>
+<span class="sourceLineNo">105</span><a id="line.105">import org.jfree.chart.labels.StandardContourToolTipGenerator;</a>
+<span class="sourceLineNo">106</span><a id="line.106">import org.jfree.chart.renderer.xy.XYBlockRenderer;</a>
+<span class="sourceLineNo">107</span><a id="line.107">import org.jfree.chart.urls.XYURLGenerator;</a>
+<span class="sourceLineNo">108</span><a id="line.108">import org.jfree.chart.util.ResourceBundleWrapper;</a>
+<span class="sourceLineNo">109</span><a id="line.109">import org.jfree.data.Range;</a>
+<span class="sourceLineNo">110</span><a id="line.110">import org.jfree.data.contour.ContourDataset;</a>
+<span class="sourceLineNo">111</span><a id="line.111">import org.jfree.data.general.DatasetChangeEvent;</a>
+<span class="sourceLineNo">112</span><a id="line.112">import org.jfree.data.general.DatasetUtilities;</a>
+<span class="sourceLineNo">113</span><a id="line.113">import org.jfree.ui.RectangleEdge;</a>
+<span class="sourceLineNo">114</span><a id="line.114">import org.jfree.ui.RectangleInsets;</a>
+<span class="sourceLineNo">115</span><a id="line.115">import org.jfree.util.ObjectUtilities;</a>
+<span class="sourceLineNo">116</span><a id="line.116"></a>
+<span class="sourceLineNo">117</span><a id="line.117">/**</a>
+<span class="sourceLineNo">118</span><a id="line.118"> * A class for creating shaded contours.</a>
+<span class="sourceLineNo">119</span><a id="line.119"> *</a>
+<span class="sourceLineNo">120</span><a id="line.120"> * @deprecated This plot is no longer supported, please use {@link XYPlot} with</a>
+<span class="sourceLineNo">121</span><a id="line.121"> *     an {@link XYBlockRenderer}.</a>
+<span class="sourceLineNo">122</span><a id="line.122"> */</a>
+<span class="sourceLineNo">123</span><a id="line.123">public class ContourPlot extends Plot implements ContourValuePlot,</a>
+<span class="sourceLineNo">124</span><a id="line.124">        ValueAxisPlot, PropertyChangeListener, Serializable, Cloneable {</a>
+<span class="sourceLineNo">125</span><a id="line.125"></a>
+<span class="sourceLineNo">126</span><a id="line.126">    /** For serialization. */</a>
+<span class="sourceLineNo">127</span><a id="line.127">    private static final long serialVersionUID = 7861072556590502247L;</a>
+<span class="sourceLineNo">128</span><a id="line.128"></a>
+<span class="sourceLineNo">129</span><a id="line.129">    /** The default insets. */</a>
+<span class="sourceLineNo">130</span><a id="line.130">    protected static final RectangleInsets DEFAULT_INSETS</a>
+<span class="sourceLineNo">131</span><a id="line.131">            = new RectangleInsets(2.0, 2.0, 100.0, 10.0);</a>
+<span class="sourceLineNo">132</span><a id="line.132"></a>
+<span class="sourceLineNo">133</span><a id="line.133">    /** The domain axis (used for the x-values). */</a>
+<span class="sourceLineNo">134</span><a id="line.134">    private ValueAxis domainAxis;</a>
+<span class="sourceLineNo">135</span><a id="line.135"></a>
+<span class="sourceLineNo">136</span><a id="line.136">    /** The range axis (used for the y-values). */</a>
+<span class="sourceLineNo">137</span><a id="line.137">    private ValueAxis rangeAxis;</a>
+<span class="sourceLineNo">138</span><a id="line.138"></a>
+<span class="sourceLineNo">139</span><a id="line.139">    /** The dataset. */</a>
+<span class="sourceLineNo">140</span><a id="line.140">    private ContourDataset dataset;</a>
+<span class="sourceLineNo">141</span><a id="line.141"></a>
+<span class="sourceLineNo">142</span><a id="line.142">    /** The colorbar axis (used for the z-values). */</a>
+<span class="sourceLineNo">143</span><a id="line.143">    private ColorBar colorBar = null;</a>
+<span class="sourceLineNo">144</span><a id="line.144"></a>
+<span class="sourceLineNo">145</span><a id="line.145">    /** The color bar location. */</a>
+<span class="sourceLineNo">146</span><a id="line.146">    private RectangleEdge colorBarLocation;</a>
+<span class="sourceLineNo">147</span><a id="line.147"></a>
+<span class="sourceLineNo">148</span><a id="line.148">    /** A flag that controls whether or not a domain crosshair is drawn..*/</a>
+<span class="sourceLineNo">149</span><a id="line.149">    private boolean domainCrosshairVisible;</a>
+<span class="sourceLineNo">150</span><a id="line.150"></a>
+<span class="sourceLineNo">151</span><a id="line.151">    /** The domain crosshair value. */</a>
+<span class="sourceLineNo">152</span><a id="line.152">    private double domainCrosshairValue;</a>
+<span class="sourceLineNo">153</span><a id="line.153"></a>
+<span class="sourceLineNo">154</span><a id="line.154">    /** The pen/brush used to draw the crosshair (if any). */</a>
+<span class="sourceLineNo">155</span><a id="line.155">    private transient Stroke domainCrosshairStroke;</a>
+<span class="sourceLineNo">156</span><a id="line.156"></a>
+<span class="sourceLineNo">157</span><a id="line.157">    /** The color used to draw the crosshair (if any). */</a>
+<span class="sourceLineNo">158</span><a id="line.158">    private transient Paint domainCrosshairPaint;</a>
+<span class="sourceLineNo">159</span><a id="line.159"></a>
+<span class="sourceLineNo">160</span><a id="line.160">    /**</a>
+<span class="sourceLineNo">161</span><a id="line.161">     * A flag that controls whether or not the crosshair locks onto actual data</a>
+<span class="sourceLineNo">162</span><a id="line.162">     * points.</a>
+<span class="sourceLineNo">163</span><a id="line.163">     */</a>
+<span class="sourceLineNo">164</span><a id="line.164">    private boolean domainCrosshairLockedOnData = true;</a>
+<span class="sourceLineNo">165</span><a id="line.165"></a>
+<span class="sourceLineNo">166</span><a id="line.166">    /** A flag that controls whether or not a range crosshair is drawn..*/</a>
+<span class="sourceLineNo">167</span><a id="line.167">    private boolean rangeCrosshairVisible;</a>
+<span class="sourceLineNo">168</span><a id="line.168"></a>
+<span class="sourceLineNo">169</span><a id="line.169">    /** The range crosshair value. */</a>
+<span class="sourceLineNo">170</span><a id="line.170">    private double rangeCrosshairValue;</a>
+<span class="sourceLineNo">171</span><a id="line.171"></a>
+<span class="sourceLineNo">172</span><a id="line.172">    /** The pen/brush used to draw the crosshair (if any). */</a>
+<span class="sourceLineNo">173</span><a id="line.173">    private transient Stroke rangeCrosshairStroke;</a>
+<span class="sourceLineNo">174</span><a id="line.174"></a>
+<span class="sourceLineNo">175</span><a id="line.175">    /** The color used to draw the crosshair (if any). */</a>
+<span class="sourceLineNo">176</span><a id="line.176">    private transient Paint rangeCrosshairPaint;</a>
+<span class="sourceLineNo">177</span><a id="line.177"></a>
+<span class="sourceLineNo">178</span><a id="line.178">    /**</a>
+<span class="sourceLineNo">179</span><a id="line.179">     * A flag that controls whether or not the crosshair locks onto actual data</a>
+<span class="sourceLineNo">180</span><a id="line.180">     * points.</a>
+<span class="sourceLineNo">181</span><a id="line.181">     */</a>
+<span class="sourceLineNo">182</span><a id="line.182">    private boolean rangeCrosshairLockedOnData = true;</a>
+<span class="sourceLineNo">183</span><a id="line.183"></a>
+<span class="sourceLineNo">184</span><a id="line.184">    /**</a>
+<span class="sourceLineNo">185</span><a id="line.185">     * Defines dataArea rectangle as the ratio formed from dividing height by</a>
+<span class="sourceLineNo">186</span><a id="line.186">     * width (of the dataArea).  Modifies plot area calculations.</a>
+<span class="sourceLineNo">187</span><a id="line.187">     * ratio &amp;gt; 0 will attempt to layout the plot so that the</a>
+<span class="sourceLineNo">188</span><a id="line.188">     * dataArea.height/dataArea.width = ratio.</a>
+<span class="sourceLineNo">189</span><a id="line.189">     * ratio &amp;lt; 0 will attempt to layout the plot so that the</a>
+<span class="sourceLineNo">190</span><a id="line.190">     * dataArea.height/dataArea.width in plot units (not java2D units as when</a>
+<span class="sourceLineNo">191</span><a id="line.191">     * ratio &amp;gt; 0) = -1.*ratio.</a>
+<span class="sourceLineNo">192</span><a id="line.192">     */         //dmo</a>
+<span class="sourceLineNo">193</span><a id="line.193">    private double dataAreaRatio = 0.0;  //zero when the parameter is not set</a>
+<span class="sourceLineNo">194</span><a id="line.194"></a>
+<span class="sourceLineNo">195</span><a id="line.195">    /** A list of markers (optional) for the domain axis. */</a>
+<span class="sourceLineNo">196</span><a id="line.196">    private List domainMarkers;</a>
+<span class="sourceLineNo">197</span><a id="line.197"></a>
+<span class="sourceLineNo">198</span><a id="line.198">    /** A list of markers (optional) for the range axis. */</a>
+<span class="sourceLineNo">199</span><a id="line.199">    private List rangeMarkers;</a>
+<span class="sourceLineNo">200</span><a id="line.200"></a>
+<span class="sourceLineNo">201</span><a id="line.201">    /** A list of annotations (optional) for the plot. */</a>
+<span class="sourceLineNo">202</span><a id="line.202">    private List annotations;</a>
+<span class="sourceLineNo">203</span><a id="line.203"></a>
+<span class="sourceLineNo">204</span><a id="line.204">    /** The tool tip generator. */</a>
+<span class="sourceLineNo">205</span><a id="line.205">    private ContourToolTipGenerator toolTipGenerator;</a>
+<span class="sourceLineNo">206</span><a id="line.206"></a>
+<span class="sourceLineNo">207</span><a id="line.207">    /** The URL text generator. */</a>
+<span class="sourceLineNo">208</span><a id="line.208">    private XYURLGenerator urlGenerator;</a>
+<span class="sourceLineNo">209</span><a id="line.209"></a>
+<span class="sourceLineNo">210</span><a id="line.210">    /**</a>
+<span class="sourceLineNo">211</span><a id="line.211">     * Controls whether data are render as filled rectangles or rendered as</a>
+<span class="sourceLineNo">212</span><a id="line.212">     * points</a>
+<span class="sourceLineNo">213</span><a id="line.213">     */</a>
+<span class="sourceLineNo">214</span><a id="line.214">    private boolean renderAsPoints = false;</a>
+<span class="sourceLineNo">215</span><a id="line.215"></a>
+<span class="sourceLineNo">216</span><a id="line.216">    /**</a>
+<span class="sourceLineNo">217</span><a id="line.217">     * Size of points rendered when renderAsPoints = true.  Size is relative to</a>
+<span class="sourceLineNo">218</span><a id="line.218">     * dataArea</a>
+<span class="sourceLineNo">219</span><a id="line.219">     */</a>
+<span class="sourceLineNo">220</span><a id="line.220">    private double ptSizePct = 0.05;</a>
+<span class="sourceLineNo">221</span><a id="line.221"></a>
+<span class="sourceLineNo">222</span><a id="line.222">    /** Contains the a ClipPath to "trim" the contours. */</a>
+<span class="sourceLineNo">223</span><a id="line.223">    private transient ClipPath clipPath = null;</a>
+<span class="sourceLineNo">224</span><a id="line.224"></a>
+<span class="sourceLineNo">225</span><a id="line.225">    /** Set to Paint to represent missing values. */</a>
+<span class="sourceLineNo">226</span><a id="line.226">    private transient Paint missingPaint = null;</a>
+<span class="sourceLineNo">227</span><a id="line.227"></a>
+<span class="sourceLineNo">228</span><a id="line.228">    /** The resourceBundle for the localization. */</a>
+<span class="sourceLineNo">229</span><a id="line.229">    protected static ResourceBundle localizationResources</a>
+<span class="sourceLineNo">230</span><a id="line.230">            = ResourceBundleWrapper.getBundle(</a>
+<span class="sourceLineNo">231</span><a id="line.231">                    "org.jfree.chart.plot.LocalizationBundle");</a>
+<span class="sourceLineNo">232</span><a id="line.232"></a>
+<span class="sourceLineNo">233</span><a id="line.233">    /**</a>
+<span class="sourceLineNo">234</span><a id="line.234">     * Creates a new plot with no dataset or axes.</a>
+<span class="sourceLineNo">235</span><a id="line.235">     */</a>
+<span class="sourceLineNo">236</span><a id="line.236">    public ContourPlot() {</a>
+<span class="sourceLineNo">237</span><a id="line.237">        this(null, null, null, null);</a>
+<span class="sourceLineNo">238</span><a id="line.238">    }</a>
+<span class="sourceLineNo">239</span><a id="line.239"></a>
+<span class="sourceLineNo">240</span><a id="line.240">    /**</a>
+<span class="sourceLineNo">241</span><a id="line.241">     * Constructs a contour plot with the specified axes (other attributes take</a>
+<span class="sourceLineNo">242</span><a id="line.242">     * default values).</a>
+<span class="sourceLineNo">243</span><a id="line.243">     *</a>
+<span class="sourceLineNo">244</span><a id="line.244">     * @param dataset  The dataset.</a>
+<span class="sourceLineNo">245</span><a id="line.245">     * @param domainAxis  The domain axis.</a>
+<span class="sourceLineNo">246</span><a id="line.246">     * @param rangeAxis  The range axis.</a>
+<span class="sourceLineNo">247</span><a id="line.247">     * @param colorBar  The z-axis axis.</a>
+<span class="sourceLineNo">248</span><a id="line.248">    */</a>
+<span class="sourceLineNo">249</span><a id="line.249">    public ContourPlot(ContourDataset dataset,</a>
+<span class="sourceLineNo">250</span><a id="line.250">                       ValueAxis domainAxis, ValueAxis rangeAxis,</a>
+<span class="sourceLineNo">251</span><a id="line.251">                       ColorBar colorBar) {</a>
+<span class="sourceLineNo">252</span><a id="line.252"></a>
+<span class="sourceLineNo">253</span><a id="line.253">        super();</a>
+<span class="sourceLineNo">254</span><a id="line.254"></a>
+<span class="sourceLineNo">255</span><a id="line.255">        this.dataset = dataset;</a>
+<span class="sourceLineNo">256</span><a id="line.256">        if (dataset != null) {</a>
+<span class="sourceLineNo">257</span><a id="line.257">            dataset.addChangeListener(this);</a>
+<span class="sourceLineNo">258</span><a id="line.258">        }</a>
+<span class="sourceLineNo">259</span><a id="line.259"></a>
+<span class="sourceLineNo">260</span><a id="line.260">        this.domainAxis = domainAxis;</a>
+<span class="sourceLineNo">261</span><a id="line.261">        if (domainAxis != null) {</a>
+<span class="sourceLineNo">262</span><a id="line.262">            domainAxis.setPlot(this);</a>
+<span class="sourceLineNo">263</span><a id="line.263">            domainAxis.addChangeListener(this);</a>
+<span class="sourceLineNo">264</span><a id="line.264">        }</a>
+<span class="sourceLineNo">265</span><a id="line.265"></a>
+<span class="sourceLineNo">266</span><a id="line.266">        this.rangeAxis = rangeAxis;</a>
+<span class="sourceLineNo">267</span><a id="line.267">        if (rangeAxis != null) {</a>
+<span class="sourceLineNo">268</span><a id="line.268">            rangeAxis.setPlot(this);</a>
+<span class="sourceLineNo">269</span><a id="line.269">            rangeAxis.addChangeListener(this);</a>
+<span class="sourceLineNo">270</span><a id="line.270">        }</a>
+<span class="sourceLineNo">271</span><a id="line.271"></a>
+<span class="sourceLineNo">272</span><a id="line.272">        this.colorBar = colorBar;</a>
+<span class="sourceLineNo">273</span><a id="line.273">        if (colorBar != null) {</a>
+<span class="sourceLineNo">274</span><a id="line.274">            colorBar.getAxis().setPlot(this);</a>
+<span class="sourceLineNo">275</span><a id="line.275">            colorBar.getAxis().addChangeListener(this);</a>
+<span class="sourceLineNo">276</span><a id="line.276">            colorBar.configure(this);</a>
+<span class="sourceLineNo">277</span><a id="line.277">        }</a>
+<span class="sourceLineNo">278</span><a id="line.278">        this.colorBarLocation = RectangleEdge.LEFT;</a>
+<span class="sourceLineNo">279</span><a id="line.279"></a>
+<span class="sourceLineNo">280</span><a id="line.280">        this.toolTipGenerator = new StandardContourToolTipGenerator();</a>
+<span class="sourceLineNo">281</span><a id="line.281"></a>
+<span class="sourceLineNo">282</span><a id="line.282">    }</a>
+<span class="sourceLineNo">283</span><a id="line.283"></a>
+<span class="sourceLineNo">284</span><a id="line.284">    /**</a>
+<span class="sourceLineNo">285</span><a id="line.285">     * Returns the color bar location.</a>
+<span class="sourceLineNo">286</span><a id="line.286">     *</a>
+<span class="sourceLineNo">287</span><a id="line.287">     * @return The color bar location.</a>
+<span class="sourceLineNo">288</span><a id="line.288">     */</a>
+<span class="sourceLineNo">289</span><a id="line.289">    public RectangleEdge getColorBarLocation() {</a>
+<span class="sourceLineNo">290</span><a id="line.290">        return this.colorBarLocation;</a>
+<span class="sourceLineNo">291</span><a id="line.291">    }</a>
+<span class="sourceLineNo">292</span><a id="line.292"></a>
+<span class="sourceLineNo">293</span><a id="line.293">    /**</a>
+<span class="sourceLineNo">294</span><a id="line.294">     * Sets the color bar location and sends a {@link PlotChangeEvent} to all</a>
+<span class="sourceLineNo">295</span><a id="line.295">     * registered listeners.</a>
+<span class="sourceLineNo">296</span><a id="line.296">     *</a>
+<span class="sourceLineNo">297</span><a id="line.297">     * @param edge  the location.</a>
+<span class="sourceLineNo">298</span><a id="line.298">     */</a>
+<span class="sourceLineNo">299</span><a id="line.299">    public void setColorBarLocation(RectangleEdge edge) {</a>
+<span class="sourceLineNo">300</span><a id="line.300">        this.colorBarLocation = edge;</a>
+<span class="sourceLineNo">301</span><a id="line.301">        fireChangeEvent();</a>
+<span class="sourceLineNo">302</span><a id="line.302">    }</a>
+<span class="sourceLineNo">303</span><a id="line.303"></a>
+<span class="sourceLineNo">304</span><a id="line.304">    /**</a>
+<span class="sourceLineNo">305</span><a id="line.305">     * Returns the primary dataset for the plot.</a>
+<span class="sourceLineNo">306</span><a id="line.306">     *</a>
+<span class="sourceLineNo">307</span><a id="line.307">     * @return The primary dataset (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">308</span><a id="line.308">     */</a>
+<span class="sourceLineNo">309</span><a id="line.309">    public ContourDataset getDataset() {</a>
+<span class="sourceLineNo">310</span><a id="line.310">        return this.dataset;</a>
+<span class="sourceLineNo">311</span><a id="line.311">    }</a>
+<span class="sourceLineNo">312</span><a id="line.312"></a>
+<span class="sourceLineNo">313</span><a id="line.313">    /**</a>
+<span class="sourceLineNo">314</span><a id="line.314">     * Sets the dataset for the plot, replacing the existing dataset if there</a>
+<span class="sourceLineNo">315</span><a id="line.315">     * is one.</a>
+<span class="sourceLineNo">316</span><a id="line.316">     *</a>
+<span class="sourceLineNo">317</span><a id="line.317">     * @param dataset  the dataset (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">318</span><a id="line.318">     */</a>
+<span class="sourceLineNo">319</span><a id="line.319">    public void setDataset(ContourDataset dataset) {</a>
+<span class="sourceLineNo">320</span><a id="line.320"></a>
+<span class="sourceLineNo">321</span><a id="line.321">        // if there is an existing dataset, remove the plot from the list of</a>
+<span class="sourceLineNo">322</span><a id="line.322">        // change listeners...</a>
+<span class="sourceLineNo">323</span><a id="line.323">        ContourDataset existing = this.dataset;</a>
+<span class="sourceLineNo">324</span><a id="line.324">        if (existing != null) {</a>
+<span class="sourceLineNo">325</span><a id="line.325">            existing.removeChangeListener(this);</a>
+<span class="sourceLineNo">326</span><a id="line.326">        }</a>
+<span class="sourceLineNo">327</span><a id="line.327"></a>
+<span class="sourceLineNo">328</span><a id="line.328">        // set the new dataset, and register the chart as a change listener...</a>
+<span class="sourceLineNo">329</span><a id="line.329">        this.dataset = dataset;</a>
+<span class="sourceLineNo">330</span><a id="line.330">        if (dataset != null) {</a>
+<span class="sourceLineNo">331</span><a id="line.331">            setDatasetGroup(dataset.getGroup());</a>
+<span class="sourceLineNo">332</span><a id="line.332">            dataset.addChangeListener(this);</a>
+<span class="sourceLineNo">333</span><a id="line.333">        }</a>
+<span class="sourceLineNo">334</span><a id="line.334"></a>
+<span class="sourceLineNo">335</span><a id="line.335">        // send a dataset change event to self...</a>
+<span class="sourceLineNo">336</span><a id="line.336">        DatasetChangeEvent event = new DatasetChangeEvent(this, dataset);</a>
+<span class="sourceLineNo">337</span><a id="line.337">        datasetChanged(event);</a>
+<span class="sourceLineNo">338</span><a id="line.338"></a>
+<span class="sourceLineNo">339</span><a id="line.339">    }</a>
+<span class="sourceLineNo">340</span><a id="line.340"></a>
+<span class="sourceLineNo">341</span><a id="line.341">    /**</a>
+<span class="sourceLineNo">342</span><a id="line.342">     * Returns the domain axis for the plot.</a>
+<span class="sourceLineNo">343</span><a id="line.343">     *</a>
+<span class="sourceLineNo">344</span><a id="line.344">     * @return The domain axis.</a>
+<span class="sourceLineNo">345</span><a id="line.345">     */</a>
+<span class="sourceLineNo">346</span><a id="line.346">    public ValueAxis getDomainAxis() {</a>
+<span class="sourceLineNo">347</span><a id="line.347"></a>
+<span class="sourceLineNo">348</span><a id="line.348">        ValueAxis result = this.domainAxis;</a>
+<span class="sourceLineNo">349</span><a id="line.349"></a>
+<span class="sourceLineNo">350</span><a id="line.350">        return result;</a>
+<span class="sourceLineNo">351</span><a id="line.351"></a>
+<span class="sourceLineNo">352</span><a id="line.352">    }</a>
+<span class="sourceLineNo">353</span><a id="line.353"></a>
+<span class="sourceLineNo">354</span><a id="line.354">    /**</a>
+<span class="sourceLineNo">355</span><a id="line.355">     * Sets the domain axis for the plot (this must be compatible with the plot</a>
+<span class="sourceLineNo">356</span><a id="line.356">     * type or an exception is thrown).</a>
+<span class="sourceLineNo">357</span><a id="line.357">     *</a>
+<span class="sourceLineNo">358</span><a id="line.358">     * @param axis The new axis.</a>
+<span class="sourceLineNo">359</span><a id="line.359">     */</a>
+<span class="sourceLineNo">360</span><a id="line.360">    public void setDomainAxis(ValueAxis axis) {</a>
+<span class="sourceLineNo">361</span><a id="line.361"></a>
+<span class="sourceLineNo">362</span><a id="line.362">        if (isCompatibleDomainAxis(axis)) {</a>
+<span class="sourceLineNo">363</span><a id="line.363"></a>
+<span class="sourceLineNo">364</span><a id="line.364">            if (axis != null) {</a>
+<span class="sourceLineNo">365</span><a id="line.365">                axis.setPlot(this);</a>
+<span class="sourceLineNo">366</span><a id="line.366">                axis.addChangeListener(this);</a>
+<span class="sourceLineNo">367</span><a id="line.367">            }</a>
+<span class="sourceLineNo">368</span><a id="line.368"></a>
+<span class="sourceLineNo">369</span><a id="line.369">            // plot is likely registered as a listener with the existing axis...</a>
+<span class="sourceLineNo">370</span><a id="line.370">            if (this.domainAxis != null) {</a>
+<span class="sourceLineNo">371</span><a id="line.371">                this.domainAxis.removeChangeListener(this);</a>
+<span class="sourceLineNo">372</span><a id="line.372">            }</a>
+<span class="sourceLineNo">373</span><a id="line.373"></a>
+<span class="sourceLineNo">374</span><a id="line.374">            this.domainAxis = axis;</a>
+<span class="sourceLineNo">375</span><a id="line.375">            fireChangeEvent();</a>
+<span class="sourceLineNo">376</span><a id="line.376"></a>
+<span class="sourceLineNo">377</span><a id="line.377">        }</a>
+<span class="sourceLineNo">378</span><a id="line.378"></a>
+<span class="sourceLineNo">379</span><a id="line.379">    }</a>
+<span class="sourceLineNo">380</span><a id="line.380"></a>
+<span class="sourceLineNo">381</span><a id="line.381">    /**</a>
+<span class="sourceLineNo">382</span><a id="line.382">     * Returns the range axis for the plot.</a>
+<span class="sourceLineNo">383</span><a id="line.383">     *</a>
+<span class="sourceLineNo">384</span><a id="line.384">     * @return The range axis.</a>
+<span class="sourceLineNo">385</span><a id="line.385">     */</a>
+<span class="sourceLineNo">386</span><a id="line.386">    public ValueAxis getRangeAxis() {</a>
+<span class="sourceLineNo">387</span><a id="line.387"></a>
+<span class="sourceLineNo">388</span><a id="line.388">        ValueAxis result = this.rangeAxis;</a>
+<span class="sourceLineNo">389</span><a id="line.389"></a>
+<span class="sourceLineNo">390</span><a id="line.390">        return result;</a>
+<span class="sourceLineNo">391</span><a id="line.391"></a>
+<span class="sourceLineNo">392</span><a id="line.392">    }</a>
+<span class="sourceLineNo">393</span><a id="line.393"></a>
+<span class="sourceLineNo">394</span><a id="line.394">    /**</a>
+<span class="sourceLineNo">395</span><a id="line.395">     * Sets the range axis for the plot.</a>
+<span class="sourceLineNo">396</span><a id="line.396">     * &lt;P&gt;</a>
+<span class="sourceLineNo">397</span><a id="line.397">     * An exception is thrown if the new axis and the plot are not mutually</a>
+<span class="sourceLineNo">398</span><a id="line.398">     * compatible.</a>
+<span class="sourceLineNo">399</span><a id="line.399">     *</a>
+<span class="sourceLineNo">400</span><a id="line.400">     * @param axis The new axis (null permitted).</a>
+<span class="sourceLineNo">401</span><a id="line.401">     */</a>
+<span class="sourceLineNo">402</span><a id="line.402">    public void setRangeAxis(ValueAxis axis) {</a>
+<span class="sourceLineNo">403</span><a id="line.403"></a>
+<span class="sourceLineNo">404</span><a id="line.404">        if (axis != null) {</a>
+<span class="sourceLineNo">405</span><a id="line.405">            axis.setPlot(this);</a>
+<span class="sourceLineNo">406</span><a id="line.406">            axis.addChangeListener(this);</a>
+<span class="sourceLineNo">407</span><a id="line.407">        }</a>
+<span class="sourceLineNo">408</span><a id="line.408"></a>
+<span class="sourceLineNo">409</span><a id="line.409">        // plot is likely registered as a listener with the existing axis...</a>
+<span class="sourceLineNo">410</span><a id="line.410">        if (this.rangeAxis != null) {</a>
+<span class="sourceLineNo">411</span><a id="line.411">            this.rangeAxis.removeChangeListener(this);</a>
+<span class="sourceLineNo">412</span><a id="line.412">        }</a>
+<span class="sourceLineNo">413</span><a id="line.413"></a>
+<span class="sourceLineNo">414</span><a id="line.414">        this.rangeAxis = axis;</a>
+<span class="sourceLineNo">415</span><a id="line.415">        fireChangeEvent();</a>
+<span class="sourceLineNo">416</span><a id="line.416"></a>
+<span class="sourceLineNo">417</span><a id="line.417">    }</a>
+<span class="sourceLineNo">418</span><a id="line.418"></a>
+<span class="sourceLineNo">419</span><a id="line.419">    /**</a>
+<span class="sourceLineNo">420</span><a id="line.420">     * Sets the colorbar for the plot.</a>
+<span class="sourceLineNo">421</span><a id="line.421">     *</a>
+<span class="sourceLineNo">422</span><a id="line.422">     * @param axis The new axis (null permitted).</a>
+<span class="sourceLineNo">423</span><a id="line.423">     */</a>
+<span class="sourceLineNo">424</span><a id="line.424">    public void setColorBarAxis(ColorBar axis) {</a>
+<span class="sourceLineNo">425</span><a id="line.425"></a>
+<span class="sourceLineNo">426</span><a id="line.426">        this.colorBar = axis;</a>
+<span class="sourceLineNo">427</span><a id="line.427">        fireChangeEvent();</a>
+<span class="sourceLineNo">428</span><a id="line.428"></a>
+<span class="sourceLineNo">429</span><a id="line.429">    }</a>
+<span class="sourceLineNo">430</span><a id="line.430"></a>
+<span class="sourceLineNo">431</span><a id="line.431">    /**</a>
+<span class="sourceLineNo">432</span><a id="line.432">     * Returns the data area ratio.</a>
+<span class="sourceLineNo">433</span><a id="line.433">     *</a>
+<span class="sourceLineNo">434</span><a id="line.434">     * @return The ratio.</a>
+<span class="sourceLineNo">435</span><a id="line.435">     */</a>
+<span class="sourceLineNo">436</span><a id="line.436">    public double getDataAreaRatio() {</a>
+<span class="sourceLineNo">437</span><a id="line.437">        return this.dataAreaRatio;</a>
+<span class="sourceLineNo">438</span><a id="line.438">    }</a>
+<span class="sourceLineNo">439</span><a id="line.439"></a>
+<span class="sourceLineNo">440</span><a id="line.440">    /**</a>
+<span class="sourceLineNo">441</span><a id="line.441">     * Sets the data area ratio.</a>
+<span class="sourceLineNo">442</span><a id="line.442">     *</a>
+<span class="sourceLineNo">443</span><a id="line.443">     * @param ratio  the ratio.</a>
+<span class="sourceLineNo">444</span><a id="line.444">     */</a>
+<span class="sourceLineNo">445</span><a id="line.445">    public void setDataAreaRatio(double ratio) {</a>
+<span class="sourceLineNo">446</span><a id="line.446">        this.dataAreaRatio = ratio;</a>
+<span class="sourceLineNo">447</span><a id="line.447">    }</a>
+<span class="sourceLineNo">448</span><a id="line.448"></a>
+<span class="sourceLineNo">449</span><a id="line.449">    /**</a>
+<span class="sourceLineNo">450</span><a id="line.450">     * Adds a marker for the domain axis.</a>
+<span class="sourceLineNo">451</span><a id="line.451">     * &lt;P&gt;</a>
+<span class="sourceLineNo">452</span><a id="line.452">     * Typically a marker will be drawn by the renderer as a line perpendicular</a>
+<span class="sourceLineNo">453</span><a id="line.453">     * to the range axis, however this is entirely up to the renderer.</a>
+<span class="sourceLineNo">454</span><a id="line.454">     *</a>
+<span class="sourceLineNo">455</span><a id="line.455">     * @param marker the marker.</a>
+<span class="sourceLineNo">456</span><a id="line.456">     */</a>
+<span class="sourceLineNo">457</span><a id="line.457">    public void addDomainMarker(Marker marker) {</a>
+<span class="sourceLineNo">458</span><a id="line.458"></a>
+<span class="sourceLineNo">459</span><a id="line.459">        if (this.domainMarkers == null) {</a>
+<span class="sourceLineNo">460</span><a id="line.460">            this.domainMarkers = new java.util.ArrayList();</a>
+<span class="sourceLineNo">461</span><a id="line.461">        }</a>
+<span class="sourceLineNo">462</span><a id="line.462">        this.domainMarkers.add(marker);</a>
+<span class="sourceLineNo">463</span><a id="line.463">        fireChangeEvent();</a>
+<span class="sourceLineNo">464</span><a id="line.464"></a>
+<span class="sourceLineNo">465</span><a id="line.465">    }</a>
+<span class="sourceLineNo">466</span><a id="line.466"></a>
+<span class="sourceLineNo">467</span><a id="line.467">    /**</a>
+<span class="sourceLineNo">468</span><a id="line.468">     * Clears all the domain markers.</a>
+<span class="sourceLineNo">469</span><a id="line.469">     */</a>
+<span class="sourceLineNo">470</span><a id="line.470">    public void clearDomainMarkers() {</a>
+<span class="sourceLineNo">471</span><a id="line.471">        if (this.domainMarkers != null) {</a>
+<span class="sourceLineNo">472</span><a id="line.472">            this.domainMarkers.clear();</a>
+<span class="sourceLineNo">473</span><a id="line.473">            fireChangeEvent();</a>
+<span class="sourceLineNo">474</span><a id="line.474">        }</a>
+<span class="sourceLineNo">475</span><a id="line.475">    }</a>
+<span class="sourceLineNo">476</span><a id="line.476"></a>
+<span class="sourceLineNo">477</span><a id="line.477">    /**</a>
+<span class="sourceLineNo">478</span><a id="line.478">     * Adds a marker for the range axis.</a>
+<span class="sourceLineNo">479</span><a id="line.479">     * &lt;P&gt;</a>
+<span class="sourceLineNo">480</span><a id="line.480">     * Typically a marker will be drawn by the renderer as a line perpendicular</a>
+<span class="sourceLineNo">481</span><a id="line.481">     * to the range axis, however this is entirely up to the renderer.</a>
+<span class="sourceLineNo">482</span><a id="line.482">     *</a>
+<span class="sourceLineNo">483</span><a id="line.483">     * @param marker The marker.</a>
+<span class="sourceLineNo">484</span><a id="line.484">     */</a>
+<span class="sourceLineNo">485</span><a id="line.485">    public void addRangeMarker(Marker marker) {</a>
+<span class="sourceLineNo">486</span><a id="line.486"></a>
+<span class="sourceLineNo">487</span><a id="line.487">        if (this.rangeMarkers == null) {</a>
+<span class="sourceLineNo">488</span><a id="line.488">            this.rangeMarkers = new java.util.ArrayList();</a>
+<span class="sourceLineNo">489</span><a id="line.489">        }</a>
+<span class="sourceLineNo">490</span><a id="line.490">        this.rangeMarkers.add(marker);</a>
+<span class="sourceLineNo">491</span><a id="line.491">        fireChangeEvent();</a>
+<span class="sourceLineNo">492</span><a id="line.492"></a>
+<span class="sourceLineNo">493</span><a id="line.493">    }</a>
+<span class="sourceLineNo">494</span><a id="line.494"></a>
+<span class="sourceLineNo">495</span><a id="line.495">    /**</a>
+<span class="sourceLineNo">496</span><a id="line.496">     * Clears all the range markers.</a>
+<span class="sourceLineNo">497</span><a id="line.497">     */</a>
+<span class="sourceLineNo">498</span><a id="line.498">    public void clearRangeMarkers() {</a>
+<span class="sourceLineNo">499</span><a id="line.499">        if (this.rangeMarkers != null) {</a>
+<span class="sourceLineNo">500</span><a id="line.500">            this.rangeMarkers.clear();</a>
+<span class="sourceLineNo">501</span><a id="line.501">            fireChangeEvent();</a>
+<span class="sourceLineNo">502</span><a id="line.502">        }</a>
+<span class="sourceLineNo">503</span><a id="line.503">    }</a>
+<span class="sourceLineNo">504</span><a id="line.504"></a>
+<span class="sourceLineNo">505</span><a id="line.505">    /**</a>
+<span class="sourceLineNo">506</span><a id="line.506">     * Adds an annotation to the plot.</a>
+<span class="sourceLineNo">507</span><a id="line.507">     *</a>
+<span class="sourceLineNo">508</span><a id="line.508">     * @param annotation  the annotation.</a>
+<span class="sourceLineNo">509</span><a id="line.509">     */</a>
+<span class="sourceLineNo">510</span><a id="line.510">    public void addAnnotation(XYAnnotation annotation) {</a>
+<span class="sourceLineNo">511</span><a id="line.511"></a>
+<span class="sourceLineNo">512</span><a id="line.512">        if (this.annotations == null) {</a>
+<span class="sourceLineNo">513</span><a id="line.513">            this.annotations = new java.util.ArrayList();</a>
+<span class="sourceLineNo">514</span><a id="line.514">        }</a>
+<span class="sourceLineNo">515</span><a id="line.515">        this.annotations.add(annotation);</a>
+<span class="sourceLineNo">516</span><a id="line.516">        fireChangeEvent();</a>
+<span class="sourceLineNo">517</span><a id="line.517"></a>
+<span class="sourceLineNo">518</span><a id="line.518">    }</a>
+<span class="sourceLineNo">519</span><a id="line.519"></a>
+<span class="sourceLineNo">520</span><a id="line.520">    /**</a>
+<span class="sourceLineNo">521</span><a id="line.521">     * Clears all the annotations.</a>
+<span class="sourceLineNo">522</span><a id="line.522">     */</a>
+<span class="sourceLineNo">523</span><a id="line.523">    public void clearAnnotations() {</a>
+<span class="sourceLineNo">524</span><a id="line.524">        if (this.annotations != null) {</a>
+<span class="sourceLineNo">525</span><a id="line.525">            this.annotations.clear();</a>
+<span class="sourceLineNo">526</span><a id="line.526">            fireChangeEvent();</a>
+<span class="sourceLineNo">527</span><a id="line.527">        }</a>
+<span class="sourceLineNo">528</span><a id="line.528">    }</a>
+<span class="sourceLineNo">529</span><a id="line.529"></a>
+<span class="sourceLineNo">530</span><a id="line.530">    /**</a>
+<span class="sourceLineNo">531</span><a id="line.531">     * Checks the compatibility of a domain axis, returning true if the axis is</a>
+<span class="sourceLineNo">532</span><a id="line.532">     * compatible with the plot, and false otherwise.</a>
+<span class="sourceLineNo">533</span><a id="line.533">     *</a>
+<span class="sourceLineNo">534</span><a id="line.534">     * @param axis The proposed axis.</a>
+<span class="sourceLineNo">535</span><a id="line.535">     *</a>
+<span class="sourceLineNo">536</span><a id="line.536">     * @return &lt;code&gt;true&lt;/code&gt; if the axis is compatible with the plot.</a>
+<span class="sourceLineNo">537</span><a id="line.537">     */</a>
+<span class="sourceLineNo">538</span><a id="line.538">    public boolean isCompatibleDomainAxis(ValueAxis axis) {</a>
+<span class="sourceLineNo">539</span><a id="line.539"></a>
+<span class="sourceLineNo">540</span><a id="line.540">        return true;</a>
+<span class="sourceLineNo">541</span><a id="line.541"></a>
+<span class="sourceLineNo">542</span><a id="line.542">    }</a>
+<span class="sourceLineNo">543</span><a id="line.543"></a>
+<span class="sourceLineNo">544</span><a id="line.544">    /**</a>
+<span class="sourceLineNo">545</span><a id="line.545">     * Draws the plot on a Java 2D graphics device (such as the screen or a</a>
+<span class="sourceLineNo">546</span><a id="line.546">     * printer).</a>
+<span class="sourceLineNo">547</span><a id="line.547">     * &lt;P&gt;</a>
+<span class="sourceLineNo">548</span><a id="line.548">     * The optional &lt;code&gt;info&lt;/code&gt; argument collects information about the</a>
+<span class="sourceLineNo">549</span><a id="line.549">     * rendering of the plot (dimensions, tooltip information etc).  Just pass</a>
+<span class="sourceLineNo">550</span><a id="line.550">     * in &lt;code&gt;null&lt;/code&gt; if you do not need this information.</a>
+<span class="sourceLineNo">551</span><a id="line.551">     *</a>
+<span class="sourceLineNo">552</span><a id="line.552">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">553</span><a id="line.553">     * @param area  the area within which the plot (including axis labels)</a>
+<span class="sourceLineNo">554</span><a id="line.554">     *              should be drawn.</a>
+<span class="sourceLineNo">555</span><a id="line.555">     * @param anchor  the anchor point (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">556</span><a id="line.556">     * @param parentState  the state from the parent plot, if there is one.</a>
+<span class="sourceLineNo">557</span><a id="line.557">     * @param info  collects chart drawing information (&lt;code&gt;null&lt;/code&gt;</a>
+<span class="sourceLineNo">558</span><a id="line.558">     *              permitted).</a>
+<span class="sourceLineNo">559</span><a id="line.559">     */</a>
+<span class="sourceLineNo">560</span><a id="line.560">    @Override</a>
+<span class="sourceLineNo">561</span><a id="line.561">    public void draw(Graphics2D g2, Rectangle2D area, Point2D anchor,</a>
+<span class="sourceLineNo">562</span><a id="line.562">                     PlotState parentState, PlotRenderingInfo info) {</a>
+<span class="sourceLineNo">563</span><a id="line.563"></a>
+<span class="sourceLineNo">564</span><a id="line.564">        // if the plot area is too small, just return...</a>
+<span class="sourceLineNo">565</span><a id="line.565">        boolean b1 = (area.getWidth() &lt;= MINIMUM_WIDTH_TO_DRAW);</a>
+<span class="sourceLineNo">566</span><a id="line.566">        boolean b2 = (area.getHeight() &lt;= MINIMUM_HEIGHT_TO_DRAW);</a>
+<span class="sourceLineNo">567</span><a id="line.567">        if (b1 || b2) {</a>
+<span class="sourceLineNo">568</span><a id="line.568">            return;</a>
+<span class="sourceLineNo">569</span><a id="line.569">        }</a>
+<span class="sourceLineNo">570</span><a id="line.570"></a>
+<span class="sourceLineNo">571</span><a id="line.571">        // record the plot area...</a>
+<span class="sourceLineNo">572</span><a id="line.572">        if (info != null) {</a>
+<span class="sourceLineNo">573</span><a id="line.573">            info.setPlotArea(area);</a>
+<span class="sourceLineNo">574</span><a id="line.574">        }</a>
+<span class="sourceLineNo">575</span><a id="line.575"></a>
+<span class="sourceLineNo">576</span><a id="line.576">        // adjust the drawing area for plot insets (if any)...</a>
+<span class="sourceLineNo">577</span><a id="line.577">        RectangleInsets insets = getInsets();</a>
+<span class="sourceLineNo">578</span><a id="line.578">        insets.trim(area);</a>
+<span class="sourceLineNo">579</span><a id="line.579"></a>
+<span class="sourceLineNo">580</span><a id="line.580">        AxisSpace space = new AxisSpace();</a>
+<span class="sourceLineNo">581</span><a id="line.581"></a>
+<span class="sourceLineNo">582</span><a id="line.582">        space = this.domainAxis.reserveSpace(g2, this, area,</a>
+<span class="sourceLineNo">583</span><a id="line.583">                RectangleEdge.BOTTOM, space);</a>
+<span class="sourceLineNo">584</span><a id="line.584">        space = this.rangeAxis.reserveSpace(g2, this, area,</a>
+<span class="sourceLineNo">585</span><a id="line.585">                RectangleEdge.LEFT, space);</a>
+<span class="sourceLineNo">586</span><a id="line.586"></a>
+<span class="sourceLineNo">587</span><a id="line.587">        Rectangle2D estimatedDataArea = space.shrink(area, null);</a>
+<span class="sourceLineNo">588</span><a id="line.588"></a>
+<span class="sourceLineNo">589</span><a id="line.589">        AxisSpace space2 = new AxisSpace();</a>
+<span class="sourceLineNo">590</span><a id="line.590">        space2 = this.colorBar.reserveSpace(g2, this, area, estimatedDataArea,</a>
+<span class="sourceLineNo">591</span><a id="line.591">                this.colorBarLocation, space2);</a>
+<span class="sourceLineNo">592</span><a id="line.592">        Rectangle2D adjustedPlotArea = space2.shrink(area, null);</a>
+<span class="sourceLineNo">593</span><a id="line.593"></a>
+<span class="sourceLineNo">594</span><a id="line.594">        Rectangle2D dataArea = space.shrink(adjustedPlotArea, null);</a>
+<span class="sourceLineNo">595</span><a id="line.595"></a>
+<span class="sourceLineNo">596</span><a id="line.596">        Rectangle2D colorBarArea = space2.reserved(area, this.colorBarLocation);</a>
+<span class="sourceLineNo">597</span><a id="line.597"></a>
+<span class="sourceLineNo">598</span><a id="line.598">        // additional dataArea modifications</a>
+<span class="sourceLineNo">599</span><a id="line.599">        if (getDataAreaRatio() != 0.0) { //check whether modification is</a>
+<span class="sourceLineNo">600</span><a id="line.600">            double ratio = getDataAreaRatio();</a>
+<span class="sourceLineNo">601</span><a id="line.601">            Rectangle2D tmpDataArea = (Rectangle2D) dataArea.clone();</a>
+<span class="sourceLineNo">602</span><a id="line.602">            double h = tmpDataArea.getHeight();</a>
+<span class="sourceLineNo">603</span><a id="line.603">            double w = tmpDataArea.getWidth();</a>
+<span class="sourceLineNo">604</span><a id="line.604"></a>
+<span class="sourceLineNo">605</span><a id="line.605">            if (ratio &gt; 0) { // ratio represents pixels</a>
+<span class="sourceLineNo">606</span><a id="line.606">                if (w * ratio &lt;= h) {</a>
+<span class="sourceLineNo">607</span><a id="line.607">                    h = ratio * w;</a>
+<span class="sourceLineNo">608</span><a id="line.608">                }</a>
+<span class="sourceLineNo">609</span><a id="line.609">                else {</a>
+<span class="sourceLineNo">610</span><a id="line.610">                    w = h / ratio;</a>
+<span class="sourceLineNo">611</span><a id="line.611">                }</a>
+<span class="sourceLineNo">612</span><a id="line.612">            }</a>
+<span class="sourceLineNo">613</span><a id="line.613">            else {  // ratio represents axis units</a>
+<span class="sourceLineNo">614</span><a id="line.614">                ratio *= -1.0;</a>
+<span class="sourceLineNo">615</span><a id="line.615">                double xLength = getDomainAxis().getRange().getLength();</a>
+<span class="sourceLineNo">616</span><a id="line.616">                double yLength = getRangeAxis().getRange().getLength();</a>
+<span class="sourceLineNo">617</span><a id="line.617">                double unitRatio = yLength / xLength;</a>
+<span class="sourceLineNo">618</span><a id="line.618"></a>
+<span class="sourceLineNo">619</span><a id="line.619">                ratio = unitRatio * ratio;</a>
+<span class="sourceLineNo">620</span><a id="line.620"></a>
+<span class="sourceLineNo">621</span><a id="line.621">                if (w * ratio &lt;= h) {</a>
+<span class="sourceLineNo">622</span><a id="line.622">                    h = ratio * w;</a>
+<span class="sourceLineNo">623</span><a id="line.623">                }</a>
+<span class="sourceLineNo">624</span><a id="line.624">                else {</a>
+<span class="sourceLineNo">625</span><a id="line.625">                    w = h / ratio;</a>
+<span class="sourceLineNo">626</span><a id="line.626">                }</a>
+<span class="sourceLineNo">627</span><a id="line.627">            }</a>
+<span class="sourceLineNo">628</span><a id="line.628"></a>
+<span class="sourceLineNo">629</span><a id="line.629">            dataArea.setRect(tmpDataArea.getX() + tmpDataArea.getWidth() / 2</a>
+<span class="sourceLineNo">630</span><a id="line.630">                    - w / 2, tmpDataArea.getY(), w, h);</a>
+<span class="sourceLineNo">631</span><a id="line.631">        }</a>
+<span class="sourceLineNo">632</span><a id="line.632"></a>
+<span class="sourceLineNo">633</span><a id="line.633">        if (info != null) {</a>
+<span class="sourceLineNo">634</span><a id="line.634">            info.setDataArea(dataArea);</a>
+<span class="sourceLineNo">635</span><a id="line.635">        }</a>
+<span class="sourceLineNo">636</span><a id="line.636"></a>
+<span class="sourceLineNo">637</span><a id="line.637">        CrosshairState crosshairState = new CrosshairState();</a>
+<span class="sourceLineNo">638</span><a id="line.638">        crosshairState.setCrosshairDistance(Double.POSITIVE_INFINITY);</a>
+<span class="sourceLineNo">639</span><a id="line.639"></a>
+<span class="sourceLineNo">640</span><a id="line.640">        // draw the plot background...</a>
+<span class="sourceLineNo">641</span><a id="line.641">        drawBackground(g2, dataArea);</a>
+<span class="sourceLineNo">642</span><a id="line.642"></a>
+<span class="sourceLineNo">643</span><a id="line.643">        double cursor = dataArea.getMaxY();</a>
+<span class="sourceLineNo">644</span><a id="line.644">        if (this.domainAxis != null) {</a>
+<span class="sourceLineNo">645</span><a id="line.645">            this.domainAxis.draw(g2, cursor, adjustedPlotArea, dataArea,</a>
+<span class="sourceLineNo">646</span><a id="line.646">                    RectangleEdge.BOTTOM, info);</a>
+<span class="sourceLineNo">647</span><a id="line.647">        }</a>
+<span class="sourceLineNo">648</span><a id="line.648"></a>
+<span class="sourceLineNo">649</span><a id="line.649">        if (this.rangeAxis != null) {</a>
+<span class="sourceLineNo">650</span><a id="line.650">            cursor = dataArea.getMinX();</a>
+<span class="sourceLineNo">651</span><a id="line.651">            this.rangeAxis.draw(g2, cursor, adjustedPlotArea, dataArea,</a>
+<span class="sourceLineNo">652</span><a id="line.652">                    RectangleEdge.LEFT, info);</a>
+<span class="sourceLineNo">653</span><a id="line.653">        }</a>
+<span class="sourceLineNo">654</span><a id="line.654"></a>
+<span class="sourceLineNo">655</span><a id="line.655">        if (this.colorBar != null) {</a>
+<span class="sourceLineNo">656</span><a id="line.656">            cursor = 0.0;</a>
+<span class="sourceLineNo">657</span><a id="line.657">            this.colorBar.draw(g2, cursor, adjustedPlotArea, dataArea,</a>
+<span class="sourceLineNo">658</span><a id="line.658">                    colorBarArea, this.colorBarLocation);</a>
+<span class="sourceLineNo">659</span><a id="line.659">        }</a>
+<span class="sourceLineNo">660</span><a id="line.660">        Shape originalClip = g2.getClip();</a>
+<span class="sourceLineNo">661</span><a id="line.661">        Composite originalComposite = g2.getComposite();</a>
+<span class="sourceLineNo">662</span><a id="line.662"></a>
+<span class="sourceLineNo">663</span><a id="line.663">        g2.clip(dataArea);</a>
+<span class="sourceLineNo">664</span><a id="line.664">        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,</a>
+<span class="sourceLineNo">665</span><a id="line.665">                getForegroundAlpha()));</a>
+<span class="sourceLineNo">666</span><a id="line.666">        render(g2, dataArea, info, crosshairState);</a>
+<span class="sourceLineNo">667</span><a id="line.667"></a>
+<span class="sourceLineNo">668</span><a id="line.668">        if (this.domainMarkers != null) {</a>
+<span class="sourceLineNo">669</span><a id="line.669">            Iterator iterator = this.domainMarkers.iterator();</a>
+<span class="sourceLineNo">670</span><a id="line.670">            while (iterator.hasNext()) {</a>
+<span class="sourceLineNo">671</span><a id="line.671">                Marker marker = (Marker) iterator.next();</a>
+<span class="sourceLineNo">672</span><a id="line.672">                drawDomainMarker(g2, this, getDomainAxis(), marker, dataArea);</a>
+<span class="sourceLineNo">673</span><a id="line.673">            }</a>
+<span class="sourceLineNo">674</span><a id="line.674">        }</a>
+<span class="sourceLineNo">675</span><a id="line.675"></a>
+<span class="sourceLineNo">676</span><a id="line.676">        if (this.rangeMarkers != null) {</a>
+<span class="sourceLineNo">677</span><a id="line.677">            Iterator iterator = this.rangeMarkers.iterator();</a>
+<span class="sourceLineNo">678</span><a id="line.678">            while (iterator.hasNext()) {</a>
+<span class="sourceLineNo">679</span><a id="line.679">                Marker marker = (Marker) iterator.next();</a>
+<span class="sourceLineNo">680</span><a id="line.680">                drawRangeMarker(g2, this, getRangeAxis(), marker, dataArea);</a>
+<span class="sourceLineNo">681</span><a id="line.681">            }</a>
+<span class="sourceLineNo">682</span><a id="line.682">        }</a>
+<span class="sourceLineNo">683</span><a id="line.683"></a>
+<span class="sourceLineNo">684</span><a id="line.684">// TO DO:  these annotations only work with XYPlot, see if it is possible to</a>
+<span class="sourceLineNo">685</span><a id="line.685">// make ContourPlot a subclass of XYPlot (DG);</a>
+<span class="sourceLineNo">686</span><a id="line.686"></a>
+<span class="sourceLineNo">687</span><a id="line.687">//        // draw the annotations...</a>
+<span class="sourceLineNo">688</span><a id="line.688">//        if (this.annotations != null) {</a>
+<span class="sourceLineNo">689</span><a id="line.689">//            Iterator iterator = this.annotations.iterator();</a>
+<span class="sourceLineNo">690</span><a id="line.690">//            while (iterator.hasNext()) {</a>
+<span class="sourceLineNo">691</span><a id="line.691">//                Annotation annotation = (Annotation) iterator.next();</a>
+<span class="sourceLineNo">692</span><a id="line.692">//                if (annotation instanceof XYAnnotation) {</a>
+<span class="sourceLineNo">693</span><a id="line.693">//                    XYAnnotation xya = (XYAnnotation) annotation;</a>
+<span class="sourceLineNo">694</span><a id="line.694">//                    // get the annotation to draw itself...</a>
+<span class="sourceLineNo">695</span><a id="line.695">//                    xya.draw(g2, this, dataArea, getDomainAxis(),</a>
+<span class="sourceLineNo">696</span><a id="line.696">//                             getRangeAxis());</a>
+<span class="sourceLineNo">697</span><a id="line.697">//                }</a>
+<span class="sourceLineNo">698</span><a id="line.698">//            }</a>
+<span class="sourceLineNo">699</span><a id="line.699">//        }</a>
+<span class="sourceLineNo">700</span><a id="line.700"></a>
+<span class="sourceLineNo">701</span><a id="line.701">        g2.setClip(originalClip);</a>
+<span class="sourceLineNo">702</span><a id="line.702">        g2.setComposite(originalComposite);</a>
+<span class="sourceLineNo">703</span><a id="line.703">        drawOutline(g2, dataArea);</a>
+<span class="sourceLineNo">704</span><a id="line.704"></a>
+<span class="sourceLineNo">705</span><a id="line.705">    }</a>
+<span class="sourceLineNo">706</span><a id="line.706"></a>
+<span class="sourceLineNo">707</span><a id="line.707">    /**</a>
+<span class="sourceLineNo">708</span><a id="line.708">     * Draws a representation of the data within the dataArea region, using the</a>
+<span class="sourceLineNo">709</span><a id="line.709">     * current renderer.</a>
+<span class="sourceLineNo">710</span><a id="line.710">     * &lt;P&gt;</a>
+<span class="sourceLineNo">711</span><a id="line.711">     * The &lt;code&gt;info&lt;/code&gt; and &lt;code&gt;crosshairState&lt;/code&gt; arguments may be</a>
+<span class="sourceLineNo">712</span><a id="line.712">     * &lt;code&gt;null&lt;/code&gt;.</a>
+<span class="sourceLineNo">713</span><a id="line.713">     *</a>
+<span class="sourceLineNo">714</span><a id="line.714">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">715</span><a id="line.715">     * @param dataArea  the region in which the data is to be drawn.</a>
+<span class="sourceLineNo">716</span><a id="line.716">     * @param info  an optional object for collection dimension information.</a>
+<span class="sourceLineNo">717</span><a id="line.717">     * @param crosshairState  an optional object for collecting crosshair info.</a>
+<span class="sourceLineNo">718</span><a id="line.718">     */</a>
+<span class="sourceLineNo">719</span><a id="line.719">    public void render(Graphics2D g2, Rectangle2D dataArea,</a>
+<span class="sourceLineNo">720</span><a id="line.720">                       PlotRenderingInfo info, CrosshairState crosshairState) {</a>
+<span class="sourceLineNo">721</span><a id="line.721"></a>
+<span class="sourceLineNo">722</span><a id="line.722">        // now get the data and plot it (the visual representation will depend</a>
+<span class="sourceLineNo">723</span><a id="line.723">        // on the renderer that has been set)...</a>
+<span class="sourceLineNo">724</span><a id="line.724">        ContourDataset data = getDataset();</a>
+<span class="sourceLineNo">725</span><a id="line.725">        if (data != null) {</a>
+<span class="sourceLineNo">726</span><a id="line.726"></a>
+<span class="sourceLineNo">727</span><a id="line.727">            ColorBar zAxis = getColorBar();</a>
+<span class="sourceLineNo">728</span><a id="line.728"></a>
+<span class="sourceLineNo">729</span><a id="line.729">            if (this.clipPath != null) {</a>
+<span class="sourceLineNo">730</span><a id="line.730">                GeneralPath clipper = getClipPath().draw(g2, dataArea,</a>
+<span class="sourceLineNo">731</span><a id="line.731">                        this.domainAxis, this.rangeAxis);</a>
+<span class="sourceLineNo">732</span><a id="line.732">                if (this.clipPath.isClip()) {</a>
+<span class="sourceLineNo">733</span><a id="line.733">                    g2.clip(clipper);</a>
+<span class="sourceLineNo">734</span><a id="line.734">                }</a>
+<span class="sourceLineNo">735</span><a id="line.735">            }</a>
+<span class="sourceLineNo">736</span><a id="line.736"></a>
+<span class="sourceLineNo">737</span><a id="line.737">            if (this.renderAsPoints) {</a>
+<span class="sourceLineNo">738</span><a id="line.738">                pointRenderer(g2, dataArea, info, this, this.domainAxis,</a>
+<span class="sourceLineNo">739</span><a id="line.739">                        this.rangeAxis, zAxis, data, crosshairState);</a>
+<span class="sourceLineNo">740</span><a id="line.740">            }</a>
+<span class="sourceLineNo">741</span><a id="line.741">            else {</a>
+<span class="sourceLineNo">742</span><a id="line.742">                contourRenderer(g2, dataArea, info, this, this.domainAxis,</a>
+<span class="sourceLineNo">743</span><a id="line.743">                        this.rangeAxis, zAxis, data, crosshairState);</a>
+<span class="sourceLineNo">744</span><a id="line.744">            }</a>
+<span class="sourceLineNo">745</span><a id="line.745"></a>
+<span class="sourceLineNo">746</span><a id="line.746">            // draw vertical crosshair if required...</a>
+<span class="sourceLineNo">747</span><a id="line.747">            setDomainCrosshairValue(crosshairState.getCrosshairX(), false);</a>
+<span class="sourceLineNo">748</span><a id="line.748">            if (isDomainCrosshairVisible()) {</a>
+<span class="sourceLineNo">749</span><a id="line.749">                drawVerticalLine(g2, dataArea,</a>
+<span class="sourceLineNo">750</span><a id="line.750">                                 getDomainCrosshairValue(),</a>
+<span class="sourceLineNo">751</span><a id="line.751">                                 getDomainCrosshairStroke(),</a>
+<span class="sourceLineNo">752</span><a id="line.752">                                 getDomainCrosshairPaint());</a>
+<span class="sourceLineNo">753</span><a id="line.753">            }</a>
+<span class="sourceLineNo">754</span><a id="line.754"></a>
+<span class="sourceLineNo">755</span><a id="line.755">            // draw horizontal crosshair if required...</a>
+<span class="sourceLineNo">756</span><a id="line.756">            setRangeCrosshairValue(crosshairState.getCrosshairY(), false);</a>
+<span class="sourceLineNo">757</span><a id="line.757">            if (isRangeCrosshairVisible()) {</a>
+<span class="sourceLineNo">758</span><a id="line.758">                drawHorizontalLine(g2, dataArea,</a>
+<span class="sourceLineNo">759</span><a id="line.759">                                   getRangeCrosshairValue(),</a>
+<span class="sourceLineNo">760</span><a id="line.760">                                   getRangeCrosshairStroke(),</a>
+<span class="sourceLineNo">761</span><a id="line.761">                                   getRangeCrosshairPaint());</a>
+<span class="sourceLineNo">762</span><a id="line.762">            }</a>
+<span class="sourceLineNo">763</span><a id="line.763"></a>
+<span class="sourceLineNo">764</span><a id="line.764">        }</a>
+<span class="sourceLineNo">765</span><a id="line.765">        else if (this.clipPath != null) {</a>
+<span class="sourceLineNo">766</span><a id="line.766">            getClipPath().draw(g2, dataArea, this.domainAxis, this.rangeAxis);</a>
+<span class="sourceLineNo">767</span><a id="line.767">        }</a>
+<span class="sourceLineNo">768</span><a id="line.768"></a>
+<span class="sourceLineNo">769</span><a id="line.769">    }</a>
+<span class="sourceLineNo">770</span><a id="line.770"></a>
+<span class="sourceLineNo">771</span><a id="line.771">    /**</a>
+<span class="sourceLineNo">772</span><a id="line.772">     * Fills the plot.</a>
+<span class="sourceLineNo">773</span><a id="line.773">     *</a>
+<span class="sourceLineNo">774</span><a id="line.774">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">775</span><a id="line.775">     * @param dataArea  the area within which the data is being drawn.</a>
+<span class="sourceLineNo">776</span><a id="line.776">     * @param info  collects information about the drawing.</a>
+<span class="sourceLineNo">777</span><a id="line.777">     * @param plot  the plot (can be used to obtain standard color</a>
+<span class="sourceLineNo">778</span><a id="line.778">     *              information etc).</a>
+<span class="sourceLineNo">779</span><a id="line.779">     * @param horizontalAxis  the domain (horizontal) axis.</a>
+<span class="sourceLineNo">780</span><a id="line.780">     * @param verticalAxis  the range (vertical) axis.</a>
+<span class="sourceLineNo">781</span><a id="line.781">     * @param colorBar  the color bar axis.</a>
+<span class="sourceLineNo">782</span><a id="line.782">     * @param data  the dataset.</a>
+<span class="sourceLineNo">783</span><a id="line.783">     * @param crosshairState  information about crosshairs on a plot.</a>
+<span class="sourceLineNo">784</span><a id="line.784">     */</a>
+<span class="sourceLineNo">785</span><a id="line.785">    public void contourRenderer(Graphics2D g2,</a>
+<span class="sourceLineNo">786</span><a id="line.786">                                Rectangle2D dataArea,</a>
+<span class="sourceLineNo">787</span><a id="line.787">                                PlotRenderingInfo info,</a>
+<span class="sourceLineNo">788</span><a id="line.788">                                ContourPlot plot,</a>
+<span class="sourceLineNo">789</span><a id="line.789">                                ValueAxis horizontalAxis,</a>
+<span class="sourceLineNo">790</span><a id="line.790">                                ValueAxis verticalAxis,</a>
+<span class="sourceLineNo">791</span><a id="line.791">                                ColorBar colorBar,</a>
+<span class="sourceLineNo">792</span><a id="line.792">                                ContourDataset data,</a>
+<span class="sourceLineNo">793</span><a id="line.793">                                CrosshairState crosshairState) {</a>
+<span class="sourceLineNo">794</span><a id="line.794"></a>
+<span class="sourceLineNo">795</span><a id="line.795">        // setup for collecting optional entity info...</a>
+<span class="sourceLineNo">796</span><a id="line.796">        Rectangle2D.Double entityArea;</a>
+<span class="sourceLineNo">797</span><a id="line.797">        EntityCollection entities = null;</a>
+<span class="sourceLineNo">798</span><a id="line.798">        if (info != null) {</a>
+<span class="sourceLineNo">799</span><a id="line.799">            entities = info.getOwner().getEntityCollection();</a>
+<span class="sourceLineNo">800</span><a id="line.800">        }</a>
+<span class="sourceLineNo">801</span><a id="line.801"></a>
+<span class="sourceLineNo">802</span><a id="line.802">        Rectangle2D.Double rect;</a>
+<span class="sourceLineNo">803</span><a id="line.803">        rect = new Rectangle2D.Double();</a>
+<span class="sourceLineNo">804</span><a id="line.804"></a>
+<span class="sourceLineNo">805</span><a id="line.805">        //turn off anti-aliasing when filling rectangles</a>
+<span class="sourceLineNo">806</span><a id="line.806">        Object antiAlias = g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);</a>
+<span class="sourceLineNo">807</span><a id="line.807">        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,</a>
+<span class="sourceLineNo">808</span><a id="line.808">                RenderingHints.VALUE_ANTIALIAS_OFF);</a>
+<span class="sourceLineNo">809</span><a id="line.809"></a>
+<span class="sourceLineNo">810</span><a id="line.810">        // get the data points</a>
+<span class="sourceLineNo">811</span><a id="line.811">        Number[] xNumber = data.getXValues();</a>
+<span class="sourceLineNo">812</span><a id="line.812">        Number[] yNumber = data.getYValues();</a>
+<span class="sourceLineNo">813</span><a id="line.813">        Number[] zNumber = data.getZValues();</a>
+<span class="sourceLineNo">814</span><a id="line.814"></a>
+<span class="sourceLineNo">815</span><a id="line.815">        double[] x = new double[xNumber.length];</a>
+<span class="sourceLineNo">816</span><a id="line.816">        double[] y = new double[yNumber.length];</a>
+<span class="sourceLineNo">817</span><a id="line.817"></a>
+<span class="sourceLineNo">818</span><a id="line.818">        for (int i = 0; i &lt; x.length; i++) {</a>
+<span class="sourceLineNo">819</span><a id="line.819">            x[i] = xNumber[i].doubleValue();</a>
+<span class="sourceLineNo">820</span><a id="line.820">            y[i] = yNumber[i].doubleValue();</a>
+<span class="sourceLineNo">821</span><a id="line.821">        }</a>
+<span class="sourceLineNo">822</span><a id="line.822"></a>
+<span class="sourceLineNo">823</span><a id="line.823">        int[] xIndex = data.indexX();</a>
+<span class="sourceLineNo">824</span><a id="line.824">        int[] indexX = data.getXIndices();</a>
+<span class="sourceLineNo">825</span><a id="line.825">        boolean vertInverted = ((NumberAxis) verticalAxis).isInverted();</a>
+<span class="sourceLineNo">826</span><a id="line.826">        boolean horizInverted = false;</a>
+<span class="sourceLineNo">827</span><a id="line.827">        if (horizontalAxis instanceof NumberAxis) {</a>
+<span class="sourceLineNo">828</span><a id="line.828">            horizInverted = ((NumberAxis) horizontalAxis).isInverted();</a>
+<span class="sourceLineNo">829</span><a id="line.829">        }</a>
+<span class="sourceLineNo">830</span><a id="line.830">        double transX = 0.0;</a>
+<span class="sourceLineNo">831</span><a id="line.831">        double transXm1;</a>
+<span class="sourceLineNo">832</span><a id="line.832">        double transXp1;</a>
+<span class="sourceLineNo">833</span><a id="line.833">        double transDXm1;</a>
+<span class="sourceLineNo">834</span><a id="line.834">        double transDXp1 = 0.0;</a>
+<span class="sourceLineNo">835</span><a id="line.835">        double transDX = 0.0;</a>
+<span class="sourceLineNo">836</span><a id="line.836">        double transY;</a>
+<span class="sourceLineNo">837</span><a id="line.837">        double transYm1;</a>
+<span class="sourceLineNo">838</span><a id="line.838">        double transYp1;</a>
+<span class="sourceLineNo">839</span><a id="line.839">        double transDYm1;</a>
+<span class="sourceLineNo">840</span><a id="line.840">        double transDYp1 = 0.0;</a>
+<span class="sourceLineNo">841</span><a id="line.841">        double transDY;</a>
+<span class="sourceLineNo">842</span><a id="line.842">        int iMax = xIndex[xIndex.length - 1];</a>
+<span class="sourceLineNo">843</span><a id="line.843">        for (int k = 0; k &lt; x.length; k++) {</a>
+<span class="sourceLineNo">844</span><a id="line.844">            int i = xIndex[k];</a>
+<span class="sourceLineNo">845</span><a id="line.845">            if (indexX[i] == k) { // this is a new column</a>
+<span class="sourceLineNo">846</span><a id="line.846">                if (i == 0) {</a>
+<span class="sourceLineNo">847</span><a id="line.847">                    transX = horizontalAxis.valueToJava2D(x[k], dataArea,</a>
+<span class="sourceLineNo">848</span><a id="line.848">                            RectangleEdge.BOTTOM);</a>
+<span class="sourceLineNo">849</span><a id="line.849">                    transXm1 = transX;</a>
+<span class="sourceLineNo">850</span><a id="line.850">                    transXp1 = horizontalAxis.valueToJava2D(</a>
+<span class="sourceLineNo">851</span><a id="line.851">                            x[indexX[i + 1]], dataArea, RectangleEdge.BOTTOM);</a>
+<span class="sourceLineNo">852</span><a id="line.852">                    transDXm1 = Math.abs(0.5 * (transX - transXm1));</a>
+<span class="sourceLineNo">853</span><a id="line.853">                    transDXp1 = Math.abs(0.5 * (transX - transXp1));</a>
+<span class="sourceLineNo">854</span><a id="line.854">                }</a>
+<span class="sourceLineNo">855</span><a id="line.855">                else if (i == iMax) {</a>
+<span class="sourceLineNo">856</span><a id="line.856">                    transX = horizontalAxis.valueToJava2D(x[k], dataArea,</a>
+<span class="sourceLineNo">857</span><a id="line.857">                            RectangleEdge.BOTTOM);</a>
+<span class="sourceLineNo">858</span><a id="line.858">                    transXm1 = horizontalAxis.valueToJava2D(x[indexX[i - 1]],</a>
+<span class="sourceLineNo">859</span><a id="line.859">                            dataArea, RectangleEdge.BOTTOM);</a>
+<span class="sourceLineNo">860</span><a id="line.860">                    transXp1 = transX;</a>
+<span class="sourceLineNo">861</span><a id="line.861">                    transDXm1 = Math.abs(0.5 * (transX - transXm1));</a>
+<span class="sourceLineNo">862</span><a id="line.862">                    transDXp1 = Math.abs(0.5 * (transX - transXp1));</a>
+<span class="sourceLineNo">863</span><a id="line.863">                }</a>
+<span class="sourceLineNo">864</span><a id="line.864">                else {</a>
+<span class="sourceLineNo">865</span><a id="line.865">                    transX = horizontalAxis.valueToJava2D(x[k], dataArea,</a>
+<span class="sourceLineNo">866</span><a id="line.866">                            RectangleEdge.BOTTOM);</a>
+<span class="sourceLineNo">867</span><a id="line.867">                    transXp1 = horizontalAxis.valueToJava2D(x[indexX[i + 1]],</a>
+<span class="sourceLineNo">868</span><a id="line.868">                            dataArea, RectangleEdge.BOTTOM);</a>
+<span class="sourceLineNo">869</span><a id="line.869">                    transDXm1 = transDXp1;</a>
+<span class="sourceLineNo">870</span><a id="line.870">                    transDXp1 = Math.abs(0.5 * (transX - transXp1));</a>
+<span class="sourceLineNo">871</span><a id="line.871">                }</a>
+<span class="sourceLineNo">872</span><a id="line.872"></a>
+<span class="sourceLineNo">873</span><a id="line.873">                if (horizInverted) {</a>
+<span class="sourceLineNo">874</span><a id="line.874">                    transX -= transDXp1;</a>
+<span class="sourceLineNo">875</span><a id="line.875">                }</a>
+<span class="sourceLineNo">876</span><a id="line.876">                else {</a>
+<span class="sourceLineNo">877</span><a id="line.877">                    transX -= transDXm1;</a>
+<span class="sourceLineNo">878</span><a id="line.878">                }</a>
+<span class="sourceLineNo">879</span><a id="line.879"></a>
+<span class="sourceLineNo">880</span><a id="line.880">                transDX = transDXm1 + transDXp1;</a>
+<span class="sourceLineNo">881</span><a id="line.881"></a>
+<span class="sourceLineNo">882</span><a id="line.882">                transY = verticalAxis.valueToJava2D(y[k], dataArea,</a>
+<span class="sourceLineNo">883</span><a id="line.883">                        RectangleEdge.LEFT);</a>
+<span class="sourceLineNo">884</span><a id="line.884">                transYm1 = transY;</a>
+<span class="sourceLineNo">885</span><a id="line.885">                if (k + 1 == y.length) {</a>
+<span class="sourceLineNo">886</span><a id="line.886">                    continue;</a>
+<span class="sourceLineNo">887</span><a id="line.887">                }</a>
+<span class="sourceLineNo">888</span><a id="line.888">                transYp1 = verticalAxis.valueToJava2D(y[k + 1], dataArea,</a>
+<span class="sourceLineNo">889</span><a id="line.889">                        RectangleEdge.LEFT);</a>
+<span class="sourceLineNo">890</span><a id="line.890">                transDYm1 = Math.abs(0.5 * (transY - transYm1));</a>
+<span class="sourceLineNo">891</span><a id="line.891">                transDYp1 = Math.abs(0.5 * (transY - transYp1));</a>
+<span class="sourceLineNo">892</span><a id="line.892">            }</a>
+<span class="sourceLineNo">893</span><a id="line.893">            else if ((i &lt; indexX.length - 1</a>
+<span class="sourceLineNo">894</span><a id="line.894">                     &amp;&amp; indexX[i + 1] - 1 == k) || k == x.length - 1) {</a>
+<span class="sourceLineNo">895</span><a id="line.895">                // end of column</a>
+<span class="sourceLineNo">896</span><a id="line.896">                transY = verticalAxis.valueToJava2D(y[k], dataArea,</a>
+<span class="sourceLineNo">897</span><a id="line.897">                        RectangleEdge.LEFT);</a>
+<span class="sourceLineNo">898</span><a id="line.898">                transYm1 = verticalAxis.valueToJava2D(y[k - 1], dataArea,</a>
+<span class="sourceLineNo">899</span><a id="line.899">                        RectangleEdge.LEFT);</a>
+<span class="sourceLineNo">900</span><a id="line.900">                transYp1 = transY;</a>
+<span class="sourceLineNo">901</span><a id="line.901">                transDYm1 = Math.abs(0.5 * (transY - transYm1));</a>
+<span class="sourceLineNo">902</span><a id="line.902">                transDYp1 = Math.abs(0.5 * (transY - transYp1));</a>
+<span class="sourceLineNo">903</span><a id="line.903">            }</a>
+<span class="sourceLineNo">904</span><a id="line.904">            else {</a>
+<span class="sourceLineNo">905</span><a id="line.905">                transY = verticalAxis.valueToJava2D(y[k], dataArea,</a>
+<span class="sourceLineNo">906</span><a id="line.906">                        RectangleEdge.LEFT);</a>
+<span class="sourceLineNo">907</span><a id="line.907">                transYp1 = verticalAxis.valueToJava2D(y[k + 1], dataArea,</a>
+<span class="sourceLineNo">908</span><a id="line.908">                        RectangleEdge.LEFT);</a>
+<span class="sourceLineNo">909</span><a id="line.909">                transDYm1 = transDYp1;</a>
+<span class="sourceLineNo">910</span><a id="line.910">                transDYp1 = Math.abs(0.5 * (transY - transYp1));</a>
+<span class="sourceLineNo">911</span><a id="line.911">            }</a>
+<span class="sourceLineNo">912</span><a id="line.912">            if (vertInverted) {</a>
+<span class="sourceLineNo">913</span><a id="line.913">                transY -= transDYm1;</a>
+<span class="sourceLineNo">914</span><a id="line.914">            }</a>
+<span class="sourceLineNo">915</span><a id="line.915">            else {</a>
+<span class="sourceLineNo">916</span><a id="line.916">                transY -= transDYp1;</a>
+<span class="sourceLineNo">917</span><a id="line.917">            }</a>
+<span class="sourceLineNo">918</span><a id="line.918"></a>
+<span class="sourceLineNo">919</span><a id="line.919">            transDY = transDYm1 + transDYp1;</a>
+<span class="sourceLineNo">920</span><a id="line.920"></a>
+<span class="sourceLineNo">921</span><a id="line.921">            rect.setRect(transX, transY, transDX, transDY);</a>
+<span class="sourceLineNo">922</span><a id="line.922">            if (zNumber[k] != null) {</a>
+<span class="sourceLineNo">923</span><a id="line.923">                g2.setPaint(colorBar.getPaint(zNumber[k].doubleValue()));</a>
+<span class="sourceLineNo">924</span><a id="line.924">                g2.fill(rect);</a>
+<span class="sourceLineNo">925</span><a id="line.925">            }</a>
+<span class="sourceLineNo">926</span><a id="line.926">            else if (this.missingPaint != null) {</a>
+<span class="sourceLineNo">927</span><a id="line.927">                g2.setPaint(this.missingPaint);</a>
+<span class="sourceLineNo">928</span><a id="line.928">                g2.fill(rect);</a>
+<span class="sourceLineNo">929</span><a id="line.929">            }</a>
+<span class="sourceLineNo">930</span><a id="line.930"></a>
+<span class="sourceLineNo">931</span><a id="line.931">            entityArea = rect;</a>
+<span class="sourceLineNo">932</span><a id="line.932"></a>
+<span class="sourceLineNo">933</span><a id="line.933">            // add an entity for the item...</a>
+<span class="sourceLineNo">934</span><a id="line.934">            if (entities != null) {</a>
+<span class="sourceLineNo">935</span><a id="line.935">                String tip = "";</a>
+<span class="sourceLineNo">936</span><a id="line.936">                if (getToolTipGenerator() != null) {</a>
+<span class="sourceLineNo">937</span><a id="line.937">                    tip = this.toolTipGenerator.generateToolTip(data, k);</a>
+<span class="sourceLineNo">938</span><a id="line.938">                }</a>
+<span class="sourceLineNo">939</span><a id="line.939">//              Shape s = g2.getClip();</a>
+<span class="sourceLineNo">940</span><a id="line.940">//              if (s.contains(rect) || s.intersects(rect)) {</a>
+<span class="sourceLineNo">941</span><a id="line.941">                String url = null;</a>
+<span class="sourceLineNo">942</span><a id="line.942">                // if (getURLGenerator() != null) {    //dmo: look at this later</a>
+<span class="sourceLineNo">943</span><a id="line.943">                //      url = getURLGenerator().generateURL(data, series, item);</a>
+<span class="sourceLineNo">944</span><a id="line.944">                // }</a>
+<span class="sourceLineNo">945</span><a id="line.945">                // Unlike XYItemRenderer, we need to clone entityArea since it</a>
+<span class="sourceLineNo">946</span><a id="line.946">                // reused.</a>
+<span class="sourceLineNo">947</span><a id="line.947">                ContourEntity entity = new ContourEntity(</a>
+<span class="sourceLineNo">948</span><a id="line.948">                        (Rectangle2D.Double) entityArea.clone(), tip, url);</a>
+<span class="sourceLineNo">949</span><a id="line.949">                entity.setIndex(k);</a>
+<span class="sourceLineNo">950</span><a id="line.950">                entities.add(entity);</a>
+<span class="sourceLineNo">951</span><a id="line.951">//              }</a>
+<span class="sourceLineNo">952</span><a id="line.952">            }</a>
+<span class="sourceLineNo">953</span><a id="line.953"></a>
+<span class="sourceLineNo">954</span><a id="line.954">            // do we need to update the crosshair values?</a>
+<span class="sourceLineNo">955</span><a id="line.955">            if (plot.isDomainCrosshairLockedOnData()) {</a>
+<span class="sourceLineNo">956</span><a id="line.956">                if (plot.isRangeCrosshairLockedOnData()) {</a>
+<span class="sourceLineNo">957</span><a id="line.957">                    // both axes</a>
+<span class="sourceLineNo">958</span><a id="line.958">                    crosshairState.updateCrosshairPoint(x[k], y[k], transX,</a>
+<span class="sourceLineNo">959</span><a id="line.959">                            transY, PlotOrientation.VERTICAL);</a>
+<span class="sourceLineNo">960</span><a id="line.960">                }</a>
+<span class="sourceLineNo">961</span><a id="line.961">                else {</a>
+<span class="sourceLineNo">962</span><a id="line.962">                    // just the horizontal axis...</a>
+<span class="sourceLineNo">963</span><a id="line.963">                    crosshairState.updateCrosshairX(transX);</a>
+<span class="sourceLineNo">964</span><a id="line.964">                }</a>
+<span class="sourceLineNo">965</span><a id="line.965">            }</a>
+<span class="sourceLineNo">966</span><a id="line.966">            else {</a>
+<span class="sourceLineNo">967</span><a id="line.967">                if (plot.isRangeCrosshairLockedOnData()) {</a>
+<span class="sourceLineNo">968</span><a id="line.968">                    // just the vertical axis...</a>
+<span class="sourceLineNo">969</span><a id="line.969">                    crosshairState.updateCrosshairY(transY);</a>
+<span class="sourceLineNo">970</span><a id="line.970">                }</a>
+<span class="sourceLineNo">971</span><a id="line.971">            }</a>
+<span class="sourceLineNo">972</span><a id="line.972">        }</a>
+<span class="sourceLineNo">973</span><a id="line.973"></a>
+<span class="sourceLineNo">974</span><a id="line.974">        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias);</a>
+<span class="sourceLineNo">975</span><a id="line.975"></a>
+<span class="sourceLineNo">976</span><a id="line.976">    }</a>
+<span class="sourceLineNo">977</span><a id="line.977"></a>
+<span class="sourceLineNo">978</span><a id="line.978">    /**</a>
+<span class="sourceLineNo">979</span><a id="line.979">     * Draws the visual representation of a single data item.</a>
+<span class="sourceLineNo">980</span><a id="line.980">     *</a>
+<span class="sourceLineNo">981</span><a id="line.981">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">982</span><a id="line.982">     * @param dataArea  the area within which the data is being drawn.</a>
+<span class="sourceLineNo">983</span><a id="line.983">     * @param info  collects information about the drawing.</a>
+<span class="sourceLineNo">984</span><a id="line.984">     * @param plot  the plot (can be used to obtain standard color</a>
+<span class="sourceLineNo">985</span><a id="line.985">     *              information etc).</a>
+<span class="sourceLineNo">986</span><a id="line.986">     * @param domainAxis  the domain (horizontal) axis.</a>
+<span class="sourceLineNo">987</span><a id="line.987">     * @param rangeAxis  the range (vertical) axis.</a>
+<span class="sourceLineNo">988</span><a id="line.988">     * @param colorBar  the color bar axis.</a>
+<span class="sourceLineNo">989</span><a id="line.989">     * @param data  the dataset.</a>
+<span class="sourceLineNo">990</span><a id="line.990">     * @param crosshairState  information about crosshairs on a plot.</a>
+<span class="sourceLineNo">991</span><a id="line.991">     */</a>
+<span class="sourceLineNo">992</span><a id="line.992">    public void pointRenderer(Graphics2D g2,</a>
+<span class="sourceLineNo">993</span><a id="line.993">                              Rectangle2D dataArea,</a>
+<span class="sourceLineNo">994</span><a id="line.994">                              PlotRenderingInfo info,</a>
+<span class="sourceLineNo">995</span><a id="line.995">                              ContourPlot plot,</a>
+<span class="sourceLineNo">996</span><a id="line.996">                              ValueAxis domainAxis,</a>
+<span class="sourceLineNo">997</span><a id="line.997">                              ValueAxis rangeAxis,</a>
+<span class="sourceLineNo">998</span><a id="line.998">                              ColorBar colorBar,</a>
+<span class="sourceLineNo">999</span><a id="line.999">                              ContourDataset data,</a>
+<span class="sourceLineNo">1000</span><a id="line.1000">                              CrosshairState crosshairState) {</a>
+<span class="sourceLineNo">1001</span><a id="line.1001"></a>
+<span class="sourceLineNo">1002</span><a id="line.1002">        // setup for collecting optional entity info...</a>
+<span class="sourceLineNo">1003</span><a id="line.1003">        RectangularShape entityArea;</a>
+<span class="sourceLineNo">1004</span><a id="line.1004">        EntityCollection entities = null;</a>
+<span class="sourceLineNo">1005</span><a id="line.1005">        if (info != null) {</a>
+<span class="sourceLineNo">1006</span><a id="line.1006">            entities = info.getOwner().getEntityCollection();</a>
+<span class="sourceLineNo">1007</span><a id="line.1007">        }</a>
+<span class="sourceLineNo">1008</span><a id="line.1008"></a>
+<span class="sourceLineNo">1009</span><a id="line.1009">//      Rectangle2D.Double rect = null;</a>
+<span class="sourceLineNo">1010</span><a id="line.1010">//      rect = new Rectangle2D.Double();</a>
+<span class="sourceLineNo">1011</span><a id="line.1011">        RectangularShape rect = new Ellipse2D.Double();</a>
+<span class="sourceLineNo">1012</span><a id="line.1012"></a>
+<span class="sourceLineNo">1013</span><a id="line.1013"></a>
+<span class="sourceLineNo">1014</span><a id="line.1014">        //turn off anti-aliasing when filling rectangles</a>
+<span class="sourceLineNo">1015</span><a id="line.1015">        Object antiAlias = g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);</a>
+<span class="sourceLineNo">1016</span><a id="line.1016">        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,</a>
+<span class="sourceLineNo">1017</span><a id="line.1017">                RenderingHints.VALUE_ANTIALIAS_OFF);</a>
+<span class="sourceLineNo">1018</span><a id="line.1018"></a>
+<span class="sourceLineNo">1019</span><a id="line.1019">        // if (tooltips!=null) tooltips.clearToolTips(); // reset collection</a>
+<span class="sourceLineNo">1020</span><a id="line.1020">        // get the data points</a>
+<span class="sourceLineNo">1021</span><a id="line.1021">        Number[] xNumber = data.getXValues();</a>
+<span class="sourceLineNo">1022</span><a id="line.1022">        Number[] yNumber = data.getYValues();</a>
+<span class="sourceLineNo">1023</span><a id="line.1023">        Number[] zNumber = data.getZValues();</a>
+<span class="sourceLineNo">1024</span><a id="line.1024"></a>
+<span class="sourceLineNo">1025</span><a id="line.1025">        double[] x = new double[xNumber.length];</a>
+<span class="sourceLineNo">1026</span><a id="line.1026">        double[] y = new double[yNumber.length];</a>
+<span class="sourceLineNo">1027</span><a id="line.1027"></a>
+<span class="sourceLineNo">1028</span><a id="line.1028">        for (int i = 0; i &lt; x.length; i++) {</a>
+<span class="sourceLineNo">1029</span><a id="line.1029">            x[i] = xNumber[i].doubleValue();</a>
+<span class="sourceLineNo">1030</span><a id="line.1030">            y[i] = yNumber[i].doubleValue();</a>
+<span class="sourceLineNo">1031</span><a id="line.1031">        }</a>
+<span class="sourceLineNo">1032</span><a id="line.1032"></a>
+<span class="sourceLineNo">1033</span><a id="line.1033">        double transX;</a>
+<span class="sourceLineNo">1034</span><a id="line.1034">        double transDX;</a>
+<span class="sourceLineNo">1035</span><a id="line.1035">        double transY;</a>
+<span class="sourceLineNo">1036</span><a id="line.1036">        double transDY;</a>
+<span class="sourceLineNo">1037</span><a id="line.1037">        double size = dataArea.getWidth() * this.ptSizePct;</a>
+<span class="sourceLineNo">1038</span><a id="line.1038">        for (int k = 0; k &lt; x.length; k++) {</a>
+<span class="sourceLineNo">1039</span><a id="line.1039"></a>
+<span class="sourceLineNo">1040</span><a id="line.1040">            transX = domainAxis.valueToJava2D(x[k], dataArea,</a>
+<span class="sourceLineNo">1041</span><a id="line.1041">                    RectangleEdge.BOTTOM) - 0.5 * size;</a>
+<span class="sourceLineNo">1042</span><a id="line.1042">            transY = rangeAxis.valueToJava2D(y[k], dataArea, RectangleEdge.LEFT)</a>
+<span class="sourceLineNo">1043</span><a id="line.1043">                     - 0.5 * size;</a>
+<span class="sourceLineNo">1044</span><a id="line.1044">            transDX = size;</a>
+<span class="sourceLineNo">1045</span><a id="line.1045">            transDY = size;</a>
+<span class="sourceLineNo">1046</span><a id="line.1046"></a>
+<span class="sourceLineNo">1047</span><a id="line.1047">            rect.setFrame(transX, transY, transDX, transDY);</a>
+<span class="sourceLineNo">1048</span><a id="line.1048"></a>
+<span class="sourceLineNo">1049</span><a id="line.1049">            if (zNumber[k] != null) {</a>
+<span class="sourceLineNo">1050</span><a id="line.1050">                g2.setPaint(colorBar.getPaint(zNumber[k].doubleValue()));</a>
+<span class="sourceLineNo">1051</span><a id="line.1051">                g2.fill(rect);</a>
+<span class="sourceLineNo">1052</span><a id="line.1052">            }</a>
+<span class="sourceLineNo">1053</span><a id="line.1053">            else if (this.missingPaint != null) {</a>
+<span class="sourceLineNo">1054</span><a id="line.1054">                g2.setPaint(this.missingPaint);</a>
+<span class="sourceLineNo">1055</span><a id="line.1055">                g2.fill(rect);</a>
+<span class="sourceLineNo">1056</span><a id="line.1056">            }</a>
+<span class="sourceLineNo">1057</span><a id="line.1057"></a>
+<span class="sourceLineNo">1058</span><a id="line.1058"></a>
+<span class="sourceLineNo">1059</span><a id="line.1059">            entityArea = rect;</a>
+<span class="sourceLineNo">1060</span><a id="line.1060"></a>
+<span class="sourceLineNo">1061</span><a id="line.1061">            // add an entity for the item...</a>
+<span class="sourceLineNo">1062</span><a id="line.1062">            if (entities != null) {</a>
+<span class="sourceLineNo">1063</span><a id="line.1063">                String tip = null;</a>
+<span class="sourceLineNo">1064</span><a id="line.1064">                if (getToolTipGenerator() != null) {</a>
+<span class="sourceLineNo">1065</span><a id="line.1065">                    tip = this.toolTipGenerator.generateToolTip(data, k);</a>
+<span class="sourceLineNo">1066</span><a id="line.1066">                }</a>
+<span class="sourceLineNo">1067</span><a id="line.1067">                String url = null;</a>
+<span class="sourceLineNo">1068</span><a id="line.1068">                // if (getURLGenerator() != null) {   //dmo: look at this later</a>
+<span class="sourceLineNo">1069</span><a id="line.1069">                //   url = getURLGenerator().generateURL(data, series, item);</a>
+<span class="sourceLineNo">1070</span><a id="line.1070">                // }</a>
+<span class="sourceLineNo">1071</span><a id="line.1071">                // Unlike XYItemRenderer, we need to clone entityArea since it</a>
+<span class="sourceLineNo">1072</span><a id="line.1072">                // reused.</a>
+<span class="sourceLineNo">1073</span><a id="line.1073">                ContourEntity entity = new ContourEntity(</a>
+<span class="sourceLineNo">1074</span><a id="line.1074">                        (RectangularShape) entityArea.clone(), tip, url);</a>
+<span class="sourceLineNo">1075</span><a id="line.1075">                entity.setIndex(k);</a>
+<span class="sourceLineNo">1076</span><a id="line.1076">                entities.add(entity);</a>
+<span class="sourceLineNo">1077</span><a id="line.1077">            }</a>
+<span class="sourceLineNo">1078</span><a id="line.1078"></a>
+<span class="sourceLineNo">1079</span><a id="line.1079">            // do we need to update the crosshair values?</a>
+<span class="sourceLineNo">1080</span><a id="line.1080">            if (plot.isDomainCrosshairLockedOnData()) {</a>
+<span class="sourceLineNo">1081</span><a id="line.1081">                if (plot.isRangeCrosshairLockedOnData()) {</a>
+<span class="sourceLineNo">1082</span><a id="line.1082">                    // both axes</a>
+<span class="sourceLineNo">1083</span><a id="line.1083">                    crosshairState.updateCrosshairPoint(x[k], y[k], transX,</a>
+<span class="sourceLineNo">1084</span><a id="line.1084">                            transY, PlotOrientation.VERTICAL);</a>
+<span class="sourceLineNo">1085</span><a id="line.1085">                }</a>
+<span class="sourceLineNo">1086</span><a id="line.1086">                else {</a>
+<span class="sourceLineNo">1087</span><a id="line.1087">                    // just the horizontal axis...</a>
+<span class="sourceLineNo">1088</span><a id="line.1088">                    crosshairState.updateCrosshairX(transX);</a>
+<span class="sourceLineNo">1089</span><a id="line.1089">                }</a>
+<span class="sourceLineNo">1090</span><a id="line.1090">            }</a>
+<span class="sourceLineNo">1091</span><a id="line.1091">            else {</a>
+<span class="sourceLineNo">1092</span><a id="line.1092">                if (plot.isRangeCrosshairLockedOnData()) {</a>
+<span class="sourceLineNo">1093</span><a id="line.1093">                    // just the vertical axis...</a>
+<span class="sourceLineNo">1094</span><a id="line.1094">                    crosshairState.updateCrosshairY(transY);</a>
+<span class="sourceLineNo">1095</span><a id="line.1095">                }</a>
+<span class="sourceLineNo">1096</span><a id="line.1096">            }</a>
+<span class="sourceLineNo">1097</span><a id="line.1097">        }</a>
+<span class="sourceLineNo">1098</span><a id="line.1098"></a>
+<span class="sourceLineNo">1099</span><a id="line.1099"></a>
+<span class="sourceLineNo">1100</span><a id="line.1100">        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias);</a>
+<span class="sourceLineNo">1101</span><a id="line.1101"></a>
+<span class="sourceLineNo">1102</span><a id="line.1102">    }</a>
+<span class="sourceLineNo">1103</span><a id="line.1103"></a>
+<span class="sourceLineNo">1104</span><a id="line.1104">    /**</a>
+<span class="sourceLineNo">1105</span><a id="line.1105">     * Utility method for drawing a crosshair on the chart (if required).</a>
+<span class="sourceLineNo">1106</span><a id="line.1106">     *</a>
+<span class="sourceLineNo">1107</span><a id="line.1107">     * @param g2  The graphics device.</a>
+<span class="sourceLineNo">1108</span><a id="line.1108">     * @param dataArea  The data area.</a>
+<span class="sourceLineNo">1109</span><a id="line.1109">     * @param value  The coordinate, where to draw the line.</a>
+<span class="sourceLineNo">1110</span><a id="line.1110">     * @param stroke  The stroke to use.</a>
+<span class="sourceLineNo">1111</span><a id="line.1111">     * @param paint  The paint to use.</a>
+<span class="sourceLineNo">1112</span><a id="line.1112">     */</a>
+<span class="sourceLineNo">1113</span><a id="line.1113">    protected void drawVerticalLine(Graphics2D g2, Rectangle2D dataArea,</a>
+<span class="sourceLineNo">1114</span><a id="line.1114">                                    double value, Stroke stroke, Paint paint) {</a>
+<span class="sourceLineNo">1115</span><a id="line.1115"></a>
+<span class="sourceLineNo">1116</span><a id="line.1116">        double xx = getDomainAxis().valueToJava2D(value, dataArea,</a>
+<span class="sourceLineNo">1117</span><a id="line.1117">                RectangleEdge.BOTTOM);</a>
+<span class="sourceLineNo">1118</span><a id="line.1118">        Line2D line = new Line2D.Double(xx, dataArea.getMinY(), xx,</a>
+<span class="sourceLineNo">1119</span><a id="line.1119">                dataArea.getMaxY());</a>
+<span class="sourceLineNo">1120</span><a id="line.1120">        g2.setStroke(stroke);</a>
+<span class="sourceLineNo">1121</span><a id="line.1121">        g2.setPaint(paint);</a>
+<span class="sourceLineNo">1122</span><a id="line.1122">        g2.draw(line);</a>
+<span class="sourceLineNo">1123</span><a id="line.1123"></a>
+<span class="sourceLineNo">1124</span><a id="line.1124">    }</a>
+<span class="sourceLineNo">1125</span><a id="line.1125"></a>
+<span class="sourceLineNo">1126</span><a id="line.1126">    /**</a>
+<span class="sourceLineNo">1127</span><a id="line.1127">     * Utility method for drawing a crosshair on the chart (if required).</a>
+<span class="sourceLineNo">1128</span><a id="line.1128">     *</a>
+<span class="sourceLineNo">1129</span><a id="line.1129">     * @param g2  The graphics device.</a>
+<span class="sourceLineNo">1130</span><a id="line.1130">     * @param dataArea  The data area.</a>
+<span class="sourceLineNo">1131</span><a id="line.1131">     * @param value  The coordinate, where to draw the line.</a>
+<span class="sourceLineNo">1132</span><a id="line.1132">     * @param stroke  The stroke to use.</a>
+<span class="sourceLineNo">1133</span><a id="line.1133">     * @param paint  The paint to use.</a>
+<span class="sourceLineNo">1134</span><a id="line.1134">     */</a>
+<span class="sourceLineNo">1135</span><a id="line.1135">    protected void drawHorizontalLine(Graphics2D g2, Rectangle2D dataArea,</a>
+<span class="sourceLineNo">1136</span><a id="line.1136">                                      double value, Stroke stroke,</a>
+<span class="sourceLineNo">1137</span><a id="line.1137">                                      Paint paint) {</a>
+<span class="sourceLineNo">1138</span><a id="line.1138"></a>
+<span class="sourceLineNo">1139</span><a id="line.1139">        double yy = getRangeAxis().valueToJava2D(value, dataArea,</a>
+<span class="sourceLineNo">1140</span><a id="line.1140">                RectangleEdge.LEFT);</a>
+<span class="sourceLineNo">1141</span><a id="line.1141">        Line2D line = new Line2D.Double(dataArea.getMinX(), yy,</a>
+<span class="sourceLineNo">1142</span><a id="line.1142">                dataArea.getMaxX(), yy);</a>
+<span class="sourceLineNo">1143</span><a id="line.1143">        g2.setStroke(stroke);</a>
+<span class="sourceLineNo">1144</span><a id="line.1144">        g2.setPaint(paint);</a>
+<span class="sourceLineNo">1145</span><a id="line.1145">        g2.draw(line);</a>
+<span class="sourceLineNo">1146</span><a id="line.1146"></a>
+<span class="sourceLineNo">1147</span><a id="line.1147">    }</a>
+<span class="sourceLineNo">1148</span><a id="line.1148"></a>
+<span class="sourceLineNo">1149</span><a id="line.1149">    /**</a>
+<span class="sourceLineNo">1150</span><a id="line.1150">     * Handles a 'click' on the plot by updating the anchor values...</a>
+<span class="sourceLineNo">1151</span><a id="line.1151">     *</a>
+<span class="sourceLineNo">1152</span><a id="line.1152">     * @param x  x-coordinate, where the click occured.</a>
+<span class="sourceLineNo">1153</span><a id="line.1153">     * @param y  y-coordinate, where the click occured.</a>
+<span class="sourceLineNo">1154</span><a id="line.1154">     * @param info  An object for collection dimension information.</a>
+<span class="sourceLineNo">1155</span><a id="line.1155">     */</a>
+<span class="sourceLineNo">1156</span><a id="line.1156">    @Override</a>
+<span class="sourceLineNo">1157</span><a id="line.1157">    public void handleClick(int x, int y, PlotRenderingInfo info) {</a>
+<span class="sourceLineNo">1158</span><a id="line.1158"></a>
+<span class="sourceLineNo">1159</span><a id="line.1159">/*        // set the anchor value for the horizontal axis...</a>
+<span class="sourceLineNo">1160</span><a id="line.1160">        ValueAxis hva = getDomainAxis();</a>
+<span class="sourceLineNo">1161</span><a id="line.1161">        if (hva != null) {</a>
+<span class="sourceLineNo">1162</span><a id="line.1162">            double hvalue = hva.translateJava2DtoValue(</a>
+<span class="sourceLineNo">1163</span><a id="line.1163">                (float) x, info.getDataArea()</a>
+<span class="sourceLineNo">1164</span><a id="line.1164">            );</a>
+<span class="sourceLineNo">1165</span><a id="line.1165"></a>
+<span class="sourceLineNo">1166</span><a id="line.1166">            hva.setAnchorValue(hvalue);</a>
+<span class="sourceLineNo">1167</span><a id="line.1167">            setDomainCrosshairValue(hvalue);</a>
+<span class="sourceLineNo">1168</span><a id="line.1168">        }</a>
+<span class="sourceLineNo">1169</span><a id="line.1169"></a>
+<span class="sourceLineNo">1170</span><a id="line.1170">        // set the anchor value for the vertical axis...</a>
+<span class="sourceLineNo">1171</span><a id="line.1171">        ValueAxis vva = getRangeAxis();</a>
+<span class="sourceLineNo">1172</span><a id="line.1172">        if (vva != null) {</a>
+<span class="sourceLineNo">1173</span><a id="line.1173">            double vvalue = vva.translateJava2DtoValue(</a>
+<span class="sourceLineNo">1174</span><a id="line.1174">                (float) y, info.getDataArea()</a>
+<span class="sourceLineNo">1175</span><a id="line.1175">            );</a>
+<span class="sourceLineNo">1176</span><a id="line.1176">            vva.setAnchorValue(vvalue);</a>
+<span class="sourceLineNo">1177</span><a id="line.1177">            setRangeCrosshairValue(vvalue);</a>
+<span class="sourceLineNo">1178</span><a id="line.1178">        }</a>
+<span class="sourceLineNo">1179</span><a id="line.1179">*/</a>
+<span class="sourceLineNo">1180</span><a id="line.1180">    }</a>
+<span class="sourceLineNo">1181</span><a id="line.1181"></a>
+<span class="sourceLineNo">1182</span><a id="line.1182">    /**</a>
+<span class="sourceLineNo">1183</span><a id="line.1183">     * Zooms the axis ranges by the specified percentage about the anchor point.</a>
+<span class="sourceLineNo">1184</span><a id="line.1184">     *</a>
+<span class="sourceLineNo">1185</span><a id="line.1185">     * @param percent  The amount of the zoom.</a>
+<span class="sourceLineNo">1186</span><a id="line.1186">     */</a>
+<span class="sourceLineNo">1187</span><a id="line.1187">    @Override</a>
+<span class="sourceLineNo">1188</span><a id="line.1188">    public void zoom(double percent) {</a>
+<span class="sourceLineNo">1189</span><a id="line.1189"></a>
+<span class="sourceLineNo">1190</span><a id="line.1190">        if (percent &gt; 0) {</a>
+<span class="sourceLineNo">1191</span><a id="line.1191">          //  double range = this.domainAxis.getRange().getLength();</a>
+<span class="sourceLineNo">1192</span><a id="line.1192">          //  double scaledRange = range * percent;</a>
+<span class="sourceLineNo">1193</span><a id="line.1193">          //  domainAxis.setAnchoredRange(scaledRange);</a>
+<span class="sourceLineNo">1194</span><a id="line.1194"></a>
+<span class="sourceLineNo">1195</span><a id="line.1195">          //  range = this.rangeAxis.getRange().getLength();</a>
+<span class="sourceLineNo">1196</span><a id="line.1196">         //  scaledRange = range * percent;</a>
+<span class="sourceLineNo">1197</span><a id="line.1197">         //   rangeAxis.setAnchoredRange(scaledRange);</a>
+<span class="sourceLineNo">1198</span><a id="line.1198">        }</a>
+<span class="sourceLineNo">1199</span><a id="line.1199">        else {</a>
+<span class="sourceLineNo">1200</span><a id="line.1200">            getRangeAxis().setAutoRange(true);</a>
+<span class="sourceLineNo">1201</span><a id="line.1201">            getDomainAxis().setAutoRange(true);</a>
+<span class="sourceLineNo">1202</span><a id="line.1202">        }</a>
+<span class="sourceLineNo">1203</span><a id="line.1203"></a>
+<span class="sourceLineNo">1204</span><a id="line.1204">    }</a>
+<span class="sourceLineNo">1205</span><a id="line.1205"></a>
+<span class="sourceLineNo">1206</span><a id="line.1206">    /**</a>
+<span class="sourceLineNo">1207</span><a id="line.1207">     * Returns the plot type as a string.</a>
+<span class="sourceLineNo">1208</span><a id="line.1208">     *</a>
+<span class="sourceLineNo">1209</span><a id="line.1209">     * @return A short string describing the type of plot.</a>
+<span class="sourceLineNo">1210</span><a id="line.1210">     */</a>
+<span class="sourceLineNo">1211</span><a id="line.1211">    @Override</a>
+<span class="sourceLineNo">1212</span><a id="line.1212">    public String getPlotType() {</a>
+<span class="sourceLineNo">1213</span><a id="line.1213">        return localizationResources.getString("Contour_Plot");</a>
+<span class="sourceLineNo">1214</span><a id="line.1214">    }</a>
+<span class="sourceLineNo">1215</span><a id="line.1215"></a>
+<span class="sourceLineNo">1216</span><a id="line.1216">    /**</a>
+<span class="sourceLineNo">1217</span><a id="line.1217">     * Returns the range for an axis.</a>
+<span class="sourceLineNo">1218</span><a id="line.1218">     *</a>
+<span class="sourceLineNo">1219</span><a id="line.1219">     * @param axis  the axis.</a>
+<span class="sourceLineNo">1220</span><a id="line.1220">     *</a>
+<span class="sourceLineNo">1221</span><a id="line.1221">     * @return The range for an axis.</a>
+<span class="sourceLineNo">1222</span><a id="line.1222">     */</a>
+<span class="sourceLineNo">1223</span><a id="line.1223">    @Override</a>
+<span class="sourceLineNo">1224</span><a id="line.1224">    public Range getDataRange(ValueAxis axis) {</a>
+<span class="sourceLineNo">1225</span><a id="line.1225"></a>
+<span class="sourceLineNo">1226</span><a id="line.1226">        if (this.dataset == null) {</a>
+<span class="sourceLineNo">1227</span><a id="line.1227">            return null;</a>
+<span class="sourceLineNo">1228</span><a id="line.1228">        }</a>
+<span class="sourceLineNo">1229</span><a id="line.1229"></a>
+<span class="sourceLineNo">1230</span><a id="line.1230">        Range result = null;</a>
+<span class="sourceLineNo">1231</span><a id="line.1231"></a>
+<span class="sourceLineNo">1232</span><a id="line.1232">        if (axis == getDomainAxis()) {</a>
+<span class="sourceLineNo">1233</span><a id="line.1233">            result = DatasetUtilities.findDomainBounds(this.dataset);</a>
+<span class="sourceLineNo">1234</span><a id="line.1234">        }</a>
+<span class="sourceLineNo">1235</span><a id="line.1235">        else if (axis == getRangeAxis()) {</a>
+<span class="sourceLineNo">1236</span><a id="line.1236">            result = DatasetUtilities.findRangeBounds(this.dataset);</a>
+<span class="sourceLineNo">1237</span><a id="line.1237">        }</a>
+<span class="sourceLineNo">1238</span><a id="line.1238">        return result;</a>
+<span class="sourceLineNo">1239</span><a id="line.1239">    }</a>
+<span class="sourceLineNo">1240</span><a id="line.1240"></a>
+<span class="sourceLineNo">1241</span><a id="line.1241">    /**</a>
+<span class="sourceLineNo">1242</span><a id="line.1242">     * Returns the range for the Contours.</a>
+<span class="sourceLineNo">1243</span><a id="line.1243">     *</a>
+<span class="sourceLineNo">1244</span><a id="line.1244">     * @return The range for the Contours (z-axis).</a>
+<span class="sourceLineNo">1245</span><a id="line.1245">     */</a>
+<span class="sourceLineNo">1246</span><a id="line.1246">    @Override</a>
+<span class="sourceLineNo">1247</span><a id="line.1247">    public Range getContourDataRange() {</a>
+<span class="sourceLineNo">1248</span><a id="line.1248">        Range result = null;</a>
+<span class="sourceLineNo">1249</span><a id="line.1249">        ContourDataset data = getDataset();</a>
+<span class="sourceLineNo">1250</span><a id="line.1250">        if (data != null) {</a>
+<span class="sourceLineNo">1251</span><a id="line.1251">            Range h = getDomainAxis().getRange();</a>
+<span class="sourceLineNo">1252</span><a id="line.1252">            Range v = getRangeAxis().getRange();</a>
+<span class="sourceLineNo">1253</span><a id="line.1253">            result = this.visibleRange(data, h, v);</a>
+<span class="sourceLineNo">1254</span><a id="line.1254">        }</a>
+<span class="sourceLineNo">1255</span><a id="line.1255">        return result;</a>
+<span class="sourceLineNo">1256</span><a id="line.1256">    }</a>
+<span class="sourceLineNo">1257</span><a id="line.1257"></a>
+<span class="sourceLineNo">1258</span><a id="line.1258">    /**</a>
+<span class="sourceLineNo">1259</span><a id="line.1259">     * Notifies all registered listeners of a property change.</a>
+<span class="sourceLineNo">1260</span><a id="line.1260">     * &lt;P&gt;</a>
+<span class="sourceLineNo">1261</span><a id="line.1261">     * One source of property change events is the plot's renderer.</a>
+<span class="sourceLineNo">1262</span><a id="line.1262">     *</a>
+<span class="sourceLineNo">1263</span><a id="line.1263">     * @param event  Information about the property change.</a>
+<span class="sourceLineNo">1264</span><a id="line.1264">     */</a>
+<span class="sourceLineNo">1265</span><a id="line.1265">    @Override</a>
+<span class="sourceLineNo">1266</span><a id="line.1266">    public void propertyChange(PropertyChangeEvent event) {</a>
+<span class="sourceLineNo">1267</span><a id="line.1267">        fireChangeEvent();</a>
+<span class="sourceLineNo">1268</span><a id="line.1268">    }</a>
+<span class="sourceLineNo">1269</span><a id="line.1269"></a>
+<span class="sourceLineNo">1270</span><a id="line.1270">    /**</a>
+<span class="sourceLineNo">1271</span><a id="line.1271">     * Receives notification of a change to the plot's dataset.</a>
+<span class="sourceLineNo">1272</span><a id="line.1272">     * &lt;P&gt;</a>
+<span class="sourceLineNo">1273</span><a id="line.1273">     * The chart reacts by passing on a chart change event to all registered</a>
+<span class="sourceLineNo">1274</span><a id="line.1274">     * listeners.</a>
+<span class="sourceLineNo">1275</span><a id="line.1275">     *</a>
+<span class="sourceLineNo">1276</span><a id="line.1276">     * @param event  Information about the event (not used here).</a>
+<span class="sourceLineNo">1277</span><a id="line.1277">     */</a>
+<span class="sourceLineNo">1278</span><a id="line.1278">    @Override</a>
+<span class="sourceLineNo">1279</span><a id="line.1279">    public void datasetChanged(DatasetChangeEvent event) {</a>
+<span class="sourceLineNo">1280</span><a id="line.1280">        if (this.domainAxis != null) {</a>
+<span class="sourceLineNo">1281</span><a id="line.1281">            this.domainAxis.configure();</a>
+<span class="sourceLineNo">1282</span><a id="line.1282">        }</a>
+<span class="sourceLineNo">1283</span><a id="line.1283">        if (this.rangeAxis != null) {</a>
+<span class="sourceLineNo">1284</span><a id="line.1284">            this.rangeAxis.configure();</a>
+<span class="sourceLineNo">1285</span><a id="line.1285">        }</a>
+<span class="sourceLineNo">1286</span><a id="line.1286">        if (this.colorBar != null) {</a>
+<span class="sourceLineNo">1287</span><a id="line.1287">            this.colorBar.configure(this);</a>
+<span class="sourceLineNo">1288</span><a id="line.1288">        }</a>
+<span class="sourceLineNo">1289</span><a id="line.1289">        super.datasetChanged(event);</a>
+<span class="sourceLineNo">1290</span><a id="line.1290">    }</a>
+<span class="sourceLineNo">1291</span><a id="line.1291"></a>
+<span class="sourceLineNo">1292</span><a id="line.1292">    /**</a>
+<span class="sourceLineNo">1293</span><a id="line.1293">     * Returns the colorbar.</a>
+<span class="sourceLineNo">1294</span><a id="line.1294">     *</a>
+<span class="sourceLineNo">1295</span><a id="line.1295">     * @return The colorbar.</a>
+<span class="sourceLineNo">1296</span><a id="line.1296">     */</a>
+<span class="sourceLineNo">1297</span><a id="line.1297">    public ColorBar getColorBar() {</a>
+<span class="sourceLineNo">1298</span><a id="line.1298">        return this.colorBar;</a>
+<span class="sourceLineNo">1299</span><a id="line.1299">    }</a>
+<span class="sourceLineNo">1300</span><a id="line.1300"></a>
+<span class="sourceLineNo">1301</span><a id="line.1301">    /**</a>
+<span class="sourceLineNo">1302</span><a id="line.1302">     * Returns a flag indicating whether or not the domain crosshair is visible.</a>
+<span class="sourceLineNo">1303</span><a id="line.1303">     *</a>
+<span class="sourceLineNo">1304</span><a id="line.1304">     * @return The flag.</a>
+<span class="sourceLineNo">1305</span><a id="line.1305">     */</a>
+<span class="sourceLineNo">1306</span><a id="line.1306">    public boolean isDomainCrosshairVisible() {</a>
+<span class="sourceLineNo">1307</span><a id="line.1307">        return this.domainCrosshairVisible;</a>
+<span class="sourceLineNo">1308</span><a id="line.1308">    }</a>
+<span class="sourceLineNo">1309</span><a id="line.1309"></a>
+<span class="sourceLineNo">1310</span><a id="line.1310">    /**</a>
+<span class="sourceLineNo">1311</span><a id="line.1311">     * Sets the flag indicating whether or not the domain crosshair is visible.</a>
+<span class="sourceLineNo">1312</span><a id="line.1312">     *</a>
+<span class="sourceLineNo">1313</span><a id="line.1313">     * @param flag  the new value of the flag.</a>
+<span class="sourceLineNo">1314</span><a id="line.1314">     */</a>
+<span class="sourceLineNo">1315</span><a id="line.1315">    public void setDomainCrosshairVisible(boolean flag) {</a>
+<span class="sourceLineNo">1316</span><a id="line.1316"></a>
+<span class="sourceLineNo">1317</span><a id="line.1317">        if (this.domainCrosshairVisible != flag) {</a>
+<span class="sourceLineNo">1318</span><a id="line.1318">            this.domainCrosshairVisible = flag;</a>
+<span class="sourceLineNo">1319</span><a id="line.1319">            fireChangeEvent();</a>
+<span class="sourceLineNo">1320</span><a id="line.1320">        }</a>
+<span class="sourceLineNo">1321</span><a id="line.1321"></a>
+<span class="sourceLineNo">1322</span><a id="line.1322">    }</a>
+<span class="sourceLineNo">1323</span><a id="line.1323"></a>
+<span class="sourceLineNo">1324</span><a id="line.1324">    /**</a>
+<span class="sourceLineNo">1325</span><a id="line.1325">     * Returns a flag indicating whether or not the crosshair should "lock-on"</a>
+<span class="sourceLineNo">1326</span><a id="line.1326">     * to actual data values.</a>
+<span class="sourceLineNo">1327</span><a id="line.1327">     *</a>
+<span class="sourceLineNo">1328</span><a id="line.1328">     * @return The flag.</a>
+<span class="sourceLineNo">1329</span><a id="line.1329">     */</a>
+<span class="sourceLineNo">1330</span><a id="line.1330">    public boolean isDomainCrosshairLockedOnData() {</a>
+<span class="sourceLineNo">1331</span><a id="line.1331">        return this.domainCrosshairLockedOnData;</a>
+<span class="sourceLineNo">1332</span><a id="line.1332">    }</a>
+<span class="sourceLineNo">1333</span><a id="line.1333"></a>
+<span class="sourceLineNo">1334</span><a id="line.1334">    /**</a>
+<span class="sourceLineNo">1335</span><a id="line.1335">     * Sets the flag indicating whether or not the domain crosshair should</a>
+<span class="sourceLineNo">1336</span><a id="line.1336">     * "lock-on" to actual data values.</a>
+<span class="sourceLineNo">1337</span><a id="line.1337">     *</a>
+<span class="sourceLineNo">1338</span><a id="line.1338">     * @param flag  the flag.</a>
+<span class="sourceLineNo">1339</span><a id="line.1339">     */</a>
+<span class="sourceLineNo">1340</span><a id="line.1340">    public void setDomainCrosshairLockedOnData(boolean flag) {</a>
+<span class="sourceLineNo">1341</span><a id="line.1341">        if (this.domainCrosshairLockedOnData != flag) {</a>
+<span class="sourceLineNo">1342</span><a id="line.1342">            this.domainCrosshairLockedOnData = flag;</a>
+<span class="sourceLineNo">1343</span><a id="line.1343">            fireChangeEvent();</a>
+<span class="sourceLineNo">1344</span><a id="line.1344">        }</a>
+<span class="sourceLineNo">1345</span><a id="line.1345">    }</a>
+<span class="sourceLineNo">1346</span><a id="line.1346"></a>
+<span class="sourceLineNo">1347</span><a id="line.1347">    /**</a>
+<span class="sourceLineNo">1348</span><a id="line.1348">     * Returns the domain crosshair value.</a>
+<span class="sourceLineNo">1349</span><a id="line.1349">     *</a>
+<span class="sourceLineNo">1350</span><a id="line.1350">     * @return The value.</a>
+<span class="sourceLineNo">1351</span><a id="line.1351">     */</a>
+<span class="sourceLineNo">1352</span><a id="line.1352">    public double getDomainCrosshairValue() {</a>
+<span class="sourceLineNo">1353</span><a id="line.1353">        return this.domainCrosshairValue;</a>
+<span class="sourceLineNo">1354</span><a id="line.1354">    }</a>
+<span class="sourceLineNo">1355</span><a id="line.1355"></a>
+<span class="sourceLineNo">1356</span><a id="line.1356">    /**</a>
+<span class="sourceLineNo">1357</span><a id="line.1357">     * Sets the domain crosshair value.</a>
+<span class="sourceLineNo">1358</span><a id="line.1358">     * &lt;P&gt;</a>
+<span class="sourceLineNo">1359</span><a id="line.1359">     * Registered listeners are notified that the plot has been modified, but</a>
+<span class="sourceLineNo">1360</span><a id="line.1360">     * only if the crosshair is visible.</a>
+<span class="sourceLineNo">1361</span><a id="line.1361">     *</a>
+<span class="sourceLineNo">1362</span><a id="line.1362">     * @param value  the new value.</a>
+<span class="sourceLineNo">1363</span><a id="line.1363">     */</a>
+<span class="sourceLineNo">1364</span><a id="line.1364">    public void setDomainCrosshairValue(double value) {</a>
+<span class="sourceLineNo">1365</span><a id="line.1365">        setDomainCrosshairValue(value, true);</a>
+<span class="sourceLineNo">1366</span><a id="line.1366">    }</a>
+<span class="sourceLineNo">1367</span><a id="line.1367"></a>
+<span class="sourceLineNo">1368</span><a id="line.1368">    /**</a>
+<span class="sourceLineNo">1369</span><a id="line.1369">     * Sets the domain crosshair value.</a>
+<span class="sourceLineNo">1370</span><a id="line.1370">     * &lt;P&gt;</a>
+<span class="sourceLineNo">1371</span><a id="line.1371">     * Registered listeners are notified that the axis has been modified, but</a>
+<span class="sourceLineNo">1372</span><a id="line.1372">     * only if the crosshair is visible.</a>
+<span class="sourceLineNo">1373</span><a id="line.1373">     *</a>
+<span class="sourceLineNo">1374</span><a id="line.1374">     * @param value  the new value.</a>
+<span class="sourceLineNo">1375</span><a id="line.1375">     * @param notify  a flag that controls whether or not listeners are</a>
+<span class="sourceLineNo">1376</span><a id="line.1376">     *                notified.</a>
+<span class="sourceLineNo">1377</span><a id="line.1377">     */</a>
+<span class="sourceLineNo">1378</span><a id="line.1378">    public void setDomainCrosshairValue(double value, boolean notify) {</a>
+<span class="sourceLineNo">1379</span><a id="line.1379">        this.domainCrosshairValue = value;</a>
+<span class="sourceLineNo">1380</span><a id="line.1380">        if (isDomainCrosshairVisible() &amp;&amp; notify) {</a>
+<span class="sourceLineNo">1381</span><a id="line.1381">            fireChangeEvent();</a>
+<span class="sourceLineNo">1382</span><a id="line.1382">        }</a>
+<span class="sourceLineNo">1383</span><a id="line.1383">    }</a>
+<span class="sourceLineNo">1384</span><a id="line.1384"></a>
+<span class="sourceLineNo">1385</span><a id="line.1385">    /**</a>
+<span class="sourceLineNo">1386</span><a id="line.1386">     * Returns the Stroke used to draw the crosshair (if visible).</a>
+<span class="sourceLineNo">1387</span><a id="line.1387">     *</a>
+<span class="sourceLineNo">1388</span><a id="line.1388">     * @return The crosshair stroke.</a>
+<span class="sourceLineNo">1389</span><a id="line.1389">     */</a>
+<span class="sourceLineNo">1390</span><a id="line.1390">    public Stroke getDomainCrosshairStroke() {</a>
+<span class="sourceLineNo">1391</span><a id="line.1391">        return this.domainCrosshairStroke;</a>
+<span class="sourceLineNo">1392</span><a id="line.1392">    }</a>
+<span class="sourceLineNo">1393</span><a id="line.1393"></a>
+<span class="sourceLineNo">1394</span><a id="line.1394">    /**</a>
+<span class="sourceLineNo">1395</span><a id="line.1395">     * Sets the Stroke used to draw the crosshairs (if visible) and notifies</a>
+<span class="sourceLineNo">1396</span><a id="line.1396">     * registered listeners that the axis has been modified.</a>
+<span class="sourceLineNo">1397</span><a id="line.1397">     *</a>
+<span class="sourceLineNo">1398</span><a id="line.1398">     * @param stroke  the new crosshair stroke.</a>
+<span class="sourceLineNo">1399</span><a id="line.1399">     */</a>
+<span class="sourceLineNo">1400</span><a id="line.1400">    public void setDomainCrosshairStroke(Stroke stroke) {</a>
+<span class="sourceLineNo">1401</span><a id="line.1401">        this.domainCrosshairStroke = stroke;</a>
+<span class="sourceLineNo">1402</span><a id="line.1402">        fireChangeEvent();</a>
+<span class="sourceLineNo">1403</span><a id="line.1403">    }</a>
+<span class="sourceLineNo">1404</span><a id="line.1404"></a>
+<span class="sourceLineNo">1405</span><a id="line.1405">    /**</a>
+<span class="sourceLineNo">1406</span><a id="line.1406">     * Returns the domain crosshair color.</a>
+<span class="sourceLineNo">1407</span><a id="line.1407">     *</a>
+<span class="sourceLineNo">1408</span><a id="line.1408">     * @return The crosshair color.</a>
+<span class="sourceLineNo">1409</span><a id="line.1409">     */</a>
+<span class="sourceLineNo">1410</span><a id="line.1410">    public Paint getDomainCrosshairPaint() {</a>
+<span class="sourceLineNo">1411</span><a id="line.1411">        return this.domainCrosshairPaint;</a>
+<span class="sourceLineNo">1412</span><a id="line.1412">    }</a>
+<span class="sourceLineNo">1413</span><a id="line.1413"></a>
+<span class="sourceLineNo">1414</span><a id="line.1414">    /**</a>
+<span class="sourceLineNo">1415</span><a id="line.1415">     * Sets the Paint used to color the crosshairs (if visible) and notifies</a>
+<span class="sourceLineNo">1416</span><a id="line.1416">     * registered listeners that the axis has been modified.</a>
+<span class="sourceLineNo">1417</span><a id="line.1417">     *</a>
+<span class="sourceLineNo">1418</span><a id="line.1418">     * @param paint the new crosshair paint.</a>
+<span class="sourceLineNo">1419</span><a id="line.1419">     */</a>
+<span class="sourceLineNo">1420</span><a id="line.1420">    public void setDomainCrosshairPaint(Paint paint) {</a>
+<span class="sourceLineNo">1421</span><a id="line.1421">        this.domainCrosshairPaint = paint;</a>
+<span class="sourceLineNo">1422</span><a id="line.1422">        fireChangeEvent();</a>
+<span class="sourceLineNo">1423</span><a id="line.1423">    }</a>
+<span class="sourceLineNo">1424</span><a id="line.1424"></a>
+<span class="sourceLineNo">1425</span><a id="line.1425">    /**</a>
+<span class="sourceLineNo">1426</span><a id="line.1426">     * Returns a flag indicating whether or not the range crosshair is visible.</a>
+<span class="sourceLineNo">1427</span><a id="line.1427">     *</a>
+<span class="sourceLineNo">1428</span><a id="line.1428">     * @return The flag.</a>
+<span class="sourceLineNo">1429</span><a id="line.1429">     */</a>
+<span class="sourceLineNo">1430</span><a id="line.1430">    public boolean isRangeCrosshairVisible() {</a>
+<span class="sourceLineNo">1431</span><a id="line.1431">        return this.rangeCrosshairVisible;</a>
+<span class="sourceLineNo">1432</span><a id="line.1432">    }</a>
+<span class="sourceLineNo">1433</span><a id="line.1433"></a>
+<span class="sourceLineNo">1434</span><a id="line.1434">    /**</a>
+<span class="sourceLineNo">1435</span><a id="line.1435">     * Sets the flag indicating whether or not the range crosshair is visible.</a>
+<span class="sourceLineNo">1436</span><a id="line.1436">     *</a>
+<span class="sourceLineNo">1437</span><a id="line.1437">     * @param flag  the new value of the flag.</a>
+<span class="sourceLineNo">1438</span><a id="line.1438">     */</a>
+<span class="sourceLineNo">1439</span><a id="line.1439">    public void setRangeCrosshairVisible(boolean flag) {</a>
+<span class="sourceLineNo">1440</span><a id="line.1440">        if (this.rangeCrosshairVisible != flag) {</a>
+<span class="sourceLineNo">1441</span><a id="line.1441">            this.rangeCrosshairVisible = flag;</a>
+<span class="sourceLineNo">1442</span><a id="line.1442">            fireChangeEvent();</a>
+<span class="sourceLineNo">1443</span><a id="line.1443">        }</a>
+<span class="sourceLineNo">1444</span><a id="line.1444">    }</a>
+<span class="sourceLineNo">1445</span><a id="line.1445"></a>
+<span class="sourceLineNo">1446</span><a id="line.1446">    /**</a>
+<span class="sourceLineNo">1447</span><a id="line.1447">     * Returns a flag indicating whether or not the crosshair should "lock-on"</a>
+<span class="sourceLineNo">1448</span><a id="line.1448">     * to actual data values.</a>
+<span class="sourceLineNo">1449</span><a id="line.1449">     *</a>
+<span class="sourceLineNo">1450</span><a id="line.1450">     * @return The flag.</a>
+<span class="sourceLineNo">1451</span><a id="line.1451">     */</a>
+<span class="sourceLineNo">1452</span><a id="line.1452">    public boolean isRangeCrosshairLockedOnData() {</a>
+<span class="sourceLineNo">1453</span><a id="line.1453">        return this.rangeCrosshairLockedOnData;</a>
+<span class="sourceLineNo">1454</span><a id="line.1454">    }</a>
+<span class="sourceLineNo">1455</span><a id="line.1455"></a>
+<span class="sourceLineNo">1456</span><a id="line.1456">    /**</a>
+<span class="sourceLineNo">1457</span><a id="line.1457">     * Sets the flag indicating whether or not the range crosshair should</a>
+<span class="sourceLineNo">1458</span><a id="line.1458">     * "lock-on" to actual data values.</a>
+<span class="sourceLineNo">1459</span><a id="line.1459">     *</a>
+<span class="sourceLineNo">1460</span><a id="line.1460">     * @param flag  the flag.</a>
+<span class="sourceLineNo">1461</span><a id="line.1461">     */</a>
+<span class="sourceLineNo">1462</span><a id="line.1462">    public void setRangeCrosshairLockedOnData(boolean flag) {</a>
+<span class="sourceLineNo">1463</span><a id="line.1463">        if (this.rangeCrosshairLockedOnData != flag) {</a>
+<span class="sourceLineNo">1464</span><a id="line.1464">            this.rangeCrosshairLockedOnData = flag;</a>
+<span class="sourceLineNo">1465</span><a id="line.1465">            fireChangeEvent();</a>
+<span class="sourceLineNo">1466</span><a id="line.1466">        }</a>
+<span class="sourceLineNo">1467</span><a id="line.1467">    }</a>
+<span class="sourceLineNo">1468</span><a id="line.1468"></a>
+<span class="sourceLineNo">1469</span><a id="line.1469">    /**</a>
+<span class="sourceLineNo">1470</span><a id="line.1470">     * Returns the range crosshair value.</a>
+<span class="sourceLineNo">1471</span><a id="line.1471">     *</a>
+<span class="sourceLineNo">1472</span><a id="line.1472">     * @return The value.</a>
+<span class="sourceLineNo">1473</span><a id="line.1473">     */</a>
+<span class="sourceLineNo">1474</span><a id="line.1474">    public double getRangeCrosshairValue() {</a>
+<span class="sourceLineNo">1475</span><a id="line.1475">        return this.rangeCrosshairValue;</a>
+<span class="sourceLineNo">1476</span><a id="line.1476">    }</a>
+<span class="sourceLineNo">1477</span><a id="line.1477"></a>
+<span class="sourceLineNo">1478</span><a id="line.1478">    /**</a>
+<span class="sourceLineNo">1479</span><a id="line.1479">     * Sets the domain crosshair value.</a>
+<span class="sourceLineNo">1480</span><a id="line.1480">     * &lt;P&gt;</a>
+<span class="sourceLineNo">1481</span><a id="line.1481">     * Registered listeners are notified that the plot has been modified, but</a>
+<span class="sourceLineNo">1482</span><a id="line.1482">     * only if the crosshair is visible.</a>
+<span class="sourceLineNo">1483</span><a id="line.1483">     *</a>
+<span class="sourceLineNo">1484</span><a id="line.1484">     * @param value  the new value.</a>
+<span class="sourceLineNo">1485</span><a id="line.1485">     */</a>
+<span class="sourceLineNo">1486</span><a id="line.1486">    public void setRangeCrosshairValue(double value) {</a>
+<span class="sourceLineNo">1487</span><a id="line.1487">        setRangeCrosshairValue(value, true);</a>
+<span class="sourceLineNo">1488</span><a id="line.1488">    }</a>
+<span class="sourceLineNo">1489</span><a id="line.1489"></a>
+<span class="sourceLineNo">1490</span><a id="line.1490">    /**</a>
+<span class="sourceLineNo">1491</span><a id="line.1491">     * Sets the range crosshair value.</a>
+<span class="sourceLineNo">1492</span><a id="line.1492">     * &lt;P&gt;</a>
+<span class="sourceLineNo">1493</span><a id="line.1493">     * Registered listeners are notified that the axis has been modified, but</a>
+<span class="sourceLineNo">1494</span><a id="line.1494">     * only if the crosshair is visible.</a>
+<span class="sourceLineNo">1495</span><a id="line.1495">     *</a>
+<span class="sourceLineNo">1496</span><a id="line.1496">     * @param value  the new value.</a>
+<span class="sourceLineNo">1497</span><a id="line.1497">     * @param notify  a flag that controls whether or not listeners are</a>
+<span class="sourceLineNo">1498</span><a id="line.1498">     *                notified.</a>
+<span class="sourceLineNo">1499</span><a id="line.1499">     */</a>
+<span class="sourceLineNo">1500</span><a id="line.1500">    public void setRangeCrosshairValue(double value, boolean notify) {</a>
+<span class="sourceLineNo">1501</span><a id="line.1501">        this.rangeCrosshairValue = value;</a>
+<span class="sourceLineNo">1502</span><a id="line.1502">        if (isRangeCrosshairVisible() &amp;&amp; notify) {</a>
+<span class="sourceLineNo">1503</span><a id="line.1503">            fireChangeEvent();</a>
+<span class="sourceLineNo">1504</span><a id="line.1504">        }</a>
+<span class="sourceLineNo">1505</span><a id="line.1505">    }</a>
+<span class="sourceLineNo">1506</span><a id="line.1506"></a>
+<span class="sourceLineNo">1507</span><a id="line.1507">    /**</a>
+<span class="sourceLineNo">1508</span><a id="line.1508">     * Returns the Stroke used to draw the crosshair (if visible).</a>
+<span class="sourceLineNo">1509</span><a id="line.1509">     *</a>
+<span class="sourceLineNo">1510</span><a id="line.1510">     * @return The crosshair stroke.</a>
+<span class="sourceLineNo">1511</span><a id="line.1511">     */</a>
+<span class="sourceLineNo">1512</span><a id="line.1512">    public Stroke getRangeCrosshairStroke() {</a>
+<span class="sourceLineNo">1513</span><a id="line.1513">        return this.rangeCrosshairStroke;</a>
+<span class="sourceLineNo">1514</span><a id="line.1514">    }</a>
+<span class="sourceLineNo">1515</span><a id="line.1515"></a>
+<span class="sourceLineNo">1516</span><a id="line.1516">    /**</a>
+<span class="sourceLineNo">1517</span><a id="line.1517">     * Sets the Stroke used to draw the crosshairs (if visible) and notifies</a>
+<span class="sourceLineNo">1518</span><a id="line.1518">     * registered listeners that the axis has been modified.</a>
+<span class="sourceLineNo">1519</span><a id="line.1519">     *</a>
+<span class="sourceLineNo">1520</span><a id="line.1520">     * @param stroke  the new crosshair stroke.</a>
+<span class="sourceLineNo">1521</span><a id="line.1521">     */</a>
+<span class="sourceLineNo">1522</span><a id="line.1522">    public void setRangeCrosshairStroke(Stroke stroke) {</a>
+<span class="sourceLineNo">1523</span><a id="line.1523">        this.rangeCrosshairStroke = stroke;</a>
+<span class="sourceLineNo">1524</span><a id="line.1524">        fireChangeEvent();</a>
+<span class="sourceLineNo">1525</span><a id="line.1525">    }</a>
+<span class="sourceLineNo">1526</span><a id="line.1526"></a>
+<span class="sourceLineNo">1527</span><a id="line.1527">    /**</a>
+<span class="sourceLineNo">1528</span><a id="line.1528">     * Returns the range crosshair color.</a>
+<span class="sourceLineNo">1529</span><a id="line.1529">     *</a>
+<span class="sourceLineNo">1530</span><a id="line.1530">     * @return The crosshair color.</a>
+<span class="sourceLineNo">1531</span><a id="line.1531">     */</a>
+<span class="sourceLineNo">1532</span><a id="line.1532">    public Paint getRangeCrosshairPaint() {</a>
+<span class="sourceLineNo">1533</span><a id="line.1533">        return this.rangeCrosshairPaint;</a>
+<span class="sourceLineNo">1534</span><a id="line.1534">    }</a>
+<span class="sourceLineNo">1535</span><a id="line.1535"></a>
+<span class="sourceLineNo">1536</span><a id="line.1536">    /**</a>
+<span class="sourceLineNo">1537</span><a id="line.1537">     * Sets the Paint used to color the crosshairs (if visible) and notifies</a>
+<span class="sourceLineNo">1538</span><a id="line.1538">     * registered listeners that the axis has been modified.</a>
+<span class="sourceLineNo">1539</span><a id="line.1539">     *</a>
+<span class="sourceLineNo">1540</span><a id="line.1540">     * @param paint the new crosshair paint.</a>
+<span class="sourceLineNo">1541</span><a id="line.1541">     */</a>
+<span class="sourceLineNo">1542</span><a id="line.1542">    public void setRangeCrosshairPaint(Paint paint) {</a>
+<span class="sourceLineNo">1543</span><a id="line.1543">        this.rangeCrosshairPaint = paint;</a>
+<span class="sourceLineNo">1544</span><a id="line.1544">        fireChangeEvent();</a>
+<span class="sourceLineNo">1545</span><a id="line.1545">    }</a>
+<span class="sourceLineNo">1546</span><a id="line.1546"></a>
+<span class="sourceLineNo">1547</span><a id="line.1547">    /**</a>
+<span class="sourceLineNo">1548</span><a id="line.1548">     * Returns the tool tip generator.</a>
+<span class="sourceLineNo">1549</span><a id="line.1549">     *</a>
+<span class="sourceLineNo">1550</span><a id="line.1550">     * @return The tool tip generator (possibly null).</a>
+<span class="sourceLineNo">1551</span><a id="line.1551">     */</a>
+<span class="sourceLineNo">1552</span><a id="line.1552">    public ContourToolTipGenerator getToolTipGenerator() {</a>
+<span class="sourceLineNo">1553</span><a id="line.1553">        return this.toolTipGenerator;</a>
+<span class="sourceLineNo">1554</span><a id="line.1554">    }</a>
+<span class="sourceLineNo">1555</span><a id="line.1555"></a>
+<span class="sourceLineNo">1556</span><a id="line.1556">    /**</a>
+<span class="sourceLineNo">1557</span><a id="line.1557">     * Sets the tool tip generator.</a>
+<span class="sourceLineNo">1558</span><a id="line.1558">     *</a>
+<span class="sourceLineNo">1559</span><a id="line.1559">     * @param generator  the tool tip generator (null permitted).</a>
+<span class="sourceLineNo">1560</span><a id="line.1560">     */</a>
+<span class="sourceLineNo">1561</span><a id="line.1561">    public void setToolTipGenerator(ContourToolTipGenerator generator) {</a>
+<span class="sourceLineNo">1562</span><a id="line.1562">        //Object oldValue = this.toolTipGenerator;</a>
+<span class="sourceLineNo">1563</span><a id="line.1563">        this.toolTipGenerator = generator;</a>
+<span class="sourceLineNo">1564</span><a id="line.1564">    }</a>
+<span class="sourceLineNo">1565</span><a id="line.1565"></a>
+<span class="sourceLineNo">1566</span><a id="line.1566">    /**</a>
+<span class="sourceLineNo">1567</span><a id="line.1567">     * Returns the URL generator for HTML image maps.</a>
+<span class="sourceLineNo">1568</span><a id="line.1568">     *</a>
+<span class="sourceLineNo">1569</span><a id="line.1569">     * @return The URL generator (possibly null).</a>
+<span class="sourceLineNo">1570</span><a id="line.1570">     */</a>
+<span class="sourceLineNo">1571</span><a id="line.1571">    public XYURLGenerator getURLGenerator() {</a>
+<span class="sourceLineNo">1572</span><a id="line.1572">        return this.urlGenerator;</a>
+<span class="sourceLineNo">1573</span><a id="line.1573">    }</a>
+<span class="sourceLineNo">1574</span><a id="line.1574"></a>
+<span class="sourceLineNo">1575</span><a id="line.1575">    /**</a>
+<span class="sourceLineNo">1576</span><a id="line.1576">     * Sets the URL generator for HTML image maps.</a>
+<span class="sourceLineNo">1577</span><a id="line.1577">     *</a>
+<span class="sourceLineNo">1578</span><a id="line.1578">     * @param urlGenerator  the URL generator (null permitted).</a>
+<span class="sourceLineNo">1579</span><a id="line.1579">     */</a>
+<span class="sourceLineNo">1580</span><a id="line.1580">    public void setURLGenerator(XYURLGenerator urlGenerator) {</a>
+<span class="sourceLineNo">1581</span><a id="line.1581">        //Object oldValue = this.urlGenerator;</a>
+<span class="sourceLineNo">1582</span><a id="line.1582">        this.urlGenerator = urlGenerator;</a>
+<span class="sourceLineNo">1583</span><a id="line.1583">    }</a>
+<span class="sourceLineNo">1584</span><a id="line.1584"></a>
+<span class="sourceLineNo">1585</span><a id="line.1585">    /**</a>
+<span class="sourceLineNo">1586</span><a id="line.1586">     * Draws a vertical line on the chart to represent a 'range marker'.</a>
+<span class="sourceLineNo">1587</span><a id="line.1587">     *</a>
+<span class="sourceLineNo">1588</span><a id="line.1588">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1589</span><a id="line.1589">     * @param plot  the plot.</a>
+<span class="sourceLineNo">1590</span><a id="line.1590">     * @param domainAxis  the domain axis.</a>
+<span class="sourceLineNo">1591</span><a id="line.1591">     * @param marker  the marker line.</a>
+<span class="sourceLineNo">1592</span><a id="line.1592">     * @param dataArea  the axis data area.</a>
+<span class="sourceLineNo">1593</span><a id="line.1593">     */</a>
+<span class="sourceLineNo">1594</span><a id="line.1594">    public void drawDomainMarker(Graphics2D g2,</a>
+<span class="sourceLineNo">1595</span><a id="line.1595">                                 ContourPlot plot,</a>
+<span class="sourceLineNo">1596</span><a id="line.1596">                                 ValueAxis domainAxis,</a>
+<span class="sourceLineNo">1597</span><a id="line.1597">                                 Marker marker,</a>
+<span class="sourceLineNo">1598</span><a id="line.1598">                                 Rectangle2D dataArea) {</a>
+<span class="sourceLineNo">1599</span><a id="line.1599"></a>
+<span class="sourceLineNo">1600</span><a id="line.1600">        if (marker instanceof ValueMarker) {</a>
+<span class="sourceLineNo">1601</span><a id="line.1601">            ValueMarker vm = (ValueMarker) marker;</a>
+<span class="sourceLineNo">1602</span><a id="line.1602">            double value = vm.getValue();</a>
+<span class="sourceLineNo">1603</span><a id="line.1603">            Range range = domainAxis.getRange();</a>
+<span class="sourceLineNo">1604</span><a id="line.1604">            if (!range.contains(value)) {</a>
+<span class="sourceLineNo">1605</span><a id="line.1605">                return;</a>
+<span class="sourceLineNo">1606</span><a id="line.1606">            }</a>
+<span class="sourceLineNo">1607</span><a id="line.1607"></a>
+<span class="sourceLineNo">1608</span><a id="line.1608">            double x = domainAxis.valueToJava2D(value, dataArea,</a>
+<span class="sourceLineNo">1609</span><a id="line.1609">                    RectangleEdge.BOTTOM);</a>
+<span class="sourceLineNo">1610</span><a id="line.1610">            Line2D line = new Line2D.Double(x, dataArea.getMinY(), x,</a>
+<span class="sourceLineNo">1611</span><a id="line.1611">                    dataArea.getMaxY());</a>
+<span class="sourceLineNo">1612</span><a id="line.1612">            Paint paint = marker.getOutlinePaint();</a>
+<span class="sourceLineNo">1613</span><a id="line.1613">            Stroke stroke = marker.getOutlineStroke();</a>
+<span class="sourceLineNo">1614</span><a id="line.1614">            g2.setPaint(paint != null ? paint : Plot.DEFAULT_OUTLINE_PAINT);</a>
+<span class="sourceLineNo">1615</span><a id="line.1615">            g2.setStroke(stroke != null ? stroke : Plot.DEFAULT_OUTLINE_STROKE);</a>
+<span class="sourceLineNo">1616</span><a id="line.1616">            g2.draw(line);</a>
+<span class="sourceLineNo">1617</span><a id="line.1617">        }</a>
+<span class="sourceLineNo">1618</span><a id="line.1618"></a>
+<span class="sourceLineNo">1619</span><a id="line.1619">    }</a>
+<span class="sourceLineNo">1620</span><a id="line.1620"></a>
+<span class="sourceLineNo">1621</span><a id="line.1621">    /**</a>
+<span class="sourceLineNo">1622</span><a id="line.1622">     * Draws a horizontal line across the chart to represent a 'range marker'.</a>
+<span class="sourceLineNo">1623</span><a id="line.1623">     *</a>
+<span class="sourceLineNo">1624</span><a id="line.1624">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1625</span><a id="line.1625">     * @param plot  the plot.</a>
+<span class="sourceLineNo">1626</span><a id="line.1626">     * @param rangeAxis  the range axis.</a>
+<span class="sourceLineNo">1627</span><a id="line.1627">     * @param marker  the marker line.</a>
+<span class="sourceLineNo">1628</span><a id="line.1628">     * @param dataArea  the axis data area.</a>
+<span class="sourceLineNo">1629</span><a id="line.1629">     */</a>
+<span class="sourceLineNo">1630</span><a id="line.1630">    public void drawRangeMarker(Graphics2D g2,</a>
+<span class="sourceLineNo">1631</span><a id="line.1631">                                ContourPlot plot,</a>
+<span class="sourceLineNo">1632</span><a id="line.1632">                                ValueAxis rangeAxis,</a>
+<span class="sourceLineNo">1633</span><a id="line.1633">                                Marker marker,</a>
+<span class="sourceLineNo">1634</span><a id="line.1634">                                Rectangle2D dataArea) {</a>
+<span class="sourceLineNo">1635</span><a id="line.1635"></a>
+<span class="sourceLineNo">1636</span><a id="line.1636">        if (marker instanceof ValueMarker) {</a>
+<span class="sourceLineNo">1637</span><a id="line.1637">            ValueMarker vm = (ValueMarker) marker;</a>
+<span class="sourceLineNo">1638</span><a id="line.1638">            double value = vm.getValue();</a>
+<span class="sourceLineNo">1639</span><a id="line.1639">            Range range = rangeAxis.getRange();</a>
+<span class="sourceLineNo">1640</span><a id="line.1640">            if (!range.contains(value)) {</a>
+<span class="sourceLineNo">1641</span><a id="line.1641">                return;</a>
+<span class="sourceLineNo">1642</span><a id="line.1642">            }</a>
+<span class="sourceLineNo">1643</span><a id="line.1643"></a>
+<span class="sourceLineNo">1644</span><a id="line.1644">            double y = rangeAxis.valueToJava2D(value, dataArea,</a>
+<span class="sourceLineNo">1645</span><a id="line.1645">                    RectangleEdge.LEFT);</a>
+<span class="sourceLineNo">1646</span><a id="line.1646">            Line2D line = new Line2D.Double(dataArea.getMinX(), y,</a>
+<span class="sourceLineNo">1647</span><a id="line.1647">                    dataArea.getMaxX(), y);</a>
+<span class="sourceLineNo">1648</span><a id="line.1648">            Paint paint = marker.getOutlinePaint();</a>
+<span class="sourceLineNo">1649</span><a id="line.1649">            Stroke stroke = marker.getOutlineStroke();</a>
+<span class="sourceLineNo">1650</span><a id="line.1650">            g2.setPaint(paint != null ? paint : Plot.DEFAULT_OUTLINE_PAINT);</a>
+<span class="sourceLineNo">1651</span><a id="line.1651">            g2.setStroke(stroke != null ? stroke : Plot.DEFAULT_OUTLINE_STROKE);</a>
+<span class="sourceLineNo">1652</span><a id="line.1652">            g2.draw(line);</a>
+<span class="sourceLineNo">1653</span><a id="line.1653">        }</a>
+<span class="sourceLineNo">1654</span><a id="line.1654"></a>
+<span class="sourceLineNo">1655</span><a id="line.1655">    }</a>
+<span class="sourceLineNo">1656</span><a id="line.1656"></a>
+<span class="sourceLineNo">1657</span><a id="line.1657">    /**</a>
+<span class="sourceLineNo">1658</span><a id="line.1658">     * Returns the clipPath.</a>
+<span class="sourceLineNo">1659</span><a id="line.1659">     * @return ClipPath</a>
+<span class="sourceLineNo">1660</span><a id="line.1660">     */</a>
+<span class="sourceLineNo">1661</span><a id="line.1661">    public ClipPath getClipPath() {</a>
+<span class="sourceLineNo">1662</span><a id="line.1662">        return this.clipPath;</a>
+<span class="sourceLineNo">1663</span><a id="line.1663">    }</a>
+<span class="sourceLineNo">1664</span><a id="line.1664"></a>
+<span class="sourceLineNo">1665</span><a id="line.1665">    /**</a>
+<span class="sourceLineNo">1666</span><a id="line.1666">     * Sets the clipPath.</a>
+<span class="sourceLineNo">1667</span><a id="line.1667">     * @param clipPath The clipPath to set</a>
+<span class="sourceLineNo">1668</span><a id="line.1668">     */</a>
+<span class="sourceLineNo">1669</span><a id="line.1669">    public void setClipPath(ClipPath clipPath) {</a>
+<span class="sourceLineNo">1670</span><a id="line.1670">        this.clipPath = clipPath;</a>
+<span class="sourceLineNo">1671</span><a id="line.1671">    }</a>
+<span class="sourceLineNo">1672</span><a id="line.1672"></a>
+<span class="sourceLineNo">1673</span><a id="line.1673">    /**</a>
+<span class="sourceLineNo">1674</span><a id="line.1674">     * Returns the ptSizePct.</a>
+<span class="sourceLineNo">1675</span><a id="line.1675">     * @return double</a>
+<span class="sourceLineNo">1676</span><a id="line.1676">     */</a>
+<span class="sourceLineNo">1677</span><a id="line.1677">    public double getPtSizePct() {</a>
+<span class="sourceLineNo">1678</span><a id="line.1678">        return this.ptSizePct;</a>
+<span class="sourceLineNo">1679</span><a id="line.1679">    }</a>
+<span class="sourceLineNo">1680</span><a id="line.1680"></a>
+<span class="sourceLineNo">1681</span><a id="line.1681">    /**</a>
+<span class="sourceLineNo">1682</span><a id="line.1682">     * Returns the renderAsPoints.</a>
+<span class="sourceLineNo">1683</span><a id="line.1683">     * @return boolean</a>
+<span class="sourceLineNo">1684</span><a id="line.1684">     */</a>
+<span class="sourceLineNo">1685</span><a id="line.1685">    public boolean isRenderAsPoints() {</a>
+<span class="sourceLineNo">1686</span><a id="line.1686">        return this.renderAsPoints;</a>
+<span class="sourceLineNo">1687</span><a id="line.1687">    }</a>
+<span class="sourceLineNo">1688</span><a id="line.1688"></a>
+<span class="sourceLineNo">1689</span><a id="line.1689">    /**</a>
+<span class="sourceLineNo">1690</span><a id="line.1690">     * Sets the ptSizePct.</a>
+<span class="sourceLineNo">1691</span><a id="line.1691">     * @param ptSizePct The ptSizePct to set</a>
+<span class="sourceLineNo">1692</span><a id="line.1692">     */</a>
+<span class="sourceLineNo">1693</span><a id="line.1693">    public void setPtSizePct(double ptSizePct) {</a>
+<span class="sourceLineNo">1694</span><a id="line.1694">        this.ptSizePct = ptSizePct;</a>
+<span class="sourceLineNo">1695</span><a id="line.1695">    }</a>
+<span class="sourceLineNo">1696</span><a id="line.1696"></a>
+<span class="sourceLineNo">1697</span><a id="line.1697">    /**</a>
+<span class="sourceLineNo">1698</span><a id="line.1698">     * Sets the renderAsPoints.</a>
+<span class="sourceLineNo">1699</span><a id="line.1699">     * @param renderAsPoints The renderAsPoints to set</a>
+<span class="sourceLineNo">1700</span><a id="line.1700">     */</a>
+<span class="sourceLineNo">1701</span><a id="line.1701">    public void setRenderAsPoints(boolean renderAsPoints) {</a>
+<span class="sourceLineNo">1702</span><a id="line.1702">        this.renderAsPoints = renderAsPoints;</a>
+<span class="sourceLineNo">1703</span><a id="line.1703">    }</a>
+<span class="sourceLineNo">1704</span><a id="line.1704"></a>
+<span class="sourceLineNo">1705</span><a id="line.1705">    /**</a>
+<span class="sourceLineNo">1706</span><a id="line.1706">     * Receives notification of a change to one of the plot's axes.</a>
+<span class="sourceLineNo">1707</span><a id="line.1707">     *</a>
+<span class="sourceLineNo">1708</span><a id="line.1708">     * @param event  information about the event.</a>
+<span class="sourceLineNo">1709</span><a id="line.1709">     */</a>
+<span class="sourceLineNo">1710</span><a id="line.1710">    @Override</a>
+<span class="sourceLineNo">1711</span><a id="line.1711">    public void axisChanged(AxisChangeEvent event) {</a>
+<span class="sourceLineNo">1712</span><a id="line.1712">        Object source = event.getSource();</a>
+<span class="sourceLineNo">1713</span><a id="line.1713">        if (source.equals(this.rangeAxis) || source.equals(this.domainAxis)) {</a>
+<span class="sourceLineNo">1714</span><a id="line.1714">            ColorBar cba = this.colorBar;</a>
+<span class="sourceLineNo">1715</span><a id="line.1715">            if (this.colorBar.getAxis().isAutoRange()) {</a>
+<span class="sourceLineNo">1716</span><a id="line.1716">                cba.getAxis().configure();</a>
+<span class="sourceLineNo">1717</span><a id="line.1717">            }</a>
+<span class="sourceLineNo">1718</span><a id="line.1718"></a>
+<span class="sourceLineNo">1719</span><a id="line.1719">        }</a>
+<span class="sourceLineNo">1720</span><a id="line.1720">        super.axisChanged(event);</a>
+<span class="sourceLineNo">1721</span><a id="line.1721">    }</a>
+<span class="sourceLineNo">1722</span><a id="line.1722"></a>
+<span class="sourceLineNo">1723</span><a id="line.1723">    /**</a>
+<span class="sourceLineNo">1724</span><a id="line.1724">     * Returns the visible z-range.</a>
+<span class="sourceLineNo">1725</span><a id="line.1725">     *</a>
+<span class="sourceLineNo">1726</span><a id="line.1726">     * @param data  the dataset.</a>
+<span class="sourceLineNo">1727</span><a id="line.1727">     * @param x  the x range.</a>
+<span class="sourceLineNo">1728</span><a id="line.1728">     * @param y  the y range.</a>
+<span class="sourceLineNo">1729</span><a id="line.1729">     *</a>
+<span class="sourceLineNo">1730</span><a id="line.1730">     * @return The range.</a>
+<span class="sourceLineNo">1731</span><a id="line.1731">     */</a>
+<span class="sourceLineNo">1732</span><a id="line.1732">    public Range visibleRange(ContourDataset data, Range x, Range y) {</a>
+<span class="sourceLineNo">1733</span><a id="line.1733">        Range range = data.getZValueRange(x, y);</a>
+<span class="sourceLineNo">1734</span><a id="line.1734">        return range;</a>
+<span class="sourceLineNo">1735</span><a id="line.1735">    }</a>
+<span class="sourceLineNo">1736</span><a id="line.1736"></a>
+<span class="sourceLineNo">1737</span><a id="line.1737">    /**</a>
+<span class="sourceLineNo">1738</span><a id="line.1738">     * Returns the missingPaint.</a>
+<span class="sourceLineNo">1739</span><a id="line.1739">     * @return Paint</a>
+<span class="sourceLineNo">1740</span><a id="line.1740">     */</a>
+<span class="sourceLineNo">1741</span><a id="line.1741">    public Paint getMissingPaint() {</a>
+<span class="sourceLineNo">1742</span><a id="line.1742">        return this.missingPaint;</a>
+<span class="sourceLineNo">1743</span><a id="line.1743">    }</a>
+<span class="sourceLineNo">1744</span><a id="line.1744"></a>
+<span class="sourceLineNo">1745</span><a id="line.1745">    /**</a>
+<span class="sourceLineNo">1746</span><a id="line.1746">     * Sets the missingPaint.</a>
+<span class="sourceLineNo">1747</span><a id="line.1747">     *</a>
+<span class="sourceLineNo">1748</span><a id="line.1748">     * @param paint  the missingPaint to set.</a>
+<span class="sourceLineNo">1749</span><a id="line.1749">     */</a>
+<span class="sourceLineNo">1750</span><a id="line.1750">    public void setMissingPaint(Paint paint) {</a>
+<span class="sourceLineNo">1751</span><a id="line.1751">        this.missingPaint = paint;</a>
+<span class="sourceLineNo">1752</span><a id="line.1752">    }</a>
+<span class="sourceLineNo">1753</span><a id="line.1753"></a>
+<span class="sourceLineNo">1754</span><a id="line.1754">    /**</a>
+<span class="sourceLineNo">1755</span><a id="line.1755">     * Multiplies the range on the domain axis/axes by the specified factor</a>
+<span class="sourceLineNo">1756</span><a id="line.1756">     * (to be implemented).</a>
+<span class="sourceLineNo">1757</span><a id="line.1757">     *</a>
+<span class="sourceLineNo">1758</span><a id="line.1758">     * @param x  the x-coordinate (in Java2D space).</a>
+<span class="sourceLineNo">1759</span><a id="line.1759">     * @param y  the y-coordinate (in Java2D space).</a>
+<span class="sourceLineNo">1760</span><a id="line.1760">     * @param factor  the zoom factor.</a>
+<span class="sourceLineNo">1761</span><a id="line.1761">     */</a>
+<span class="sourceLineNo">1762</span><a id="line.1762">    public void zoomDomainAxes(double x, double y, double factor) {</a>
+<span class="sourceLineNo">1763</span><a id="line.1763">        // TODO: to be implemented</a>
+<span class="sourceLineNo">1764</span><a id="line.1764">    }</a>
+<span class="sourceLineNo">1765</span><a id="line.1765"></a>
+<span class="sourceLineNo">1766</span><a id="line.1766">    /**</a>
+<span class="sourceLineNo">1767</span><a id="line.1767">     * Zooms the domain axes (not yet implemented).</a>
+<span class="sourceLineNo">1768</span><a id="line.1768">     *</a>
+<span class="sourceLineNo">1769</span><a id="line.1769">     * @param x  the x-coordinate (in Java2D space).</a>
+<span class="sourceLineNo">1770</span><a id="line.1770">     * @param y  the y-coordinate (in Java2D space).</a>
+<span class="sourceLineNo">1771</span><a id="line.1771">     * @param lowerPercent  the new lower bound.</a>
+<span class="sourceLineNo">1772</span><a id="line.1772">     * @param upperPercent  the new upper bound.</a>
+<span class="sourceLineNo">1773</span><a id="line.1773">     */</a>
+<span class="sourceLineNo">1774</span><a id="line.1774">    public void zoomDomainAxes(double x, double y, double lowerPercent,</a>
+<span class="sourceLineNo">1775</span><a id="line.1775">                               double upperPercent) {</a>
+<span class="sourceLineNo">1776</span><a id="line.1776">        // TODO: to be implemented</a>
+<span class="sourceLineNo">1777</span><a id="line.1777">    }</a>
+<span class="sourceLineNo">1778</span><a id="line.1778"></a>
+<span class="sourceLineNo">1779</span><a id="line.1779">    /**</a>
+<span class="sourceLineNo">1780</span><a id="line.1780">     * Multiplies the range on the range axis/axes by the specified factor.</a>
+<span class="sourceLineNo">1781</span><a id="line.1781">     *</a>
+<span class="sourceLineNo">1782</span><a id="line.1782">     * @param x  the x-coordinate (in Java2D space).</a>
+<span class="sourceLineNo">1783</span><a id="line.1783">     * @param y  the y-coordinate (in Java2D space).</a>
+<span class="sourceLineNo">1784</span><a id="line.1784">     * @param factor  the zoom factor.</a>
+<span class="sourceLineNo">1785</span><a id="line.1785">     */</a>
+<span class="sourceLineNo">1786</span><a id="line.1786">    public void zoomRangeAxes(double x, double y, double factor) {</a>
+<span class="sourceLineNo">1787</span><a id="line.1787">        // TODO: to be implemented</a>
+<span class="sourceLineNo">1788</span><a id="line.1788">    }</a>
+<span class="sourceLineNo">1789</span><a id="line.1789"></a>
+<span class="sourceLineNo">1790</span><a id="line.1790">    /**</a>
+<span class="sourceLineNo">1791</span><a id="line.1791">     * Zooms the range axes (not yet implemented).</a>
+<span class="sourceLineNo">1792</span><a id="line.1792">     *</a>
+<span class="sourceLineNo">1793</span><a id="line.1793">     * @param x  the x-coordinate (in Java2D space).</a>
+<span class="sourceLineNo">1794</span><a id="line.1794">     * @param y  the y-coordinate (in Java2D space).</a>
+<span class="sourceLineNo">1795</span><a id="line.1795">     * @param lowerPercent  the new lower bound.</a>
+<span class="sourceLineNo">1796</span><a id="line.1796">     * @param upperPercent  the new upper bound.</a>
+<span class="sourceLineNo">1797</span><a id="line.1797">     */</a>
+<span class="sourceLineNo">1798</span><a id="line.1798">    public void zoomRangeAxes(double x, double y, double lowerPercent,</a>
+<span class="sourceLineNo">1799</span><a id="line.1799">                              double upperPercent) {</a>
+<span class="sourceLineNo">1800</span><a id="line.1800">        // TODO: to be implemented</a>
+<span class="sourceLineNo">1801</span><a id="line.1801">    }</a>
+<span class="sourceLineNo">1802</span><a id="line.1802"></a>
+<span class="sourceLineNo">1803</span><a id="line.1803">    /**</a>
+<span class="sourceLineNo">1804</span><a id="line.1804">     * Returns &lt;code&gt;false&lt;/code&gt;.</a>
+<span class="sourceLineNo">1805</span><a id="line.1805">     *</a>
+<span class="sourceLineNo">1806</span><a id="line.1806">     * @return A boolean.</a>
+<span class="sourceLineNo">1807</span><a id="line.1807">     */</a>
+<span class="sourceLineNo">1808</span><a id="line.1808">    public boolean isDomainZoomable() {</a>
+<span class="sourceLineNo">1809</span><a id="line.1809">        return false;</a>
+<span class="sourceLineNo">1810</span><a id="line.1810">    }</a>
+<span class="sourceLineNo">1811</span><a id="line.1811"></a>
+<span class="sourceLineNo">1812</span><a id="line.1812">    /**</a>
+<span class="sourceLineNo">1813</span><a id="line.1813">     * Returns &lt;code&gt;false&lt;/code&gt;.</a>
+<span class="sourceLineNo">1814</span><a id="line.1814">     *</a>
+<span class="sourceLineNo">1815</span><a id="line.1815">     * @return A boolean.</a>
+<span class="sourceLineNo">1816</span><a id="line.1816">     */</a>
+<span class="sourceLineNo">1817</span><a id="line.1817">    public boolean isRangeZoomable() {</a>
+<span class="sourceLineNo">1818</span><a id="line.1818">        return false;</a>
+<span class="sourceLineNo">1819</span><a id="line.1819">    }</a>
+<span class="sourceLineNo">1820</span><a id="line.1820"></a>
+<span class="sourceLineNo">1821</span><a id="line.1821">    /**</a>
+<span class="sourceLineNo">1822</span><a id="line.1822">     * Extends plot cloning to this plot type</a>
+<span class="sourceLineNo">1823</span><a id="line.1823">     * @see org.jfree.chart.plot.Plot#clone()</a>
+<span class="sourceLineNo">1824</span><a id="line.1824">     */</a>
+<span class="sourceLineNo">1825</span><a id="line.1825">    @Override</a>
+<span class="sourceLineNo">1826</span><a id="line.1826">    public Object clone() throws CloneNotSupportedException {</a>
+<span class="sourceLineNo">1827</span><a id="line.1827">        ContourPlot clone = (ContourPlot) super.clone();</a>
+<span class="sourceLineNo">1828</span><a id="line.1828"></a>
+<span class="sourceLineNo">1829</span><a id="line.1829">        if (this.domainAxis != null) {</a>
+<span class="sourceLineNo">1830</span><a id="line.1830">            clone.domainAxis = (ValueAxis) this.domainAxis.clone();</a>
+<span class="sourceLineNo">1831</span><a id="line.1831">            clone.domainAxis.setPlot(clone);</a>
+<span class="sourceLineNo">1832</span><a id="line.1832">            clone.domainAxis.addChangeListener(clone);</a>
+<span class="sourceLineNo">1833</span><a id="line.1833">        }</a>
+<span class="sourceLineNo">1834</span><a id="line.1834">        if (this.rangeAxis != null) {</a>
+<span class="sourceLineNo">1835</span><a id="line.1835">            clone.rangeAxis = (ValueAxis) this.rangeAxis.clone();</a>
+<span class="sourceLineNo">1836</span><a id="line.1836">            clone.rangeAxis.setPlot(clone);</a>
+<span class="sourceLineNo">1837</span><a id="line.1837">            clone.rangeAxis.addChangeListener(clone);</a>
+<span class="sourceLineNo">1838</span><a id="line.1838">        }</a>
+<span class="sourceLineNo">1839</span><a id="line.1839"></a>
+<span class="sourceLineNo">1840</span><a id="line.1840">        if (clone.dataset != null) {</a>
+<span class="sourceLineNo">1841</span><a id="line.1841">            clone.dataset.addChangeListener(clone);</a>
+<span class="sourceLineNo">1842</span><a id="line.1842">        }</a>
+<span class="sourceLineNo">1843</span><a id="line.1843"></a>
+<span class="sourceLineNo">1844</span><a id="line.1844">        if (this.colorBar != null) {</a>
+<span class="sourceLineNo">1845</span><a id="line.1845">            clone.colorBar = (ColorBar) this.colorBar.clone();</a>
+<span class="sourceLineNo">1846</span><a id="line.1846">        }</a>
+<span class="sourceLineNo">1847</span><a id="line.1847"></a>
+<span class="sourceLineNo">1848</span><a id="line.1848">        clone.domainMarkers = (List) ObjectUtilities.deepClone(</a>
+<span class="sourceLineNo">1849</span><a id="line.1849">                this.domainMarkers);</a>
+<span class="sourceLineNo">1850</span><a id="line.1850">        clone.rangeMarkers = (List) ObjectUtilities.deepClone(</a>
+<span class="sourceLineNo">1851</span><a id="line.1851">                this.rangeMarkers);</a>
+<span class="sourceLineNo">1852</span><a id="line.1852">        clone.annotations = (List) ObjectUtilities.deepClone(this.annotations);</a>
+<span class="sourceLineNo">1853</span><a id="line.1853"></a>
+<span class="sourceLineNo">1854</span><a id="line.1854">        if (this.clipPath != null) {</a>
+<span class="sourceLineNo">1855</span><a id="line.1855">            clone.clipPath = (ClipPath) this.clipPath.clone();</a>
+<span class="sourceLineNo">1856</span><a id="line.1856">        }</a>
+<span class="sourceLineNo">1857</span><a id="line.1857"></a>
+<span class="sourceLineNo">1858</span><a id="line.1858">        return clone;</a>
+<span class="sourceLineNo">1859</span><a id="line.1859">    }</a>
+<span class="sourceLineNo">1860</span><a id="line.1860"></a>
+<span class="sourceLineNo">1861</span><a id="line.1861">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

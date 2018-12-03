@@ -1,0 +1,348 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * ------------------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * IntervalBarRenderer.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * ------------------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2002-2014, by Jeremy Bowman.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  Jeremy Bowman;</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *                   Christian W. Zuckschwerdt;</a>
+<span class="sourceLineNo">035</span><a id="line.35"> *                   Peter Kolb (patch 2497611, 2791407);</a>
+<span class="sourceLineNo">036</span><a id="line.36"> *</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * Changes</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * -------</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * 29-Apr-2002 : Version 1, contributed by Jeremy Bowman (DG);</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 11-May-2002 : Use CategoryPlot.getLabelsVisible() (JB);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * 29-May-2002 : Added constructors (DG);</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * 26-Jun-2002 : Added axis to initialise method (DG);</a>
+<span class="sourceLineNo">043</span><a id="line.43"> * 20-Sep-2002 : Added basic support for chart entities (DG);</a>
+<span class="sourceLineNo">044</span><a id="line.44"> * 24-Oct-2002 : Amendments for changes in CategoryDataset interface and</a>
+<span class="sourceLineNo">045</span><a id="line.45"> *               CategoryToolTipGenerator interface (DG);</a>
+<span class="sourceLineNo">046</span><a id="line.46"> * 05-Nov-2002 : Base dataset is now TableDataset not CategoryDataset (DG);</a>
+<span class="sourceLineNo">047</span><a id="line.47"> * 25-Mar-2003 : Implemented Serializable (DG);</a>
+<span class="sourceLineNo">048</span><a id="line.48"> * 30-Jul-2003 : Modified entity constructor (CZ);</a>
+<span class="sourceLineNo">049</span><a id="line.49"> * 19-Aug-2003 : Implemented Cloneable and PublicCloneable (DG);</a>
+<span class="sourceLineNo">050</span><a id="line.50"> * 08-Sep-2003 : Added checks for null values (DG);</a>
+<span class="sourceLineNo">051</span><a id="line.51"> * 07-Oct-2003 : Added renderer state (DG);</a>
+<span class="sourceLineNo">052</span><a id="line.52"> * 21-Oct-2003 : Bar width moved into renderer state (DG);</a>
+<span class="sourceLineNo">053</span><a id="line.53"> * 23-Dec-2003 : Removed the deprecated MultiIntervalCategoryDataset</a>
+<span class="sourceLineNo">054</span><a id="line.54"> *               interface (DG);</a>
+<span class="sourceLineNo">055</span><a id="line.55"> * 05-Nov-2004 : Modified drawItem() signature (DG);</a>
+<span class="sourceLineNo">056</span><a id="line.56"> * 20-Apr-2005 : Renamed CategoryLabelGenerator</a>
+<span class="sourceLineNo">057</span><a id="line.57"> *               --&gt; CategoryItemLabelGenerator (DG);</a>
+<span class="sourceLineNo">058</span><a id="line.58"> * 02-Feb-2007 : Removed author tags all over JFreeChart sources (DG);</a>
+<span class="sourceLineNo">059</span><a id="line.59"> * 24-Jun-2008 : Added new barPainter mechanism (DG);</a>
+<span class="sourceLineNo">060</span><a id="line.60"> * 07-Oct-2008 : Override equals() method to fix minor bug (DG);</a>
+<span class="sourceLineNo">061</span><a id="line.61"> * 14-Jan-2009 : Added support for seriesVisible flags (PK);</a>
+<span class="sourceLineNo">062</span><a id="line.62"> * 16-May-2009 : The findRangeBounds() method needs to include the dataset</a>
+<span class="sourceLineNo">063</span><a id="line.63"> *               interval (DG);</a>
+<span class="sourceLineNo">064</span><a id="line.64"> * 19-May-2009 : Fixed FindBugs warnings, patch by Michal Wozniak (DG);</a>
+<span class="sourceLineNo">065</span><a id="line.65"> * 30-Oct-2011 : Fixed alignment when setMaximumBarWidth is applied (DG);</a>
+<span class="sourceLineNo">066</span><a id="line.66"> */</a>
+<span class="sourceLineNo">067</span><a id="line.67"></a>
+<span class="sourceLineNo">068</span><a id="line.68">package org.jfree.chart.renderer.category;</a>
+<span class="sourceLineNo">069</span><a id="line.69"></a>
+<span class="sourceLineNo">070</span><a id="line.70">import java.awt.Graphics2D;</a>
+<span class="sourceLineNo">071</span><a id="line.71">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">072</span><a id="line.72"></a>
+<span class="sourceLineNo">073</span><a id="line.73">import org.jfree.chart.axis.CategoryAxis;</a>
+<span class="sourceLineNo">074</span><a id="line.74">import org.jfree.chart.axis.ValueAxis;</a>
+<span class="sourceLineNo">075</span><a id="line.75">import org.jfree.chart.entity.EntityCollection;</a>
+<span class="sourceLineNo">076</span><a id="line.76">import org.jfree.chart.labels.CategoryItemLabelGenerator;</a>
+<span class="sourceLineNo">077</span><a id="line.77">import org.jfree.chart.plot.CategoryPlot;</a>
+<span class="sourceLineNo">078</span><a id="line.78">import org.jfree.chart.plot.PlotOrientation;</a>
+<span class="sourceLineNo">079</span><a id="line.79">import org.jfree.data.Range;</a>
+<span class="sourceLineNo">080</span><a id="line.80">import org.jfree.data.category.CategoryDataset;</a>
+<span class="sourceLineNo">081</span><a id="line.81">import org.jfree.data.category.IntervalCategoryDataset;</a>
+<span class="sourceLineNo">082</span><a id="line.82">import org.jfree.ui.RectangleEdge;</a>
+<span class="sourceLineNo">083</span><a id="line.83"></a>
+<span class="sourceLineNo">084</span><a id="line.84">/**</a>
+<span class="sourceLineNo">085</span><a id="line.85"> * A renderer that handles the drawing of bars for a bar plot where</a>
+<span class="sourceLineNo">086</span><a id="line.86"> * each bar has a high and low value.  This renderer is for use with the</a>
+<span class="sourceLineNo">087</span><a id="line.87"> * {@link CategoryPlot} class.  The example shown here is generated by the</a>
+<span class="sourceLineNo">088</span><a id="line.88"> * &lt;code&gt;IntervalBarChartDemo1.java&lt;/code&gt; program included in the JFreeChart</a>
+<span class="sourceLineNo">089</span><a id="line.89"> * Demo Collection:</a>
+<span class="sourceLineNo">090</span><a id="line.90"> * &lt;br&gt;&lt;br&gt;</a>
+<span class="sourceLineNo">091</span><a id="line.91"> * &lt;img src="../../../../../images/IntervalBarRendererSample.png"</a>
+<span class="sourceLineNo">092</span><a id="line.92"> * alt="IntervalBarRendererSample.png"&gt;</a>
+<span class="sourceLineNo">093</span><a id="line.93"> */</a>
+<span class="sourceLineNo">094</span><a id="line.94">public class IntervalBarRenderer extends BarRenderer {</a>
+<span class="sourceLineNo">095</span><a id="line.95"></a>
+<span class="sourceLineNo">096</span><a id="line.96">    /** For serialization. */</a>
+<span class="sourceLineNo">097</span><a id="line.97">    private static final long serialVersionUID = -5068857361615528725L;</a>
+<span class="sourceLineNo">098</span><a id="line.98"></a>
+<span class="sourceLineNo">099</span><a id="line.99">    /**</a>
+<span class="sourceLineNo">100</span><a id="line.100">     * Constructs a new renderer.</a>
+<span class="sourceLineNo">101</span><a id="line.101">     */</a>
+<span class="sourceLineNo">102</span><a id="line.102">    public IntervalBarRenderer() {</a>
+<span class="sourceLineNo">103</span><a id="line.103">        super();</a>
+<span class="sourceLineNo">104</span><a id="line.104">    }</a>
+<span class="sourceLineNo">105</span><a id="line.105"></a>
+<span class="sourceLineNo">106</span><a id="line.106">    /**</a>
+<span class="sourceLineNo">107</span><a id="line.107">     * Returns the range of values from the specified dataset.  For this</a>
+<span class="sourceLineNo">108</span><a id="line.108">     * renderer, this is equivalent to calling</a>
+<span class="sourceLineNo">109</span><a id="line.109">     * &lt;code&gt;findRangeBounds(dataset, true)&lt;/code&gt;.</a>
+<span class="sourceLineNo">110</span><a id="line.110">     *</a>
+<span class="sourceLineNo">111</span><a id="line.111">     * @param dataset  the dataset (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">112</span><a id="line.112">     *</a>
+<span class="sourceLineNo">113</span><a id="line.113">     * @return The range (or &lt;code&gt;null&lt;/code&gt; if the dataset is</a>
+<span class="sourceLineNo">114</span><a id="line.114">     *         &lt;code&gt;null&lt;/code&gt; or empty).</a>
+<span class="sourceLineNo">115</span><a id="line.115">     */</a>
+<span class="sourceLineNo">116</span><a id="line.116">    @Override</a>
+<span class="sourceLineNo">117</span><a id="line.117">    public Range findRangeBounds(CategoryDataset dataset) {</a>
+<span class="sourceLineNo">118</span><a id="line.118">        return findRangeBounds(dataset, true);</a>
+<span class="sourceLineNo">119</span><a id="line.119">    }</a>
+<span class="sourceLineNo">120</span><a id="line.120"></a>
+<span class="sourceLineNo">121</span><a id="line.121">    /**</a>
+<span class="sourceLineNo">122</span><a id="line.122">     * Draws the bar for a single (series, category) data item.</a>
+<span class="sourceLineNo">123</span><a id="line.123">     *</a>
+<span class="sourceLineNo">124</span><a id="line.124">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">125</span><a id="line.125">     * @param state  the renderer state.</a>
+<span class="sourceLineNo">126</span><a id="line.126">     * @param dataArea  the data area.</a>
+<span class="sourceLineNo">127</span><a id="line.127">     * @param plot  the plot.</a>
+<span class="sourceLineNo">128</span><a id="line.128">     * @param domainAxis  the domain axis.</a>
+<span class="sourceLineNo">129</span><a id="line.129">     * @param rangeAxis  the range axis.</a>
+<span class="sourceLineNo">130</span><a id="line.130">     * @param dataset  the dataset.</a>
+<span class="sourceLineNo">131</span><a id="line.131">     * @param row  the row index (zero-based).</a>
+<span class="sourceLineNo">132</span><a id="line.132">     * @param column  the column index (zero-based).</a>
+<span class="sourceLineNo">133</span><a id="line.133">     * @param pass  the pass index.</a>
+<span class="sourceLineNo">134</span><a id="line.134">     */</a>
+<span class="sourceLineNo">135</span><a id="line.135">    @Override</a>
+<span class="sourceLineNo">136</span><a id="line.136">    public void drawItem(Graphics2D g2, CategoryItemRendererState state,</a>
+<span class="sourceLineNo">137</span><a id="line.137">            Rectangle2D dataArea, CategoryPlot plot, CategoryAxis domainAxis,</a>
+<span class="sourceLineNo">138</span><a id="line.138">            ValueAxis rangeAxis, CategoryDataset dataset, int row, int column,</a>
+<span class="sourceLineNo">139</span><a id="line.139">            int pass) {</a>
+<span class="sourceLineNo">140</span><a id="line.140"></a>
+<span class="sourceLineNo">141</span><a id="line.141">         if (dataset instanceof IntervalCategoryDataset) {</a>
+<span class="sourceLineNo">142</span><a id="line.142">             IntervalCategoryDataset d = (IntervalCategoryDataset) dataset;</a>
+<span class="sourceLineNo">143</span><a id="line.143">             drawInterval(g2, state, dataArea, plot, domainAxis, rangeAxis,</a>
+<span class="sourceLineNo">144</span><a id="line.144">                     d, row, column);</a>
+<span class="sourceLineNo">145</span><a id="line.145">         }</a>
+<span class="sourceLineNo">146</span><a id="line.146">         else {</a>
+<span class="sourceLineNo">147</span><a id="line.147">             super.drawItem(g2, state, dataArea, plot, domainAxis, rangeAxis,</a>
+<span class="sourceLineNo">148</span><a id="line.148">                     dataset, row, column, pass);</a>
+<span class="sourceLineNo">149</span><a id="line.149">         }</a>
+<span class="sourceLineNo">150</span><a id="line.150"></a>
+<span class="sourceLineNo">151</span><a id="line.151">     }</a>
+<span class="sourceLineNo">152</span><a id="line.152"></a>
+<span class="sourceLineNo">153</span><a id="line.153">     /**</a>
+<span class="sourceLineNo">154</span><a id="line.154">      * Draws a single interval.</a>
+<span class="sourceLineNo">155</span><a id="line.155">      *</a>
+<span class="sourceLineNo">156</span><a id="line.156">      * @param g2  the graphics device.</a>
+<span class="sourceLineNo">157</span><a id="line.157">      * @param state  the renderer state.</a>
+<span class="sourceLineNo">158</span><a id="line.158">      * @param dataArea  the data plot area.</a>
+<span class="sourceLineNo">159</span><a id="line.159">      * @param plot  the plot.</a>
+<span class="sourceLineNo">160</span><a id="line.160">      * @param domainAxis  the domain axis.</a>
+<span class="sourceLineNo">161</span><a id="line.161">      * @param rangeAxis  the range axis.</a>
+<span class="sourceLineNo">162</span><a id="line.162">      * @param dataset  the data.</a>
+<span class="sourceLineNo">163</span><a id="line.163">      * @param row  the row index (zero-based).</a>
+<span class="sourceLineNo">164</span><a id="line.164">      * @param column  the column index (zero-based).</a>
+<span class="sourceLineNo">165</span><a id="line.165">      */</a>
+<span class="sourceLineNo">166</span><a id="line.166">     protected void drawInterval(Graphics2D g2,</a>
+<span class="sourceLineNo">167</span><a id="line.167">                                 CategoryItemRendererState state,</a>
+<span class="sourceLineNo">168</span><a id="line.168">                                 Rectangle2D dataArea,</a>
+<span class="sourceLineNo">169</span><a id="line.169">                                 CategoryPlot plot,</a>
+<span class="sourceLineNo">170</span><a id="line.170">                                 CategoryAxis domainAxis,</a>
+<span class="sourceLineNo">171</span><a id="line.171">                                 ValueAxis rangeAxis,</a>
+<span class="sourceLineNo">172</span><a id="line.172">                                 IntervalCategoryDataset dataset,</a>
+<span class="sourceLineNo">173</span><a id="line.173">                                 int row,</a>
+<span class="sourceLineNo">174</span><a id="line.174">                                 int column) {</a>
+<span class="sourceLineNo">175</span><a id="line.175"></a>
+<span class="sourceLineNo">176</span><a id="line.176">        int visibleRow = state.getVisibleSeriesIndex(row);</a>
+<span class="sourceLineNo">177</span><a id="line.177">        if (visibleRow &lt; 0) {</a>
+<span class="sourceLineNo">178</span><a id="line.178">            return;</a>
+<span class="sourceLineNo">179</span><a id="line.179">        }</a>
+<span class="sourceLineNo">180</span><a id="line.180"></a>
+<span class="sourceLineNo">181</span><a id="line.181">        PlotOrientation orientation = plot.getOrientation();</a>
+<span class="sourceLineNo">182</span><a id="line.182">        double rectX = 0.0;</a>
+<span class="sourceLineNo">183</span><a id="line.183">        double rectY = 0.0;</a>
+<span class="sourceLineNo">184</span><a id="line.184"></a>
+<span class="sourceLineNo">185</span><a id="line.185">        RectangleEdge rangeAxisLocation = plot.getRangeAxisEdge();</a>
+<span class="sourceLineNo">186</span><a id="line.186"></a>
+<span class="sourceLineNo">187</span><a id="line.187">        // Y0</a>
+<span class="sourceLineNo">188</span><a id="line.188">        Number value0 = dataset.getEndValue(row, column);</a>
+<span class="sourceLineNo">189</span><a id="line.189">        if (value0 == null) {</a>
+<span class="sourceLineNo">190</span><a id="line.190">            return;</a>
+<span class="sourceLineNo">191</span><a id="line.191">        }</a>
+<span class="sourceLineNo">192</span><a id="line.192">        double java2dValue0 = rangeAxis.valueToJava2D(value0.doubleValue(),</a>
+<span class="sourceLineNo">193</span><a id="line.193">                dataArea, rangeAxisLocation);</a>
+<span class="sourceLineNo">194</span><a id="line.194"></a>
+<span class="sourceLineNo">195</span><a id="line.195">        // Y1</a>
+<span class="sourceLineNo">196</span><a id="line.196">        Number value1 = dataset.getStartValue(row, column);</a>
+<span class="sourceLineNo">197</span><a id="line.197">        if (value1 == null) {</a>
+<span class="sourceLineNo">198</span><a id="line.198">            return;</a>
+<span class="sourceLineNo">199</span><a id="line.199">        }</a>
+<span class="sourceLineNo">200</span><a id="line.200">        double java2dValue1 = rangeAxis.valueToJava2D(</a>
+<span class="sourceLineNo">201</span><a id="line.201">                value1.doubleValue(), dataArea, rangeAxisLocation);</a>
+<span class="sourceLineNo">202</span><a id="line.202"></a>
+<span class="sourceLineNo">203</span><a id="line.203">        if (java2dValue1 &lt; java2dValue0) {</a>
+<span class="sourceLineNo">204</span><a id="line.204">            double temp = java2dValue1;</a>
+<span class="sourceLineNo">205</span><a id="line.205">            java2dValue1 = java2dValue0;</a>
+<span class="sourceLineNo">206</span><a id="line.206">            java2dValue0 = temp;</a>
+<span class="sourceLineNo">207</span><a id="line.207">        }</a>
+<span class="sourceLineNo">208</span><a id="line.208"></a>
+<span class="sourceLineNo">209</span><a id="line.209">        // BAR WIDTH</a>
+<span class="sourceLineNo">210</span><a id="line.210">        double rectWidth = state.getBarWidth();</a>
+<span class="sourceLineNo">211</span><a id="line.211"></a>
+<span class="sourceLineNo">212</span><a id="line.212">        // BAR HEIGHT</a>
+<span class="sourceLineNo">213</span><a id="line.213">        double rectHeight = Math.abs(java2dValue1 - java2dValue0);</a>
+<span class="sourceLineNo">214</span><a id="line.214"></a>
+<span class="sourceLineNo">215</span><a id="line.215">        RectangleEdge barBase = RectangleEdge.LEFT;</a>
+<span class="sourceLineNo">216</span><a id="line.216">        if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">217</span><a id="line.217">            // BAR Y</a>
+<span class="sourceLineNo">218</span><a id="line.218">            rectX = java2dValue0;</a>
+<span class="sourceLineNo">219</span><a id="line.219">            rectY = calculateBarW0(getPlot(), orientation, dataArea, </a>
+<span class="sourceLineNo">220</span><a id="line.220">                    domainAxis, state, visibleRow, column);</a>
+<span class="sourceLineNo">221</span><a id="line.221">            rectHeight = state.getBarWidth();</a>
+<span class="sourceLineNo">222</span><a id="line.222">            rectWidth = Math.abs(java2dValue1 - java2dValue0);</a>
+<span class="sourceLineNo">223</span><a id="line.223">            barBase = RectangleEdge.LEFT;</a>
+<span class="sourceLineNo">224</span><a id="line.224">        }</a>
+<span class="sourceLineNo">225</span><a id="line.225">        else if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">226</span><a id="line.226">            // BAR X</a>
+<span class="sourceLineNo">227</span><a id="line.227">            rectX = calculateBarW0(getPlot(), orientation, dataArea, </a>
+<span class="sourceLineNo">228</span><a id="line.228">                    domainAxis, state, visibleRow, column);</a>
+<span class="sourceLineNo">229</span><a id="line.229">            rectY = java2dValue0;</a>
+<span class="sourceLineNo">230</span><a id="line.230">            barBase = RectangleEdge.BOTTOM;</a>
+<span class="sourceLineNo">231</span><a id="line.231">        }</a>
+<span class="sourceLineNo">232</span><a id="line.232">        Rectangle2D bar = new Rectangle2D.Double(rectX, rectY, rectWidth,</a>
+<span class="sourceLineNo">233</span><a id="line.233">                rectHeight);</a>
+<span class="sourceLineNo">234</span><a id="line.234">        BarPainter painter = getBarPainter();</a>
+<span class="sourceLineNo">235</span><a id="line.235">        if (getShadowsVisible()) {</a>
+<span class="sourceLineNo">236</span><a id="line.236">            painter.paintBarShadow(g2, this, row, column, bar, barBase, false);</a>
+<span class="sourceLineNo">237</span><a id="line.237">        }</a>
+<span class="sourceLineNo">238</span><a id="line.238">        getBarPainter().paintBar(g2, this, row, column, bar, barBase);</a>
+<span class="sourceLineNo">239</span><a id="line.239"></a>
+<span class="sourceLineNo">240</span><a id="line.240">        CategoryItemLabelGenerator generator = getItemLabelGenerator(row,</a>
+<span class="sourceLineNo">241</span><a id="line.241">                column);</a>
+<span class="sourceLineNo">242</span><a id="line.242">        if (generator != null &amp;&amp; isItemLabelVisible(row, column)) {</a>
+<span class="sourceLineNo">243</span><a id="line.243">            drawItemLabel(g2, dataset, row, column, plot, generator, bar,</a>
+<span class="sourceLineNo">244</span><a id="line.244">                    false);</a>
+<span class="sourceLineNo">245</span><a id="line.245">        }</a>
+<span class="sourceLineNo">246</span><a id="line.246"></a>
+<span class="sourceLineNo">247</span><a id="line.247">        // add an item entity, if this information is being collected</a>
+<span class="sourceLineNo">248</span><a id="line.248">        EntityCollection entities = state.getEntityCollection();</a>
+<span class="sourceLineNo">249</span><a id="line.249">        if (entities != null) {</a>
+<span class="sourceLineNo">250</span><a id="line.250">            addItemEntity(entities, dataset, row, column, bar);</a>
+<span class="sourceLineNo">251</span><a id="line.251">        }</a>
+<span class="sourceLineNo">252</span><a id="line.252"></a>
+<span class="sourceLineNo">253</span><a id="line.253">    }</a>
+<span class="sourceLineNo">254</span><a id="line.254"></a>
+<span class="sourceLineNo">255</span><a id="line.255">    /**</a>
+<span class="sourceLineNo">256</span><a id="line.256">     * Tests this renderer for equality with an arbitrary object.</a>
+<span class="sourceLineNo">257</span><a id="line.257">     *</a>
+<span class="sourceLineNo">258</span><a id="line.258">     * @param obj  the object (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">259</span><a id="line.259">     *</a>
+<span class="sourceLineNo">260</span><a id="line.260">     * @return A boolean.</a>
+<span class="sourceLineNo">261</span><a id="line.261">     */</a>
+<span class="sourceLineNo">262</span><a id="line.262">    @Override</a>
+<span class="sourceLineNo">263</span><a id="line.263">    public boolean equals(Object obj) {</a>
+<span class="sourceLineNo">264</span><a id="line.264">        if (obj == this) {</a>
+<span class="sourceLineNo">265</span><a id="line.265">            return true;</a>
+<span class="sourceLineNo">266</span><a id="line.266">        }</a>
+<span class="sourceLineNo">267</span><a id="line.267">        if (!(obj instanceof IntervalBarRenderer)) {</a>
+<span class="sourceLineNo">268</span><a id="line.268">            return false;</a>
+<span class="sourceLineNo">269</span><a id="line.269">        }</a>
+<span class="sourceLineNo">270</span><a id="line.270">        // there are no fields to check</a>
+<span class="sourceLineNo">271</span><a id="line.271">        return super.equals(obj);</a>
+<span class="sourceLineNo">272</span><a id="line.272">    }</a>
+<span class="sourceLineNo">273</span><a id="line.273"></a>
+<span class="sourceLineNo">274</span><a id="line.274">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

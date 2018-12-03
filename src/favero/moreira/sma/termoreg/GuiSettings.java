@@ -1,12 +1,20 @@
 package favero.moreira.sma.termoreg;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.ChangeListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import org.jfree.chart.JFreeChart;
 
 
 public class GuiSettings extends JFrame implements ActionListener, ChangeListener{
@@ -47,8 +55,15 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 		//Font settings for sliders
 		Font font = new Font("Serif", Font.ITALIC, 15);
 		
-		//Sliders Configuration
+		 JFreeChart chart = ChartFactory.createPieChart
+				 ("CSC408 Mark Distribution", // Title
+				 pieDataset, // Dataset
+				 true, // Show legend
+				 true, // Use tooltips
+				 false // Configure chart to generate URLs?
+				 );
 		
+		//Sliders Configuration
 		infLimSlider = new JSlider(JSlider.HORIZONTAL,TEMP_MIN, TEMP_MAX, INF_INIT);
 		supLimSlider =  new JSlider(JSlider.HORIZONTAL,TEMP_MIN, TEMP_MAX, SUP_INIT);
 		

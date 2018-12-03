@@ -1,0 +1,378 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2013, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * --------------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * AbstractDataset.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * --------------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C)opyright 2000-2013, by Object Refinery Limited.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   Nicolas Brodu (for Astrium and EADS Corporate Research</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *                   Center);</a>
+<span class="sourceLineNo">035</span><a id="line.35"> *</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * Changes (from 21-Aug-2001)</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * --------------------------</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * 21-Aug-2001 : Added standard header. Fixed DOS encoding problem (DG);</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * 18-Sep-2001 : Updated e-mail address in header (DG);</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 15-Oct-2001 : Moved to new package (com.jrefinery.data.*) (DG);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * 22-Oct-2001 : Renamed DataSource.java --&gt; Dataset.java etc. (DG);</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * 17-Nov-2001 : Changed constructor from public to protected, created new</a>
+<span class="sourceLineNo">043</span><a id="line.43"> *               AbstractSeriesDataset class and transferred series-related</a>
+<span class="sourceLineNo">044</span><a id="line.44"> *               methods, updated Javadoc comments (DG);</a>
+<span class="sourceLineNo">045</span><a id="line.45"> * 04-Mar-2002 : Updated import statements (DG);</a>
+<span class="sourceLineNo">046</span><a id="line.46"> * 11-Jun-2002 : Updated for change in the event constructor (DG);</a>
+<span class="sourceLineNo">047</span><a id="line.47"> * 07-Aug-2002 : Changed listener list to use</a>
+<span class="sourceLineNo">048</span><a id="line.48"> *               javax.swing.event.EventListenerList (DG);</a>
+<span class="sourceLineNo">049</span><a id="line.49"> * 04-Oct-2002 : Fixed errors reported by Checkstyle (DG);</a>
+<span class="sourceLineNo">050</span><a id="line.50"> * 27-Mar-2003 : Implemented Serializable (DG);</a>
+<span class="sourceLineNo">051</span><a id="line.51"> * 18-Aug-2003 : Implemented Cloneable (DG);</a>
+<span class="sourceLineNo">052</span><a id="line.52"> * 08-Sep-2003 : Serialization fixes (NB);</a>
+<span class="sourceLineNo">053</span><a id="line.53"> * 11-Sep-2003 : Cloning Fixes (NB);</a>
+<span class="sourceLineNo">054</span><a id="line.54"> * 01-Jun-2005 : Added hasListener() method for unit testing (DG);</a>
+<span class="sourceLineNo">055</span><a id="line.55"> * 03-Jul-2013 : Use ParamChecks (DG);</a>
+<span class="sourceLineNo">056</span><a id="line.56"> * 21-Nov-2013 : Added notify flag to allow suppressing change events </a>
+<span class="sourceLineNo">057</span><a id="line.57"> *               temporarily (DG);</a>
+<span class="sourceLineNo">058</span><a id="line.58"> *</a>
+<span class="sourceLineNo">059</span><a id="line.59"> */</a>
+<span class="sourceLineNo">060</span><a id="line.60"></a>
+<span class="sourceLineNo">061</span><a id="line.61">package org.jfree.data.general;</a>
+<span class="sourceLineNo">062</span><a id="line.62"></a>
+<span class="sourceLineNo">063</span><a id="line.63">import java.io.IOException;</a>
+<span class="sourceLineNo">064</span><a id="line.64">import java.io.InvalidObjectException;</a>
+<span class="sourceLineNo">065</span><a id="line.65">import java.io.ObjectInputStream;</a>
+<span class="sourceLineNo">066</span><a id="line.66">import java.io.ObjectInputValidation;</a>
+<span class="sourceLineNo">067</span><a id="line.67">import java.io.ObjectOutputStream;</a>
+<span class="sourceLineNo">068</span><a id="line.68">import java.io.Serializable;</a>
+<span class="sourceLineNo">069</span><a id="line.69">import java.util.Arrays;</a>
+<span class="sourceLineNo">070</span><a id="line.70">import java.util.EventListener;</a>
+<span class="sourceLineNo">071</span><a id="line.71">import java.util.List;</a>
+<span class="sourceLineNo">072</span><a id="line.72"></a>
+<span class="sourceLineNo">073</span><a id="line.73">import javax.swing.event.EventListenerList;</a>
+<span class="sourceLineNo">074</span><a id="line.74">import org.jfree.chart.util.ParamChecks;</a>
+<span class="sourceLineNo">075</span><a id="line.75"></a>
+<span class="sourceLineNo">076</span><a id="line.76">/**</a>
+<span class="sourceLineNo">077</span><a id="line.77"> * An abstract implementation of the {@link Dataset} interface, containing a</a>
+<span class="sourceLineNo">078</span><a id="line.78"> * mechanism for registering change listeners.</a>
+<span class="sourceLineNo">079</span><a id="line.79"> */</a>
+<span class="sourceLineNo">080</span><a id="line.80">public abstract class AbstractDataset implements Dataset, Cloneable,</a>
+<span class="sourceLineNo">081</span><a id="line.81">        Serializable, ObjectInputValidation {</a>
+<span class="sourceLineNo">082</span><a id="line.82"></a>
+<span class="sourceLineNo">083</span><a id="line.83">    /** For serialization. */</a>
+<span class="sourceLineNo">084</span><a id="line.84">    private static final long serialVersionUID = 1918768939869230744L;</a>
+<span class="sourceLineNo">085</span><a id="line.85"></a>
+<span class="sourceLineNo">086</span><a id="line.86">    /** The group that the dataset belongs to. */</a>
+<span class="sourceLineNo">087</span><a id="line.87">    private DatasetGroup group;</a>
+<span class="sourceLineNo">088</span><a id="line.88"></a>
+<span class="sourceLineNo">089</span><a id="line.89">    /** Storage for registered change listeners. */</a>
+<span class="sourceLineNo">090</span><a id="line.90">    private transient EventListenerList listenerList;</a>
+<span class="sourceLineNo">091</span><a id="line.91">    </a>
+<span class="sourceLineNo">092</span><a id="line.92">    /** </a>
+<span class="sourceLineNo">093</span><a id="line.93">     * A flag that can be used to temporarily suppress dataset change event</a>
+<span class="sourceLineNo">094</span><a id="line.94">     * notifications.</a>
+<span class="sourceLineNo">095</span><a id="line.95">     */</a>
+<span class="sourceLineNo">096</span><a id="line.96">    private boolean notify;</a>
+<span class="sourceLineNo">097</span><a id="line.97"></a>
+<span class="sourceLineNo">098</span><a id="line.98">    /**</a>
+<span class="sourceLineNo">099</span><a id="line.99">     * Constructs a dataset. By default, the dataset is assigned to its own</a>
+<span class="sourceLineNo">100</span><a id="line.100">     * group.</a>
+<span class="sourceLineNo">101</span><a id="line.101">     */</a>
+<span class="sourceLineNo">102</span><a id="line.102">    protected AbstractDataset() {</a>
+<span class="sourceLineNo">103</span><a id="line.103">        this.group = new DatasetGroup();</a>
+<span class="sourceLineNo">104</span><a id="line.104">        this.listenerList = new EventListenerList();</a>
+<span class="sourceLineNo">105</span><a id="line.105">        this.notify = true;</a>
+<span class="sourceLineNo">106</span><a id="line.106">    }</a>
+<span class="sourceLineNo">107</span><a id="line.107"></a>
+<span class="sourceLineNo">108</span><a id="line.108">    /**</a>
+<span class="sourceLineNo">109</span><a id="line.109">     * Returns the dataset group for the dataset.</a>
+<span class="sourceLineNo">110</span><a id="line.110">     *</a>
+<span class="sourceLineNo">111</span><a id="line.111">     * @return The group (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">112</span><a id="line.112">     *</a>
+<span class="sourceLineNo">113</span><a id="line.113">     * @see #setGroup(DatasetGroup)</a>
+<span class="sourceLineNo">114</span><a id="line.114">     */</a>
+<span class="sourceLineNo">115</span><a id="line.115">    @Override</a>
+<span class="sourceLineNo">116</span><a id="line.116">    public DatasetGroup getGroup() {</a>
+<span class="sourceLineNo">117</span><a id="line.117">        return this.group;</a>
+<span class="sourceLineNo">118</span><a id="line.118">    }</a>
+<span class="sourceLineNo">119</span><a id="line.119"></a>
+<span class="sourceLineNo">120</span><a id="line.120">    /**</a>
+<span class="sourceLineNo">121</span><a id="line.121">     * Sets the dataset group for the dataset.</a>
+<span class="sourceLineNo">122</span><a id="line.122">     *</a>
+<span class="sourceLineNo">123</span><a id="line.123">     * @param group  the group (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">124</span><a id="line.124">     *</a>
+<span class="sourceLineNo">125</span><a id="line.125">     * @see #getGroup()</a>
+<span class="sourceLineNo">126</span><a id="line.126">     */</a>
+<span class="sourceLineNo">127</span><a id="line.127">    @Override</a>
+<span class="sourceLineNo">128</span><a id="line.128">    public void setGroup(DatasetGroup group) {</a>
+<span class="sourceLineNo">129</span><a id="line.129">        ParamChecks.nullNotPermitted(group, "group");</a>
+<span class="sourceLineNo">130</span><a id="line.130">        this.group = group;</a>
+<span class="sourceLineNo">131</span><a id="line.131">    }</a>
+<span class="sourceLineNo">132</span><a id="line.132"></a>
+<span class="sourceLineNo">133</span><a id="line.133">    /**</a>
+<span class="sourceLineNo">134</span><a id="line.134">     * Returns the value of the notify flag.  The default value is </a>
+<span class="sourceLineNo">135</span><a id="line.135">     * &lt;code&gt;true&lt;/code&gt;.  If this is &lt;code&gt;false&lt;/code&gt;, calls to the </a>
+<span class="sourceLineNo">136</span><a id="line.136">     * {@link #fireDatasetChanged()} method will NOT trigger a dataset</a>
+<span class="sourceLineNo">137</span><a id="line.137">     * change event.</a>
+<span class="sourceLineNo">138</span><a id="line.138">     * </a>
+<span class="sourceLineNo">139</span><a id="line.139">     * @return A boolean.</a>
+<span class="sourceLineNo">140</span><a id="line.140">     * </a>
+<span class="sourceLineNo">141</span><a id="line.141">     * @since 1.0.17</a>
+<span class="sourceLineNo">142</span><a id="line.142">     */</a>
+<span class="sourceLineNo">143</span><a id="line.143">    public boolean getNotify() {</a>
+<span class="sourceLineNo">144</span><a id="line.144">        return this.notify;</a>
+<span class="sourceLineNo">145</span><a id="line.145">    }</a>
+<span class="sourceLineNo">146</span><a id="line.146">    </a>
+<span class="sourceLineNo">147</span><a id="line.147">    /**</a>
+<span class="sourceLineNo">148</span><a id="line.148">     * Sets the notify flag, which controls whether or not the {@link #fireDatasetChanged()}</a>
+<span class="sourceLineNo">149</span><a id="line.149">     * method notifies listeners.  Setting this flag to &lt;code&gt;true&lt;/code&gt; will</a>
+<span class="sourceLineNo">150</span><a id="line.150">     * trigger a &lt;code&gt;DatasetChangeEvent&lt;/code&gt; because there may be </a>
+<span class="sourceLineNo">151</span><a id="line.151">     * queued up changes.</a>
+<span class="sourceLineNo">152</span><a id="line.152">     * </a>
+<span class="sourceLineNo">153</span><a id="line.153">     * @param notify  the new flag value.</a>
+<span class="sourceLineNo">154</span><a id="line.154">     * </a>
+<span class="sourceLineNo">155</span><a id="line.155">     * @since 1.0.17</a>
+<span class="sourceLineNo">156</span><a id="line.156">     */</a>
+<span class="sourceLineNo">157</span><a id="line.157">    public void setNotify(boolean notify) {</a>
+<span class="sourceLineNo">158</span><a id="line.158">        this.notify = notify;</a>
+<span class="sourceLineNo">159</span><a id="line.159">        if (notify) {</a>
+<span class="sourceLineNo">160</span><a id="line.160">            fireDatasetChanged();</a>
+<span class="sourceLineNo">161</span><a id="line.161">        }    </a>
+<span class="sourceLineNo">162</span><a id="line.162">    }</a>
+<span class="sourceLineNo">163</span><a id="line.163">    </a>
+<span class="sourceLineNo">164</span><a id="line.164">    /**</a>
+<span class="sourceLineNo">165</span><a id="line.165">     * Registers an object to receive notification of changes to the dataset.</a>
+<span class="sourceLineNo">166</span><a id="line.166">     *</a>
+<span class="sourceLineNo">167</span><a id="line.167">     * @param listener  the object to register.</a>
+<span class="sourceLineNo">168</span><a id="line.168">     *</a>
+<span class="sourceLineNo">169</span><a id="line.169">     * @see #removeChangeListener(DatasetChangeListener)</a>
+<span class="sourceLineNo">170</span><a id="line.170">     */</a>
+<span class="sourceLineNo">171</span><a id="line.171">    @Override</a>
+<span class="sourceLineNo">172</span><a id="line.172">    public void addChangeListener(DatasetChangeListener listener) {</a>
+<span class="sourceLineNo">173</span><a id="line.173">        this.listenerList.add(DatasetChangeListener.class, listener);</a>
+<span class="sourceLineNo">174</span><a id="line.174">    }</a>
+<span class="sourceLineNo">175</span><a id="line.175"></a>
+<span class="sourceLineNo">176</span><a id="line.176">    /**</a>
+<span class="sourceLineNo">177</span><a id="line.177">     * Deregisters an object so that it no longer receives notification of</a>
+<span class="sourceLineNo">178</span><a id="line.178">     * changes to the dataset.</a>
+<span class="sourceLineNo">179</span><a id="line.179">     *</a>
+<span class="sourceLineNo">180</span><a id="line.180">     * @param listener  the object to deregister.</a>
+<span class="sourceLineNo">181</span><a id="line.181">     *</a>
+<span class="sourceLineNo">182</span><a id="line.182">     * @see #addChangeListener(DatasetChangeListener)</a>
+<span class="sourceLineNo">183</span><a id="line.183">     */</a>
+<span class="sourceLineNo">184</span><a id="line.184">    @Override</a>
+<span class="sourceLineNo">185</span><a id="line.185">    public void removeChangeListener(DatasetChangeListener listener) {</a>
+<span class="sourceLineNo">186</span><a id="line.186">        this.listenerList.remove(DatasetChangeListener.class, listener);</a>
+<span class="sourceLineNo">187</span><a id="line.187">    }</a>
+<span class="sourceLineNo">188</span><a id="line.188"></a>
+<span class="sourceLineNo">189</span><a id="line.189">    /**</a>
+<span class="sourceLineNo">190</span><a id="line.190">     * Returns &lt;code&gt;true&lt;/code&gt; if the specified object is registered with</a>
+<span class="sourceLineNo">191</span><a id="line.191">     * the dataset as a listener.  Most applications won't need to call this</a>
+<span class="sourceLineNo">192</span><a id="line.192">     * method, it exists mainly for use by unit testing code.</a>
+<span class="sourceLineNo">193</span><a id="line.193">     *</a>
+<span class="sourceLineNo">194</span><a id="line.194">     * @param listener  the listener.</a>
+<span class="sourceLineNo">195</span><a id="line.195">     *</a>
+<span class="sourceLineNo">196</span><a id="line.196">     * @return A boolean.</a>
+<span class="sourceLineNo">197</span><a id="line.197">     *</a>
+<span class="sourceLineNo">198</span><a id="line.198">     * @see #addChangeListener(DatasetChangeListener)</a>
+<span class="sourceLineNo">199</span><a id="line.199">     * @see #removeChangeListener(DatasetChangeListener)</a>
+<span class="sourceLineNo">200</span><a id="line.200">     */</a>
+<span class="sourceLineNo">201</span><a id="line.201">    public boolean hasListener(EventListener listener) {</a>
+<span class="sourceLineNo">202</span><a id="line.202">        List list = Arrays.asList(this.listenerList.getListenerList());</a>
+<span class="sourceLineNo">203</span><a id="line.203">        return list.contains(listener);</a>
+<span class="sourceLineNo">204</span><a id="line.204">    }</a>
+<span class="sourceLineNo">205</span><a id="line.205"></a>
+<span class="sourceLineNo">206</span><a id="line.206">    /**</a>
+<span class="sourceLineNo">207</span><a id="line.207">     * Notifies all registered listeners that the dataset has changed, </a>
+<span class="sourceLineNo">208</span><a id="line.208">     * provided that the &lt;code&gt;notify&lt;/code&gt; flag has not been set to </a>
+<span class="sourceLineNo">209</span><a id="line.209">     * &lt;code&gt;false&lt;/code&gt;.</a>
+<span class="sourceLineNo">210</span><a id="line.210">     *</a>
+<span class="sourceLineNo">211</span><a id="line.211">     * @see #addChangeListener(DatasetChangeListener)</a>
+<span class="sourceLineNo">212</span><a id="line.212">     */</a>
+<span class="sourceLineNo">213</span><a id="line.213">    protected void fireDatasetChanged() {</a>
+<span class="sourceLineNo">214</span><a id="line.214">        if (this.notify) {</a>
+<span class="sourceLineNo">215</span><a id="line.215">            notifyListeners(new DatasetChangeEvent(this, this));</a>
+<span class="sourceLineNo">216</span><a id="line.216">        }</a>
+<span class="sourceLineNo">217</span><a id="line.217">    }</a>
+<span class="sourceLineNo">218</span><a id="line.218"></a>
+<span class="sourceLineNo">219</span><a id="line.219">    /**</a>
+<span class="sourceLineNo">220</span><a id="line.220">     * Notifies all registered listeners that the dataset has changed.</a>
+<span class="sourceLineNo">221</span><a id="line.221">     *</a>
+<span class="sourceLineNo">222</span><a id="line.222">     * @param event  contains information about the event that triggered the</a>
+<span class="sourceLineNo">223</span><a id="line.223">     *               notification.</a>
+<span class="sourceLineNo">224</span><a id="line.224">     *</a>
+<span class="sourceLineNo">225</span><a id="line.225">     * @see #addChangeListener(DatasetChangeListener)</a>
+<span class="sourceLineNo">226</span><a id="line.226">     * @see #removeChangeListener(DatasetChangeListener)</a>
+<span class="sourceLineNo">227</span><a id="line.227">     */</a>
+<span class="sourceLineNo">228</span><a id="line.228">    protected void notifyListeners(DatasetChangeEvent event) {</a>
+<span class="sourceLineNo">229</span><a id="line.229">        Object[] listeners = this.listenerList.getListenerList();</a>
+<span class="sourceLineNo">230</span><a id="line.230">        for (int i = listeners.length - 2; i &gt;= 0; i -= 2) {</a>
+<span class="sourceLineNo">231</span><a id="line.231">            if (listeners[i] == DatasetChangeListener.class) {</a>
+<span class="sourceLineNo">232</span><a id="line.232">                ((DatasetChangeListener) listeners[i + 1]).datasetChanged(</a>
+<span class="sourceLineNo">233</span><a id="line.233">                        event);</a>
+<span class="sourceLineNo">234</span><a id="line.234">            }</a>
+<span class="sourceLineNo">235</span><a id="line.235">        }</a>
+<span class="sourceLineNo">236</span><a id="line.236">    }</a>
+<span class="sourceLineNo">237</span><a id="line.237"></a>
+<span class="sourceLineNo">238</span><a id="line.238">    /**</a>
+<span class="sourceLineNo">239</span><a id="line.239">     * Returns a clone of the dataset. The cloned dataset will NOT include the</a>
+<span class="sourceLineNo">240</span><a id="line.240">     * {@link DatasetChangeListener} references that have been registered with</a>
+<span class="sourceLineNo">241</span><a id="line.241">     * this dataset.</a>
+<span class="sourceLineNo">242</span><a id="line.242">     *</a>
+<span class="sourceLineNo">243</span><a id="line.243">     * @return A clone.</a>
+<span class="sourceLineNo">244</span><a id="line.244">     *</a>
+<span class="sourceLineNo">245</span><a id="line.245">     * @throws CloneNotSupportedException  if the dataset does not support</a>
+<span class="sourceLineNo">246</span><a id="line.246">     *                                     cloning.</a>
+<span class="sourceLineNo">247</span><a id="line.247">     */</a>
+<span class="sourceLineNo">248</span><a id="line.248">    @Override</a>
+<span class="sourceLineNo">249</span><a id="line.249">    public Object clone() throws CloneNotSupportedException {</a>
+<span class="sourceLineNo">250</span><a id="line.250">        AbstractDataset clone = (AbstractDataset) super.clone();</a>
+<span class="sourceLineNo">251</span><a id="line.251">        clone.listenerList = new EventListenerList();</a>
+<span class="sourceLineNo">252</span><a id="line.252">        return clone;</a>
+<span class="sourceLineNo">253</span><a id="line.253">    }</a>
+<span class="sourceLineNo">254</span><a id="line.254"></a>
+<span class="sourceLineNo">255</span><a id="line.255">    /**</a>
+<span class="sourceLineNo">256</span><a id="line.256">     * Handles serialization.</a>
+<span class="sourceLineNo">257</span><a id="line.257">     *</a>
+<span class="sourceLineNo">258</span><a id="line.258">     * @param stream  the output stream.</a>
+<span class="sourceLineNo">259</span><a id="line.259">     *</a>
+<span class="sourceLineNo">260</span><a id="line.260">     * @throws IOException if there is an I/O problem.</a>
+<span class="sourceLineNo">261</span><a id="line.261">     */</a>
+<span class="sourceLineNo">262</span><a id="line.262">    private void writeObject(ObjectOutputStream stream) throws IOException {</a>
+<span class="sourceLineNo">263</span><a id="line.263">        stream.defaultWriteObject();</a>
+<span class="sourceLineNo">264</span><a id="line.264">    }</a>
+<span class="sourceLineNo">265</span><a id="line.265"></a>
+<span class="sourceLineNo">266</span><a id="line.266">    /**</a>
+<span class="sourceLineNo">267</span><a id="line.267">     * Restores a serialized object.</a>
+<span class="sourceLineNo">268</span><a id="line.268">     *</a>
+<span class="sourceLineNo">269</span><a id="line.269">     * @param stream  the input stream.</a>
+<span class="sourceLineNo">270</span><a id="line.270">     *</a>
+<span class="sourceLineNo">271</span><a id="line.271">     * @throws IOException if there is an I/O problem.</a>
+<span class="sourceLineNo">272</span><a id="line.272">     * @throws ClassNotFoundException if there is a problem loading a class.</a>
+<span class="sourceLineNo">273</span><a id="line.273">     */</a>
+<span class="sourceLineNo">274</span><a id="line.274">    private void readObject(ObjectInputStream stream)</a>
+<span class="sourceLineNo">275</span><a id="line.275">        throws IOException, ClassNotFoundException {</a>
+<span class="sourceLineNo">276</span><a id="line.276">        stream.defaultReadObject();</a>
+<span class="sourceLineNo">277</span><a id="line.277">        this.listenerList = new EventListenerList();</a>
+<span class="sourceLineNo">278</span><a id="line.278">        stream.registerValidation(this, 10);  // see comments about priority of</a>
+<span class="sourceLineNo">279</span><a id="line.279">                                              // 10 in validateObject()</a>
+<span class="sourceLineNo">280</span><a id="line.280">    }</a>
+<span class="sourceLineNo">281</span><a id="line.281"></a>
+<span class="sourceLineNo">282</span><a id="line.282">    /**</a>
+<span class="sourceLineNo">283</span><a id="line.283">     * Validates the object. We use this opportunity to call listeners who have</a>
+<span class="sourceLineNo">284</span><a id="line.284">     * registered during the deserialization process, as listeners are not</a>
+<span class="sourceLineNo">285</span><a id="line.285">     * serialized. This method is called by the serialization system after the</a>
+<span class="sourceLineNo">286</span><a id="line.286">     * entire graph is read.</a>
+<span class="sourceLineNo">287</span><a id="line.287">     *</a>
+<span class="sourceLineNo">288</span><a id="line.288">     * This object has registered itself to the system with a priority of 10.</a>
+<span class="sourceLineNo">289</span><a id="line.289">     * Other callbacks may register with a higher priority number to be called</a>
+<span class="sourceLineNo">290</span><a id="line.290">     * before this object, or with a lower priority number to be called after</a>
+<span class="sourceLineNo">291</span><a id="line.291">     * the listeners were notified.</a>
+<span class="sourceLineNo">292</span><a id="line.292">     *</a>
+<span class="sourceLineNo">293</span><a id="line.293">     * All listeners are supposed to have register by now, either in their</a>
+<span class="sourceLineNo">294</span><a id="line.294">     * readObject or validateObject methods. Notify them that this dataset has</a>
+<span class="sourceLineNo">295</span><a id="line.295">     * changed.</a>
+<span class="sourceLineNo">296</span><a id="line.296">     *</a>
+<span class="sourceLineNo">297</span><a id="line.297">     * @exception InvalidObjectException If the object cannot validate itself.</a>
+<span class="sourceLineNo">298</span><a id="line.298">     */</a>
+<span class="sourceLineNo">299</span><a id="line.299">    @Override</a>
+<span class="sourceLineNo">300</span><a id="line.300">    public void validateObject() throws InvalidObjectException {</a>
+<span class="sourceLineNo">301</span><a id="line.301">        fireDatasetChanged();</a>
+<span class="sourceLineNo">302</span><a id="line.302">    }</a>
+<span class="sourceLineNo">303</span><a id="line.303"></a>
+<span class="sourceLineNo">304</span><a id="line.304">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

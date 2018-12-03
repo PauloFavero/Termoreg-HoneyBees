@@ -1,0 +1,1051 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * ------------------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * CandlestickRenderer.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * ------------------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2001-2014, by Object Refinery Limited.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Authors:  David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">033</span><a id="line.33"> *                    Sylvain Vieujot;</a>
+<span class="sourceLineNo">034</span><a id="line.34"> * Contributor(s):    Richard Atkinson;</a>
+<span class="sourceLineNo">035</span><a id="line.35"> *                    Christian W. Zuckschwerdt;</a>
+<span class="sourceLineNo">036</span><a id="line.36"> *                    Jerome Fisher;</a>
+<span class="sourceLineNo">037</span><a id="line.37"> *</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * Changes</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * -------</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 13-Dec-2001 : Version 1.  Based on code in the (now redundant)</a>
+<span class="sourceLineNo">041</span><a id="line.41"> *               CandlestickPlot class, written by Sylvain Vieujot (DG);</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * 23-Jan-2002 : Added DrawInfo parameter to drawItem() method (DG);</a>
+<span class="sourceLineNo">043</span><a id="line.43"> * 28-Mar-2002 : Added a property change listener mechanism so that renderers</a>
+<span class="sourceLineNo">044</span><a id="line.44"> *               no longer need to be immutable.  Added properties for up and</a>
+<span class="sourceLineNo">045</span><a id="line.45"> *               down colors (DG);</a>
+<span class="sourceLineNo">046</span><a id="line.46"> * 04-Apr-2002 : Updated with new automatic width calculation and optional</a>
+<span class="sourceLineNo">047</span><a id="line.47"> *               volume display, contributed by Sylvain Vieujot (DG);</a>
+<span class="sourceLineNo">048</span><a id="line.48"> * 09-Apr-2002 : Removed translatedRangeZero from the drawItem() method, and</a>
+<span class="sourceLineNo">049</span><a id="line.49"> *               changed the return type of the drawItem method to void,</a>
+<span class="sourceLineNo">050</span><a id="line.50"> *               reflecting a change in the XYItemRenderer interface.  Added</a>
+<span class="sourceLineNo">051</span><a id="line.51"> *               tooltip code to drawItem() method (DG);</a>
+<span class="sourceLineNo">052</span><a id="line.52"> * 25-Jun-2002 : Removed redundant code (DG);</a>
+<span class="sourceLineNo">053</span><a id="line.53"> * 05-Aug-2002 : Small modification to drawItem method to support URLs for HTML</a>
+<span class="sourceLineNo">054</span><a id="line.54"> *               image maps (RA);</a>
+<span class="sourceLineNo">055</span><a id="line.55"> * 19-Sep-2002 : Fixed errors reported by Checkstyle (DG);</a>
+<span class="sourceLineNo">056</span><a id="line.56"> * 25-Mar-2003 : Implemented Serializable (DG);</a>
+<span class="sourceLineNo">057</span><a id="line.57"> * 01-May-2003 : Modified drawItem() method signature (DG);</a>
+<span class="sourceLineNo">058</span><a id="line.58"> * 30-Jun-2003 : Added support for PlotOrientation (for completeness, this</a>
+<span class="sourceLineNo">059</span><a id="line.59"> *               renderer is unlikely to be used with a HORIZONTAL</a>
+<span class="sourceLineNo">060</span><a id="line.60"> *               orientation) (DG);</a>
+<span class="sourceLineNo">061</span><a id="line.61"> * 30-Jul-2003 : Modified entity constructor (CZ);</a>
+<span class="sourceLineNo">062</span><a id="line.62"> * 20-Aug-2003 : Implemented Cloneable and PublicCloneable (DG);</a>
+<span class="sourceLineNo">063</span><a id="line.63"> * 29-Aug-2003 : Moved maxVolume calculation to initialise method (see bug</a>
+<span class="sourceLineNo">064</span><a id="line.64"> *               report 796619) (DG);</a>
+<span class="sourceLineNo">065</span><a id="line.65"> * 02-Sep-2003 : Added maxCandleWidthInMilliseconds as workaround for bug</a>
+<span class="sourceLineNo">066</span><a id="line.66"> *               796621 (DG);</a>
+<span class="sourceLineNo">067</span><a id="line.67"> * 08-Sep-2003 : Changed ValueAxis API (DG);</a>
+<span class="sourceLineNo">068</span><a id="line.68"> * 16-Sep-2003 : Changed ChartRenderingInfo --&gt; PlotRenderingInfo (DG);</a>
+<span class="sourceLineNo">069</span><a id="line.69"> * 13-Oct-2003 : Applied patch from Jerome Fisher to improve auto width</a>
+<span class="sourceLineNo">070</span><a id="line.70"> *               calculations (DG);</a>
+<span class="sourceLineNo">071</span><a id="line.71"> * 23-Dec-2003 : Fixed bug where up and down paint are used incorrectly (DG);</a>
+<span class="sourceLineNo">072</span><a id="line.72"> * 25-Feb-2004 : Replaced CrosshairInfo with CrosshairState (DG);</a>
+<span class="sourceLineNo">073</span><a id="line.73"> * 15-Jul-2004 : Switched getX() with getXValue() and getY() with</a>
+<span class="sourceLineNo">074</span><a id="line.74"> *               getYValue() (DG);</a>
+<span class="sourceLineNo">075</span><a id="line.75"> * ------------- JFREECHART 1.0.x ---------------------------------------------</a>
+<span class="sourceLineNo">076</span><a id="line.76"> * 06-Jul-2006 : Swapped calls to getX() --&gt; getXValue(), and the same for the</a>
+<span class="sourceLineNo">077</span><a id="line.77"> *               other data values (DG);</a>
+<span class="sourceLineNo">078</span><a id="line.78"> * 17-Aug-2006 : Corrections to the equals() method (DG);</a>
+<span class="sourceLineNo">079</span><a id="line.79"> * 05-Mar-2007 : Added flag to allow optional use of outline paint (DG);</a>
+<span class="sourceLineNo">080</span><a id="line.80"> * 08-Oct-2007 : Added new volumePaint field (DG);</a>
+<span class="sourceLineNo">081</span><a id="line.81"> * 08-Apr-2008 : Added findRangeBounds() method override (DG);</a>
+<span class="sourceLineNo">082</span><a id="line.82"> * 13-May-2008 : Fixed chart entity bugs (1962467 and 1962472) (DG);</a>
+<span class="sourceLineNo">083</span><a id="line.83"> * 27-Mar-2009 : Updated findRangeBounds() to call new method in</a>
+<span class="sourceLineNo">084</span><a id="line.84"> *               superclass (DG);</a>
+<span class="sourceLineNo">085</span><a id="line.85"> * 03-Jul-2013 : Use ParamChecks (DG);</a>
+<span class="sourceLineNo">086</span><a id="line.86"> *</a>
+<span class="sourceLineNo">087</span><a id="line.87"> */</a>
+<span class="sourceLineNo">088</span><a id="line.88"></a>
+<span class="sourceLineNo">089</span><a id="line.89">package org.jfree.chart.renderer.xy;</a>
+<span class="sourceLineNo">090</span><a id="line.90"></a>
+<span class="sourceLineNo">091</span><a id="line.91">import java.awt.AlphaComposite;</a>
+<span class="sourceLineNo">092</span><a id="line.92">import java.awt.Color;</a>
+<span class="sourceLineNo">093</span><a id="line.93">import java.awt.Composite;</a>
+<span class="sourceLineNo">094</span><a id="line.94">import java.awt.Graphics2D;</a>
+<span class="sourceLineNo">095</span><a id="line.95">import java.awt.Paint;</a>
+<span class="sourceLineNo">096</span><a id="line.96">import java.awt.Stroke;</a>
+<span class="sourceLineNo">097</span><a id="line.97">import java.awt.geom.Line2D;</a>
+<span class="sourceLineNo">098</span><a id="line.98">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">099</span><a id="line.99">import java.io.IOException;</a>
+<span class="sourceLineNo">100</span><a id="line.100">import java.io.ObjectInputStream;</a>
+<span class="sourceLineNo">101</span><a id="line.101">import java.io.ObjectOutputStream;</a>
+<span class="sourceLineNo">102</span><a id="line.102">import java.io.Serializable;</a>
+<span class="sourceLineNo">103</span><a id="line.103"></a>
+<span class="sourceLineNo">104</span><a id="line.104">import org.jfree.chart.axis.ValueAxis;</a>
+<span class="sourceLineNo">105</span><a id="line.105">import org.jfree.chart.entity.EntityCollection;</a>
+<span class="sourceLineNo">106</span><a id="line.106">import org.jfree.chart.event.RendererChangeEvent;</a>
+<span class="sourceLineNo">107</span><a id="line.107">import org.jfree.chart.labels.HighLowItemLabelGenerator;</a>
+<span class="sourceLineNo">108</span><a id="line.108">import org.jfree.chart.labels.XYToolTipGenerator;</a>
+<span class="sourceLineNo">109</span><a id="line.109">import org.jfree.chart.plot.CrosshairState;</a>
+<span class="sourceLineNo">110</span><a id="line.110">import org.jfree.chart.plot.PlotOrientation;</a>
+<span class="sourceLineNo">111</span><a id="line.111">import org.jfree.chart.plot.PlotRenderingInfo;</a>
+<span class="sourceLineNo">112</span><a id="line.112">import org.jfree.chart.plot.XYPlot;</a>
+<span class="sourceLineNo">113</span><a id="line.113">import org.jfree.chart.util.ParamChecks;</a>
+<span class="sourceLineNo">114</span><a id="line.114">import org.jfree.data.Range;</a>
+<span class="sourceLineNo">115</span><a id="line.115">import org.jfree.data.xy.IntervalXYDataset;</a>
+<span class="sourceLineNo">116</span><a id="line.116">import org.jfree.data.xy.OHLCDataset;</a>
+<span class="sourceLineNo">117</span><a id="line.117">import org.jfree.data.xy.XYDataset;</a>
+<span class="sourceLineNo">118</span><a id="line.118">import org.jfree.io.SerialUtilities;</a>
+<span class="sourceLineNo">119</span><a id="line.119">import org.jfree.ui.RectangleEdge;</a>
+<span class="sourceLineNo">120</span><a id="line.120">import org.jfree.util.PaintUtilities;</a>
+<span class="sourceLineNo">121</span><a id="line.121">import org.jfree.util.PublicCloneable;</a>
+<span class="sourceLineNo">122</span><a id="line.122"></a>
+<span class="sourceLineNo">123</span><a id="line.123">/**</a>
+<span class="sourceLineNo">124</span><a id="line.124"> * A renderer that draws candlesticks on an {@link XYPlot} (requires a</a>
+<span class="sourceLineNo">125</span><a id="line.125"> * {@link OHLCDataset}).  The example shown here is generated</a>
+<span class="sourceLineNo">126</span><a id="line.126"> * by the &lt;code&gt;CandlestickChartDemo1.java&lt;/code&gt; program included in the</a>
+<span class="sourceLineNo">127</span><a id="line.127"> * JFreeChart demo collection:</a>
+<span class="sourceLineNo">128</span><a id="line.128"> * &lt;br&gt;&lt;br&gt;</a>
+<span class="sourceLineNo">129</span><a id="line.129"> * &lt;img src="../../../../../images/CandlestickRendererSample.png"</a>
+<span class="sourceLineNo">130</span><a id="line.130"> * alt="CandlestickRendererSample.png"&gt;</a>
+<span class="sourceLineNo">131</span><a id="line.131"> * &lt;P&gt;</a>
+<span class="sourceLineNo">132</span><a id="line.132"> * This renderer does not include code to calculate the crosshair point for the</a>
+<span class="sourceLineNo">133</span><a id="line.133"> * plot.</a>
+<span class="sourceLineNo">134</span><a id="line.134"> */</a>
+<span class="sourceLineNo">135</span><a id="line.135">public class CandlestickRenderer extends AbstractXYItemRenderer</a>
+<span class="sourceLineNo">136</span><a id="line.136">        implements XYItemRenderer, Cloneable, PublicCloneable, Serializable {</a>
+<span class="sourceLineNo">137</span><a id="line.137"></a>
+<span class="sourceLineNo">138</span><a id="line.138">    /** For serialization. */</a>
+<span class="sourceLineNo">139</span><a id="line.139">    private static final long serialVersionUID = 50390395841817121L;</a>
+<span class="sourceLineNo">140</span><a id="line.140"></a>
+<span class="sourceLineNo">141</span><a id="line.141">    /** The average width method. */</a>
+<span class="sourceLineNo">142</span><a id="line.142">    public static final int WIDTHMETHOD_AVERAGE = 0;</a>
+<span class="sourceLineNo">143</span><a id="line.143"></a>
+<span class="sourceLineNo">144</span><a id="line.144">    /** The smallest width method. */</a>
+<span class="sourceLineNo">145</span><a id="line.145">    public static final int WIDTHMETHOD_SMALLEST = 1;</a>
+<span class="sourceLineNo">146</span><a id="line.146"></a>
+<span class="sourceLineNo">147</span><a id="line.147">    /** The interval data method. */</a>
+<span class="sourceLineNo">148</span><a id="line.148">    public static final int WIDTHMETHOD_INTERVALDATA = 2;</a>
+<span class="sourceLineNo">149</span><a id="line.149"></a>
+<span class="sourceLineNo">150</span><a id="line.150">    /** The method of automatically calculating the candle width. */</a>
+<span class="sourceLineNo">151</span><a id="line.151">    private int autoWidthMethod = WIDTHMETHOD_AVERAGE;</a>
+<span class="sourceLineNo">152</span><a id="line.152"></a>
+<span class="sourceLineNo">153</span><a id="line.153">    /**</a>
+<span class="sourceLineNo">154</span><a id="line.154">     * The number (generally between 0.0 and 1.0) by which the available space</a>
+<span class="sourceLineNo">155</span><a id="line.155">     * automatically calculated for the candles will be multiplied to determine</a>
+<span class="sourceLineNo">156</span><a id="line.156">     * the actual width to use.</a>
+<span class="sourceLineNo">157</span><a id="line.157">     */</a>
+<span class="sourceLineNo">158</span><a id="line.158">    private double autoWidthFactor = 4.5 / 7;</a>
+<span class="sourceLineNo">159</span><a id="line.159"></a>
+<span class="sourceLineNo">160</span><a id="line.160">    /** The minimum gap between one candle and the next */</a>
+<span class="sourceLineNo">161</span><a id="line.161">    private double autoWidthGap = 0.0;</a>
+<span class="sourceLineNo">162</span><a id="line.162"></a>
+<span class="sourceLineNo">163</span><a id="line.163">    /** The candle width. */</a>
+<span class="sourceLineNo">164</span><a id="line.164">    private double candleWidth;</a>
+<span class="sourceLineNo">165</span><a id="line.165"></a>
+<span class="sourceLineNo">166</span><a id="line.166">    /** The maximum candlewidth in milliseconds. */</a>
+<span class="sourceLineNo">167</span><a id="line.167">    private double maxCandleWidthInMilliseconds = 1000.0 * 60.0 * 60.0 * 20.0;</a>
+<span class="sourceLineNo">168</span><a id="line.168"></a>
+<span class="sourceLineNo">169</span><a id="line.169">    /** Temporary storage for the maximum candle width. */</a>
+<span class="sourceLineNo">170</span><a id="line.170">    private double maxCandleWidth;</a>
+<span class="sourceLineNo">171</span><a id="line.171"></a>
+<span class="sourceLineNo">172</span><a id="line.172">    /**</a>
+<span class="sourceLineNo">173</span><a id="line.173">     * The paint used to fill the candle when the price moved up from open to</a>
+<span class="sourceLineNo">174</span><a id="line.174">     * close.</a>
+<span class="sourceLineNo">175</span><a id="line.175">     */</a>
+<span class="sourceLineNo">176</span><a id="line.176">    private transient Paint upPaint;</a>
+<span class="sourceLineNo">177</span><a id="line.177"></a>
+<span class="sourceLineNo">178</span><a id="line.178">    /**</a>
+<span class="sourceLineNo">179</span><a id="line.179">     * The paint used to fill the candle when the price moved down from open</a>
+<span class="sourceLineNo">180</span><a id="line.180">     * to close.</a>
+<span class="sourceLineNo">181</span><a id="line.181">     */</a>
+<span class="sourceLineNo">182</span><a id="line.182">    private transient Paint downPaint;</a>
+<span class="sourceLineNo">183</span><a id="line.183"></a>
+<span class="sourceLineNo">184</span><a id="line.184">    /** A flag controlling whether or not volume bars are drawn on the chart. */</a>
+<span class="sourceLineNo">185</span><a id="line.185">    private boolean drawVolume;</a>
+<span class="sourceLineNo">186</span><a id="line.186"></a>
+<span class="sourceLineNo">187</span><a id="line.187">    /**</a>
+<span class="sourceLineNo">188</span><a id="line.188">     * The paint used to fill the volume bars (if they are visible).  Once</a>
+<span class="sourceLineNo">189</span><a id="line.189">     * initialised, this field should never be set to &lt;code&gt;null&lt;/code&gt;.</a>
+<span class="sourceLineNo">190</span><a id="line.190">     *</a>
+<span class="sourceLineNo">191</span><a id="line.191">     * @since 1.0.7</a>
+<span class="sourceLineNo">192</span><a id="line.192">     */</a>
+<span class="sourceLineNo">193</span><a id="line.193">    private transient Paint volumePaint;</a>
+<span class="sourceLineNo">194</span><a id="line.194"></a>
+<span class="sourceLineNo">195</span><a id="line.195">    /** Temporary storage for the maximum volume. */</a>
+<span class="sourceLineNo">196</span><a id="line.196">    private transient double maxVolume;</a>
+<span class="sourceLineNo">197</span><a id="line.197"></a>
+<span class="sourceLineNo">198</span><a id="line.198">    /**</a>
+<span class="sourceLineNo">199</span><a id="line.199">     * A flag that controls whether or not the renderer's outline paint is</a>
+<span class="sourceLineNo">200</span><a id="line.200">     * used to draw the outline of the candlestick.  The default value is</a>
+<span class="sourceLineNo">201</span><a id="line.201">     * &lt;code&gt;false&lt;/code&gt; to avoid a change of behaviour for existing code.</a>
+<span class="sourceLineNo">202</span><a id="line.202">     *</a>
+<span class="sourceLineNo">203</span><a id="line.203">     * @since 1.0.5</a>
+<span class="sourceLineNo">204</span><a id="line.204">     */</a>
+<span class="sourceLineNo">205</span><a id="line.205">    private boolean useOutlinePaint;</a>
+<span class="sourceLineNo">206</span><a id="line.206"></a>
+<span class="sourceLineNo">207</span><a id="line.207">    /**</a>
+<span class="sourceLineNo">208</span><a id="line.208">     * Creates a new renderer for candlestick charts.</a>
+<span class="sourceLineNo">209</span><a id="line.209">     */</a>
+<span class="sourceLineNo">210</span><a id="line.210">    public CandlestickRenderer() {</a>
+<span class="sourceLineNo">211</span><a id="line.211">        this(-1.0);</a>
+<span class="sourceLineNo">212</span><a id="line.212">    }</a>
+<span class="sourceLineNo">213</span><a id="line.213"></a>
+<span class="sourceLineNo">214</span><a id="line.214">    /**</a>
+<span class="sourceLineNo">215</span><a id="line.215">     * Creates a new renderer for candlestick charts.</a>
+<span class="sourceLineNo">216</span><a id="line.216">     * &lt;P&gt;</a>
+<span class="sourceLineNo">217</span><a id="line.217">     * Use -1 for the candle width if you prefer the width to be calculated</a>
+<span class="sourceLineNo">218</span><a id="line.218">     * automatically.</a>
+<span class="sourceLineNo">219</span><a id="line.219">     *</a>
+<span class="sourceLineNo">220</span><a id="line.220">     * @param candleWidth  The candle width.</a>
+<span class="sourceLineNo">221</span><a id="line.221">     */</a>
+<span class="sourceLineNo">222</span><a id="line.222">    public CandlestickRenderer(double candleWidth) {</a>
+<span class="sourceLineNo">223</span><a id="line.223">        this(candleWidth, true, new HighLowItemLabelGenerator());</a>
+<span class="sourceLineNo">224</span><a id="line.224">    }</a>
+<span class="sourceLineNo">225</span><a id="line.225"></a>
+<span class="sourceLineNo">226</span><a id="line.226">    /**</a>
+<span class="sourceLineNo">227</span><a id="line.227">     * Creates a new renderer for candlestick charts.</a>
+<span class="sourceLineNo">228</span><a id="line.228">     * &lt;P&gt;</a>
+<span class="sourceLineNo">229</span><a id="line.229">     * Use -1 for the candle width if you prefer the width to be calculated</a>
+<span class="sourceLineNo">230</span><a id="line.230">     * automatically.</a>
+<span class="sourceLineNo">231</span><a id="line.231">     *</a>
+<span class="sourceLineNo">232</span><a id="line.232">     * @param candleWidth  the candle width.</a>
+<span class="sourceLineNo">233</span><a id="line.233">     * @param drawVolume  a flag indicating whether or not volume bars should</a>
+<span class="sourceLineNo">234</span><a id="line.234">     *                    be drawn.</a>
+<span class="sourceLineNo">235</span><a id="line.235">     * @param toolTipGenerator  the tool tip generator. &lt;code&gt;null&lt;/code&gt; is</a>
+<span class="sourceLineNo">236</span><a id="line.236">     *                          none.</a>
+<span class="sourceLineNo">237</span><a id="line.237">     */</a>
+<span class="sourceLineNo">238</span><a id="line.238">    public CandlestickRenderer(double candleWidth, boolean drawVolume,</a>
+<span class="sourceLineNo">239</span><a id="line.239">                               XYToolTipGenerator toolTipGenerator) {</a>
+<span class="sourceLineNo">240</span><a id="line.240">        super();</a>
+<span class="sourceLineNo">241</span><a id="line.241">        setBaseToolTipGenerator(toolTipGenerator);</a>
+<span class="sourceLineNo">242</span><a id="line.242">        this.candleWidth = candleWidth;</a>
+<span class="sourceLineNo">243</span><a id="line.243">        this.drawVolume = drawVolume;</a>
+<span class="sourceLineNo">244</span><a id="line.244">        this.volumePaint = Color.gray;</a>
+<span class="sourceLineNo">245</span><a id="line.245">        this.upPaint = Color.green;</a>
+<span class="sourceLineNo">246</span><a id="line.246">        this.downPaint = Color.red;</a>
+<span class="sourceLineNo">247</span><a id="line.247">        this.useOutlinePaint = false;  // false preserves the old behaviour</a>
+<span class="sourceLineNo">248</span><a id="line.248">                                       // prior to introducing this flag</a>
+<span class="sourceLineNo">249</span><a id="line.249">    }</a>
+<span class="sourceLineNo">250</span><a id="line.250"></a>
+<span class="sourceLineNo">251</span><a id="line.251">    /**</a>
+<span class="sourceLineNo">252</span><a id="line.252">     * Returns the width of each candle.</a>
+<span class="sourceLineNo">253</span><a id="line.253">     *</a>
+<span class="sourceLineNo">254</span><a id="line.254">     * @return The candle width.</a>
+<span class="sourceLineNo">255</span><a id="line.255">     *</a>
+<span class="sourceLineNo">256</span><a id="line.256">     * @see #setCandleWidth(double)</a>
+<span class="sourceLineNo">257</span><a id="line.257">     */</a>
+<span class="sourceLineNo">258</span><a id="line.258">    public double getCandleWidth() {</a>
+<span class="sourceLineNo">259</span><a id="line.259">        return this.candleWidth;</a>
+<span class="sourceLineNo">260</span><a id="line.260">    }</a>
+<span class="sourceLineNo">261</span><a id="line.261"></a>
+<span class="sourceLineNo">262</span><a id="line.262">    /**</a>
+<span class="sourceLineNo">263</span><a id="line.263">     * Sets the candle width and sends a {@link RendererChangeEvent} to all</a>
+<span class="sourceLineNo">264</span><a id="line.264">     * registered listeners.</a>
+<span class="sourceLineNo">265</span><a id="line.265">     * &lt;P&gt;</a>
+<span class="sourceLineNo">266</span><a id="line.266">     * If you set the width to a negative value, the renderer will calculate</a>
+<span class="sourceLineNo">267</span><a id="line.267">     * the candle width automatically based on the space available on the chart.</a>
+<span class="sourceLineNo">268</span><a id="line.268">     *</a>
+<span class="sourceLineNo">269</span><a id="line.269">     * @param width  The width.</a>
+<span class="sourceLineNo">270</span><a id="line.270">     * @see #setAutoWidthMethod(int)</a>
+<span class="sourceLineNo">271</span><a id="line.271">     * @see #setAutoWidthGap(double)</a>
+<span class="sourceLineNo">272</span><a id="line.272">     * @see #setAutoWidthFactor(double)</a>
+<span class="sourceLineNo">273</span><a id="line.273">     * @see #setMaxCandleWidthInMilliseconds(double)</a>
+<span class="sourceLineNo">274</span><a id="line.274">     */</a>
+<span class="sourceLineNo">275</span><a id="line.275">    public void setCandleWidth(double width) {</a>
+<span class="sourceLineNo">276</span><a id="line.276">        if (width != this.candleWidth) {</a>
+<span class="sourceLineNo">277</span><a id="line.277">            this.candleWidth = width;</a>
+<span class="sourceLineNo">278</span><a id="line.278">            fireChangeEvent();</a>
+<span class="sourceLineNo">279</span><a id="line.279">        }</a>
+<span class="sourceLineNo">280</span><a id="line.280">    }</a>
+<span class="sourceLineNo">281</span><a id="line.281"></a>
+<span class="sourceLineNo">282</span><a id="line.282">    /**</a>
+<span class="sourceLineNo">283</span><a id="line.283">     * Returns the maximum width (in milliseconds) of each candle.</a>
+<span class="sourceLineNo">284</span><a id="line.284">     *</a>
+<span class="sourceLineNo">285</span><a id="line.285">     * @return The maximum candle width in milliseconds.</a>
+<span class="sourceLineNo">286</span><a id="line.286">     *</a>
+<span class="sourceLineNo">287</span><a id="line.287">     * @see #setMaxCandleWidthInMilliseconds(double)</a>
+<span class="sourceLineNo">288</span><a id="line.288">     */</a>
+<span class="sourceLineNo">289</span><a id="line.289">    public double getMaxCandleWidthInMilliseconds() {</a>
+<span class="sourceLineNo">290</span><a id="line.290">        return this.maxCandleWidthInMilliseconds;</a>
+<span class="sourceLineNo">291</span><a id="line.291">    }</a>
+<span class="sourceLineNo">292</span><a id="line.292"></a>
+<span class="sourceLineNo">293</span><a id="line.293">    /**</a>
+<span class="sourceLineNo">294</span><a id="line.294">     * Sets the maximum candle width (in milliseconds) and sends a</a>
+<span class="sourceLineNo">295</span><a id="line.295">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">296</span><a id="line.296">     *</a>
+<span class="sourceLineNo">297</span><a id="line.297">     * @param millis  The maximum width.</a>
+<span class="sourceLineNo">298</span><a id="line.298">     *</a>
+<span class="sourceLineNo">299</span><a id="line.299">     * @see #getMaxCandleWidthInMilliseconds()</a>
+<span class="sourceLineNo">300</span><a id="line.300">     * @see #setCandleWidth(double)</a>
+<span class="sourceLineNo">301</span><a id="line.301">     * @see #setAutoWidthMethod(int)</a>
+<span class="sourceLineNo">302</span><a id="line.302">     * @see #setAutoWidthGap(double)</a>
+<span class="sourceLineNo">303</span><a id="line.303">     * @see #setAutoWidthFactor(double)</a>
+<span class="sourceLineNo">304</span><a id="line.304">     */</a>
+<span class="sourceLineNo">305</span><a id="line.305">    public void setMaxCandleWidthInMilliseconds(double millis) {</a>
+<span class="sourceLineNo">306</span><a id="line.306">        this.maxCandleWidthInMilliseconds = millis;</a>
+<span class="sourceLineNo">307</span><a id="line.307">        fireChangeEvent();</a>
+<span class="sourceLineNo">308</span><a id="line.308">    }</a>
+<span class="sourceLineNo">309</span><a id="line.309"></a>
+<span class="sourceLineNo">310</span><a id="line.310">    /**</a>
+<span class="sourceLineNo">311</span><a id="line.311">     * Returns the method of automatically calculating the candle width.</a>
+<span class="sourceLineNo">312</span><a id="line.312">     *</a>
+<span class="sourceLineNo">313</span><a id="line.313">     * @return The method of automatically calculating the candle width.</a>
+<span class="sourceLineNo">314</span><a id="line.314">     *</a>
+<span class="sourceLineNo">315</span><a id="line.315">     * @see #setAutoWidthMethod(int)</a>
+<span class="sourceLineNo">316</span><a id="line.316">     */</a>
+<span class="sourceLineNo">317</span><a id="line.317">    public int getAutoWidthMethod() {</a>
+<span class="sourceLineNo">318</span><a id="line.318">        return this.autoWidthMethod;</a>
+<span class="sourceLineNo">319</span><a id="line.319">    }</a>
+<span class="sourceLineNo">320</span><a id="line.320"></a>
+<span class="sourceLineNo">321</span><a id="line.321">    /**</a>
+<span class="sourceLineNo">322</span><a id="line.322">     * Sets the method of automatically calculating the candle width and</a>
+<span class="sourceLineNo">323</span><a id="line.323">     * sends a {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">324</span><a id="line.324">     * &lt;p&gt;</a>
+<span class="sourceLineNo">325</span><a id="line.325">     * &lt;code&gt;WIDTHMETHOD_AVERAGE&lt;/code&gt;: Divides the entire display (ignoring</a>
+<span class="sourceLineNo">326</span><a id="line.326">     * scale factor) by the number of items, and uses this as the available</a>
+<span class="sourceLineNo">327</span><a id="line.327">     * width.&lt;br&gt;</a>
+<span class="sourceLineNo">328</span><a id="line.328">     * &lt;code&gt;WIDTHMETHOD_SMALLEST&lt;/code&gt;: Checks the interval between each</a>
+<span class="sourceLineNo">329</span><a id="line.329">     * item, and uses the smallest as the available width.&lt;br&gt;</a>
+<span class="sourceLineNo">330</span><a id="line.330">     * &lt;code&gt;WIDTHMETHOD_INTERVALDATA&lt;/code&gt;: Assumes that the dataset supports</a>
+<span class="sourceLineNo">331</span><a id="line.331">     * the IntervalXYDataset interface, and uses the startXValue - endXValue as</a>
+<span class="sourceLineNo">332</span><a id="line.332">     * the available width.</a>
+<span class="sourceLineNo">333</span><a id="line.333">     * &lt;br&gt;</a>
+<span class="sourceLineNo">334</span><a id="line.334">     *</a>
+<span class="sourceLineNo">335</span><a id="line.335">     * @param autoWidthMethod  The method of automatically calculating the</a>
+<span class="sourceLineNo">336</span><a id="line.336">     * candle width.</a>
+<span class="sourceLineNo">337</span><a id="line.337">     *</a>
+<span class="sourceLineNo">338</span><a id="line.338">     * @see #WIDTHMETHOD_AVERAGE</a>
+<span class="sourceLineNo">339</span><a id="line.339">     * @see #WIDTHMETHOD_SMALLEST</a>
+<span class="sourceLineNo">340</span><a id="line.340">     * @see #WIDTHMETHOD_INTERVALDATA</a>
+<span class="sourceLineNo">341</span><a id="line.341">     * @see #getAutoWidthMethod()</a>
+<span class="sourceLineNo">342</span><a id="line.342">     * @see #setCandleWidth(double)</a>
+<span class="sourceLineNo">343</span><a id="line.343">     * @see #setAutoWidthGap(double)</a>
+<span class="sourceLineNo">344</span><a id="line.344">     * @see #setAutoWidthFactor(double)</a>
+<span class="sourceLineNo">345</span><a id="line.345">     * @see #setMaxCandleWidthInMilliseconds(double)</a>
+<span class="sourceLineNo">346</span><a id="line.346">     */</a>
+<span class="sourceLineNo">347</span><a id="line.347">    public void setAutoWidthMethod(int autoWidthMethod) {</a>
+<span class="sourceLineNo">348</span><a id="line.348">        if (this.autoWidthMethod != autoWidthMethod) {</a>
+<span class="sourceLineNo">349</span><a id="line.349">            this.autoWidthMethod = autoWidthMethod;</a>
+<span class="sourceLineNo">350</span><a id="line.350">            fireChangeEvent();</a>
+<span class="sourceLineNo">351</span><a id="line.351">        }</a>
+<span class="sourceLineNo">352</span><a id="line.352">    }</a>
+<span class="sourceLineNo">353</span><a id="line.353"></a>
+<span class="sourceLineNo">354</span><a id="line.354">    /**</a>
+<span class="sourceLineNo">355</span><a id="line.355">     * Returns the factor by which the available space automatically</a>
+<span class="sourceLineNo">356</span><a id="line.356">     * calculated for the candles will be multiplied to determine the actual</a>
+<span class="sourceLineNo">357</span><a id="line.357">     * width to use.</a>
+<span class="sourceLineNo">358</span><a id="line.358">     *</a>
+<span class="sourceLineNo">359</span><a id="line.359">     * @return The width factor (generally between 0.0 and 1.0).</a>
+<span class="sourceLineNo">360</span><a id="line.360">     *</a>
+<span class="sourceLineNo">361</span><a id="line.361">     * @see #setAutoWidthFactor(double)</a>
+<span class="sourceLineNo">362</span><a id="line.362">     */</a>
+<span class="sourceLineNo">363</span><a id="line.363">    public double getAutoWidthFactor() {</a>
+<span class="sourceLineNo">364</span><a id="line.364">        return this.autoWidthFactor;</a>
+<span class="sourceLineNo">365</span><a id="line.365">    }</a>
+<span class="sourceLineNo">366</span><a id="line.366"></a>
+<span class="sourceLineNo">367</span><a id="line.367">    /**</a>
+<span class="sourceLineNo">368</span><a id="line.368">     * Sets the factor by which the available space automatically calculated</a>
+<span class="sourceLineNo">369</span><a id="line.369">     * for the candles will be multiplied to determine the actual width to use.</a>
+<span class="sourceLineNo">370</span><a id="line.370">     *</a>
+<span class="sourceLineNo">371</span><a id="line.371">     * @param autoWidthFactor The width factor (generally between 0.0 and 1.0).</a>
+<span class="sourceLineNo">372</span><a id="line.372">     *</a>
+<span class="sourceLineNo">373</span><a id="line.373">     * @see #getAutoWidthFactor()</a>
+<span class="sourceLineNo">374</span><a id="line.374">     * @see #setCandleWidth(double)</a>
+<span class="sourceLineNo">375</span><a id="line.375">     * @see #setAutoWidthMethod(int)</a>
+<span class="sourceLineNo">376</span><a id="line.376">     * @see #setAutoWidthGap(double)</a>
+<span class="sourceLineNo">377</span><a id="line.377">     * @see #setMaxCandleWidthInMilliseconds(double)</a>
+<span class="sourceLineNo">378</span><a id="line.378">     */</a>
+<span class="sourceLineNo">379</span><a id="line.379">    public void setAutoWidthFactor(double autoWidthFactor) {</a>
+<span class="sourceLineNo">380</span><a id="line.380">        if (this.autoWidthFactor != autoWidthFactor) {</a>
+<span class="sourceLineNo">381</span><a id="line.381">            this.autoWidthFactor = autoWidthFactor;</a>
+<span class="sourceLineNo">382</span><a id="line.382">            fireChangeEvent();</a>
+<span class="sourceLineNo">383</span><a id="line.383">        }</a>
+<span class="sourceLineNo">384</span><a id="line.384">    }</a>
+<span class="sourceLineNo">385</span><a id="line.385"></a>
+<span class="sourceLineNo">386</span><a id="line.386">    /**</a>
+<span class="sourceLineNo">387</span><a id="line.387">     * Returns the amount of space to leave on the left and right of each</a>
+<span class="sourceLineNo">388</span><a id="line.388">     * candle when automatically calculating widths.</a>
+<span class="sourceLineNo">389</span><a id="line.389">     *</a>
+<span class="sourceLineNo">390</span><a id="line.390">     * @return The gap.</a>
+<span class="sourceLineNo">391</span><a id="line.391">     *</a>
+<span class="sourceLineNo">392</span><a id="line.392">     * @see #setAutoWidthGap(double)</a>
+<span class="sourceLineNo">393</span><a id="line.393">     */</a>
+<span class="sourceLineNo">394</span><a id="line.394">    public double getAutoWidthGap() {</a>
+<span class="sourceLineNo">395</span><a id="line.395">        return this.autoWidthGap;</a>
+<span class="sourceLineNo">396</span><a id="line.396">    }</a>
+<span class="sourceLineNo">397</span><a id="line.397"></a>
+<span class="sourceLineNo">398</span><a id="line.398">    /**</a>
+<span class="sourceLineNo">399</span><a id="line.399">     * Sets the amount of space to leave on the left and right of each candle</a>
+<span class="sourceLineNo">400</span><a id="line.400">     * when automatically calculating widths and sends a</a>
+<span class="sourceLineNo">401</span><a id="line.401">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">402</span><a id="line.402">     *</a>
+<span class="sourceLineNo">403</span><a id="line.403">     * @param autoWidthGap The gap.</a>
+<span class="sourceLineNo">404</span><a id="line.404">     *</a>
+<span class="sourceLineNo">405</span><a id="line.405">     * @see #getAutoWidthGap()</a>
+<span class="sourceLineNo">406</span><a id="line.406">     * @see #setCandleWidth(double)</a>
+<span class="sourceLineNo">407</span><a id="line.407">     * @see #setAutoWidthMethod(int)</a>
+<span class="sourceLineNo">408</span><a id="line.408">     * @see #setAutoWidthFactor(double)</a>
+<span class="sourceLineNo">409</span><a id="line.409">     * @see #setMaxCandleWidthInMilliseconds(double)</a>
+<span class="sourceLineNo">410</span><a id="line.410">     */</a>
+<span class="sourceLineNo">411</span><a id="line.411">    public void setAutoWidthGap(double autoWidthGap) {</a>
+<span class="sourceLineNo">412</span><a id="line.412">        if (this.autoWidthGap != autoWidthGap) {</a>
+<span class="sourceLineNo">413</span><a id="line.413">            this.autoWidthGap = autoWidthGap;</a>
+<span class="sourceLineNo">414</span><a id="line.414">            fireChangeEvent();</a>
+<span class="sourceLineNo">415</span><a id="line.415">        }</a>
+<span class="sourceLineNo">416</span><a id="line.416">    }</a>
+<span class="sourceLineNo">417</span><a id="line.417"></a>
+<span class="sourceLineNo">418</span><a id="line.418">    /**</a>
+<span class="sourceLineNo">419</span><a id="line.419">     * Returns the paint used to fill candles when the price moves up from open</a>
+<span class="sourceLineNo">420</span><a id="line.420">     * to close.</a>
+<span class="sourceLineNo">421</span><a id="line.421">     *</a>
+<span class="sourceLineNo">422</span><a id="line.422">     * @return The paint (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">423</span><a id="line.423">     *</a>
+<span class="sourceLineNo">424</span><a id="line.424">     * @see #setUpPaint(Paint)</a>
+<span class="sourceLineNo">425</span><a id="line.425">     */</a>
+<span class="sourceLineNo">426</span><a id="line.426">    public Paint getUpPaint() {</a>
+<span class="sourceLineNo">427</span><a id="line.427">        return this.upPaint;</a>
+<span class="sourceLineNo">428</span><a id="line.428">    }</a>
+<span class="sourceLineNo">429</span><a id="line.429"></a>
+<span class="sourceLineNo">430</span><a id="line.430">    /**</a>
+<span class="sourceLineNo">431</span><a id="line.431">     * Sets the paint used to fill candles when the price moves up from open</a>
+<span class="sourceLineNo">432</span><a id="line.432">     * to close and sends a {@link RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">433</span><a id="line.433">     * listeners.</a>
+<span class="sourceLineNo">434</span><a id="line.434">     *</a>
+<span class="sourceLineNo">435</span><a id="line.435">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">436</span><a id="line.436">     *</a>
+<span class="sourceLineNo">437</span><a id="line.437">     * @see #getUpPaint()</a>
+<span class="sourceLineNo">438</span><a id="line.438">     */</a>
+<span class="sourceLineNo">439</span><a id="line.439">    public void setUpPaint(Paint paint) {</a>
+<span class="sourceLineNo">440</span><a id="line.440">        this.upPaint = paint;</a>
+<span class="sourceLineNo">441</span><a id="line.441">        fireChangeEvent();</a>
+<span class="sourceLineNo">442</span><a id="line.442">    }</a>
+<span class="sourceLineNo">443</span><a id="line.443"></a>
+<span class="sourceLineNo">444</span><a id="line.444">    /**</a>
+<span class="sourceLineNo">445</span><a id="line.445">     * Returns the paint used to fill candles when the price moves down from</a>
+<span class="sourceLineNo">446</span><a id="line.446">     * open to close.</a>
+<span class="sourceLineNo">447</span><a id="line.447">     *</a>
+<span class="sourceLineNo">448</span><a id="line.448">     * @return The paint (possibly &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">449</span><a id="line.449">     *</a>
+<span class="sourceLineNo">450</span><a id="line.450">     * @see #setDownPaint(Paint)</a>
+<span class="sourceLineNo">451</span><a id="line.451">     */</a>
+<span class="sourceLineNo">452</span><a id="line.452">    public Paint getDownPaint() {</a>
+<span class="sourceLineNo">453</span><a id="line.453">        return this.downPaint;</a>
+<span class="sourceLineNo">454</span><a id="line.454">    }</a>
+<span class="sourceLineNo">455</span><a id="line.455"></a>
+<span class="sourceLineNo">456</span><a id="line.456">    /**</a>
+<span class="sourceLineNo">457</span><a id="line.457">     * Sets the paint used to fill candles when the price moves down from open</a>
+<span class="sourceLineNo">458</span><a id="line.458">     * to close and sends a {@link RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">459</span><a id="line.459">     * listeners.</a>
+<span class="sourceLineNo">460</span><a id="line.460">     *</a>
+<span class="sourceLineNo">461</span><a id="line.461">     * @param paint  The paint (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">462</span><a id="line.462">     */</a>
+<span class="sourceLineNo">463</span><a id="line.463">    public void setDownPaint(Paint paint) {</a>
+<span class="sourceLineNo">464</span><a id="line.464">        this.downPaint = paint;</a>
+<span class="sourceLineNo">465</span><a id="line.465">        fireChangeEvent();</a>
+<span class="sourceLineNo">466</span><a id="line.466">    }</a>
+<span class="sourceLineNo">467</span><a id="line.467"></a>
+<span class="sourceLineNo">468</span><a id="line.468">    /**</a>
+<span class="sourceLineNo">469</span><a id="line.469">     * Returns a flag indicating whether or not volume bars are drawn on the</a>
+<span class="sourceLineNo">470</span><a id="line.470">     * chart.</a>
+<span class="sourceLineNo">471</span><a id="line.471">     *</a>
+<span class="sourceLineNo">472</span><a id="line.472">     * @return A boolean.</a>
+<span class="sourceLineNo">473</span><a id="line.473">     *</a>
+<span class="sourceLineNo">474</span><a id="line.474">     * @since 1.0.5</a>
+<span class="sourceLineNo">475</span><a id="line.475">     *</a>
+<span class="sourceLineNo">476</span><a id="line.476">     * @see #setDrawVolume(boolean)</a>
+<span class="sourceLineNo">477</span><a id="line.477">     */</a>
+<span class="sourceLineNo">478</span><a id="line.478">    public boolean getDrawVolume() {</a>
+<span class="sourceLineNo">479</span><a id="line.479">        return this.drawVolume;</a>
+<span class="sourceLineNo">480</span><a id="line.480">    }</a>
+<span class="sourceLineNo">481</span><a id="line.481"></a>
+<span class="sourceLineNo">482</span><a id="line.482">    /**</a>
+<span class="sourceLineNo">483</span><a id="line.483">     * Sets a flag that controls whether or not volume bars are drawn in the</a>
+<span class="sourceLineNo">484</span><a id="line.484">     * background and sends a {@link RendererChangeEvent} to all registered</a>
+<span class="sourceLineNo">485</span><a id="line.485">     * listeners.</a>
+<span class="sourceLineNo">486</span><a id="line.486">     *</a>
+<span class="sourceLineNo">487</span><a id="line.487">     * @param flag  the flag.</a>
+<span class="sourceLineNo">488</span><a id="line.488">     *</a>
+<span class="sourceLineNo">489</span><a id="line.489">     * @see #getDrawVolume()</a>
+<span class="sourceLineNo">490</span><a id="line.490">     */</a>
+<span class="sourceLineNo">491</span><a id="line.491">    public void setDrawVolume(boolean flag) {</a>
+<span class="sourceLineNo">492</span><a id="line.492">        if (this.drawVolume != flag) {</a>
+<span class="sourceLineNo">493</span><a id="line.493">            this.drawVolume = flag;</a>
+<span class="sourceLineNo">494</span><a id="line.494">            fireChangeEvent();</a>
+<span class="sourceLineNo">495</span><a id="line.495">        }</a>
+<span class="sourceLineNo">496</span><a id="line.496">    }</a>
+<span class="sourceLineNo">497</span><a id="line.497"></a>
+<span class="sourceLineNo">498</span><a id="line.498">    /**</a>
+<span class="sourceLineNo">499</span><a id="line.499">     * Returns the paint that is used to fill the volume bars if they are</a>
+<span class="sourceLineNo">500</span><a id="line.500">     * visible.</a>
+<span class="sourceLineNo">501</span><a id="line.501">     *</a>
+<span class="sourceLineNo">502</span><a id="line.502">     * @return The paint (never &lt;code&gt;null&lt;/code&gt;).</a>
+<span class="sourceLineNo">503</span><a id="line.503">     *</a>
+<span class="sourceLineNo">504</span><a id="line.504">     * @see #setVolumePaint(Paint)</a>
+<span class="sourceLineNo">505</span><a id="line.505">     *</a>
+<span class="sourceLineNo">506</span><a id="line.506">     * @since 1.0.7</a>
+<span class="sourceLineNo">507</span><a id="line.507">     */</a>
+<span class="sourceLineNo">508</span><a id="line.508">    public Paint getVolumePaint() {</a>
+<span class="sourceLineNo">509</span><a id="line.509">        return this.volumePaint;</a>
+<span class="sourceLineNo">510</span><a id="line.510">    }</a>
+<span class="sourceLineNo">511</span><a id="line.511"></a>
+<span class="sourceLineNo">512</span><a id="line.512">    /**</a>
+<span class="sourceLineNo">513</span><a id="line.513">     * Sets the paint used to fill the volume bars, and sends a</a>
+<span class="sourceLineNo">514</span><a id="line.514">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">515</span><a id="line.515">     *</a>
+<span class="sourceLineNo">516</span><a id="line.516">     * @param paint  the paint (&lt;code&gt;null&lt;/code&gt; not permitted).</a>
+<span class="sourceLineNo">517</span><a id="line.517">     *</a>
+<span class="sourceLineNo">518</span><a id="line.518">     * @see #getVolumePaint()</a>
+<span class="sourceLineNo">519</span><a id="line.519">     * @see #getDrawVolume()</a>
+<span class="sourceLineNo">520</span><a id="line.520">     *</a>
+<span class="sourceLineNo">521</span><a id="line.521">     * @since 1.0.7</a>
+<span class="sourceLineNo">522</span><a id="line.522">     */</a>
+<span class="sourceLineNo">523</span><a id="line.523">    public void setVolumePaint(Paint paint) {</a>
+<span class="sourceLineNo">524</span><a id="line.524">        ParamChecks.nullNotPermitted(paint, "paint");</a>
+<span class="sourceLineNo">525</span><a id="line.525">        this.volumePaint = paint;</a>
+<span class="sourceLineNo">526</span><a id="line.526">        fireChangeEvent();</a>
+<span class="sourceLineNo">527</span><a id="line.527">    }</a>
+<span class="sourceLineNo">528</span><a id="line.528"></a>
+<span class="sourceLineNo">529</span><a id="line.529">    /**</a>
+<span class="sourceLineNo">530</span><a id="line.530">     * Returns the flag that controls whether or not the renderer's outline</a>
+<span class="sourceLineNo">531</span><a id="line.531">     * paint is used to draw the candlestick outline.  The default value is</a>
+<span class="sourceLineNo">532</span><a id="line.532">     * &lt;code&gt;false&lt;/code&gt;.</a>
+<span class="sourceLineNo">533</span><a id="line.533">     *</a>
+<span class="sourceLineNo">534</span><a id="line.534">     * @return A boolean.</a>
+<span class="sourceLineNo">535</span><a id="line.535">     *</a>
+<span class="sourceLineNo">536</span><a id="line.536">     * @since 1.0.5</a>
+<span class="sourceLineNo">537</span><a id="line.537">     *</a>
+<span class="sourceLineNo">538</span><a id="line.538">     * @see #setUseOutlinePaint(boolean)</a>
+<span class="sourceLineNo">539</span><a id="line.539">     */</a>
+<span class="sourceLineNo">540</span><a id="line.540">    public boolean getUseOutlinePaint() {</a>
+<span class="sourceLineNo">541</span><a id="line.541">        return this.useOutlinePaint;</a>
+<span class="sourceLineNo">542</span><a id="line.542">    }</a>
+<span class="sourceLineNo">543</span><a id="line.543"></a>
+<span class="sourceLineNo">544</span><a id="line.544">    /**</a>
+<span class="sourceLineNo">545</span><a id="line.545">     * Sets the flag that controls whether or not the renderer's outline</a>
+<span class="sourceLineNo">546</span><a id="line.546">     * paint is used to draw the candlestick outline, and sends a</a>
+<span class="sourceLineNo">547</span><a id="line.547">     * {@link RendererChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">548</span><a id="line.548">     *</a>
+<span class="sourceLineNo">549</span><a id="line.549">     * @param use  the new flag value.</a>
+<span class="sourceLineNo">550</span><a id="line.550">     *</a>
+<span class="sourceLineNo">551</span><a id="line.551">     * @since 1.0.5</a>
+<span class="sourceLineNo">552</span><a id="line.552">     *</a>
+<span class="sourceLineNo">553</span><a id="line.553">     * @see #getUseOutlinePaint()</a>
+<span class="sourceLineNo">554</span><a id="line.554">     */</a>
+<span class="sourceLineNo">555</span><a id="line.555">    public void setUseOutlinePaint(boolean use) {</a>
+<span class="sourceLineNo">556</span><a id="line.556">        if (this.useOutlinePaint != use) {</a>
+<span class="sourceLineNo">557</span><a id="line.557">            this.useOutlinePaint = use;</a>
+<span class="sourceLineNo">558</span><a id="line.558">            fireChangeEvent();</a>
+<span class="sourceLineNo">559</span><a id="line.559">        }</a>
+<span class="sourceLineNo">560</span><a id="line.560">    }</a>
+<span class="sourceLineNo">561</span><a id="line.561"></a>
+<span class="sourceLineNo">562</span><a id="line.562">    /**</a>
+<span class="sourceLineNo">563</span><a id="line.563">     * Returns the range of values the renderer requires to display all the</a>
+<span class="sourceLineNo">564</span><a id="line.564">     * items from the specified dataset.</a>
+<span class="sourceLineNo">565</span><a id="line.565">     *</a>
+<span class="sourceLineNo">566</span><a id="line.566">     * @param dataset  the dataset (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">567</span><a id="line.567">     *</a>
+<span class="sourceLineNo">568</span><a id="line.568">     * @return The range (&lt;code&gt;null&lt;/code&gt; if the dataset is &lt;code&gt;null&lt;/code&gt;</a>
+<span class="sourceLineNo">569</span><a id="line.569">     *         or empty).</a>
+<span class="sourceLineNo">570</span><a id="line.570">     */</a>
+<span class="sourceLineNo">571</span><a id="line.571">    @Override</a>
+<span class="sourceLineNo">572</span><a id="line.572">    public Range findRangeBounds(XYDataset dataset) {</a>
+<span class="sourceLineNo">573</span><a id="line.573">        return findRangeBounds(dataset, true);</a>
+<span class="sourceLineNo">574</span><a id="line.574">    }</a>
+<span class="sourceLineNo">575</span><a id="line.575"></a>
+<span class="sourceLineNo">576</span><a id="line.576">    /**</a>
+<span class="sourceLineNo">577</span><a id="line.577">     * Initialises the renderer then returns the number of 'passes' through the</a>
+<span class="sourceLineNo">578</span><a id="line.578">     * data that the renderer will require (usually just one).  This method</a>
+<span class="sourceLineNo">579</span><a id="line.579">     * will be called before the first item is rendered, giving the renderer</a>
+<span class="sourceLineNo">580</span><a id="line.580">     * an opportunity to initialise any state information it wants to maintain.</a>
+<span class="sourceLineNo">581</span><a id="line.581">     * The renderer can do nothing if it chooses.</a>
+<span class="sourceLineNo">582</span><a id="line.582">     *</a>
+<span class="sourceLineNo">583</span><a id="line.583">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">584</span><a id="line.584">     * @param dataArea  the area inside the axes.</a>
+<span class="sourceLineNo">585</span><a id="line.585">     * @param plot  the plot.</a>
+<span class="sourceLineNo">586</span><a id="line.586">     * @param dataset  the data.</a>
+<span class="sourceLineNo">587</span><a id="line.587">     * @param info  an optional info collection object to return data back to</a>
+<span class="sourceLineNo">588</span><a id="line.588">     *              the caller.</a>
+<span class="sourceLineNo">589</span><a id="line.589">     *</a>
+<span class="sourceLineNo">590</span><a id="line.590">     * @return The number of passes the renderer requires.</a>
+<span class="sourceLineNo">591</span><a id="line.591">     */</a>
+<span class="sourceLineNo">592</span><a id="line.592">    @Override</a>
+<span class="sourceLineNo">593</span><a id="line.593">    public XYItemRendererState initialise(Graphics2D g2, Rectangle2D dataArea,</a>
+<span class="sourceLineNo">594</span><a id="line.594">            XYPlot plot, XYDataset dataset, PlotRenderingInfo info) {</a>
+<span class="sourceLineNo">595</span><a id="line.595"></a>
+<span class="sourceLineNo">596</span><a id="line.596">        // calculate the maximum allowed candle width from the axis...</a>
+<span class="sourceLineNo">597</span><a id="line.597">        ValueAxis axis = plot.getDomainAxis();</a>
+<span class="sourceLineNo">598</span><a id="line.598">        double x1 = axis.getLowerBound();</a>
+<span class="sourceLineNo">599</span><a id="line.599">        double x2 = x1 + this.maxCandleWidthInMilliseconds;</a>
+<span class="sourceLineNo">600</span><a id="line.600">        RectangleEdge edge = plot.getDomainAxisEdge();</a>
+<span class="sourceLineNo">601</span><a id="line.601">        double xx1 = axis.valueToJava2D(x1, dataArea, edge);</a>
+<span class="sourceLineNo">602</span><a id="line.602">        double xx2 = axis.valueToJava2D(x2, dataArea, edge);</a>
+<span class="sourceLineNo">603</span><a id="line.603">        this.maxCandleWidth = Math.abs(xx2 - xx1);</a>
+<span class="sourceLineNo">604</span><a id="line.604">            // Absolute value, since the relative x</a>
+<span class="sourceLineNo">605</span><a id="line.605">            // positions are reversed for horizontal orientation</a>
+<span class="sourceLineNo">606</span><a id="line.606"></a>
+<span class="sourceLineNo">607</span><a id="line.607">        // calculate the highest volume in the dataset...</a>
+<span class="sourceLineNo">608</span><a id="line.608">        if (this.drawVolume) {</a>
+<span class="sourceLineNo">609</span><a id="line.609">            OHLCDataset highLowDataset = (OHLCDataset) dataset;</a>
+<span class="sourceLineNo">610</span><a id="line.610">            this.maxVolume = 0.0;</a>
+<span class="sourceLineNo">611</span><a id="line.611">            for (int series = 0; series &lt; highLowDataset.getSeriesCount();</a>
+<span class="sourceLineNo">612</span><a id="line.612">                 series++) {</a>
+<span class="sourceLineNo">613</span><a id="line.613">                for (int item = 0; item &lt; highLowDataset.getItemCount(series);</a>
+<span class="sourceLineNo">614</span><a id="line.614">                     item++) {</a>
+<span class="sourceLineNo">615</span><a id="line.615">                    double volume = highLowDataset.getVolumeValue(series, item);</a>
+<span class="sourceLineNo">616</span><a id="line.616">                    if (volume &gt; this.maxVolume) {</a>
+<span class="sourceLineNo">617</span><a id="line.617">                        this.maxVolume = volume;</a>
+<span class="sourceLineNo">618</span><a id="line.618">                    }</a>
+<span class="sourceLineNo">619</span><a id="line.619"></a>
+<span class="sourceLineNo">620</span><a id="line.620">                }</a>
+<span class="sourceLineNo">621</span><a id="line.621">            }</a>
+<span class="sourceLineNo">622</span><a id="line.622">        }</a>
+<span class="sourceLineNo">623</span><a id="line.623"></a>
+<span class="sourceLineNo">624</span><a id="line.624">        return new XYItemRendererState(info);</a>
+<span class="sourceLineNo">625</span><a id="line.625">    }</a>
+<span class="sourceLineNo">626</span><a id="line.626"></a>
+<span class="sourceLineNo">627</span><a id="line.627">    /**</a>
+<span class="sourceLineNo">628</span><a id="line.628">     * Draws the visual representation of a single data item.</a>
+<span class="sourceLineNo">629</span><a id="line.629">     *</a>
+<span class="sourceLineNo">630</span><a id="line.630">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">631</span><a id="line.631">     * @param state  the renderer state.</a>
+<span class="sourceLineNo">632</span><a id="line.632">     * @param dataArea  the area within which the plot is being drawn.</a>
+<span class="sourceLineNo">633</span><a id="line.633">     * @param info  collects info about the drawing.</a>
+<span class="sourceLineNo">634</span><a id="line.634">     * @param plot  the plot (can be used to obtain standard color</a>
+<span class="sourceLineNo">635</span><a id="line.635">     *              information etc).</a>
+<span class="sourceLineNo">636</span><a id="line.636">     * @param domainAxis  the domain axis.</a>
+<span class="sourceLineNo">637</span><a id="line.637">     * @param rangeAxis  the range axis.</a>
+<span class="sourceLineNo">638</span><a id="line.638">     * @param dataset  the dataset.</a>
+<span class="sourceLineNo">639</span><a id="line.639">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">640</span><a id="line.640">     * @param item  the item index (zero-based).</a>
+<span class="sourceLineNo">641</span><a id="line.641">     * @param crosshairState  crosshair information for the plot</a>
+<span class="sourceLineNo">642</span><a id="line.642">     *                        (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">643</span><a id="line.643">     * @param pass  the pass index.</a>
+<span class="sourceLineNo">644</span><a id="line.644">     */</a>
+<span class="sourceLineNo">645</span><a id="line.645">    @Override</a>
+<span class="sourceLineNo">646</span><a id="line.646">    public void drawItem(Graphics2D g2, XYItemRendererState state,</a>
+<span class="sourceLineNo">647</span><a id="line.647">            Rectangle2D dataArea, PlotRenderingInfo info, XYPlot plot,</a>
+<span class="sourceLineNo">648</span><a id="line.648">            ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset,</a>
+<span class="sourceLineNo">649</span><a id="line.649">            int series, int item, CrosshairState crosshairState, int pass) {</a>
+<span class="sourceLineNo">650</span><a id="line.650"></a>
+<span class="sourceLineNo">651</span><a id="line.651">        boolean horiz;</a>
+<span class="sourceLineNo">652</span><a id="line.652">        PlotOrientation orientation = plot.getOrientation();</a>
+<span class="sourceLineNo">653</span><a id="line.653">        if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">654</span><a id="line.654">            horiz = true;</a>
+<span class="sourceLineNo">655</span><a id="line.655">        }</a>
+<span class="sourceLineNo">656</span><a id="line.656">        else if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">657</span><a id="line.657">            horiz = false;</a>
+<span class="sourceLineNo">658</span><a id="line.658">        }</a>
+<span class="sourceLineNo">659</span><a id="line.659">        else {</a>
+<span class="sourceLineNo">660</span><a id="line.660">            return;</a>
+<span class="sourceLineNo">661</span><a id="line.661">        }</a>
+<span class="sourceLineNo">662</span><a id="line.662"></a>
+<span class="sourceLineNo">663</span><a id="line.663">        // setup for collecting optional entity info...</a>
+<span class="sourceLineNo">664</span><a id="line.664">        EntityCollection entities = null;</a>
+<span class="sourceLineNo">665</span><a id="line.665">        if (info != null) {</a>
+<span class="sourceLineNo">666</span><a id="line.666">            entities = info.getOwner().getEntityCollection();</a>
+<span class="sourceLineNo">667</span><a id="line.667">        }</a>
+<span class="sourceLineNo">668</span><a id="line.668"></a>
+<span class="sourceLineNo">669</span><a id="line.669">        OHLCDataset highLowData = (OHLCDataset) dataset;</a>
+<span class="sourceLineNo">670</span><a id="line.670"></a>
+<span class="sourceLineNo">671</span><a id="line.671">        double x = highLowData.getXValue(series, item);</a>
+<span class="sourceLineNo">672</span><a id="line.672">        double yHigh = highLowData.getHighValue(series, item);</a>
+<span class="sourceLineNo">673</span><a id="line.673">        double yLow = highLowData.getLowValue(series, item);</a>
+<span class="sourceLineNo">674</span><a id="line.674">        double yOpen = highLowData.getOpenValue(series, item);</a>
+<span class="sourceLineNo">675</span><a id="line.675">        double yClose = highLowData.getCloseValue(series, item);</a>
+<span class="sourceLineNo">676</span><a id="line.676"></a>
+<span class="sourceLineNo">677</span><a id="line.677">        RectangleEdge domainEdge = plot.getDomainAxisEdge();</a>
+<span class="sourceLineNo">678</span><a id="line.678">        double xx = domainAxis.valueToJava2D(x, dataArea, domainEdge);</a>
+<span class="sourceLineNo">679</span><a id="line.679"></a>
+<span class="sourceLineNo">680</span><a id="line.680">        RectangleEdge edge = plot.getRangeAxisEdge();</a>
+<span class="sourceLineNo">681</span><a id="line.681">        double yyHigh = rangeAxis.valueToJava2D(yHigh, dataArea, edge);</a>
+<span class="sourceLineNo">682</span><a id="line.682">        double yyLow = rangeAxis.valueToJava2D(yLow, dataArea, edge);</a>
+<span class="sourceLineNo">683</span><a id="line.683">        double yyOpen = rangeAxis.valueToJava2D(yOpen, dataArea, edge);</a>
+<span class="sourceLineNo">684</span><a id="line.684">        double yyClose = rangeAxis.valueToJava2D(yClose, dataArea, edge);</a>
+<span class="sourceLineNo">685</span><a id="line.685"></a>
+<span class="sourceLineNo">686</span><a id="line.686">        double volumeWidth;</a>
+<span class="sourceLineNo">687</span><a id="line.687">        double stickWidth;</a>
+<span class="sourceLineNo">688</span><a id="line.688">        if (this.candleWidth &gt; 0) {</a>
+<span class="sourceLineNo">689</span><a id="line.689">            // These are deliberately not bounded to minimums/maxCandleWidth to</a>
+<span class="sourceLineNo">690</span><a id="line.690">            //  retain old behaviour.</a>
+<span class="sourceLineNo">691</span><a id="line.691">            volumeWidth = this.candleWidth;</a>
+<span class="sourceLineNo">692</span><a id="line.692">            stickWidth = this.candleWidth;</a>
+<span class="sourceLineNo">693</span><a id="line.693">        }</a>
+<span class="sourceLineNo">694</span><a id="line.694">        else {</a>
+<span class="sourceLineNo">695</span><a id="line.695">            double xxWidth = 0;</a>
+<span class="sourceLineNo">696</span><a id="line.696">            int itemCount;</a>
+<span class="sourceLineNo">697</span><a id="line.697">            switch (this.autoWidthMethod) {</a>
+<span class="sourceLineNo">698</span><a id="line.698"></a>
+<span class="sourceLineNo">699</span><a id="line.699">                case WIDTHMETHOD_AVERAGE:</a>
+<span class="sourceLineNo">700</span><a id="line.700">                    itemCount = highLowData.getItemCount(series);</a>
+<span class="sourceLineNo">701</span><a id="line.701">                    if (horiz) {</a>
+<span class="sourceLineNo">702</span><a id="line.702">                        xxWidth = dataArea.getHeight() / itemCount;</a>
+<span class="sourceLineNo">703</span><a id="line.703">                    }</a>
+<span class="sourceLineNo">704</span><a id="line.704">                    else {</a>
+<span class="sourceLineNo">705</span><a id="line.705">                        xxWidth = dataArea.getWidth() / itemCount;</a>
+<span class="sourceLineNo">706</span><a id="line.706">                    }</a>
+<span class="sourceLineNo">707</span><a id="line.707">                    break;</a>
+<span class="sourceLineNo">708</span><a id="line.708"></a>
+<span class="sourceLineNo">709</span><a id="line.709">                case WIDTHMETHOD_SMALLEST:</a>
+<span class="sourceLineNo">710</span><a id="line.710">                    // Note: It would be nice to pre-calculate this per series</a>
+<span class="sourceLineNo">711</span><a id="line.711">                    itemCount = highLowData.getItemCount(series);</a>
+<span class="sourceLineNo">712</span><a id="line.712">                    double lastPos = -1;</a>
+<span class="sourceLineNo">713</span><a id="line.713">                    xxWidth = dataArea.getWidth();</a>
+<span class="sourceLineNo">714</span><a id="line.714">                    for (int i = 0; i &lt; itemCount; i++) {</a>
+<span class="sourceLineNo">715</span><a id="line.715">                        double pos = domainAxis.valueToJava2D(</a>
+<span class="sourceLineNo">716</span><a id="line.716">                                highLowData.getXValue(series, i), dataArea,</a>
+<span class="sourceLineNo">717</span><a id="line.717">                                domainEdge);</a>
+<span class="sourceLineNo">718</span><a id="line.718">                        if (lastPos != -1) {</a>
+<span class="sourceLineNo">719</span><a id="line.719">                            xxWidth = Math.min(xxWidth,</a>
+<span class="sourceLineNo">720</span><a id="line.720">                                    Math.abs(pos - lastPos));</a>
+<span class="sourceLineNo">721</span><a id="line.721">                        }</a>
+<span class="sourceLineNo">722</span><a id="line.722">                        lastPos = pos;</a>
+<span class="sourceLineNo">723</span><a id="line.723">                    }</a>
+<span class="sourceLineNo">724</span><a id="line.724">                    break;</a>
+<span class="sourceLineNo">725</span><a id="line.725"></a>
+<span class="sourceLineNo">726</span><a id="line.726">                case WIDTHMETHOD_INTERVALDATA:</a>
+<span class="sourceLineNo">727</span><a id="line.727">                    IntervalXYDataset intervalXYData</a>
+<span class="sourceLineNo">728</span><a id="line.728">                            = (IntervalXYDataset) dataset;</a>
+<span class="sourceLineNo">729</span><a id="line.729">                    double startPos = domainAxis.valueToJava2D(</a>
+<span class="sourceLineNo">730</span><a id="line.730">                            intervalXYData.getStartXValue(series, item),</a>
+<span class="sourceLineNo">731</span><a id="line.731">                            dataArea, plot.getDomainAxisEdge());</a>
+<span class="sourceLineNo">732</span><a id="line.732">                    double endPos = domainAxis.valueToJava2D(</a>
+<span class="sourceLineNo">733</span><a id="line.733">                            intervalXYData.getEndXValue(series, item),</a>
+<span class="sourceLineNo">734</span><a id="line.734">                            dataArea, plot.getDomainAxisEdge());</a>
+<span class="sourceLineNo">735</span><a id="line.735">                    xxWidth = Math.abs(endPos - startPos);</a>
+<span class="sourceLineNo">736</span><a id="line.736">                    break;</a>
+<span class="sourceLineNo">737</span><a id="line.737"></a>
+<span class="sourceLineNo">738</span><a id="line.738">            }</a>
+<span class="sourceLineNo">739</span><a id="line.739">            xxWidth -= 2 * this.autoWidthGap;</a>
+<span class="sourceLineNo">740</span><a id="line.740">            xxWidth *= this.autoWidthFactor;</a>
+<span class="sourceLineNo">741</span><a id="line.741">            xxWidth = Math.min(xxWidth, this.maxCandleWidth);</a>
+<span class="sourceLineNo">742</span><a id="line.742">            volumeWidth = Math.max(Math.min(1, this.maxCandleWidth), xxWidth);</a>
+<span class="sourceLineNo">743</span><a id="line.743">            stickWidth = Math.max(Math.min(3, this.maxCandleWidth), xxWidth);</a>
+<span class="sourceLineNo">744</span><a id="line.744">        }</a>
+<span class="sourceLineNo">745</span><a id="line.745"></a>
+<span class="sourceLineNo">746</span><a id="line.746">        Paint p = getItemPaint(series, item);</a>
+<span class="sourceLineNo">747</span><a id="line.747">        Paint outlinePaint = null;</a>
+<span class="sourceLineNo">748</span><a id="line.748">        if (this.useOutlinePaint) {</a>
+<span class="sourceLineNo">749</span><a id="line.749">            outlinePaint = getItemOutlinePaint(series, item);</a>
+<span class="sourceLineNo">750</span><a id="line.750">        }</a>
+<span class="sourceLineNo">751</span><a id="line.751">        Stroke s = getItemStroke(series, item);</a>
+<span class="sourceLineNo">752</span><a id="line.752"></a>
+<span class="sourceLineNo">753</span><a id="line.753">        g2.setStroke(s);</a>
+<span class="sourceLineNo">754</span><a id="line.754"></a>
+<span class="sourceLineNo">755</span><a id="line.755">        if (this.drawVolume) {</a>
+<span class="sourceLineNo">756</span><a id="line.756">            int volume = (int) highLowData.getVolumeValue(series, item);</a>
+<span class="sourceLineNo">757</span><a id="line.757">            double volumeHeight = volume / this.maxVolume;</a>
+<span class="sourceLineNo">758</span><a id="line.758"></a>
+<span class="sourceLineNo">759</span><a id="line.759">            double min, max;</a>
+<span class="sourceLineNo">760</span><a id="line.760">            if (horiz) {</a>
+<span class="sourceLineNo">761</span><a id="line.761">                min = dataArea.getMinX();</a>
+<span class="sourceLineNo">762</span><a id="line.762">                max = dataArea.getMaxX();</a>
+<span class="sourceLineNo">763</span><a id="line.763">            }</a>
+<span class="sourceLineNo">764</span><a id="line.764">            else {</a>
+<span class="sourceLineNo">765</span><a id="line.765">                min = dataArea.getMinY();</a>
+<span class="sourceLineNo">766</span><a id="line.766">                max = dataArea.getMaxY();</a>
+<span class="sourceLineNo">767</span><a id="line.767">            }</a>
+<span class="sourceLineNo">768</span><a id="line.768"></a>
+<span class="sourceLineNo">769</span><a id="line.769">            double zzVolume = volumeHeight * (max - min);</a>
+<span class="sourceLineNo">770</span><a id="line.770"></a>
+<span class="sourceLineNo">771</span><a id="line.771">            g2.setPaint(getVolumePaint());</a>
+<span class="sourceLineNo">772</span><a id="line.772">            Composite originalComposite = g2.getComposite();</a>
+<span class="sourceLineNo">773</span><a id="line.773">            g2.setComposite(AlphaComposite.getInstance(</a>
+<span class="sourceLineNo">774</span><a id="line.774">                    AlphaComposite.SRC_OVER, 0.3f));</a>
+<span class="sourceLineNo">775</span><a id="line.775"></a>
+<span class="sourceLineNo">776</span><a id="line.776">            if (horiz) {</a>
+<span class="sourceLineNo">777</span><a id="line.777">                g2.fill(new Rectangle2D.Double(min, xx - volumeWidth / 2,</a>
+<span class="sourceLineNo">778</span><a id="line.778">                        zzVolume, volumeWidth));</a>
+<span class="sourceLineNo">779</span><a id="line.779">            }</a>
+<span class="sourceLineNo">780</span><a id="line.780">            else {</a>
+<span class="sourceLineNo">781</span><a id="line.781">                g2.fill(new Rectangle2D.Double(xx - volumeWidth / 2,</a>
+<span class="sourceLineNo">782</span><a id="line.782">                        max - zzVolume, volumeWidth, zzVolume));</a>
+<span class="sourceLineNo">783</span><a id="line.783">            }</a>
+<span class="sourceLineNo">784</span><a id="line.784"></a>
+<span class="sourceLineNo">785</span><a id="line.785">            g2.setComposite(originalComposite);</a>
+<span class="sourceLineNo">786</span><a id="line.786">        }</a>
+<span class="sourceLineNo">787</span><a id="line.787"></a>
+<span class="sourceLineNo">788</span><a id="line.788">        if (this.useOutlinePaint) {</a>
+<span class="sourceLineNo">789</span><a id="line.789">            g2.setPaint(outlinePaint);</a>
+<span class="sourceLineNo">790</span><a id="line.790">        }</a>
+<span class="sourceLineNo">791</span><a id="line.791">        else {</a>
+<span class="sourceLineNo">792</span><a id="line.792">            g2.setPaint(p);</a>
+<span class="sourceLineNo">793</span><a id="line.793">        }</a>
+<span class="sourceLineNo">794</span><a id="line.794"></a>
+<span class="sourceLineNo">795</span><a id="line.795">        double yyMaxOpenClose = Math.max(yyOpen, yyClose);</a>
+<span class="sourceLineNo">796</span><a id="line.796">        double yyMinOpenClose = Math.min(yyOpen, yyClose);</a>
+<span class="sourceLineNo">797</span><a id="line.797">        double maxOpenClose = Math.max(yOpen, yClose);</a>
+<span class="sourceLineNo">798</span><a id="line.798">        double minOpenClose = Math.min(yOpen, yClose);</a>
+<span class="sourceLineNo">799</span><a id="line.799"></a>
+<span class="sourceLineNo">800</span><a id="line.800">        // draw the upper shadow</a>
+<span class="sourceLineNo">801</span><a id="line.801">        if (yHigh &gt; maxOpenClose) {</a>
+<span class="sourceLineNo">802</span><a id="line.802">            if (horiz) {</a>
+<span class="sourceLineNo">803</span><a id="line.803">                g2.draw(new Line2D.Double(yyHigh, xx, yyMaxOpenClose, xx));</a>
+<span class="sourceLineNo">804</span><a id="line.804">            }</a>
+<span class="sourceLineNo">805</span><a id="line.805">            else {</a>
+<span class="sourceLineNo">806</span><a id="line.806">                g2.draw(new Line2D.Double(xx, yyHigh, xx, yyMaxOpenClose));</a>
+<span class="sourceLineNo">807</span><a id="line.807">            }</a>
+<span class="sourceLineNo">808</span><a id="line.808">        }</a>
+<span class="sourceLineNo">809</span><a id="line.809"></a>
+<span class="sourceLineNo">810</span><a id="line.810">        // draw the lower shadow</a>
+<span class="sourceLineNo">811</span><a id="line.811">        if (yLow &lt; minOpenClose) {</a>
+<span class="sourceLineNo">812</span><a id="line.812">            if (horiz) {</a>
+<span class="sourceLineNo">813</span><a id="line.813">                g2.draw(new Line2D.Double(yyLow, xx, yyMinOpenClose, xx));</a>
+<span class="sourceLineNo">814</span><a id="line.814">            }</a>
+<span class="sourceLineNo">815</span><a id="line.815">            else {</a>
+<span class="sourceLineNo">816</span><a id="line.816">                g2.draw(new Line2D.Double(xx, yyLow, xx, yyMinOpenClose));</a>
+<span class="sourceLineNo">817</span><a id="line.817">            }</a>
+<span class="sourceLineNo">818</span><a id="line.818">        }</a>
+<span class="sourceLineNo">819</span><a id="line.819"></a>
+<span class="sourceLineNo">820</span><a id="line.820">        // draw the body</a>
+<span class="sourceLineNo">821</span><a id="line.821">        Rectangle2D body;</a>
+<span class="sourceLineNo">822</span><a id="line.822">        Rectangle2D hotspot;</a>
+<span class="sourceLineNo">823</span><a id="line.823">        double length = Math.abs(yyHigh - yyLow);</a>
+<span class="sourceLineNo">824</span><a id="line.824">        double base = Math.min(yyHigh, yyLow);</a>
+<span class="sourceLineNo">825</span><a id="line.825">        if (horiz) {</a>
+<span class="sourceLineNo">826</span><a id="line.826">            body = new Rectangle2D.Double(yyMinOpenClose, xx - stickWidth / 2,</a>
+<span class="sourceLineNo">827</span><a id="line.827">                    yyMaxOpenClose - yyMinOpenClose, stickWidth);</a>
+<span class="sourceLineNo">828</span><a id="line.828">            hotspot = new Rectangle2D.Double(base, xx - stickWidth / 2,</a>
+<span class="sourceLineNo">829</span><a id="line.829">                    length, stickWidth);</a>
+<span class="sourceLineNo">830</span><a id="line.830">        }</a>
+<span class="sourceLineNo">831</span><a id="line.831">        else {</a>
+<span class="sourceLineNo">832</span><a id="line.832">            body = new Rectangle2D.Double(xx - stickWidth / 2, yyMinOpenClose,</a>
+<span class="sourceLineNo">833</span><a id="line.833">                    stickWidth, yyMaxOpenClose - yyMinOpenClose);</a>
+<span class="sourceLineNo">834</span><a id="line.834">            hotspot = new Rectangle2D.Double(xx - stickWidth / 2,</a>
+<span class="sourceLineNo">835</span><a id="line.835">                    base, stickWidth, length);</a>
+<span class="sourceLineNo">836</span><a id="line.836">        }</a>
+<span class="sourceLineNo">837</span><a id="line.837">        if (yClose &gt; yOpen) {</a>
+<span class="sourceLineNo">838</span><a id="line.838">            if (this.upPaint != null) {</a>
+<span class="sourceLineNo">839</span><a id="line.839">                g2.setPaint(this.upPaint);</a>
+<span class="sourceLineNo">840</span><a id="line.840">            }</a>
+<span class="sourceLineNo">841</span><a id="line.841">            else {</a>
+<span class="sourceLineNo">842</span><a id="line.842">                g2.setPaint(p);</a>
+<span class="sourceLineNo">843</span><a id="line.843">            }</a>
+<span class="sourceLineNo">844</span><a id="line.844">            g2.fill(body);</a>
+<span class="sourceLineNo">845</span><a id="line.845">        }</a>
+<span class="sourceLineNo">846</span><a id="line.846">        else {</a>
+<span class="sourceLineNo">847</span><a id="line.847">            if (this.downPaint != null) {</a>
+<span class="sourceLineNo">848</span><a id="line.848">                g2.setPaint(this.downPaint);</a>
+<span class="sourceLineNo">849</span><a id="line.849">            }</a>
+<span class="sourceLineNo">850</span><a id="line.850">            else {</a>
+<span class="sourceLineNo">851</span><a id="line.851">                g2.setPaint(p);</a>
+<span class="sourceLineNo">852</span><a id="line.852">            }</a>
+<span class="sourceLineNo">853</span><a id="line.853">            g2.fill(body);</a>
+<span class="sourceLineNo">854</span><a id="line.854">        }</a>
+<span class="sourceLineNo">855</span><a id="line.855">        if (this.useOutlinePaint) {</a>
+<span class="sourceLineNo">856</span><a id="line.856">            g2.setPaint(outlinePaint);</a>
+<span class="sourceLineNo">857</span><a id="line.857">        }</a>
+<span class="sourceLineNo">858</span><a id="line.858">        else {</a>
+<span class="sourceLineNo">859</span><a id="line.859">            g2.setPaint(p);</a>
+<span class="sourceLineNo">860</span><a id="line.860">        }</a>
+<span class="sourceLineNo">861</span><a id="line.861">        g2.draw(body);</a>
+<span class="sourceLineNo">862</span><a id="line.862"></a>
+<span class="sourceLineNo">863</span><a id="line.863">        // add an entity for the item...</a>
+<span class="sourceLineNo">864</span><a id="line.864">        if (entities != null) {</a>
+<span class="sourceLineNo">865</span><a id="line.865">            addEntity(entities, hotspot, dataset, series, item, 0.0, 0.0);</a>
+<span class="sourceLineNo">866</span><a id="line.866">        }</a>
+<span class="sourceLineNo">867</span><a id="line.867"></a>
+<span class="sourceLineNo">868</span><a id="line.868">    }</a>
+<span class="sourceLineNo">869</span><a id="line.869"></a>
+<span class="sourceLineNo">870</span><a id="line.870">    /**</a>
+<span class="sourceLineNo">871</span><a id="line.871">     * Tests this renderer for equality with another object.</a>
+<span class="sourceLineNo">872</span><a id="line.872">     *</a>
+<span class="sourceLineNo">873</span><a id="line.873">     * @param obj  the object (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">874</span><a id="line.874">     *</a>
+<span class="sourceLineNo">875</span><a id="line.875">     * @return &lt;code&gt;true&lt;/code&gt; or &lt;code&gt;false&lt;/code&gt;.</a>
+<span class="sourceLineNo">876</span><a id="line.876">     */</a>
+<span class="sourceLineNo">877</span><a id="line.877">    @Override</a>
+<span class="sourceLineNo">878</span><a id="line.878">    public boolean equals(Object obj) {</a>
+<span class="sourceLineNo">879</span><a id="line.879">        if (obj == this) {</a>
+<span class="sourceLineNo">880</span><a id="line.880">            return true;</a>
+<span class="sourceLineNo">881</span><a id="line.881">        }</a>
+<span class="sourceLineNo">882</span><a id="line.882">        if (!(obj instanceof CandlestickRenderer)) {</a>
+<span class="sourceLineNo">883</span><a id="line.883">            return false;</a>
+<span class="sourceLineNo">884</span><a id="line.884">        }</a>
+<span class="sourceLineNo">885</span><a id="line.885">        CandlestickRenderer that = (CandlestickRenderer) obj;</a>
+<span class="sourceLineNo">886</span><a id="line.886">        if (this.candleWidth != that.candleWidth) {</a>
+<span class="sourceLineNo">887</span><a id="line.887">            return false;</a>
+<span class="sourceLineNo">888</span><a id="line.888">        }</a>
+<span class="sourceLineNo">889</span><a id="line.889">        if (!PaintUtilities.equal(this.upPaint, that.upPaint)) {</a>
+<span class="sourceLineNo">890</span><a id="line.890">            return false;</a>
+<span class="sourceLineNo">891</span><a id="line.891">        }</a>
+<span class="sourceLineNo">892</span><a id="line.892">        if (!PaintUtilities.equal(this.downPaint, that.downPaint)) {</a>
+<span class="sourceLineNo">893</span><a id="line.893">            return false;</a>
+<span class="sourceLineNo">894</span><a id="line.894">        }</a>
+<span class="sourceLineNo">895</span><a id="line.895">        if (this.drawVolume != that.drawVolume) {</a>
+<span class="sourceLineNo">896</span><a id="line.896">            return false;</a>
+<span class="sourceLineNo">897</span><a id="line.897">        }</a>
+<span class="sourceLineNo">898</span><a id="line.898">        if (this.maxCandleWidthInMilliseconds</a>
+<span class="sourceLineNo">899</span><a id="line.899">                != that.maxCandleWidthInMilliseconds) {</a>
+<span class="sourceLineNo">900</span><a id="line.900">            return false;</a>
+<span class="sourceLineNo">901</span><a id="line.901">        }</a>
+<span class="sourceLineNo">902</span><a id="line.902">        if (this.autoWidthMethod != that.autoWidthMethod) {</a>
+<span class="sourceLineNo">903</span><a id="line.903">            return false;</a>
+<span class="sourceLineNo">904</span><a id="line.904">        }</a>
+<span class="sourceLineNo">905</span><a id="line.905">        if (this.autoWidthFactor != that.autoWidthFactor) {</a>
+<span class="sourceLineNo">906</span><a id="line.906">            return false;</a>
+<span class="sourceLineNo">907</span><a id="line.907">        }</a>
+<span class="sourceLineNo">908</span><a id="line.908">        if (this.autoWidthGap != that.autoWidthGap) {</a>
+<span class="sourceLineNo">909</span><a id="line.909">            return false;</a>
+<span class="sourceLineNo">910</span><a id="line.910">        }</a>
+<span class="sourceLineNo">911</span><a id="line.911">        if (this.useOutlinePaint != that.useOutlinePaint) {</a>
+<span class="sourceLineNo">912</span><a id="line.912">            return false;</a>
+<span class="sourceLineNo">913</span><a id="line.913">        }</a>
+<span class="sourceLineNo">914</span><a id="line.914">        if (!PaintUtilities.equal(this.volumePaint, that.volumePaint)) {</a>
+<span class="sourceLineNo">915</span><a id="line.915">            return false;</a>
+<span class="sourceLineNo">916</span><a id="line.916">        }</a>
+<span class="sourceLineNo">917</span><a id="line.917">        return super.equals(obj);</a>
+<span class="sourceLineNo">918</span><a id="line.918">    }</a>
+<span class="sourceLineNo">919</span><a id="line.919"></a>
+<span class="sourceLineNo">920</span><a id="line.920">    /**</a>
+<span class="sourceLineNo">921</span><a id="line.921">     * Returns a clone of the renderer.</a>
+<span class="sourceLineNo">922</span><a id="line.922">     *</a>
+<span class="sourceLineNo">923</span><a id="line.923">     * @return A clone.</a>
+<span class="sourceLineNo">924</span><a id="line.924">     *</a>
+<span class="sourceLineNo">925</span><a id="line.925">     * @throws CloneNotSupportedException  if the renderer cannot be cloned.</a>
+<span class="sourceLineNo">926</span><a id="line.926">     */</a>
+<span class="sourceLineNo">927</span><a id="line.927">    @Override</a>
+<span class="sourceLineNo">928</span><a id="line.928">    public Object clone() throws CloneNotSupportedException {</a>
+<span class="sourceLineNo">929</span><a id="line.929">        return super.clone();</a>
+<span class="sourceLineNo">930</span><a id="line.930">    }</a>
+<span class="sourceLineNo">931</span><a id="line.931"></a>
+<span class="sourceLineNo">932</span><a id="line.932">    /**</a>
+<span class="sourceLineNo">933</span><a id="line.933">     * Provides serialization support.</a>
+<span class="sourceLineNo">934</span><a id="line.934">     *</a>
+<span class="sourceLineNo">935</span><a id="line.935">     * @param stream  the output stream.</a>
+<span class="sourceLineNo">936</span><a id="line.936">     *</a>
+<span class="sourceLineNo">937</span><a id="line.937">     * @throws IOException  if there is an I/O error.</a>
+<span class="sourceLineNo">938</span><a id="line.938">     */</a>
+<span class="sourceLineNo">939</span><a id="line.939">    private void writeObject(ObjectOutputStream stream) throws IOException {</a>
+<span class="sourceLineNo">940</span><a id="line.940">        stream.defaultWriteObject();</a>
+<span class="sourceLineNo">941</span><a id="line.941">        SerialUtilities.writePaint(this.upPaint, stream);</a>
+<span class="sourceLineNo">942</span><a id="line.942">        SerialUtilities.writePaint(this.downPaint, stream);</a>
+<span class="sourceLineNo">943</span><a id="line.943">        SerialUtilities.writePaint(this.volumePaint, stream);</a>
+<span class="sourceLineNo">944</span><a id="line.944">    }</a>
+<span class="sourceLineNo">945</span><a id="line.945"></a>
+<span class="sourceLineNo">946</span><a id="line.946">    /**</a>
+<span class="sourceLineNo">947</span><a id="line.947">     * Provides serialization support.</a>
+<span class="sourceLineNo">948</span><a id="line.948">     *</a>
+<span class="sourceLineNo">949</span><a id="line.949">     * @param stream  the input stream.</a>
+<span class="sourceLineNo">950</span><a id="line.950">     *</a>
+<span class="sourceLineNo">951</span><a id="line.951">     * @throws IOException  if there is an I/O error.</a>
+<span class="sourceLineNo">952</span><a id="line.952">     * @throws ClassNotFoundException  if there is a classpath problem.</a>
+<span class="sourceLineNo">953</span><a id="line.953">     */</a>
+<span class="sourceLineNo">954</span><a id="line.954">    private void readObject(ObjectInputStream stream)</a>
+<span class="sourceLineNo">955</span><a id="line.955">            throws IOException, ClassNotFoundException {</a>
+<span class="sourceLineNo">956</span><a id="line.956">        stream.defaultReadObject();</a>
+<span class="sourceLineNo">957</span><a id="line.957">        this.upPaint = SerialUtilities.readPaint(stream);</a>
+<span class="sourceLineNo">958</span><a id="line.958">        this.downPaint = SerialUtilities.readPaint(stream);</a>
+<span class="sourceLineNo">959</span><a id="line.959">        this.volumePaint = SerialUtilities.readPaint(stream);</a>
+<span class="sourceLineNo">960</span><a id="line.960">    }</a>
+<span class="sourceLineNo">961</span><a id="line.961"></a>
+<span class="sourceLineNo">962</span><a id="line.962">    // --- DEPRECATED CODE ----------------------------------------------------</a>
+<span class="sourceLineNo">963</span><a id="line.963"></a>
+<span class="sourceLineNo">964</span><a id="line.964">    /**</a>
+<span class="sourceLineNo">965</span><a id="line.965">     * Returns a flag indicating whether or not volume bars are drawn on the</a>
+<span class="sourceLineNo">966</span><a id="line.966">     * chart.</a>
+<span class="sourceLineNo">967</span><a id="line.967">     *</a>
+<span class="sourceLineNo">968</span><a id="line.968">     * @return &lt;code&gt;true&lt;/code&gt; if volume bars are drawn on the chart.</a>
+<span class="sourceLineNo">969</span><a id="line.969">     *</a>
+<span class="sourceLineNo">970</span><a id="line.970">     * @deprecated As of 1.0.5, you should use the {@link #getDrawVolume()}</a>
+<span class="sourceLineNo">971</span><a id="line.971">     *         method.</a>
+<span class="sourceLineNo">972</span><a id="line.972">     */</a>
+<span class="sourceLineNo">973</span><a id="line.973">    public boolean drawVolume() {</a>
+<span class="sourceLineNo">974</span><a id="line.974">        return this.drawVolume;</a>
+<span class="sourceLineNo">975</span><a id="line.975">    }</a>
+<span class="sourceLineNo">976</span><a id="line.976"></a>
+<span class="sourceLineNo">977</span><a id="line.977">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

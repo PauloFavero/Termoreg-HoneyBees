@@ -1,0 +1,440 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * ---------------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * XYBubbleRenderer.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * ---------------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2003-2014, by Object Refinery Limited.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   Christian W. Zuckschwerdt;</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *</a>
+<span class="sourceLineNo">035</span><a id="line.35"> * Changes</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * -------</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * 28-Jan-2003 : Version 1 (DG);</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * 25-Mar-2003 : Implemented Serializable (DG);</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * 01-May-2003 : Modified drawItem() method signature (DG);</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 30-Jul-2003 : Modified entity constructor (CZ);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * 20-Aug-2003 : Implemented Cloneable and PublicCloneable (DG);</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * 16-Sep-2003 : Changed ChartRenderingInfo --&gt; PlotRenderingInfo (DG);</a>
+<span class="sourceLineNo">043</span><a id="line.43"> * 10-Feb-2004 : Small change to drawItem() method to make cut-and-paste</a>
+<span class="sourceLineNo">044</span><a id="line.44"> *               overriding easier (DG);</a>
+<span class="sourceLineNo">045</span><a id="line.45"> * 15-Jul-2004 : Switched getZ() and getZValue() methods (DG);</a>
+<span class="sourceLineNo">046</span><a id="line.46"> * 19-Jan-2005 : Now accesses only primitives from dataset (DG);</a>
+<span class="sourceLineNo">047</span><a id="line.47"> * 28-Feb-2005 : Modify renderer to use circles in legend (DG);</a>
+<span class="sourceLineNo">048</span><a id="line.48"> * 17-Mar-2005 : Fixed bug in bubble bounds calculation (DG);</a>
+<span class="sourceLineNo">049</span><a id="line.49"> * 20-Apr-2005 : Use generators for legend tooltips and URLs (DG);</a>
+<span class="sourceLineNo">050</span><a id="line.50"> * ------------- JFREECHART 1.0.x ---------------------------------------------</a>
+<span class="sourceLineNo">051</span><a id="line.51"> * 13-Dec-2005 : Added support for item labels (bug 1373371) (DG);</a>
+<span class="sourceLineNo">052</span><a id="line.52"> * 20-Jan-2006 : Check flag for drawing item labels (DG);</a>
+<span class="sourceLineNo">053</span><a id="line.53"> * 21-Sep-2006 : Respect the outline paint and stroke settings (DG);</a>
+<span class="sourceLineNo">054</span><a id="line.54"> * 24-Jan-2007 : Added new equals() override (DG);</a>
+<span class="sourceLineNo">055</span><a id="line.55"> * 06-Feb-2007 : Fixed bug 1086307, crosshairs with multiple axes (DG);</a>
+<span class="sourceLineNo">056</span><a id="line.56"> * 20-Apr-2007 : Updated getLegendItem() for renderer change (DG);</a>
+<span class="sourceLineNo">057</span><a id="line.57"> * 17-May-2007 : Set datasetIndex and seriesIndex in getLegendItem() (DG);</a>
+<span class="sourceLineNo">058</span><a id="line.58"> * 18-May-2007 : Set dataset and seriesKey for LegendItem (DG);</a>
+<span class="sourceLineNo">059</span><a id="line.59"> * 13-Jun-2007 : Fixed seriesVisibility bug (DG);</a>
+<span class="sourceLineNo">060</span><a id="line.60"> * 17-Jun-2008 : Apply legend shape, font and paint attributes (DG);</a>
+<span class="sourceLineNo">061</span><a id="line.61"> *</a>
+<span class="sourceLineNo">062</span><a id="line.62"> */</a>
+<span class="sourceLineNo">063</span><a id="line.63"></a>
+<span class="sourceLineNo">064</span><a id="line.64">package org.jfree.chart.renderer.xy;</a>
+<span class="sourceLineNo">065</span><a id="line.65"></a>
+<span class="sourceLineNo">066</span><a id="line.66">import java.awt.Graphics2D;</a>
+<span class="sourceLineNo">067</span><a id="line.67">import java.awt.Paint;</a>
+<span class="sourceLineNo">068</span><a id="line.68">import java.awt.Shape;</a>
+<span class="sourceLineNo">069</span><a id="line.69">import java.awt.Stroke;</a>
+<span class="sourceLineNo">070</span><a id="line.70">import java.awt.geom.Ellipse2D;</a>
+<span class="sourceLineNo">071</span><a id="line.71">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">072</span><a id="line.72"></a>
+<span class="sourceLineNo">073</span><a id="line.73">import org.jfree.chart.LegendItem;</a>
+<span class="sourceLineNo">074</span><a id="line.74">import org.jfree.chart.axis.ValueAxis;</a>
+<span class="sourceLineNo">075</span><a id="line.75">import org.jfree.chart.entity.EntityCollection;</a>
+<span class="sourceLineNo">076</span><a id="line.76">import org.jfree.chart.plot.CrosshairState;</a>
+<span class="sourceLineNo">077</span><a id="line.77">import org.jfree.chart.plot.PlotOrientation;</a>
+<span class="sourceLineNo">078</span><a id="line.78">import org.jfree.chart.plot.PlotRenderingInfo;</a>
+<span class="sourceLineNo">079</span><a id="line.79">import org.jfree.chart.plot.XYPlot;</a>
+<span class="sourceLineNo">080</span><a id="line.80">import org.jfree.data.xy.XYDataset;</a>
+<span class="sourceLineNo">081</span><a id="line.81">import org.jfree.data.xy.XYZDataset;</a>
+<span class="sourceLineNo">082</span><a id="line.82">import org.jfree.ui.RectangleEdge;</a>
+<span class="sourceLineNo">083</span><a id="line.83">import org.jfree.util.PublicCloneable;</a>
+<span class="sourceLineNo">084</span><a id="line.84"></a>
+<span class="sourceLineNo">085</span><a id="line.85">/**</a>
+<span class="sourceLineNo">086</span><a id="line.86"> * A renderer that draws a circle at each data point with a diameter that is</a>
+<span class="sourceLineNo">087</span><a id="line.87"> * determined by the z-value in the dataset (the renderer requires the dataset</a>
+<span class="sourceLineNo">088</span><a id="line.88"> * to be an instance of {@link XYZDataset}.  The example shown here</a>
+<span class="sourceLineNo">089</span><a id="line.89"> * is generated by the &lt;code&gt;XYBubbleChartDemo1.java&lt;/code&gt; program</a>
+<span class="sourceLineNo">090</span><a id="line.90"> * included in the JFreeChart demo collection:</a>
+<span class="sourceLineNo">091</span><a id="line.91"> * &lt;br&gt;&lt;br&gt;</a>
+<span class="sourceLineNo">092</span><a id="line.92"> * &lt;img src="../../../../../images/XYBubbleRendererSample.png"</a>
+<span class="sourceLineNo">093</span><a id="line.93"> * alt="XYBubbleRendererSample.png"&gt;</a>
+<span class="sourceLineNo">094</span><a id="line.94"> */</a>
+<span class="sourceLineNo">095</span><a id="line.95">public class XYBubbleRenderer extends AbstractXYItemRenderer</a>
+<span class="sourceLineNo">096</span><a id="line.96">        implements XYItemRenderer, PublicCloneable {</a>
+<span class="sourceLineNo">097</span><a id="line.97"></a>
+<span class="sourceLineNo">098</span><a id="line.98">    /** For serialization. */</a>
+<span class="sourceLineNo">099</span><a id="line.99">    public static final long serialVersionUID = -5221991598674249125L;</a>
+<span class="sourceLineNo">100</span><a id="line.100"></a>
+<span class="sourceLineNo">101</span><a id="line.101">    /**</a>
+<span class="sourceLineNo">102</span><a id="line.102">     * A constant to specify that the bubbles drawn by this renderer should be</a>
+<span class="sourceLineNo">103</span><a id="line.103">     * scaled on both axes (see {@link #XYBubbleRenderer(int)}).</a>
+<span class="sourceLineNo">104</span><a id="line.104">     */</a>
+<span class="sourceLineNo">105</span><a id="line.105">    public static final int SCALE_ON_BOTH_AXES = 0;</a>
+<span class="sourceLineNo">106</span><a id="line.106"></a>
+<span class="sourceLineNo">107</span><a id="line.107">    /**</a>
+<span class="sourceLineNo">108</span><a id="line.108">     * A constant to specify that the bubbles drawn by this renderer should be</a>
+<span class="sourceLineNo">109</span><a id="line.109">     * scaled on the domain axis (see {@link #XYBubbleRenderer(int)}).</a>
+<span class="sourceLineNo">110</span><a id="line.110">     */</a>
+<span class="sourceLineNo">111</span><a id="line.111">    public static final int SCALE_ON_DOMAIN_AXIS = 1;</a>
+<span class="sourceLineNo">112</span><a id="line.112"></a>
+<span class="sourceLineNo">113</span><a id="line.113">    /**</a>
+<span class="sourceLineNo">114</span><a id="line.114">     * A constant to specify that the bubbles drawn by this renderer should be</a>
+<span class="sourceLineNo">115</span><a id="line.115">     * scaled on the range axis (see {@link #XYBubbleRenderer(int)}).</a>
+<span class="sourceLineNo">116</span><a id="line.116">     */</a>
+<span class="sourceLineNo">117</span><a id="line.117">    public static final int SCALE_ON_RANGE_AXIS = 2;</a>
+<span class="sourceLineNo">118</span><a id="line.118"></a>
+<span class="sourceLineNo">119</span><a id="line.119">    /** Controls how the width and height of the bubble are scaled. */</a>
+<span class="sourceLineNo">120</span><a id="line.120">    private int scaleType;</a>
+<span class="sourceLineNo">121</span><a id="line.121"></a>
+<span class="sourceLineNo">122</span><a id="line.122">    /**</a>
+<span class="sourceLineNo">123</span><a id="line.123">     * Constructs a new renderer.</a>
+<span class="sourceLineNo">124</span><a id="line.124">     */</a>
+<span class="sourceLineNo">125</span><a id="line.125">    public XYBubbleRenderer() {</a>
+<span class="sourceLineNo">126</span><a id="line.126">        this(SCALE_ON_BOTH_AXES);</a>
+<span class="sourceLineNo">127</span><a id="line.127">    }</a>
+<span class="sourceLineNo">128</span><a id="line.128"></a>
+<span class="sourceLineNo">129</span><a id="line.129">    /**</a>
+<span class="sourceLineNo">130</span><a id="line.130">     * Constructs a new renderer with the specified type of scaling.</a>
+<span class="sourceLineNo">131</span><a id="line.131">     *</a>
+<span class="sourceLineNo">132</span><a id="line.132">     * @param scaleType  the type of scaling (must be one of:</a>
+<span class="sourceLineNo">133</span><a id="line.133">     *        {@link #SCALE_ON_BOTH_AXES}, {@link #SCALE_ON_DOMAIN_AXIS},</a>
+<span class="sourceLineNo">134</span><a id="line.134">     *        {@link #SCALE_ON_RANGE_AXIS}).</a>
+<span class="sourceLineNo">135</span><a id="line.135">     */</a>
+<span class="sourceLineNo">136</span><a id="line.136">    public XYBubbleRenderer(int scaleType) {</a>
+<span class="sourceLineNo">137</span><a id="line.137">        super();</a>
+<span class="sourceLineNo">138</span><a id="line.138">        if (scaleType &lt; 0 || scaleType &gt; 2) {</a>
+<span class="sourceLineNo">139</span><a id="line.139">            throw new IllegalArgumentException("Invalid 'scaleType'.");</a>
+<span class="sourceLineNo">140</span><a id="line.140">        }</a>
+<span class="sourceLineNo">141</span><a id="line.141">        this.scaleType = scaleType;</a>
+<span class="sourceLineNo">142</span><a id="line.142">        setBaseLegendShape(new Ellipse2D.Double(-4.0, -4.0, 8.0, 8.0));</a>
+<span class="sourceLineNo">143</span><a id="line.143">    }</a>
+<span class="sourceLineNo">144</span><a id="line.144"></a>
+<span class="sourceLineNo">145</span><a id="line.145">    /**</a>
+<span class="sourceLineNo">146</span><a id="line.146">     * Returns the scale type that was set when the renderer was constructed.</a>
+<span class="sourceLineNo">147</span><a id="line.147">     *</a>
+<span class="sourceLineNo">148</span><a id="line.148">     * @return The scale type (one of: {@link #SCALE_ON_BOTH_AXES},</a>
+<span class="sourceLineNo">149</span><a id="line.149">     *         {@link #SCALE_ON_DOMAIN_AXIS}, {@link #SCALE_ON_RANGE_AXIS}).</a>
+<span class="sourceLineNo">150</span><a id="line.150">     */</a>
+<span class="sourceLineNo">151</span><a id="line.151">    public int getScaleType() {</a>
+<span class="sourceLineNo">152</span><a id="line.152">        return this.scaleType;</a>
+<span class="sourceLineNo">153</span><a id="line.153">    }</a>
+<span class="sourceLineNo">154</span><a id="line.154"></a>
+<span class="sourceLineNo">155</span><a id="line.155">    /**</a>
+<span class="sourceLineNo">156</span><a id="line.156">     * Draws the visual representation of a single data item.</a>
+<span class="sourceLineNo">157</span><a id="line.157">     *</a>
+<span class="sourceLineNo">158</span><a id="line.158">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">159</span><a id="line.159">     * @param state  the renderer state.</a>
+<span class="sourceLineNo">160</span><a id="line.160">     * @param dataArea  the area within which the data is being drawn.</a>
+<span class="sourceLineNo">161</span><a id="line.161">     * @param info  collects information about the drawing.</a>
+<span class="sourceLineNo">162</span><a id="line.162">     * @param plot  the plot (can be used to obtain standard color</a>
+<span class="sourceLineNo">163</span><a id="line.163">     *              information etc).</a>
+<span class="sourceLineNo">164</span><a id="line.164">     * @param domainAxis  the domain (horizontal) axis.</a>
+<span class="sourceLineNo">165</span><a id="line.165">     * @param rangeAxis  the range (vertical) axis.</a>
+<span class="sourceLineNo">166</span><a id="line.166">     * @param dataset  the dataset (an {@link XYZDataset} is expected).</a>
+<span class="sourceLineNo">167</span><a id="line.167">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">168</span><a id="line.168">     * @param item  the item index (zero-based).</a>
+<span class="sourceLineNo">169</span><a id="line.169">     * @param crosshairState  crosshair information for the plot</a>
+<span class="sourceLineNo">170</span><a id="line.170">     *                        (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">171</span><a id="line.171">     * @param pass  the pass index.</a>
+<span class="sourceLineNo">172</span><a id="line.172">     */</a>
+<span class="sourceLineNo">173</span><a id="line.173">    @Override</a>
+<span class="sourceLineNo">174</span><a id="line.174">    public void drawItem(Graphics2D g2, XYItemRendererState state,</a>
+<span class="sourceLineNo">175</span><a id="line.175">            Rectangle2D dataArea, PlotRenderingInfo info, XYPlot plot,</a>
+<span class="sourceLineNo">176</span><a id="line.176">            ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset,</a>
+<span class="sourceLineNo">177</span><a id="line.177">            int series, int item, CrosshairState crosshairState, int pass) {</a>
+<span class="sourceLineNo">178</span><a id="line.178"></a>
+<span class="sourceLineNo">179</span><a id="line.179">        // return straight away if the item is not visible</a>
+<span class="sourceLineNo">180</span><a id="line.180">        if (!getItemVisible(series, item)) {</a>
+<span class="sourceLineNo">181</span><a id="line.181">            return;</a>
+<span class="sourceLineNo">182</span><a id="line.182">        }</a>
+<span class="sourceLineNo">183</span><a id="line.183"></a>
+<span class="sourceLineNo">184</span><a id="line.184">        PlotOrientation orientation = plot.getOrientation();</a>
+<span class="sourceLineNo">185</span><a id="line.185"></a>
+<span class="sourceLineNo">186</span><a id="line.186">        // get the data point...</a>
+<span class="sourceLineNo">187</span><a id="line.187">        double x = dataset.getXValue(series, item);</a>
+<span class="sourceLineNo">188</span><a id="line.188">        double y = dataset.getYValue(series, item);</a>
+<span class="sourceLineNo">189</span><a id="line.189">        double z = Double.NaN;</a>
+<span class="sourceLineNo">190</span><a id="line.190">        if (dataset instanceof XYZDataset) {</a>
+<span class="sourceLineNo">191</span><a id="line.191">            XYZDataset xyzData = (XYZDataset) dataset;</a>
+<span class="sourceLineNo">192</span><a id="line.192">            z = xyzData.getZValue(series, item);</a>
+<span class="sourceLineNo">193</span><a id="line.193">        }</a>
+<span class="sourceLineNo">194</span><a id="line.194">        if (!Double.isNaN(z)) {</a>
+<span class="sourceLineNo">195</span><a id="line.195">            RectangleEdge domainAxisLocation = plot.getDomainAxisEdge();</a>
+<span class="sourceLineNo">196</span><a id="line.196">            RectangleEdge rangeAxisLocation = plot.getRangeAxisEdge();</a>
+<span class="sourceLineNo">197</span><a id="line.197">            double transX = domainAxis.valueToJava2D(x, dataArea,</a>
+<span class="sourceLineNo">198</span><a id="line.198">                    domainAxisLocation);</a>
+<span class="sourceLineNo">199</span><a id="line.199">            double transY = rangeAxis.valueToJava2D(y, dataArea,</a>
+<span class="sourceLineNo">200</span><a id="line.200">                    rangeAxisLocation);</a>
+<span class="sourceLineNo">201</span><a id="line.201"></a>
+<span class="sourceLineNo">202</span><a id="line.202">            double transDomain;</a>
+<span class="sourceLineNo">203</span><a id="line.203">            double transRange;</a>
+<span class="sourceLineNo">204</span><a id="line.204">            double zero;</a>
+<span class="sourceLineNo">205</span><a id="line.205"></a>
+<span class="sourceLineNo">206</span><a id="line.206">            switch(getScaleType()) {</a>
+<span class="sourceLineNo">207</span><a id="line.207">                case SCALE_ON_DOMAIN_AXIS:</a>
+<span class="sourceLineNo">208</span><a id="line.208">                    zero = domainAxis.valueToJava2D(0.0, dataArea,</a>
+<span class="sourceLineNo">209</span><a id="line.209">                            domainAxisLocation);</a>
+<span class="sourceLineNo">210</span><a id="line.210">                    transDomain = domainAxis.valueToJava2D(z, dataArea,</a>
+<span class="sourceLineNo">211</span><a id="line.211">                            domainAxisLocation) - zero;</a>
+<span class="sourceLineNo">212</span><a id="line.212">                    transRange = transDomain;</a>
+<span class="sourceLineNo">213</span><a id="line.213">                    break;</a>
+<span class="sourceLineNo">214</span><a id="line.214">                case SCALE_ON_RANGE_AXIS:</a>
+<span class="sourceLineNo">215</span><a id="line.215">                    zero = rangeAxis.valueToJava2D(0.0, dataArea,</a>
+<span class="sourceLineNo">216</span><a id="line.216">                            rangeAxisLocation);</a>
+<span class="sourceLineNo">217</span><a id="line.217">                    transRange = zero - rangeAxis.valueToJava2D(z, dataArea,</a>
+<span class="sourceLineNo">218</span><a id="line.218">                            rangeAxisLocation);</a>
+<span class="sourceLineNo">219</span><a id="line.219">                    transDomain = transRange;</a>
+<span class="sourceLineNo">220</span><a id="line.220">                    break;</a>
+<span class="sourceLineNo">221</span><a id="line.221">                default:</a>
+<span class="sourceLineNo">222</span><a id="line.222">                    double zero1 = domainAxis.valueToJava2D(0.0, dataArea,</a>
+<span class="sourceLineNo">223</span><a id="line.223">                            domainAxisLocation);</a>
+<span class="sourceLineNo">224</span><a id="line.224">                    double zero2 = rangeAxis.valueToJava2D(0.0, dataArea,</a>
+<span class="sourceLineNo">225</span><a id="line.225">                            rangeAxisLocation);</a>
+<span class="sourceLineNo">226</span><a id="line.226">                    transDomain = domainAxis.valueToJava2D(z, dataArea,</a>
+<span class="sourceLineNo">227</span><a id="line.227">                            domainAxisLocation) - zero1;</a>
+<span class="sourceLineNo">228</span><a id="line.228">                    transRange = zero2 - rangeAxis.valueToJava2D(z, dataArea,</a>
+<span class="sourceLineNo">229</span><a id="line.229">                            rangeAxisLocation);</a>
+<span class="sourceLineNo">230</span><a id="line.230">            }</a>
+<span class="sourceLineNo">231</span><a id="line.231">            transDomain = Math.abs(transDomain);</a>
+<span class="sourceLineNo">232</span><a id="line.232">            transRange = Math.abs(transRange);</a>
+<span class="sourceLineNo">233</span><a id="line.233">            Ellipse2D circle = null;</a>
+<span class="sourceLineNo">234</span><a id="line.234">            if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">235</span><a id="line.235">                circle = new Ellipse2D.Double(transX - transDomain / 2.0,</a>
+<span class="sourceLineNo">236</span><a id="line.236">                        transY - transRange / 2.0, transDomain, transRange);</a>
+<span class="sourceLineNo">237</span><a id="line.237">            }</a>
+<span class="sourceLineNo">238</span><a id="line.238">            else if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">239</span><a id="line.239">                circle = new Ellipse2D.Double(transY - transRange / 2.0,</a>
+<span class="sourceLineNo">240</span><a id="line.240">                        transX - transDomain / 2.0, transRange, transDomain);</a>
+<span class="sourceLineNo">241</span><a id="line.241">            } else {</a>
+<span class="sourceLineNo">242</span><a id="line.242">                throw new IllegalStateException();</a>
+<span class="sourceLineNo">243</span><a id="line.243">            }</a>
+<span class="sourceLineNo">244</span><a id="line.244">            g2.setPaint(getItemPaint(series, item));</a>
+<span class="sourceLineNo">245</span><a id="line.245">            g2.fill(circle);</a>
+<span class="sourceLineNo">246</span><a id="line.246">            g2.setStroke(getItemOutlineStroke(series, item));</a>
+<span class="sourceLineNo">247</span><a id="line.247">            g2.setPaint(getItemOutlinePaint(series, item));</a>
+<span class="sourceLineNo">248</span><a id="line.248">            g2.draw(circle);</a>
+<span class="sourceLineNo">249</span><a id="line.249"></a>
+<span class="sourceLineNo">250</span><a id="line.250">            if (isItemLabelVisible(series, item)) {</a>
+<span class="sourceLineNo">251</span><a id="line.251">                if (orientation == PlotOrientation.VERTICAL) {</a>
+<span class="sourceLineNo">252</span><a id="line.252">                    drawItemLabel(g2, orientation, dataset, series, item,</a>
+<span class="sourceLineNo">253</span><a id="line.253">                            transX, transY, false);</a>
+<span class="sourceLineNo">254</span><a id="line.254">                }</a>
+<span class="sourceLineNo">255</span><a id="line.255">                else if (orientation == PlotOrientation.HORIZONTAL) {</a>
+<span class="sourceLineNo">256</span><a id="line.256">                    drawItemLabel(g2, orientation, dataset, series, item,</a>
+<span class="sourceLineNo">257</span><a id="line.257">                            transY, transX, false);</a>
+<span class="sourceLineNo">258</span><a id="line.258">                }</a>
+<span class="sourceLineNo">259</span><a id="line.259">            }</a>
+<span class="sourceLineNo">260</span><a id="line.260"></a>
+<span class="sourceLineNo">261</span><a id="line.261">            // add an entity if this info is being collected</a>
+<span class="sourceLineNo">262</span><a id="line.262">            if (info != null) {</a>
+<span class="sourceLineNo">263</span><a id="line.263">                EntityCollection entities </a>
+<span class="sourceLineNo">264</span><a id="line.264">                        = info.getOwner().getEntityCollection();</a>
+<span class="sourceLineNo">265</span><a id="line.265">                if (entities != null &amp;&amp; circle.intersects(dataArea)) {</a>
+<span class="sourceLineNo">266</span><a id="line.266">                    addEntity(entities, circle, dataset, series, item,</a>
+<span class="sourceLineNo">267</span><a id="line.267">                            circle.getCenterX(), circle.getCenterY());</a>
+<span class="sourceLineNo">268</span><a id="line.268">                }</a>
+<span class="sourceLineNo">269</span><a id="line.269">            }</a>
+<span class="sourceLineNo">270</span><a id="line.270"></a>
+<span class="sourceLineNo">271</span><a id="line.271">            int domainAxisIndex = plot.getDomainAxisIndex(domainAxis);</a>
+<span class="sourceLineNo">272</span><a id="line.272">            int rangeAxisIndex = plot.getRangeAxisIndex(rangeAxis);</a>
+<span class="sourceLineNo">273</span><a id="line.273">            updateCrosshairValues(crosshairState, x, y, domainAxisIndex,</a>
+<span class="sourceLineNo">274</span><a id="line.274">                    rangeAxisIndex, transX, transY, orientation);</a>
+<span class="sourceLineNo">275</span><a id="line.275">        }</a>
+<span class="sourceLineNo">276</span><a id="line.276"></a>
+<span class="sourceLineNo">277</span><a id="line.277">    }</a>
+<span class="sourceLineNo">278</span><a id="line.278"></a>
+<span class="sourceLineNo">279</span><a id="line.279">    /**</a>
+<span class="sourceLineNo">280</span><a id="line.280">     * Returns a legend item for the specified series.  The default method</a>
+<span class="sourceLineNo">281</span><a id="line.281">     * is overridden so that the legend displays circles for all series.</a>
+<span class="sourceLineNo">282</span><a id="line.282">     *</a>
+<span class="sourceLineNo">283</span><a id="line.283">     * @param datasetIndex  the dataset index (zero-based).</a>
+<span class="sourceLineNo">284</span><a id="line.284">     * @param series  the series index (zero-based).</a>
+<span class="sourceLineNo">285</span><a id="line.285">     *</a>
+<span class="sourceLineNo">286</span><a id="line.286">     * @return A legend item for the series.</a>
+<span class="sourceLineNo">287</span><a id="line.287">     */</a>
+<span class="sourceLineNo">288</span><a id="line.288">    @Override</a>
+<span class="sourceLineNo">289</span><a id="line.289">    public LegendItem getLegendItem(int datasetIndex, int series) {</a>
+<span class="sourceLineNo">290</span><a id="line.290">        LegendItem result = null;</a>
+<span class="sourceLineNo">291</span><a id="line.291">        XYPlot plot = getPlot();</a>
+<span class="sourceLineNo">292</span><a id="line.292">        if (plot == null) {</a>
+<span class="sourceLineNo">293</span><a id="line.293">            return null;</a>
+<span class="sourceLineNo">294</span><a id="line.294">        }</a>
+<span class="sourceLineNo">295</span><a id="line.295"></a>
+<span class="sourceLineNo">296</span><a id="line.296">        XYDataset dataset = plot.getDataset(datasetIndex);</a>
+<span class="sourceLineNo">297</span><a id="line.297">        if (dataset != null) {</a>
+<span class="sourceLineNo">298</span><a id="line.298">            if (getItemVisible(series, 0)) {</a>
+<span class="sourceLineNo">299</span><a id="line.299">                String label = getLegendItemLabelGenerator().generateLabel(</a>
+<span class="sourceLineNo">300</span><a id="line.300">                        dataset, series);</a>
+<span class="sourceLineNo">301</span><a id="line.301">                String description = label;</a>
+<span class="sourceLineNo">302</span><a id="line.302">                String toolTipText = null;</a>
+<span class="sourceLineNo">303</span><a id="line.303">                if (getLegendItemToolTipGenerator() != null) {</a>
+<span class="sourceLineNo">304</span><a id="line.304">                    toolTipText = getLegendItemToolTipGenerator().generateLabel(</a>
+<span class="sourceLineNo">305</span><a id="line.305">                            dataset, series);</a>
+<span class="sourceLineNo">306</span><a id="line.306">                }</a>
+<span class="sourceLineNo">307</span><a id="line.307">                String urlText = null;</a>
+<span class="sourceLineNo">308</span><a id="line.308">                if (getLegendItemURLGenerator() != null) {</a>
+<span class="sourceLineNo">309</span><a id="line.309">                    urlText = getLegendItemURLGenerator().generateLabel(</a>
+<span class="sourceLineNo">310</span><a id="line.310">                            dataset, series);</a>
+<span class="sourceLineNo">311</span><a id="line.311">                }</a>
+<span class="sourceLineNo">312</span><a id="line.312">                Shape shape = lookupLegendShape(series);</a>
+<span class="sourceLineNo">313</span><a id="line.313">                Paint paint = lookupSeriesPaint(series);</a>
+<span class="sourceLineNo">314</span><a id="line.314">                Paint outlinePaint = lookupSeriesOutlinePaint(series);</a>
+<span class="sourceLineNo">315</span><a id="line.315">                Stroke outlineStroke = lookupSeriesOutlineStroke(series);</a>
+<span class="sourceLineNo">316</span><a id="line.316">                result = new LegendItem(label, description, toolTipText,</a>
+<span class="sourceLineNo">317</span><a id="line.317">                        urlText, shape, paint, outlineStroke, outlinePaint);</a>
+<span class="sourceLineNo">318</span><a id="line.318">                result.setLabelFont(lookupLegendTextFont(series));</a>
+<span class="sourceLineNo">319</span><a id="line.319">                Paint labelPaint = lookupLegendTextPaint(series);</a>
+<span class="sourceLineNo">320</span><a id="line.320">                if (labelPaint != null) {</a>
+<span class="sourceLineNo">321</span><a id="line.321">                    result.setLabelPaint(labelPaint);</a>
+<span class="sourceLineNo">322</span><a id="line.322">                }</a>
+<span class="sourceLineNo">323</span><a id="line.323">                result.setDataset(dataset);</a>
+<span class="sourceLineNo">324</span><a id="line.324">                result.setDatasetIndex(datasetIndex);</a>
+<span class="sourceLineNo">325</span><a id="line.325">                result.setSeriesKey(dataset.getSeriesKey(series));</a>
+<span class="sourceLineNo">326</span><a id="line.326">                result.setSeriesIndex(series);</a>
+<span class="sourceLineNo">327</span><a id="line.327">            }</a>
+<span class="sourceLineNo">328</span><a id="line.328">        }</a>
+<span class="sourceLineNo">329</span><a id="line.329">        return result;</a>
+<span class="sourceLineNo">330</span><a id="line.330">    }</a>
+<span class="sourceLineNo">331</span><a id="line.331"></a>
+<span class="sourceLineNo">332</span><a id="line.332">    /**</a>
+<span class="sourceLineNo">333</span><a id="line.333">     * Tests this renderer for equality with an arbitrary object.</a>
+<span class="sourceLineNo">334</span><a id="line.334">     *</a>
+<span class="sourceLineNo">335</span><a id="line.335">     * @param obj  the object (&lt;code&gt;null&lt;/code&gt; permitted).</a>
+<span class="sourceLineNo">336</span><a id="line.336">     *</a>
+<span class="sourceLineNo">337</span><a id="line.337">     * @return A boolean.</a>
+<span class="sourceLineNo">338</span><a id="line.338">     */</a>
+<span class="sourceLineNo">339</span><a id="line.339">    @Override</a>
+<span class="sourceLineNo">340</span><a id="line.340">    public boolean equals(Object obj) {</a>
+<span class="sourceLineNo">341</span><a id="line.341">        if (obj == this) {</a>
+<span class="sourceLineNo">342</span><a id="line.342">            return true;</a>
+<span class="sourceLineNo">343</span><a id="line.343">        }</a>
+<span class="sourceLineNo">344</span><a id="line.344">        if (!(obj instanceof XYBubbleRenderer)) {</a>
+<span class="sourceLineNo">345</span><a id="line.345">            return false;</a>
+<span class="sourceLineNo">346</span><a id="line.346">        }</a>
+<span class="sourceLineNo">347</span><a id="line.347">        XYBubbleRenderer that = (XYBubbleRenderer) obj;</a>
+<span class="sourceLineNo">348</span><a id="line.348">        if (this.scaleType != that.scaleType) {</a>
+<span class="sourceLineNo">349</span><a id="line.349">            return false;</a>
+<span class="sourceLineNo">350</span><a id="line.350">        }</a>
+<span class="sourceLineNo">351</span><a id="line.351">        return super.equals(obj);</a>
+<span class="sourceLineNo">352</span><a id="line.352">    }</a>
+<span class="sourceLineNo">353</span><a id="line.353"></a>
+<span class="sourceLineNo">354</span><a id="line.354">    /**</a>
+<span class="sourceLineNo">355</span><a id="line.355">     * Returns a clone of the renderer.</a>
+<span class="sourceLineNo">356</span><a id="line.356">     *</a>
+<span class="sourceLineNo">357</span><a id="line.357">     * @return A clone.</a>
+<span class="sourceLineNo">358</span><a id="line.358">     *</a>
+<span class="sourceLineNo">359</span><a id="line.359">     * @throws CloneNotSupportedException  if the renderer cannot be cloned.</a>
+<span class="sourceLineNo">360</span><a id="line.360">     */</a>
+<span class="sourceLineNo">361</span><a id="line.361">    @Override</a>
+<span class="sourceLineNo">362</span><a id="line.362">    public Object clone() throws CloneNotSupportedException {</a>
+<span class="sourceLineNo">363</span><a id="line.363">        return super.clone();</a>
+<span class="sourceLineNo">364</span><a id="line.364">    }</a>
+<span class="sourceLineNo">365</span><a id="line.365"></a>
+<span class="sourceLineNo">366</span><a id="line.366">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

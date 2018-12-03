@@ -1,0 +1,544 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * ---------------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * Statistics.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * ---------------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2000-2014, by Matthew Wright and Contributors.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  Matthew Wright;</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *</a>
+<span class="sourceLineNo">035</span><a id="line.35"> * Changes (from 08-Nov-2001)</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * --------------------------</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * 08-Nov-2001 : Added standard header and tidied Javadoc comments (DG);</a>
+<span class="sourceLineNo">038</span><a id="line.38"> *               Moved from JFreeChart to package com.jrefinery.data.* in</a>
+<span class="sourceLineNo">039</span><a id="line.39"> *               JCommon class library (DG);</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 24-Jun-2002 : Removed unnecessary local variable (DG);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * 07-Oct-2002 : Fixed errors reported by Checkstyle (DG);</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * 26-May-2004 : Moved calculateMean() method from BoxAndWhiskerCalculator (DG);</a>
+<span class="sourceLineNo">043</span><a id="line.43"> * 02-Jun-2004 : Fixed bug in calculateMedian() method (DG);</a>
+<span class="sourceLineNo">044</span><a id="line.44"> * 11-Jan-2005 : Removed deprecated code in preparation for the 1.0.0</a>
+<span class="sourceLineNo">045</span><a id="line.45"> *               release (DG);</a>
+<span class="sourceLineNo">046</span><a id="line.46"> * 02-Jul-2013 : Use ParamChecks (DG);</a>
+<span class="sourceLineNo">047</span><a id="line.47"> *</a>
+<span class="sourceLineNo">048</span><a id="line.48"> */</a>
+<span class="sourceLineNo">049</span><a id="line.49"></a>
+<span class="sourceLineNo">050</span><a id="line.50">package org.jfree.data.statistics;</a>
+<span class="sourceLineNo">051</span><a id="line.51"></a>
+<span class="sourceLineNo">052</span><a id="line.52">import java.util.ArrayList;</a>
+<span class="sourceLineNo">053</span><a id="line.53">import java.util.Collection;</a>
+<span class="sourceLineNo">054</span><a id="line.54">import java.util.Collections;</a>
+<span class="sourceLineNo">055</span><a id="line.55">import java.util.Iterator;</a>
+<span class="sourceLineNo">056</span><a id="line.56">import java.util.List;</a>
+<span class="sourceLineNo">057</span><a id="line.57">import org.jfree.chart.util.ParamChecks;</a>
+<span class="sourceLineNo">058</span><a id="line.58"></a>
+<span class="sourceLineNo">059</span><a id="line.59">/**</a>
+<span class="sourceLineNo">060</span><a id="line.60"> * A utility class that provides some common statistical functions.</a>
+<span class="sourceLineNo">061</span><a id="line.61"> */</a>
+<span class="sourceLineNo">062</span><a id="line.62">public abstract class Statistics {</a>
+<span class="sourceLineNo">063</span><a id="line.63"></a>
+<span class="sourceLineNo">064</span><a id="line.64">    /**</a>
+<span class="sourceLineNo">065</span><a id="line.65">     * Returns the mean of an array of numbers.  This is equivalent to calling</a>
+<span class="sourceLineNo">066</span><a id="line.66">     * {@code calculateMean(values, true)}.</a>
+<span class="sourceLineNo">067</span><a id="line.67">     *</a>
+<span class="sourceLineNo">068</span><a id="line.68">     * @param values  the values ({@code null} not permitted).</a>
+<span class="sourceLineNo">069</span><a id="line.69">     *</a>
+<span class="sourceLineNo">070</span><a id="line.70">     * @return The mean.</a>
+<span class="sourceLineNo">071</span><a id="line.71">     */</a>
+<span class="sourceLineNo">072</span><a id="line.72">    public static double calculateMean(Number[] values) {</a>
+<span class="sourceLineNo">073</span><a id="line.73">        return calculateMean(values, true);</a>
+<span class="sourceLineNo">074</span><a id="line.74">    }</a>
+<span class="sourceLineNo">075</span><a id="line.75"></a>
+<span class="sourceLineNo">076</span><a id="line.76">    /**</a>
+<span class="sourceLineNo">077</span><a id="line.77">     * Returns the mean of an array of numbers.</a>
+<span class="sourceLineNo">078</span><a id="line.78">     *</a>
+<span class="sourceLineNo">079</span><a id="line.79">     * @param values  the values ({@code null} not permitted).</a>
+<span class="sourceLineNo">080</span><a id="line.80">     * @param includeNullAndNaN  a flag that controls whether or not</a>
+<span class="sourceLineNo">081</span><a id="line.81">     *     {@code null} and {@code Double.NaN} values are included</a>
+<span class="sourceLineNo">082</span><a id="line.82">     *     in the calculation (if either is present in the array, the result is</a>
+<span class="sourceLineNo">083</span><a id="line.83">     *     {@link Double#NaN}).</a>
+<span class="sourceLineNo">084</span><a id="line.84">     *</a>
+<span class="sourceLineNo">085</span><a id="line.85">     * @return The mean.</a>
+<span class="sourceLineNo">086</span><a id="line.86">     *</a>
+<span class="sourceLineNo">087</span><a id="line.87">     * @since 1.0.3</a>
+<span class="sourceLineNo">088</span><a id="line.88">     */</a>
+<span class="sourceLineNo">089</span><a id="line.89">    public static double calculateMean(Number[] values,</a>
+<span class="sourceLineNo">090</span><a id="line.90">            boolean includeNullAndNaN) {</a>
+<span class="sourceLineNo">091</span><a id="line.91"></a>
+<span class="sourceLineNo">092</span><a id="line.92">        ParamChecks.nullNotPermitted(values, "values");</a>
+<span class="sourceLineNo">093</span><a id="line.93">        double sum = 0.0;</a>
+<span class="sourceLineNo">094</span><a id="line.94">        double current;</a>
+<span class="sourceLineNo">095</span><a id="line.95">        int counter = 0;</a>
+<span class="sourceLineNo">096</span><a id="line.96">        for (int i = 0; i &lt; values.length; i++) {</a>
+<span class="sourceLineNo">097</span><a id="line.97">            // treat nulls the same as NaNs</a>
+<span class="sourceLineNo">098</span><a id="line.98">            if (values[i] != null) {</a>
+<span class="sourceLineNo">099</span><a id="line.99">                current = values[i].doubleValue();</a>
+<span class="sourceLineNo">100</span><a id="line.100">            }</a>
+<span class="sourceLineNo">101</span><a id="line.101">            else {</a>
+<span class="sourceLineNo">102</span><a id="line.102">                current = Double.NaN;</a>
+<span class="sourceLineNo">103</span><a id="line.103">            }</a>
+<span class="sourceLineNo">104</span><a id="line.104">            // calculate the sum and count</a>
+<span class="sourceLineNo">105</span><a id="line.105">            if (includeNullAndNaN || !Double.isNaN(current)) {</a>
+<span class="sourceLineNo">106</span><a id="line.106">                sum = sum + current;</a>
+<span class="sourceLineNo">107</span><a id="line.107">                counter++;</a>
+<span class="sourceLineNo">108</span><a id="line.108">            }</a>
+<span class="sourceLineNo">109</span><a id="line.109">        }</a>
+<span class="sourceLineNo">110</span><a id="line.110">        double result = (sum / counter);</a>
+<span class="sourceLineNo">111</span><a id="line.111">        return result;</a>
+<span class="sourceLineNo">112</span><a id="line.112">    }</a>
+<span class="sourceLineNo">113</span><a id="line.113"></a>
+<span class="sourceLineNo">114</span><a id="line.114">    /**</a>
+<span class="sourceLineNo">115</span><a id="line.115">     * Returns the mean of a collection of {@code Number} objects.</a>
+<span class="sourceLineNo">116</span><a id="line.116">     *</a>
+<span class="sourceLineNo">117</span><a id="line.117">     * @param values  the values ({@code null} not permitted).</a>
+<span class="sourceLineNo">118</span><a id="line.118">     *</a>
+<span class="sourceLineNo">119</span><a id="line.119">     * @return The mean.</a>
+<span class="sourceLineNo">120</span><a id="line.120">     */</a>
+<span class="sourceLineNo">121</span><a id="line.121">    public static double calculateMean(Collection values) {</a>
+<span class="sourceLineNo">122</span><a id="line.122">        return calculateMean(values, true);</a>
+<span class="sourceLineNo">123</span><a id="line.123">    }</a>
+<span class="sourceLineNo">124</span><a id="line.124"></a>
+<span class="sourceLineNo">125</span><a id="line.125">    /**</a>
+<span class="sourceLineNo">126</span><a id="line.126">     * Returns the mean of a collection of {@code Number} objects.</a>
+<span class="sourceLineNo">127</span><a id="line.127">     *</a>
+<span class="sourceLineNo">128</span><a id="line.128">     * @param values  the values ({@code null} not permitted).</a>
+<span class="sourceLineNo">129</span><a id="line.129">     * @param includeNullAndNaN  a flag that controls whether or not</a>
+<span class="sourceLineNo">130</span><a id="line.130">     *     {@code null} and {@code Double.NaN} values are included</a>
+<span class="sourceLineNo">131</span><a id="line.131">     *     in the calculation (if either is present in the array, the result is</a>
+<span class="sourceLineNo">132</span><a id="line.132">     *     {@link Double#NaN}).</a>
+<span class="sourceLineNo">133</span><a id="line.133">     *</a>
+<span class="sourceLineNo">134</span><a id="line.134">     * @return The mean.</a>
+<span class="sourceLineNo">135</span><a id="line.135">     *</a>
+<span class="sourceLineNo">136</span><a id="line.136">     * @since 1.0.3</a>
+<span class="sourceLineNo">137</span><a id="line.137">     */</a>
+<span class="sourceLineNo">138</span><a id="line.138">    public static double calculateMean(Collection values,</a>
+<span class="sourceLineNo">139</span><a id="line.139">            boolean includeNullAndNaN) {</a>
+<span class="sourceLineNo">140</span><a id="line.140"></a>
+<span class="sourceLineNo">141</span><a id="line.141">        ParamChecks.nullNotPermitted(values, "values");</a>
+<span class="sourceLineNo">142</span><a id="line.142">        int count = 0;</a>
+<span class="sourceLineNo">143</span><a id="line.143">        double total = 0.0;</a>
+<span class="sourceLineNo">144</span><a id="line.144">        Iterator iterator = values.iterator();</a>
+<span class="sourceLineNo">145</span><a id="line.145">        while (iterator.hasNext()) {</a>
+<span class="sourceLineNo">146</span><a id="line.146">            Object object = iterator.next();</a>
+<span class="sourceLineNo">147</span><a id="line.147">            if (object == null) {</a>
+<span class="sourceLineNo">148</span><a id="line.148">                if (includeNullAndNaN) {</a>
+<span class="sourceLineNo">149</span><a id="line.149">                    return Double.NaN;</a>
+<span class="sourceLineNo">150</span><a id="line.150">                }</a>
+<span class="sourceLineNo">151</span><a id="line.151">            }</a>
+<span class="sourceLineNo">152</span><a id="line.152">            else {</a>
+<span class="sourceLineNo">153</span><a id="line.153">                if (object instanceof Number) {</a>
+<span class="sourceLineNo">154</span><a id="line.154">                    Number number = (Number) object;</a>
+<span class="sourceLineNo">155</span><a id="line.155">                    double value = number.doubleValue();</a>
+<span class="sourceLineNo">156</span><a id="line.156">                    if (Double.isNaN(value)) {</a>
+<span class="sourceLineNo">157</span><a id="line.157">                        if (includeNullAndNaN) {</a>
+<span class="sourceLineNo">158</span><a id="line.158">                            return Double.NaN;</a>
+<span class="sourceLineNo">159</span><a id="line.159">                        }</a>
+<span class="sourceLineNo">160</span><a id="line.160">                    }</a>
+<span class="sourceLineNo">161</span><a id="line.161">                    else {</a>
+<span class="sourceLineNo">162</span><a id="line.162">                        total = total + number.doubleValue();</a>
+<span class="sourceLineNo">163</span><a id="line.163">                        count = count + 1;</a>
+<span class="sourceLineNo">164</span><a id="line.164">                    }</a>
+<span class="sourceLineNo">165</span><a id="line.165">                }</a>
+<span class="sourceLineNo">166</span><a id="line.166">            }</a>
+<span class="sourceLineNo">167</span><a id="line.167">        }</a>
+<span class="sourceLineNo">168</span><a id="line.168">        return total / count;</a>
+<span class="sourceLineNo">169</span><a id="line.169">    }</a>
+<span class="sourceLineNo">170</span><a id="line.170"></a>
+<span class="sourceLineNo">171</span><a id="line.171">    /**</a>
+<span class="sourceLineNo">172</span><a id="line.172">     * Calculates the median for a list of values ({@code Number} objects).</a>
+<span class="sourceLineNo">173</span><a id="line.173">     * The list of values will be copied, and the copy sorted, before</a>
+<span class="sourceLineNo">174</span><a id="line.174">     * calculating the median.  To avoid this step (if your list of values</a>
+<span class="sourceLineNo">175</span><a id="line.175">     * is already sorted), use the {@link #calculateMedian(List, boolean)}</a>
+<span class="sourceLineNo">176</span><a id="line.176">     * method.</a>
+<span class="sourceLineNo">177</span><a id="line.177">     *</a>
+<span class="sourceLineNo">178</span><a id="line.178">     * @param values  the values ({@code null} permitted).</a>
+<span class="sourceLineNo">179</span><a id="line.179">     *</a>
+<span class="sourceLineNo">180</span><a id="line.180">     * @return The median.</a>
+<span class="sourceLineNo">181</span><a id="line.181">     */</a>
+<span class="sourceLineNo">182</span><a id="line.182">    public static double calculateMedian(List values) {</a>
+<span class="sourceLineNo">183</span><a id="line.183">        return calculateMedian(values, true);</a>
+<span class="sourceLineNo">184</span><a id="line.184">    }</a>
+<span class="sourceLineNo">185</span><a id="line.185"></a>
+<span class="sourceLineNo">186</span><a id="line.186">    /**</a>
+<span class="sourceLineNo">187</span><a id="line.187">     * Calculates the median for a list of values ({@code Number} objects).</a>
+<span class="sourceLineNo">188</span><a id="line.188">     * If {@code copyAndSort} is {@code false}, the list is assumed</a>
+<span class="sourceLineNo">189</span><a id="line.189">     * to be presorted in ascending order by value.</a>
+<span class="sourceLineNo">190</span><a id="line.190">     *</a>
+<span class="sourceLineNo">191</span><a id="line.191">     * @param values  the values ({@code null} permitted).</a>
+<span class="sourceLineNo">192</span><a id="line.192">     * @param copyAndSort  a flag that controls whether the list of values is</a>
+<span class="sourceLineNo">193</span><a id="line.193">     *                     copied and sorted.</a>
+<span class="sourceLineNo">194</span><a id="line.194">     *</a>
+<span class="sourceLineNo">195</span><a id="line.195">     * @return The median.</a>
+<span class="sourceLineNo">196</span><a id="line.196">     */</a>
+<span class="sourceLineNo">197</span><a id="line.197">    public static double calculateMedian(List values, boolean copyAndSort) {</a>
+<span class="sourceLineNo">198</span><a id="line.198"></a>
+<span class="sourceLineNo">199</span><a id="line.199">        double result = Double.NaN;</a>
+<span class="sourceLineNo">200</span><a id="line.200">        if (values != null) {</a>
+<span class="sourceLineNo">201</span><a id="line.201">            if (copyAndSort) {</a>
+<span class="sourceLineNo">202</span><a id="line.202">                int itemCount = values.size();</a>
+<span class="sourceLineNo">203</span><a id="line.203">                List copy = new ArrayList(itemCount);</a>
+<span class="sourceLineNo">204</span><a id="line.204">                for (int i = 0; i &lt; itemCount; i++) {</a>
+<span class="sourceLineNo">205</span><a id="line.205">                    copy.add(i, values.get(i));</a>
+<span class="sourceLineNo">206</span><a id="line.206">                }</a>
+<span class="sourceLineNo">207</span><a id="line.207">                Collections.sort(copy);</a>
+<span class="sourceLineNo">208</span><a id="line.208">                values = copy;</a>
+<span class="sourceLineNo">209</span><a id="line.209">            }</a>
+<span class="sourceLineNo">210</span><a id="line.210">            int count = values.size();</a>
+<span class="sourceLineNo">211</span><a id="line.211">            if (count &gt; 0) {</a>
+<span class="sourceLineNo">212</span><a id="line.212">                if (count % 2 == 1) {</a>
+<span class="sourceLineNo">213</span><a id="line.213">                    if (count &gt; 1) {</a>
+<span class="sourceLineNo">214</span><a id="line.214">                        Number value = (Number) values.get((count - 1) / 2);</a>
+<span class="sourceLineNo">215</span><a id="line.215">                        result = value.doubleValue();</a>
+<span class="sourceLineNo">216</span><a id="line.216">                    }</a>
+<span class="sourceLineNo">217</span><a id="line.217">                    else {</a>
+<span class="sourceLineNo">218</span><a id="line.218">                        Number value = (Number) values.get(0);</a>
+<span class="sourceLineNo">219</span><a id="line.219">                        result = value.doubleValue();</a>
+<span class="sourceLineNo">220</span><a id="line.220">                    }</a>
+<span class="sourceLineNo">221</span><a id="line.221">                }</a>
+<span class="sourceLineNo">222</span><a id="line.222">                else {</a>
+<span class="sourceLineNo">223</span><a id="line.223">                    Number value1 = (Number) values.get(count / 2 - 1);</a>
+<span class="sourceLineNo">224</span><a id="line.224">                    Number value2 = (Number) values.get(count / 2);</a>
+<span class="sourceLineNo">225</span><a id="line.225">                    result = (value1.doubleValue() + value2.doubleValue())</a>
+<span class="sourceLineNo">226</span><a id="line.226">                             / 2.0;</a>
+<span class="sourceLineNo">227</span><a id="line.227">                }</a>
+<span class="sourceLineNo">228</span><a id="line.228">            }</a>
+<span class="sourceLineNo">229</span><a id="line.229">        }</a>
+<span class="sourceLineNo">230</span><a id="line.230">        return result;</a>
+<span class="sourceLineNo">231</span><a id="line.231">    }</a>
+<span class="sourceLineNo">232</span><a id="line.232"></a>
+<span class="sourceLineNo">233</span><a id="line.233">    /**</a>
+<span class="sourceLineNo">234</span><a id="line.234">     * Calculates the median for a sublist within a list of values</a>
+<span class="sourceLineNo">235</span><a id="line.235">     * ({@code Number} objects).</a>
+<span class="sourceLineNo">236</span><a id="line.236">     *</a>
+<span class="sourceLineNo">237</span><a id="line.237">     * @param values  the values, in any order ({@code null} not permitted).</a>
+<span class="sourceLineNo">238</span><a id="line.238">     * @param start  the start index.</a>
+<span class="sourceLineNo">239</span><a id="line.239">     * @param end  the end index.</a>
+<span class="sourceLineNo">240</span><a id="line.240">     *</a>
+<span class="sourceLineNo">241</span><a id="line.241">     * @return The median.</a>
+<span class="sourceLineNo">242</span><a id="line.242">     */</a>
+<span class="sourceLineNo">243</span><a id="line.243">    public static double calculateMedian(List values, int start, int end) {</a>
+<span class="sourceLineNo">244</span><a id="line.244">        return calculateMedian(values, start, end, true);</a>
+<span class="sourceLineNo">245</span><a id="line.245">    }</a>
+<span class="sourceLineNo">246</span><a id="line.246"></a>
+<span class="sourceLineNo">247</span><a id="line.247">    /**</a>
+<span class="sourceLineNo">248</span><a id="line.248">     * Calculates the median for a sublist within a list of values</a>
+<span class="sourceLineNo">249</span><a id="line.249">     * ({@code Number} objects).  The entire list will be sorted if the</a>
+<span class="sourceLineNo">250</span><a id="line.250">     * {@code ascending} argument is {@code false}.</a>
+<span class="sourceLineNo">251</span><a id="line.251">     *</a>
+<span class="sourceLineNo">252</span><a id="line.252">     * @param values  the values ({@code null} not permitted).</a>
+<span class="sourceLineNo">253</span><a id="line.253">     * @param start  the start index.</a>
+<span class="sourceLineNo">254</span><a id="line.254">     * @param end  the end index.</a>
+<span class="sourceLineNo">255</span><a id="line.255">     * @param copyAndSort  a flag that that controls whether the list of values</a>
+<span class="sourceLineNo">256</span><a id="line.256">     *                     is copied and sorted.</a>
+<span class="sourceLineNo">257</span><a id="line.257">     *</a>
+<span class="sourceLineNo">258</span><a id="line.258">     * @return The median.</a>
+<span class="sourceLineNo">259</span><a id="line.259">     */</a>
+<span class="sourceLineNo">260</span><a id="line.260">    public static double calculateMedian(List values, int start, int end,</a>
+<span class="sourceLineNo">261</span><a id="line.261">                                         boolean copyAndSort) {</a>
+<span class="sourceLineNo">262</span><a id="line.262"></a>
+<span class="sourceLineNo">263</span><a id="line.263">        double result = Double.NaN;</a>
+<span class="sourceLineNo">264</span><a id="line.264">        if (copyAndSort) {</a>
+<span class="sourceLineNo">265</span><a id="line.265">            List working = new ArrayList(end - start + 1);</a>
+<span class="sourceLineNo">266</span><a id="line.266">            for (int i = start; i &lt;= end; i++) {</a>
+<span class="sourceLineNo">267</span><a id="line.267">                working.add(values.get(i));</a>
+<span class="sourceLineNo">268</span><a id="line.268">            }</a>
+<span class="sourceLineNo">269</span><a id="line.269">            Collections.sort(working);</a>
+<span class="sourceLineNo">270</span><a id="line.270">            result = calculateMedian(working, false);</a>
+<span class="sourceLineNo">271</span><a id="line.271">        }</a>
+<span class="sourceLineNo">272</span><a id="line.272">        else {</a>
+<span class="sourceLineNo">273</span><a id="line.273">            int count = end - start + 1;</a>
+<span class="sourceLineNo">274</span><a id="line.274">            if (count &gt; 0) {</a>
+<span class="sourceLineNo">275</span><a id="line.275">                if (count % 2 == 1) {</a>
+<span class="sourceLineNo">276</span><a id="line.276">                    if (count &gt; 1) {</a>
+<span class="sourceLineNo">277</span><a id="line.277">                        Number value</a>
+<span class="sourceLineNo">278</span><a id="line.278">                            = (Number) values.get(start + (count - 1) / 2);</a>
+<span class="sourceLineNo">279</span><a id="line.279">                        result = value.doubleValue();</a>
+<span class="sourceLineNo">280</span><a id="line.280">                    }</a>
+<span class="sourceLineNo">281</span><a id="line.281">                    else {</a>
+<span class="sourceLineNo">282</span><a id="line.282">                        Number value = (Number) values.get(start);</a>
+<span class="sourceLineNo">283</span><a id="line.283">                        result = value.doubleValue();</a>
+<span class="sourceLineNo">284</span><a id="line.284">                    }</a>
+<span class="sourceLineNo">285</span><a id="line.285">                }</a>
+<span class="sourceLineNo">286</span><a id="line.286">                else {</a>
+<span class="sourceLineNo">287</span><a id="line.287">                    Number value1 = (Number) values.get(start + count / 2 - 1);</a>
+<span class="sourceLineNo">288</span><a id="line.288">                    Number value2 = (Number) values.get(start + count / 2);</a>
+<span class="sourceLineNo">289</span><a id="line.289">                    result</a>
+<span class="sourceLineNo">290</span><a id="line.290">                        = (value1.doubleValue() + value2.doubleValue()) / 2.0;</a>
+<span class="sourceLineNo">291</span><a id="line.291">                }</a>
+<span class="sourceLineNo">292</span><a id="line.292">            }</a>
+<span class="sourceLineNo">293</span><a id="line.293">        }</a>
+<span class="sourceLineNo">294</span><a id="line.294">        return result;</a>
+<span class="sourceLineNo">295</span><a id="line.295"></a>
+<span class="sourceLineNo">296</span><a id="line.296">    }</a>
+<span class="sourceLineNo">297</span><a id="line.297"></a>
+<span class="sourceLineNo">298</span><a id="line.298">    /**</a>
+<span class="sourceLineNo">299</span><a id="line.299">     * Returns the standard deviation of a set of numbers.</a>
+<span class="sourceLineNo">300</span><a id="line.300">     *</a>
+<span class="sourceLineNo">301</span><a id="line.301">     * @param data  the data ({@code null} or zero length array not</a>
+<span class="sourceLineNo">302</span><a id="line.302">     *     permitted).</a>
+<span class="sourceLineNo">303</span><a id="line.303">     *</a>
+<span class="sourceLineNo">304</span><a id="line.304">     * @return The standard deviation of a set of numbers.</a>
+<span class="sourceLineNo">305</span><a id="line.305">     */</a>
+<span class="sourceLineNo">306</span><a id="line.306">    public static double getStdDev(Number[] data) {</a>
+<span class="sourceLineNo">307</span><a id="line.307">        ParamChecks.nullNotPermitted(data, "data");</a>
+<span class="sourceLineNo">308</span><a id="line.308">        if (data.length == 0) {</a>
+<span class="sourceLineNo">309</span><a id="line.309">            throw new IllegalArgumentException("Zero length 'data' array.");</a>
+<span class="sourceLineNo">310</span><a id="line.310">        }</a>
+<span class="sourceLineNo">311</span><a id="line.311">        double avg = calculateMean(data);</a>
+<span class="sourceLineNo">312</span><a id="line.312">        double sum = 0.0;</a>
+<span class="sourceLineNo">313</span><a id="line.313"></a>
+<span class="sourceLineNo">314</span><a id="line.314">        for (int counter = 0; counter &lt; data.length; counter++) {</a>
+<span class="sourceLineNo">315</span><a id="line.315">            double diff = data[counter].doubleValue() - avg;</a>
+<span class="sourceLineNo">316</span><a id="line.316">            sum = sum + diff * diff;</a>
+<span class="sourceLineNo">317</span><a id="line.317">        }</a>
+<span class="sourceLineNo">318</span><a id="line.318">        return Math.sqrt(sum / (data.length - 1));</a>
+<span class="sourceLineNo">319</span><a id="line.319">    }</a>
+<span class="sourceLineNo">320</span><a id="line.320"></a>
+<span class="sourceLineNo">321</span><a id="line.321">    /**</a>
+<span class="sourceLineNo">322</span><a id="line.322">     * Fits a straight line to a set of (x, y) data, returning the slope and</a>
+<span class="sourceLineNo">323</span><a id="line.323">     * intercept.</a>
+<span class="sourceLineNo">324</span><a id="line.324">     *</a>
+<span class="sourceLineNo">325</span><a id="line.325">     * @param xData  the x-data ({@code null} not permitted).</a>
+<span class="sourceLineNo">326</span><a id="line.326">     * @param yData  the y-data ({@code null} not permitted).</a>
+<span class="sourceLineNo">327</span><a id="line.327">     *</a>
+<span class="sourceLineNo">328</span><a id="line.328">     * @return A double array with the intercept in [0] and the slope in [1].</a>
+<span class="sourceLineNo">329</span><a id="line.329">     */</a>
+<span class="sourceLineNo">330</span><a id="line.330">    public static double[] getLinearFit(Number[] xData, Number[] yData) {</a>
+<span class="sourceLineNo">331</span><a id="line.331"></a>
+<span class="sourceLineNo">332</span><a id="line.332">        ParamChecks.nullNotPermitted(xData, "xData");</a>
+<span class="sourceLineNo">333</span><a id="line.333">        ParamChecks.nullNotPermitted(yData, "yData");</a>
+<span class="sourceLineNo">334</span><a id="line.334">        if (xData.length != yData.length) {</a>
+<span class="sourceLineNo">335</span><a id="line.335">            throw new IllegalArgumentException(</a>
+<span class="sourceLineNo">336</span><a id="line.336">                "Statistics.getLinearFit(): array lengths must be equal.");</a>
+<span class="sourceLineNo">337</span><a id="line.337">        }</a>
+<span class="sourceLineNo">338</span><a id="line.338"></a>
+<span class="sourceLineNo">339</span><a id="line.339">        double[] result = new double[2];</a>
+<span class="sourceLineNo">340</span><a id="line.340">        // slope</a>
+<span class="sourceLineNo">341</span><a id="line.341">        result[1] = getSlope(xData, yData);</a>
+<span class="sourceLineNo">342</span><a id="line.342">        // intercept</a>
+<span class="sourceLineNo">343</span><a id="line.343">        result[0] = calculateMean(yData) - result[1] * calculateMean(xData);</a>
+<span class="sourceLineNo">344</span><a id="line.344"></a>
+<span class="sourceLineNo">345</span><a id="line.345">        return result;</a>
+<span class="sourceLineNo">346</span><a id="line.346"></a>
+<span class="sourceLineNo">347</span><a id="line.347">    }</a>
+<span class="sourceLineNo">348</span><a id="line.348"></a>
+<span class="sourceLineNo">349</span><a id="line.349">    /**</a>
+<span class="sourceLineNo">350</span><a id="line.350">     * Finds the slope of a regression line using least squares.</a>
+<span class="sourceLineNo">351</span><a id="line.351">     *</a>
+<span class="sourceLineNo">352</span><a id="line.352">     * @param xData  the x-values ({@code null} not permitted).</a>
+<span class="sourceLineNo">353</span><a id="line.353">     * @param yData  the y-values ({@code null} not permitted).</a>
+<span class="sourceLineNo">354</span><a id="line.354">     *</a>
+<span class="sourceLineNo">355</span><a id="line.355">     * @return The slope.</a>
+<span class="sourceLineNo">356</span><a id="line.356">     */</a>
+<span class="sourceLineNo">357</span><a id="line.357">    public static double getSlope(Number[] xData, Number[] yData) {</a>
+<span class="sourceLineNo">358</span><a id="line.358">        ParamChecks.nullNotPermitted(xData, "xData");</a>
+<span class="sourceLineNo">359</span><a id="line.359">        ParamChecks.nullNotPermitted(yData, "yData");</a>
+<span class="sourceLineNo">360</span><a id="line.360">        if (xData.length != yData.length) {</a>
+<span class="sourceLineNo">361</span><a id="line.361">            throw new IllegalArgumentException("Array lengths must be equal.");</a>
+<span class="sourceLineNo">362</span><a id="line.362">        }</a>
+<span class="sourceLineNo">363</span><a id="line.363"></a>
+<span class="sourceLineNo">364</span><a id="line.364">        // ********* stat function for linear slope ********</a>
+<span class="sourceLineNo">365</span><a id="line.365">        // y = a + bx</a>
+<span class="sourceLineNo">366</span><a id="line.366">        // a = ybar - b * xbar</a>
+<span class="sourceLineNo">367</span><a id="line.367">        //     sum(x * y) - (sum (x) * sum(y)) / n</a>
+<span class="sourceLineNo">368</span><a id="line.368">        // b = ------------------------------------</a>
+<span class="sourceLineNo">369</span><a id="line.369">        //     sum (x^2) - (sum(x)^2 / n</a>
+<span class="sourceLineNo">370</span><a id="line.370">        // *************************************************</a>
+<span class="sourceLineNo">371</span><a id="line.371"></a>
+<span class="sourceLineNo">372</span><a id="line.372">        // sum of x, x^2, x * y, y</a>
+<span class="sourceLineNo">373</span><a id="line.373">        double sx = 0.0, sxx = 0.0, sxy = 0.0, sy = 0.0;</a>
+<span class="sourceLineNo">374</span><a id="line.374">        int counter;</a>
+<span class="sourceLineNo">375</span><a id="line.375">        for (counter = 0; counter &lt; xData.length; counter++) {</a>
+<span class="sourceLineNo">376</span><a id="line.376">            sx = sx + xData[counter].doubleValue();</a>
+<span class="sourceLineNo">377</span><a id="line.377">            sxx = sxx + Math.pow(xData[counter].doubleValue(), 2);</a>
+<span class="sourceLineNo">378</span><a id="line.378">            sxy = sxy + yData[counter].doubleValue()</a>
+<span class="sourceLineNo">379</span><a id="line.379">                      * xData[counter].doubleValue();</a>
+<span class="sourceLineNo">380</span><a id="line.380">            sy = sy + yData[counter].doubleValue();</a>
+<span class="sourceLineNo">381</span><a id="line.381">        }</a>
+<span class="sourceLineNo">382</span><a id="line.382">        return (sxy - (sx * sy) / counter) / (sxx - (sx * sx) / counter);</a>
+<span class="sourceLineNo">383</span><a id="line.383"></a>
+<span class="sourceLineNo">384</span><a id="line.384">    }</a>
+<span class="sourceLineNo">385</span><a id="line.385"></a>
+<span class="sourceLineNo">386</span><a id="line.386">    /**</a>
+<span class="sourceLineNo">387</span><a id="line.387">     * Calculates the correlation between two datasets.  Both arrays should</a>
+<span class="sourceLineNo">388</span><a id="line.388">     * contain the same number of items.  Null values are treated as zero.</a>
+<span class="sourceLineNo">389</span><a id="line.389">     * &lt;P&gt;</a>
+<span class="sourceLineNo">390</span><a id="line.390">     * Information about the correlation calculation was obtained from:</a>
+<span class="sourceLineNo">391</span><a id="line.391">     *</a>
+<span class="sourceLineNo">392</span><a id="line.392">     * http://trochim.human.cornell.edu/kb/statcorr.htm</a>
+<span class="sourceLineNo">393</span><a id="line.393">     *</a>
+<span class="sourceLineNo">394</span><a id="line.394">     * @param data1  the first dataset.</a>
+<span class="sourceLineNo">395</span><a id="line.395">     * @param data2  the second dataset.</a>
+<span class="sourceLineNo">396</span><a id="line.396">     *</a>
+<span class="sourceLineNo">397</span><a id="line.397">     * @return The correlation.</a>
+<span class="sourceLineNo">398</span><a id="line.398">     */</a>
+<span class="sourceLineNo">399</span><a id="line.399">    public static double getCorrelation(Number[] data1, Number[] data2) {</a>
+<span class="sourceLineNo">400</span><a id="line.400">        ParamChecks.nullNotPermitted(data1, "data1");</a>
+<span class="sourceLineNo">401</span><a id="line.401">        ParamChecks.nullNotPermitted(data2, "data2");</a>
+<span class="sourceLineNo">402</span><a id="line.402">        if (data1.length != data2.length) {</a>
+<span class="sourceLineNo">403</span><a id="line.403">            throw new IllegalArgumentException(</a>
+<span class="sourceLineNo">404</span><a id="line.404">                "'data1' and 'data2' arrays must have same length."</a>
+<span class="sourceLineNo">405</span><a id="line.405">            );</a>
+<span class="sourceLineNo">406</span><a id="line.406">        }</a>
+<span class="sourceLineNo">407</span><a id="line.407">        int n = data1.length;</a>
+<span class="sourceLineNo">408</span><a id="line.408">        double sumX = 0.0;</a>
+<span class="sourceLineNo">409</span><a id="line.409">        double sumY = 0.0;</a>
+<span class="sourceLineNo">410</span><a id="line.410">        double sumX2 = 0.0;</a>
+<span class="sourceLineNo">411</span><a id="line.411">        double sumY2 = 0.0;</a>
+<span class="sourceLineNo">412</span><a id="line.412">        double sumXY = 0.0;</a>
+<span class="sourceLineNo">413</span><a id="line.413">        for (int i = 0; i &lt; n; i++) {</a>
+<span class="sourceLineNo">414</span><a id="line.414">            double x = 0.0;</a>
+<span class="sourceLineNo">415</span><a id="line.415">            if (data1[i] != null) {</a>
+<span class="sourceLineNo">416</span><a id="line.416">                x = data1[i].doubleValue();</a>
+<span class="sourceLineNo">417</span><a id="line.417">            }</a>
+<span class="sourceLineNo">418</span><a id="line.418">            double y = 0.0;</a>
+<span class="sourceLineNo">419</span><a id="line.419">            if (data2[i] != null) {</a>
+<span class="sourceLineNo">420</span><a id="line.420">                y = data2[i].doubleValue();</a>
+<span class="sourceLineNo">421</span><a id="line.421">            }</a>
+<span class="sourceLineNo">422</span><a id="line.422">            sumX = sumX + x;</a>
+<span class="sourceLineNo">423</span><a id="line.423">            sumY = sumY + y;</a>
+<span class="sourceLineNo">424</span><a id="line.424">            sumXY = sumXY + (x * y);</a>
+<span class="sourceLineNo">425</span><a id="line.425">            sumX2 = sumX2 + (x * x);</a>
+<span class="sourceLineNo">426</span><a id="line.426">            sumY2 = sumY2 + (y * y);</a>
+<span class="sourceLineNo">427</span><a id="line.427">        }</a>
+<span class="sourceLineNo">428</span><a id="line.428">        return (n * sumXY - sumX * sumY) / Math.pow((n * sumX2 - sumX * sumX)</a>
+<span class="sourceLineNo">429</span><a id="line.429">                * (n * sumY2 - sumY * sumY), 0.5);</a>
+<span class="sourceLineNo">430</span><a id="line.430">    }</a>
+<span class="sourceLineNo">431</span><a id="line.431"></a>
+<span class="sourceLineNo">432</span><a id="line.432">    /**</a>
+<span class="sourceLineNo">433</span><a id="line.433">     * Returns a data set for a moving average on the data set passed in.</a>
+<span class="sourceLineNo">434</span><a id="line.434">     *</a>
+<span class="sourceLineNo">435</span><a id="line.435">     * @param xData  an array of the x data.</a>
+<span class="sourceLineNo">436</span><a id="line.436">     * @param yData  an array of the y data.</a>
+<span class="sourceLineNo">437</span><a id="line.437">     * @param period  the number of data points to average</a>
+<span class="sourceLineNo">438</span><a id="line.438">     *</a>
+<span class="sourceLineNo">439</span><a id="line.439">     * @return A double[][] the length of the data set in the first dimension,</a>
+<span class="sourceLineNo">440</span><a id="line.440">     *         with two doubles for x and y in the second dimension</a>
+<span class="sourceLineNo">441</span><a id="line.441">     */</a>
+<span class="sourceLineNo">442</span><a id="line.442">    public static double[][] getMovingAverage(Number[] xData, Number[] yData,</a>
+<span class="sourceLineNo">443</span><a id="line.443">            int period) {</a>
+<span class="sourceLineNo">444</span><a id="line.444"></a>
+<span class="sourceLineNo">445</span><a id="line.445">        // check arguments...</a>
+<span class="sourceLineNo">446</span><a id="line.446">        if (xData.length != yData.length) {</a>
+<span class="sourceLineNo">447</span><a id="line.447">            throw new IllegalArgumentException("Array lengths must be equal.");</a>
+<span class="sourceLineNo">448</span><a id="line.448">        }</a>
+<span class="sourceLineNo">449</span><a id="line.449"></a>
+<span class="sourceLineNo">450</span><a id="line.450">        if (period &gt; xData.length) {</a>
+<span class="sourceLineNo">451</span><a id="line.451">            throw new IllegalArgumentException(</a>
+<span class="sourceLineNo">452</span><a id="line.452">                "Period can't be longer than dataset.");</a>
+<span class="sourceLineNo">453</span><a id="line.453">        }</a>
+<span class="sourceLineNo">454</span><a id="line.454"></a>
+<span class="sourceLineNo">455</span><a id="line.455">        double[][] result = new double[xData.length - period][2];</a>
+<span class="sourceLineNo">456</span><a id="line.456">        for (int i = 0; i &lt; result.length; i++) {</a>
+<span class="sourceLineNo">457</span><a id="line.457">            result[i][0] = xData[i + period].doubleValue();</a>
+<span class="sourceLineNo">458</span><a id="line.458">            // holds the moving average sum</a>
+<span class="sourceLineNo">459</span><a id="line.459">            double sum = 0.0;</a>
+<span class="sourceLineNo">460</span><a id="line.460">            for (int j = 0; j &lt; period; j++) {</a>
+<span class="sourceLineNo">461</span><a id="line.461">                sum += yData[i + j].doubleValue();</a>
+<span class="sourceLineNo">462</span><a id="line.462">            }</a>
+<span class="sourceLineNo">463</span><a id="line.463">            sum = sum / period;</a>
+<span class="sourceLineNo">464</span><a id="line.464">            result[i][1] = sum;</a>
+<span class="sourceLineNo">465</span><a id="line.465">        }</a>
+<span class="sourceLineNo">466</span><a id="line.466">        return result;</a>
+<span class="sourceLineNo">467</span><a id="line.467"></a>
+<span class="sourceLineNo">468</span><a id="line.468">    }</a>
+<span class="sourceLineNo">469</span><a id="line.469"></a>
+<span class="sourceLineNo">470</span><a id="line.470">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

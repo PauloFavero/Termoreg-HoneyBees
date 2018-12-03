@@ -1,0 +1,1794 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/* ===========================================================</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * JFreeChart : a free chart library for the Java(tm) platform</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * ===========================================================</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Project Info:  http://www.jfree.org/jfreechart/index.html</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * This library is free software; you can redistribute it and/or modify it</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * under the terms of the GNU Lesser General Public License as published by</a>
+<span class="sourceLineNo">011</span><a id="line.11"> * the Free Software Foundation; either version 2.1 of the License, or</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * (at your option) any later version.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> *</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * This library is distributed in the hope that it will be useful, but</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</a>
+<span class="sourceLineNo">016</span><a id="line.16"> * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * License for more details.</a>
+<span class="sourceLineNo">018</span><a id="line.18"> *</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * You should have received a copy of the GNU Lesser General Public</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * License along with this library; if not, write to the Free Software</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * USA.</a>
+<span class="sourceLineNo">023</span><a id="line.23"> *</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. </a>
+<span class="sourceLineNo">025</span><a id="line.25"> * Other names may be trademarks of their respective owners.]</a>
+<span class="sourceLineNo">026</span><a id="line.26"> *</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * ---------</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * Axis.java</a>
+<span class="sourceLineNo">029</span><a id="line.29"> * ---------</a>
+<span class="sourceLineNo">030</span><a id="line.30"> * (C) Copyright 2000-2014, by Object Refinery Limited and Contributors.</a>
+<span class="sourceLineNo">031</span><a id="line.31"> *</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * Original Author:  David Gilbert (for Object Refinery Limited);</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * Contributor(s):   Bill Kelemen;</a>
+<span class="sourceLineNo">034</span><a id="line.34"> *                   Nicolas Brodu;</a>
+<span class="sourceLineNo">035</span><a id="line.35"> *                   Peter Kolb (patches 1934255 and 2603321);</a>
+<span class="sourceLineNo">036</span><a id="line.36"> *                   Andrew Mickish (patch 1870189);</a>
+<span class="sourceLineNo">037</span><a id="line.37"> *</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * Changes</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * -------</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * 21-Aug-2001 : Added standard header, fixed DOS encoding problem (DG);</a>
+<span class="sourceLineNo">041</span><a id="line.41"> * 18-Sep-2001 : Updated header (DG);</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * 07-Nov-2001 : Allow null axis labels (DG);</a>
+<span class="sourceLineNo">043</span><a id="line.43"> *             : Added default font values (DG);</a>
+<span class="sourceLineNo">044</span><a id="line.44"> * 13-Nov-2001 : Modified the setPlot() method to check compatibility between</a>
+<span class="sourceLineNo">045</span><a id="line.45"> *               the axis and the plot (DG);</a>
+<span class="sourceLineNo">046</span><a id="line.46"> * 30-Nov-2001 : Changed default font from "Arial" --&gt; "SansSerif" (DG);</a>
+<span class="sourceLineNo">047</span><a id="line.47"> * 06-Dec-2001 : Allow null in setPlot() method (BK);</a>
+<span class="sourceLineNo">048</span><a id="line.48"> * 06-Mar-2002 : Added AxisConstants interface (DG);</a>
+<span class="sourceLineNo">049</span><a id="line.49"> * 23-Apr-2002 : Added a visible property.  Moved drawVerticalString to</a>
+<span class="sourceLineNo">050</span><a id="line.50"> *               RefineryUtilities.  Added fixedDimension property for use in</a>
+<span class="sourceLineNo">051</span><a id="line.51"> *               combined plots (DG);</a>
+<span class="sourceLineNo">052</span><a id="line.52"> * 25-Jun-2002 : Removed unnecessary imports (DG);</a>
+<span class="sourceLineNo">053</span><a id="line.53"> * 05-Sep-2002 : Added attribute for tick mark paint (DG);</a>
+<span class="sourceLineNo">054</span><a id="line.54"> * 18-Sep-2002 : Fixed errors reported by Checkstyle (DG);</a>
+<span class="sourceLineNo">055</span><a id="line.55"> * 07-Nov-2002 : Added attributes to control the inside and outside length of</a>
+<span class="sourceLineNo">056</span><a id="line.56"> *               the tick marks (DG);</a>
+<span class="sourceLineNo">057</span><a id="line.57"> * 08-Nov-2002 : Moved to new package com.jrefinery.chart.axis (DG);</a>
+<span class="sourceLineNo">058</span><a id="line.58"> * 18-Nov-2002 : Added axis location to refreshTicks() parameters (DG);</a>
+<span class="sourceLineNo">059</span><a id="line.59"> * 15-Jan-2003 : Removed monolithic constructor (DG);</a>
+<span class="sourceLineNo">060</span><a id="line.60"> * 17-Jan-2003 : Moved plot classes to separate package (DG);</a>
+<span class="sourceLineNo">061</span><a id="line.61"> * 26-Mar-2003 : Implemented Serializable (DG);</a>
+<span class="sourceLineNo">062</span><a id="line.62"> * 03-Jul-2003 : Modified reserveSpace method (DG);</a>
+<span class="sourceLineNo">063</span><a id="line.63"> * 13-Aug-2003 : Implemented Cloneable (DG);</a>
+<span class="sourceLineNo">064</span><a id="line.64"> * 11-Sep-2003 : Took care of listeners while cloning (NB);</a>
+<span class="sourceLineNo">065</span><a id="line.65"> * 29-Oct-2003 : Added workaround for font alignment in PDF output (DG);</a>
+<span class="sourceLineNo">066</span><a id="line.66"> * 06-Nov-2003 : Modified refreshTicks() signature (DG);</a>
+<span class="sourceLineNo">067</span><a id="line.67"> * 06-Jan-2004 : Added axis line attributes (DG);</a>
+<span class="sourceLineNo">068</span><a id="line.68"> * 16-Mar-2004 : Added plot state to draw() method (DG);</a>
+<span class="sourceLineNo">069</span><a id="line.69"> * 07-Apr-2004 : Modified text bounds calculation (DG);</a>
+<span class="sourceLineNo">070</span><a id="line.70"> * 18-May-2004 : Eliminated AxisConstants.java (DG);</a>
+<span class="sourceLineNo">071</span><a id="line.71"> * 30-Sep-2004 : Moved drawRotatedString() from RefineryUtilities --&gt;</a>
+<span class="sourceLineNo">072</span><a id="line.72"> *               TextUtilities (DG);</a>
+<span class="sourceLineNo">073</span><a id="line.73"> * 04-Oct-2004 : Modified getLabelEnclosure() method to treat an empty String</a>
+<span class="sourceLineNo">074</span><a id="line.74"> *               the same way as a null string - see bug 1026521 (DG);</a>
+<span class="sourceLineNo">075</span><a id="line.75"> * 21-Apr-2005 : Replaced Insets with RectangleInsets (DG);</a>
+<span class="sourceLineNo">076</span><a id="line.76"> * 26-Apr-2005 : Removed LOGGER (DG);</a>
+<span class="sourceLineNo">077</span><a id="line.77"> * 01-Jun-2005 : Added hasListener() method for unit testing (DG);</a>
+<span class="sourceLineNo">078</span><a id="line.78"> * 08-Jun-2005 : Fixed equals() method to handle GradientPaint (DG);</a>
+<span class="sourceLineNo">079</span><a id="line.79"> * ------------- JFREECHART 1.0.x ---------------------------------------------</a>
+<span class="sourceLineNo">080</span><a id="line.80"> * 22-Aug-2006 : API doc updates (DG);</a>
+<span class="sourceLineNo">081</span><a id="line.81"> * 06-Jun-2008 : Added setTickLabelInsets(RectangleInsets, boolean) (DG);</a>
+<span class="sourceLineNo">082</span><a id="line.82"> * 25-Sep-2008 : Added minor tick support, see patch 1934255 by Peter Kolb (DG);</a>
+<span class="sourceLineNo">083</span><a id="line.83"> * 26-Sep-2008 : Added fireChangeEvent() method (DG);</a>
+<span class="sourceLineNo">084</span><a id="line.84"> * 19-Mar-2009 : Added entity support - see patch 2603321 by Peter Kolb (DG);</a>
+<span class="sourceLineNo">085</span><a id="line.85"> * 02-Jul-2013 : Use ParamChecks (DG);</a>
+<span class="sourceLineNo">086</span><a id="line.86"> * 01-Aug-2013 : Added attributedLabel override to support superscripts,</a>
+<span class="sourceLineNo">087</span><a id="line.87"> *               subscripts and more (DG);</a>
+<span class="sourceLineNo">088</span><a id="line.88"> * 29-Jul-2014 : Add hint to normalise stroke for axis line (DG);</a>
+<span class="sourceLineNo">089</span><a id="line.89"> *</a>
+<span class="sourceLineNo">090</span><a id="line.90"> */</a>
+<span class="sourceLineNo">091</span><a id="line.91"></a>
+<span class="sourceLineNo">092</span><a id="line.92">package org.jfree.chart.axis;</a>
+<span class="sourceLineNo">093</span><a id="line.93"></a>
+<span class="sourceLineNo">094</span><a id="line.94">import java.awt.BasicStroke;</a>
+<span class="sourceLineNo">095</span><a id="line.95">import java.awt.Color;</a>
+<span class="sourceLineNo">096</span><a id="line.96">import java.awt.Font;</a>
+<span class="sourceLineNo">097</span><a id="line.97">import java.awt.FontMetrics;</a>
+<span class="sourceLineNo">098</span><a id="line.98">import java.awt.Graphics2D;</a>
+<span class="sourceLineNo">099</span><a id="line.99">import java.awt.Paint;</a>
+<span class="sourceLineNo">100</span><a id="line.100">import java.awt.RenderingHints;</a>
+<span class="sourceLineNo">101</span><a id="line.101">import java.awt.Shape;</a>
+<span class="sourceLineNo">102</span><a id="line.102">import java.awt.Stroke;</a>
+<span class="sourceLineNo">103</span><a id="line.103">import java.awt.font.TextLayout;</a>
+<span class="sourceLineNo">104</span><a id="line.104">import java.awt.geom.AffineTransform;</a>
+<span class="sourceLineNo">105</span><a id="line.105">import java.awt.geom.Line2D;</a>
+<span class="sourceLineNo">106</span><a id="line.106">import java.awt.geom.Rectangle2D;</a>
+<span class="sourceLineNo">107</span><a id="line.107">import java.io.IOException;</a>
+<span class="sourceLineNo">108</span><a id="line.108">import java.io.ObjectInputStream;</a>
+<span class="sourceLineNo">109</span><a id="line.109">import java.io.ObjectOutputStream;</a>
+<span class="sourceLineNo">110</span><a id="line.110">import java.io.Serializable;</a>
+<span class="sourceLineNo">111</span><a id="line.111">import java.text.AttributedString;</a>
+<span class="sourceLineNo">112</span><a id="line.112">import java.util.Arrays;</a>
+<span class="sourceLineNo">113</span><a id="line.113">import java.util.EventListener;</a>
+<span class="sourceLineNo">114</span><a id="line.114">import java.util.List;</a>
+<span class="sourceLineNo">115</span><a id="line.115"></a>
+<span class="sourceLineNo">116</span><a id="line.116">import javax.swing.event.EventListenerList;</a>
+<span class="sourceLineNo">117</span><a id="line.117"></a>
+<span class="sourceLineNo">118</span><a id="line.118">import org.jfree.chart.entity.AxisEntity;</a>
+<span class="sourceLineNo">119</span><a id="line.119">import org.jfree.chart.entity.EntityCollection;</a>
+<span class="sourceLineNo">120</span><a id="line.120">import org.jfree.chart.event.AxisChangeEvent;</a>
+<span class="sourceLineNo">121</span><a id="line.121">import org.jfree.chart.event.AxisChangeListener;</a>
+<span class="sourceLineNo">122</span><a id="line.122">import org.jfree.chart.plot.Plot;</a>
+<span class="sourceLineNo">123</span><a id="line.123">import org.jfree.chart.plot.PlotRenderingInfo;</a>
+<span class="sourceLineNo">124</span><a id="line.124">import org.jfree.chart.util.AttrStringUtils;</a>
+<span class="sourceLineNo">125</span><a id="line.125">import org.jfree.chart.util.ParamChecks;</a>
+<span class="sourceLineNo">126</span><a id="line.126">import org.jfree.io.SerialUtilities;</a>
+<span class="sourceLineNo">127</span><a id="line.127">import org.jfree.text.TextUtilities;</a>
+<span class="sourceLineNo">128</span><a id="line.128">import org.jfree.ui.RectangleEdge;</a>
+<span class="sourceLineNo">129</span><a id="line.129">import org.jfree.ui.RectangleInsets;</a>
+<span class="sourceLineNo">130</span><a id="line.130">import org.jfree.ui.TextAnchor;</a>
+<span class="sourceLineNo">131</span><a id="line.131">import org.jfree.util.AttributedStringUtilities;</a>
+<span class="sourceLineNo">132</span><a id="line.132">import org.jfree.util.ObjectUtilities;</a>
+<span class="sourceLineNo">133</span><a id="line.133">import org.jfree.util.PaintUtilities;</a>
+<span class="sourceLineNo">134</span><a id="line.134"></a>
+<span class="sourceLineNo">135</span><a id="line.135">/**</a>
+<span class="sourceLineNo">136</span><a id="line.136"> * The base class for all axes in JFreeChart.  Subclasses are divided into</a>
+<span class="sourceLineNo">137</span><a id="line.137"> * those that display values ({@link ValueAxis}) and those that display</a>
+<span class="sourceLineNo">138</span><a id="line.138"> * categories ({@link CategoryAxis}).</a>
+<span class="sourceLineNo">139</span><a id="line.139"> */</a>
+<span class="sourceLineNo">140</span><a id="line.140">public abstract class Axis implements Cloneable, Serializable {</a>
+<span class="sourceLineNo">141</span><a id="line.141"></a>
+<span class="sourceLineNo">142</span><a id="line.142">    /** For serialization. */</a>
+<span class="sourceLineNo">143</span><a id="line.143">    private static final long serialVersionUID = 7719289504573298271L;</a>
+<span class="sourceLineNo">144</span><a id="line.144"></a>
+<span class="sourceLineNo">145</span><a id="line.145">    /** The default axis visibility. */</a>
+<span class="sourceLineNo">146</span><a id="line.146">    public static final boolean DEFAULT_AXIS_VISIBLE = true;</a>
+<span class="sourceLineNo">147</span><a id="line.147"></a>
+<span class="sourceLineNo">148</span><a id="line.148">    /** The default axis label font. */</a>
+<span class="sourceLineNo">149</span><a id="line.149">    public static final Font DEFAULT_AXIS_LABEL_FONT = new Font(</a>
+<span class="sourceLineNo">150</span><a id="line.150">            "SansSerif", Font.PLAIN, 12);</a>
+<span class="sourceLineNo">151</span><a id="line.151"></a>
+<span class="sourceLineNo">152</span><a id="line.152">    /** The default axis label paint. */</a>
+<span class="sourceLineNo">153</span><a id="line.153">    public static final Paint DEFAULT_AXIS_LABEL_PAINT = Color.black;</a>
+<span class="sourceLineNo">154</span><a id="line.154"></a>
+<span class="sourceLineNo">155</span><a id="line.155">    /** The default axis label insets. */</a>
+<span class="sourceLineNo">156</span><a id="line.156">    public static final RectangleInsets DEFAULT_AXIS_LABEL_INSETS</a>
+<span class="sourceLineNo">157</span><a id="line.157">            = new RectangleInsets(3.0, 3.0, 3.0, 3.0);</a>
+<span class="sourceLineNo">158</span><a id="line.158"></a>
+<span class="sourceLineNo">159</span><a id="line.159">    /** The default axis line paint. */</a>
+<span class="sourceLineNo">160</span><a id="line.160">    public static final Paint DEFAULT_AXIS_LINE_PAINT = Color.gray;</a>
+<span class="sourceLineNo">161</span><a id="line.161"></a>
+<span class="sourceLineNo">162</span><a id="line.162">    /** The default axis line stroke. */</a>
+<span class="sourceLineNo">163</span><a id="line.163">    public static final Stroke DEFAULT_AXIS_LINE_STROKE = new BasicStroke(0.5f);</a>
+<span class="sourceLineNo">164</span><a id="line.164"></a>
+<span class="sourceLineNo">165</span><a id="line.165">    /** The default tick labels visibility. */</a>
+<span class="sourceLineNo">166</span><a id="line.166">    public static final boolean DEFAULT_TICK_LABELS_VISIBLE = true;</a>
+<span class="sourceLineNo">167</span><a id="line.167"></a>
+<span class="sourceLineNo">168</span><a id="line.168">    /** The default tick label font. */</a>
+<span class="sourceLineNo">169</span><a id="line.169">    public static final Font DEFAULT_TICK_LABEL_FONT = new Font("SansSerif",</a>
+<span class="sourceLineNo">170</span><a id="line.170">            Font.PLAIN, 10);</a>
+<span class="sourceLineNo">171</span><a id="line.171"></a>
+<span class="sourceLineNo">172</span><a id="line.172">    /** The default tick label paint. */</a>
+<span class="sourceLineNo">173</span><a id="line.173">    public static final Paint DEFAULT_TICK_LABEL_PAINT = Color.black;</a>
+<span class="sourceLineNo">174</span><a id="line.174"></a>
+<span class="sourceLineNo">175</span><a id="line.175">    /** The default tick label insets. */</a>
+<span class="sourceLineNo">176</span><a id="line.176">    public static final RectangleInsets DEFAULT_TICK_LABEL_INSETS</a>
+<span class="sourceLineNo">177</span><a id="line.177">            = new RectangleInsets(2.0, 4.0, 2.0, 4.0);</a>
+<span class="sourceLineNo">178</span><a id="line.178"></a>
+<span class="sourceLineNo">179</span><a id="line.179">    /** The default tick marks visible. */</a>
+<span class="sourceLineNo">180</span><a id="line.180">    public static final boolean DEFAULT_TICK_MARKS_VISIBLE = true;</a>
+<span class="sourceLineNo">181</span><a id="line.181"></a>
+<span class="sourceLineNo">182</span><a id="line.182">    /** The default tick stroke. */</a>
+<span class="sourceLineNo">183</span><a id="line.183">    public static final Stroke DEFAULT_TICK_MARK_STROKE = new BasicStroke(0.5f);</a>
+<span class="sourceLineNo">184</span><a id="line.184"></a>
+<span class="sourceLineNo">185</span><a id="line.185">    /** The default tick paint. */</a>
+<span class="sourceLineNo">186</span><a id="line.186">    public static final Paint DEFAULT_TICK_MARK_PAINT = Color.gray;</a>
+<span class="sourceLineNo">187</span><a id="line.187"></a>
+<span class="sourceLineNo">188</span><a id="line.188">    /** The default tick mark inside length. */</a>
+<span class="sourceLineNo">189</span><a id="line.189">    public static final float DEFAULT_TICK_MARK_INSIDE_LENGTH = 0.0f;</a>
+<span class="sourceLineNo">190</span><a id="line.190"></a>
+<span class="sourceLineNo">191</span><a id="line.191">    /** The default tick mark outside length. */</a>
+<span class="sourceLineNo">192</span><a id="line.192">    public static final float DEFAULT_TICK_MARK_OUTSIDE_LENGTH = 2.0f;</a>
+<span class="sourceLineNo">193</span><a id="line.193"></a>
+<span class="sourceLineNo">194</span><a id="line.194">    /** A flag indicating whether or not the axis is visible. */</a>
+<span class="sourceLineNo">195</span><a id="line.195">    private boolean visible;</a>
+<span class="sourceLineNo">196</span><a id="line.196"></a>
+<span class="sourceLineNo">197</span><a id="line.197">    /** The label for the axis. */</a>
+<span class="sourceLineNo">198</span><a id="line.198">    private String label;</a>
+<span class="sourceLineNo">199</span><a id="line.199">    </a>
+<span class="sourceLineNo">200</span><a id="line.200">    /** </a>
+<span class="sourceLineNo">201</span><a id="line.201">     * An attributed label for the axis (overrides label if non-null).</a>
+<span class="sourceLineNo">202</span><a id="line.202">     * We have to use this override method to preserve the API compatibility.</a>
+<span class="sourceLineNo">203</span><a id="line.203">     */</a>
+<span class="sourceLineNo">204</span><a id="line.204">    private transient AttributedString attributedLabel;</a>
+<span class="sourceLineNo">205</span><a id="line.205"></a>
+<span class="sourceLineNo">206</span><a id="line.206">    /** The font for displaying the axis label. */</a>
+<span class="sourceLineNo">207</span><a id="line.207">    private Font labelFont;</a>
+<span class="sourceLineNo">208</span><a id="line.208"></a>
+<span class="sourceLineNo">209</span><a id="line.209">    /** The paint for drawing the axis label. */</a>
+<span class="sourceLineNo">210</span><a id="line.210">    private transient Paint labelPaint;</a>
+<span class="sourceLineNo">211</span><a id="line.211"></a>
+<span class="sourceLineNo">212</span><a id="line.212">    /** The insets for the axis label. */</a>
+<span class="sourceLineNo">213</span><a id="line.213">    private RectangleInsets labelInsets;</a>
+<span class="sourceLineNo">214</span><a id="line.214"></a>
+<span class="sourceLineNo">215</span><a id="line.215">    /** The label angle. */</a>
+<span class="sourceLineNo">216</span><a id="line.216">    private double labelAngle;</a>
+<span class="sourceLineNo">217</span><a id="line.217">    </a>
+<span class="sourceLineNo">218</span><a id="line.218">    /** The axis label location (new in 1.0.16). */</a>
+<span class="sourceLineNo">219</span><a id="line.219">    private AxisLabelLocation labelLocation;</a>
+<span class="sourceLineNo">220</span><a id="line.220"></a>
+<span class="sourceLineNo">221</span><a id="line.221">    /** A flag that controls whether or not the axis line is visible. */</a>
+<span class="sourceLineNo">222</span><a id="line.222">    private boolean axisLineVisible;</a>
+<span class="sourceLineNo">223</span><a id="line.223"></a>
+<span class="sourceLineNo">224</span><a id="line.224">    /** The stroke used for the axis line. */</a>
+<span class="sourceLineNo">225</span><a id="line.225">    private transient Stroke axisLineStroke;</a>
+<span class="sourceLineNo">226</span><a id="line.226"></a>
+<span class="sourceLineNo">227</span><a id="line.227">    /** The paint used for the axis line. */</a>
+<span class="sourceLineNo">228</span><a id="line.228">    private transient Paint axisLinePaint;</a>
+<span class="sourceLineNo">229</span><a id="line.229"></a>
+<span class="sourceLineNo">230</span><a id="line.230">    /**</a>
+<span class="sourceLineNo">231</span><a id="line.231">     * A flag that indicates whether or not tick labels are visible for the</a>
+<span class="sourceLineNo">232</span><a id="line.232">     * axis.</a>
+<span class="sourceLineNo">233</span><a id="line.233">     */</a>
+<span class="sourceLineNo">234</span><a id="line.234">    private boolean tickLabelsVisible;</a>
+<span class="sourceLineNo">235</span><a id="line.235"></a>
+<span class="sourceLineNo">236</span><a id="line.236">    /** The font used to display the tick labels. */</a>
+<span class="sourceLineNo">237</span><a id="line.237">    private Font tickLabelFont;</a>
+<span class="sourceLineNo">238</span><a id="line.238"></a>
+<span class="sourceLineNo">239</span><a id="line.239">    /** The color used to display the tick labels. */</a>
+<span class="sourceLineNo">240</span><a id="line.240">    private transient Paint tickLabelPaint;</a>
+<span class="sourceLineNo">241</span><a id="line.241"></a>
+<span class="sourceLineNo">242</span><a id="line.242">    /** The blank space around each tick label. */</a>
+<span class="sourceLineNo">243</span><a id="line.243">    private RectangleInsets tickLabelInsets;</a>
+<span class="sourceLineNo">244</span><a id="line.244"></a>
+<span class="sourceLineNo">245</span><a id="line.245">    /**</a>
+<span class="sourceLineNo">246</span><a id="line.246">     * A flag that indicates whether or not major tick marks are visible for</a>
+<span class="sourceLineNo">247</span><a id="line.247">     * the axis.</a>
+<span class="sourceLineNo">248</span><a id="line.248">     */</a>
+<span class="sourceLineNo">249</span><a id="line.249">    private boolean tickMarksVisible;</a>
+<span class="sourceLineNo">250</span><a id="line.250"></a>
+<span class="sourceLineNo">251</span><a id="line.251">    /**</a>
+<span class="sourceLineNo">252</span><a id="line.252">     * The length of the major tick mark inside the data area (zero</a>
+<span class="sourceLineNo">253</span><a id="line.253">     * permitted).</a>
+<span class="sourceLineNo">254</span><a id="line.254">     */</a>
+<span class="sourceLineNo">255</span><a id="line.255">    private float tickMarkInsideLength;</a>
+<span class="sourceLineNo">256</span><a id="line.256"></a>
+<span class="sourceLineNo">257</span><a id="line.257">    /**</a>
+<span class="sourceLineNo">258</span><a id="line.258">     * The length of the major tick mark outside the data area (zero</a>
+<span class="sourceLineNo">259</span><a id="line.259">     * permitted).</a>
+<span class="sourceLineNo">260</span><a id="line.260">     */</a>
+<span class="sourceLineNo">261</span><a id="line.261">    private float tickMarkOutsideLength;</a>
+<span class="sourceLineNo">262</span><a id="line.262"></a>
+<span class="sourceLineNo">263</span><a id="line.263">    /**</a>
+<span class="sourceLineNo">264</span><a id="line.264">     * A flag that indicates whether or not minor tick marks are visible for the</a>
+<span class="sourceLineNo">265</span><a id="line.265">     * axis.</a>
+<span class="sourceLineNo">266</span><a id="line.266">     *</a>
+<span class="sourceLineNo">267</span><a id="line.267">     * @since 1.0.12</a>
+<span class="sourceLineNo">268</span><a id="line.268">     */</a>
+<span class="sourceLineNo">269</span><a id="line.269">    private boolean minorTickMarksVisible;</a>
+<span class="sourceLineNo">270</span><a id="line.270"></a>
+<span class="sourceLineNo">271</span><a id="line.271">    /**</a>
+<span class="sourceLineNo">272</span><a id="line.272">     * The length of the minor tick mark inside the data area (zero permitted).</a>
+<span class="sourceLineNo">273</span><a id="line.273">     *</a>
+<span class="sourceLineNo">274</span><a id="line.274">     * @since 1.0.12</a>
+<span class="sourceLineNo">275</span><a id="line.275">     */</a>
+<span class="sourceLineNo">276</span><a id="line.276">    private float minorTickMarkInsideLength;</a>
+<span class="sourceLineNo">277</span><a id="line.277"></a>
+<span class="sourceLineNo">278</span><a id="line.278">    /**</a>
+<span class="sourceLineNo">279</span><a id="line.279">     * The length of the minor tick mark outside the data area (zero permitted).</a>
+<span class="sourceLineNo">280</span><a id="line.280">     *</a>
+<span class="sourceLineNo">281</span><a id="line.281">     * @since 1.0.12</a>
+<span class="sourceLineNo">282</span><a id="line.282">     */</a>
+<span class="sourceLineNo">283</span><a id="line.283">    private float minorTickMarkOutsideLength;</a>
+<span class="sourceLineNo">284</span><a id="line.284"></a>
+<span class="sourceLineNo">285</span><a id="line.285">    /** The stroke used to draw tick marks. */</a>
+<span class="sourceLineNo">286</span><a id="line.286">    private transient Stroke tickMarkStroke;</a>
+<span class="sourceLineNo">287</span><a id="line.287"></a>
+<span class="sourceLineNo">288</span><a id="line.288">    /** The paint used to draw tick marks. */</a>
+<span class="sourceLineNo">289</span><a id="line.289">    private transient Paint tickMarkPaint;</a>
+<span class="sourceLineNo">290</span><a id="line.290"></a>
+<span class="sourceLineNo">291</span><a id="line.291">    /** The fixed (horizontal or vertical) dimension for the axis. */</a>
+<span class="sourceLineNo">292</span><a id="line.292">    private double fixedDimension;</a>
+<span class="sourceLineNo">293</span><a id="line.293"></a>
+<span class="sourceLineNo">294</span><a id="line.294">    /**</a>
+<span class="sourceLineNo">295</span><a id="line.295">     * A reference back to the plot that the axis is assigned to (can be</a>
+<span class="sourceLineNo">296</span><a id="line.296">     * {@code null}).</a>
+<span class="sourceLineNo">297</span><a id="line.297">     */</a>
+<span class="sourceLineNo">298</span><a id="line.298">    private transient Plot plot;</a>
+<span class="sourceLineNo">299</span><a id="line.299"></a>
+<span class="sourceLineNo">300</span><a id="line.300">    /** Storage for registered listeners. */</a>
+<span class="sourceLineNo">301</span><a id="line.301">    private transient EventListenerList listenerList;</a>
+<span class="sourceLineNo">302</span><a id="line.302"></a>
+<span class="sourceLineNo">303</span><a id="line.303">    /**</a>
+<span class="sourceLineNo">304</span><a id="line.304">     * Constructs an axis, using default values where necessary.</a>
+<span class="sourceLineNo">305</span><a id="line.305">     *</a>
+<span class="sourceLineNo">306</span><a id="line.306">     * @param label  the axis label ({@code null} permitted).</a>
+<span class="sourceLineNo">307</span><a id="line.307">     */</a>
+<span class="sourceLineNo">308</span><a id="line.308">    protected Axis(String label) {</a>
+<span class="sourceLineNo">309</span><a id="line.309"></a>
+<span class="sourceLineNo">310</span><a id="line.310">        this.label = label;</a>
+<span class="sourceLineNo">311</span><a id="line.311">        this.visible = DEFAULT_AXIS_VISIBLE;</a>
+<span class="sourceLineNo">312</span><a id="line.312">        this.labelFont = DEFAULT_AXIS_LABEL_FONT;</a>
+<span class="sourceLineNo">313</span><a id="line.313">        this.labelPaint = DEFAULT_AXIS_LABEL_PAINT;</a>
+<span class="sourceLineNo">314</span><a id="line.314">        this.labelInsets = DEFAULT_AXIS_LABEL_INSETS;</a>
+<span class="sourceLineNo">315</span><a id="line.315">        this.labelAngle = 0.0;</a>
+<span class="sourceLineNo">316</span><a id="line.316">        this.labelLocation = AxisLabelLocation.MIDDLE;</a>
+<span class="sourceLineNo">317</span><a id="line.317"></a>
+<span class="sourceLineNo">318</span><a id="line.318">        this.axisLineVisible = true;</a>
+<span class="sourceLineNo">319</span><a id="line.319">        this.axisLinePaint = DEFAULT_AXIS_LINE_PAINT;</a>
+<span class="sourceLineNo">320</span><a id="line.320">        this.axisLineStroke = DEFAULT_AXIS_LINE_STROKE;</a>
+<span class="sourceLineNo">321</span><a id="line.321"></a>
+<span class="sourceLineNo">322</span><a id="line.322">        this.tickLabelsVisible = DEFAULT_TICK_LABELS_VISIBLE;</a>
+<span class="sourceLineNo">323</span><a id="line.323">        this.tickLabelFont = DEFAULT_TICK_LABEL_FONT;</a>
+<span class="sourceLineNo">324</span><a id="line.324">        this.tickLabelPaint = DEFAULT_TICK_LABEL_PAINT;</a>
+<span class="sourceLineNo">325</span><a id="line.325">        this.tickLabelInsets = DEFAULT_TICK_LABEL_INSETS;</a>
+<span class="sourceLineNo">326</span><a id="line.326"></a>
+<span class="sourceLineNo">327</span><a id="line.327">        this.tickMarksVisible = DEFAULT_TICK_MARKS_VISIBLE;</a>
+<span class="sourceLineNo">328</span><a id="line.328">        this.tickMarkStroke = DEFAULT_TICK_MARK_STROKE;</a>
+<span class="sourceLineNo">329</span><a id="line.329">        this.tickMarkPaint = DEFAULT_TICK_MARK_PAINT;</a>
+<span class="sourceLineNo">330</span><a id="line.330">        this.tickMarkInsideLength = DEFAULT_TICK_MARK_INSIDE_LENGTH;</a>
+<span class="sourceLineNo">331</span><a id="line.331">        this.tickMarkOutsideLength = DEFAULT_TICK_MARK_OUTSIDE_LENGTH;</a>
+<span class="sourceLineNo">332</span><a id="line.332"></a>
+<span class="sourceLineNo">333</span><a id="line.333">        this.minorTickMarksVisible = false;</a>
+<span class="sourceLineNo">334</span><a id="line.334">        this.minorTickMarkInsideLength = 0.0f;</a>
+<span class="sourceLineNo">335</span><a id="line.335">        this.minorTickMarkOutsideLength = 2.0f;</a>
+<span class="sourceLineNo">336</span><a id="line.336"></a>
+<span class="sourceLineNo">337</span><a id="line.337">        this.plot = null;</a>
+<span class="sourceLineNo">338</span><a id="line.338"></a>
+<span class="sourceLineNo">339</span><a id="line.339">        this.listenerList = new EventListenerList();</a>
+<span class="sourceLineNo">340</span><a id="line.340">    }</a>
+<span class="sourceLineNo">341</span><a id="line.341"></a>
+<span class="sourceLineNo">342</span><a id="line.342">    /**</a>
+<span class="sourceLineNo">343</span><a id="line.343">     * Returns &lt;code&gt;true&lt;/code&gt; if the axis is visible, and</a>
+<span class="sourceLineNo">344</span><a id="line.344">     * &lt;code&gt;false&lt;/code&gt; otherwise.</a>
+<span class="sourceLineNo">345</span><a id="line.345">     *</a>
+<span class="sourceLineNo">346</span><a id="line.346">     * @return A boolean.</a>
+<span class="sourceLineNo">347</span><a id="line.347">     *</a>
+<span class="sourceLineNo">348</span><a id="line.348">     * @see #setVisible(boolean)</a>
+<span class="sourceLineNo">349</span><a id="line.349">     */</a>
+<span class="sourceLineNo">350</span><a id="line.350">    public boolean isVisible() {</a>
+<span class="sourceLineNo">351</span><a id="line.351">        return this.visible;</a>
+<span class="sourceLineNo">352</span><a id="line.352">    }</a>
+<span class="sourceLineNo">353</span><a id="line.353"></a>
+<span class="sourceLineNo">354</span><a id="line.354">    /**</a>
+<span class="sourceLineNo">355</span><a id="line.355">     * Sets a flag that controls whether or not the axis is visible and sends</a>
+<span class="sourceLineNo">356</span><a id="line.356">     * an {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">357</span><a id="line.357">     *</a>
+<span class="sourceLineNo">358</span><a id="line.358">     * @param flag  the flag.</a>
+<span class="sourceLineNo">359</span><a id="line.359">     *</a>
+<span class="sourceLineNo">360</span><a id="line.360">     * @see #isVisible()</a>
+<span class="sourceLineNo">361</span><a id="line.361">     */</a>
+<span class="sourceLineNo">362</span><a id="line.362">    public void setVisible(boolean flag) {</a>
+<span class="sourceLineNo">363</span><a id="line.363">        if (flag != this.visible) {</a>
+<span class="sourceLineNo">364</span><a id="line.364">            this.visible = flag;</a>
+<span class="sourceLineNo">365</span><a id="line.365">            fireChangeEvent();</a>
+<span class="sourceLineNo">366</span><a id="line.366">        }</a>
+<span class="sourceLineNo">367</span><a id="line.367">    }</a>
+<span class="sourceLineNo">368</span><a id="line.368"></a>
+<span class="sourceLineNo">369</span><a id="line.369">    /**</a>
+<span class="sourceLineNo">370</span><a id="line.370">     * Returns the label for the axis.</a>
+<span class="sourceLineNo">371</span><a id="line.371">     *</a>
+<span class="sourceLineNo">372</span><a id="line.372">     * @return The label for the axis ({@code null} possible).</a>
+<span class="sourceLineNo">373</span><a id="line.373">     *</a>
+<span class="sourceLineNo">374</span><a id="line.374">     * @see #getLabelFont()</a>
+<span class="sourceLineNo">375</span><a id="line.375">     * @see #getLabelPaint()</a>
+<span class="sourceLineNo">376</span><a id="line.376">     * @see #setLabel(String)</a>
+<span class="sourceLineNo">377</span><a id="line.377">     */</a>
+<span class="sourceLineNo">378</span><a id="line.378">    public String getLabel() {</a>
+<span class="sourceLineNo">379</span><a id="line.379">        return this.label;</a>
+<span class="sourceLineNo">380</span><a id="line.380">    }</a>
+<span class="sourceLineNo">381</span><a id="line.381"></a>
+<span class="sourceLineNo">382</span><a id="line.382">    /**</a>
+<span class="sourceLineNo">383</span><a id="line.383">     * Sets the label for the axis and sends an {@link AxisChangeEvent} to all</a>
+<span class="sourceLineNo">384</span><a id="line.384">     * registered listeners.</a>
+<span class="sourceLineNo">385</span><a id="line.385">     *</a>
+<span class="sourceLineNo">386</span><a id="line.386">     * @param label  the new label ({@code null} permitted).</a>
+<span class="sourceLineNo">387</span><a id="line.387">     *</a>
+<span class="sourceLineNo">388</span><a id="line.388">     * @see #getLabel()</a>
+<span class="sourceLineNo">389</span><a id="line.389">     * @see #setLabelFont(Font)</a>
+<span class="sourceLineNo">390</span><a id="line.390">     * @see #setLabelPaint(Paint)</a>
+<span class="sourceLineNo">391</span><a id="line.391">     */</a>
+<span class="sourceLineNo">392</span><a id="line.392">    public void setLabel(String label) {</a>
+<span class="sourceLineNo">393</span><a id="line.393">        this.label = label;</a>
+<span class="sourceLineNo">394</span><a id="line.394">        fireChangeEvent();</a>
+<span class="sourceLineNo">395</span><a id="line.395">    }</a>
+<span class="sourceLineNo">396</span><a id="line.396"></a>
+<span class="sourceLineNo">397</span><a id="line.397">    /**</a>
+<span class="sourceLineNo">398</span><a id="line.398">     * Returns the attributed label (the returned value is a copy, so </a>
+<span class="sourceLineNo">399</span><a id="line.399">     * modifying it will not impact the state of the axis).  The default value </a>
+<span class="sourceLineNo">400</span><a id="line.400">     * is {@code null}.</a>
+<span class="sourceLineNo">401</span><a id="line.401">     * </a>
+<span class="sourceLineNo">402</span><a id="line.402">     * @return The attributed label (possibly {@code null}).</a>
+<span class="sourceLineNo">403</span><a id="line.403">     * </a>
+<span class="sourceLineNo">404</span><a id="line.404">     * @since 1.0.16</a>
+<span class="sourceLineNo">405</span><a id="line.405">     */</a>
+<span class="sourceLineNo">406</span><a id="line.406">    public AttributedString getAttributedLabel() {</a>
+<span class="sourceLineNo">407</span><a id="line.407">        if (this.attributedLabel != null) {</a>
+<span class="sourceLineNo">408</span><a id="line.408">            return new AttributedString(this.attributedLabel.getIterator());</a>
+<span class="sourceLineNo">409</span><a id="line.409">        } else {</a>
+<span class="sourceLineNo">410</span><a id="line.410">            return null;</a>
+<span class="sourceLineNo">411</span><a id="line.411">        }</a>
+<span class="sourceLineNo">412</span><a id="line.412">    }</a>
+<span class="sourceLineNo">413</span><a id="line.413">    </a>
+<span class="sourceLineNo">414</span><a id="line.414">    /**</a>
+<span class="sourceLineNo">415</span><a id="line.415">     * Sets the attributed label for the axis and sends an </a>
+<span class="sourceLineNo">416</span><a id="line.416">     * {@link AxisChangeEvent} to all registered listeners.  This is a </a>
+<span class="sourceLineNo">417</span><a id="line.417">     * convenience method that converts the string into an </a>
+<span class="sourceLineNo">418</span><a id="line.418">     * &lt;code&gt;AttributedString&lt;/code&gt; using the current font attributes.</a>
+<span class="sourceLineNo">419</span><a id="line.419">     * </a>
+<span class="sourceLineNo">420</span><a id="line.420">     * @param label  the label ({@code null} permitted).</a>
+<span class="sourceLineNo">421</span><a id="line.421">     * </a>
+<span class="sourceLineNo">422</span><a id="line.422">     * @since 1.0.16</a>
+<span class="sourceLineNo">423</span><a id="line.423">     */</a>
+<span class="sourceLineNo">424</span><a id="line.424">    public void setAttributedLabel(String label) {</a>
+<span class="sourceLineNo">425</span><a id="line.425">        setAttributedLabel(createAttributedLabel(label));    </a>
+<span class="sourceLineNo">426</span><a id="line.426">    }</a>
+<span class="sourceLineNo">427</span><a id="line.427">    </a>
+<span class="sourceLineNo">428</span><a id="line.428">    /**</a>
+<span class="sourceLineNo">429</span><a id="line.429">     * Sets the attributed label for the axis and sends an </a>
+<span class="sourceLineNo">430</span><a id="line.430">     * {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">431</span><a id="line.431">     * </a>
+<span class="sourceLineNo">432</span><a id="line.432">     * @param label  the label ({@code null} permitted).</a>
+<span class="sourceLineNo">433</span><a id="line.433">     * </a>
+<span class="sourceLineNo">434</span><a id="line.434">     * @since 1.0.16</a>
+<span class="sourceLineNo">435</span><a id="line.435">     */</a>
+<span class="sourceLineNo">436</span><a id="line.436">    public void setAttributedLabel(AttributedString label) {</a>
+<span class="sourceLineNo">437</span><a id="line.437">        if (label != null) {</a>
+<span class="sourceLineNo">438</span><a id="line.438">            this.attributedLabel = new AttributedString(label.getIterator());</a>
+<span class="sourceLineNo">439</span><a id="line.439">        } else {</a>
+<span class="sourceLineNo">440</span><a id="line.440">            this.attributedLabel = null;</a>
+<span class="sourceLineNo">441</span><a id="line.441">        }</a>
+<span class="sourceLineNo">442</span><a id="line.442">        fireChangeEvent();</a>
+<span class="sourceLineNo">443</span><a id="line.443">    }</a>
+<span class="sourceLineNo">444</span><a id="line.444">    </a>
+<span class="sourceLineNo">445</span><a id="line.445">    /**</a>
+<span class="sourceLineNo">446</span><a id="line.446">     * Creates and returns an &lt;code&gt;AttributedString&lt;/code&gt; with the specified</a>
+<span class="sourceLineNo">447</span><a id="line.447">     * text and the labelFont and labelPaint applied as attributes.</a>
+<span class="sourceLineNo">448</span><a id="line.448">     * </a>
+<span class="sourceLineNo">449</span><a id="line.449">     * @param label  the label ({@code null} permitted).</a>
+<span class="sourceLineNo">450</span><a id="line.450">     * </a>
+<span class="sourceLineNo">451</span><a id="line.451">     * @return An attributed string or {@code null}.</a>
+<span class="sourceLineNo">452</span><a id="line.452">     * </a>
+<span class="sourceLineNo">453</span><a id="line.453">     * @since 1.0.16</a>
+<span class="sourceLineNo">454</span><a id="line.454">     */</a>
+<span class="sourceLineNo">455</span><a id="line.455">    public AttributedString createAttributedLabel(String label) {</a>
+<span class="sourceLineNo">456</span><a id="line.456">        if (label == null) {</a>
+<span class="sourceLineNo">457</span><a id="line.457">            return null;</a>
+<span class="sourceLineNo">458</span><a id="line.458">        }</a>
+<span class="sourceLineNo">459</span><a id="line.459">        AttributedString s = new AttributedString(label);</a>
+<span class="sourceLineNo">460</span><a id="line.460">        s.addAttributes(this.labelFont.getAttributes(), 0, label.length());</a>
+<span class="sourceLineNo">461</span><a id="line.461">        return s;</a>
+<span class="sourceLineNo">462</span><a id="line.462">    }</a>
+<span class="sourceLineNo">463</span><a id="line.463">    </a>
+<span class="sourceLineNo">464</span><a id="line.464">    /**</a>
+<span class="sourceLineNo">465</span><a id="line.465">     * Returns the font for the axis label.</a>
+<span class="sourceLineNo">466</span><a id="line.466">     *</a>
+<span class="sourceLineNo">467</span><a id="line.467">     * @return The font (never {@code null}).</a>
+<span class="sourceLineNo">468</span><a id="line.468">     *</a>
+<span class="sourceLineNo">469</span><a id="line.469">     * @see #setLabelFont(Font)</a>
+<span class="sourceLineNo">470</span><a id="line.470">     */</a>
+<span class="sourceLineNo">471</span><a id="line.471">    public Font getLabelFont() {</a>
+<span class="sourceLineNo">472</span><a id="line.472">        return this.labelFont;</a>
+<span class="sourceLineNo">473</span><a id="line.473">    }</a>
+<span class="sourceLineNo">474</span><a id="line.474"></a>
+<span class="sourceLineNo">475</span><a id="line.475">    /**</a>
+<span class="sourceLineNo">476</span><a id="line.476">     * Sets the font for the axis label and sends an {@link AxisChangeEvent}</a>
+<span class="sourceLineNo">477</span><a id="line.477">     * to all registered listeners.</a>
+<span class="sourceLineNo">478</span><a id="line.478">     *</a>
+<span class="sourceLineNo">479</span><a id="line.479">     * @param font  the font ({@code null} not permitted).</a>
+<span class="sourceLineNo">480</span><a id="line.480">     *</a>
+<span class="sourceLineNo">481</span><a id="line.481">     * @see #getLabelFont()</a>
+<span class="sourceLineNo">482</span><a id="line.482">     */</a>
+<span class="sourceLineNo">483</span><a id="line.483">    public void setLabelFont(Font font) {</a>
+<span class="sourceLineNo">484</span><a id="line.484">        ParamChecks.nullNotPermitted(font, "font");</a>
+<span class="sourceLineNo">485</span><a id="line.485">        if (!this.labelFont.equals(font)) {</a>
+<span class="sourceLineNo">486</span><a id="line.486">            this.labelFont = font;</a>
+<span class="sourceLineNo">487</span><a id="line.487">            fireChangeEvent();</a>
+<span class="sourceLineNo">488</span><a id="line.488">        }</a>
+<span class="sourceLineNo">489</span><a id="line.489">    }</a>
+<span class="sourceLineNo">490</span><a id="line.490"></a>
+<span class="sourceLineNo">491</span><a id="line.491">    /**</a>
+<span class="sourceLineNo">492</span><a id="line.492">     * Returns the color/shade used to draw the axis label.</a>
+<span class="sourceLineNo">493</span><a id="line.493">     *</a>
+<span class="sourceLineNo">494</span><a id="line.494">     * @return The paint (never {@code null}).</a>
+<span class="sourceLineNo">495</span><a id="line.495">     *</a>
+<span class="sourceLineNo">496</span><a id="line.496">     * @see #setLabelPaint(Paint)</a>
+<span class="sourceLineNo">497</span><a id="line.497">     */</a>
+<span class="sourceLineNo">498</span><a id="line.498">    public Paint getLabelPaint() {</a>
+<span class="sourceLineNo">499</span><a id="line.499">        return this.labelPaint;</a>
+<span class="sourceLineNo">500</span><a id="line.500">    }</a>
+<span class="sourceLineNo">501</span><a id="line.501"></a>
+<span class="sourceLineNo">502</span><a id="line.502">    /**</a>
+<span class="sourceLineNo">503</span><a id="line.503">     * Sets the paint used to draw the axis label and sends an</a>
+<span class="sourceLineNo">504</span><a id="line.504">     * {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">505</span><a id="line.505">     *</a>
+<span class="sourceLineNo">506</span><a id="line.506">     * @param paint  the paint ({@code null} not permitted).</a>
+<span class="sourceLineNo">507</span><a id="line.507">     *</a>
+<span class="sourceLineNo">508</span><a id="line.508">     * @see #getLabelPaint()</a>
+<span class="sourceLineNo">509</span><a id="line.509">     */</a>
+<span class="sourceLineNo">510</span><a id="line.510">    public void setLabelPaint(Paint paint) {</a>
+<span class="sourceLineNo">511</span><a id="line.511">        ParamChecks.nullNotPermitted(paint, "paint");</a>
+<span class="sourceLineNo">512</span><a id="line.512">        this.labelPaint = paint;</a>
+<span class="sourceLineNo">513</span><a id="line.513">        fireChangeEvent();</a>
+<span class="sourceLineNo">514</span><a id="line.514">    }</a>
+<span class="sourceLineNo">515</span><a id="line.515"></a>
+<span class="sourceLineNo">516</span><a id="line.516">    /**</a>
+<span class="sourceLineNo">517</span><a id="line.517">     * Returns the insets for the label (that is, the amount of blank space</a>
+<span class="sourceLineNo">518</span><a id="line.518">     * that should be left around the label).</a>
+<span class="sourceLineNo">519</span><a id="line.519">     *</a>
+<span class="sourceLineNo">520</span><a id="line.520">     * @return The label insets (never {@code null}).</a>
+<span class="sourceLineNo">521</span><a id="line.521">     *</a>
+<span class="sourceLineNo">522</span><a id="line.522">     * @see #setLabelInsets(RectangleInsets)</a>
+<span class="sourceLineNo">523</span><a id="line.523">     */</a>
+<span class="sourceLineNo">524</span><a id="line.524">    public RectangleInsets getLabelInsets() {</a>
+<span class="sourceLineNo">525</span><a id="line.525">        return this.labelInsets;</a>
+<span class="sourceLineNo">526</span><a id="line.526">    }</a>
+<span class="sourceLineNo">527</span><a id="line.527"></a>
+<span class="sourceLineNo">528</span><a id="line.528">    /**</a>
+<span class="sourceLineNo">529</span><a id="line.529">     * Sets the insets for the axis label, and sends an {@link AxisChangeEvent}</a>
+<span class="sourceLineNo">530</span><a id="line.530">     * to all registered listeners.</a>
+<span class="sourceLineNo">531</span><a id="line.531">     *</a>
+<span class="sourceLineNo">532</span><a id="line.532">     * @param insets  the insets ({@code null} not permitted).</a>
+<span class="sourceLineNo">533</span><a id="line.533">     *</a>
+<span class="sourceLineNo">534</span><a id="line.534">     * @see #getLabelInsets()</a>
+<span class="sourceLineNo">535</span><a id="line.535">     */</a>
+<span class="sourceLineNo">536</span><a id="line.536">    public void setLabelInsets(RectangleInsets insets) {</a>
+<span class="sourceLineNo">537</span><a id="line.537">        setLabelInsets(insets, true);</a>
+<span class="sourceLineNo">538</span><a id="line.538">    }</a>
+<span class="sourceLineNo">539</span><a id="line.539"></a>
+<span class="sourceLineNo">540</span><a id="line.540">    /**</a>
+<span class="sourceLineNo">541</span><a id="line.541">     * Sets the insets for the axis label, and sends an {@link AxisChangeEvent}</a>
+<span class="sourceLineNo">542</span><a id="line.542">     * to all registered listeners.</a>
+<span class="sourceLineNo">543</span><a id="line.543">     *</a>
+<span class="sourceLineNo">544</span><a id="line.544">     * @param insets  the insets ({@code null} not permitted).</a>
+<span class="sourceLineNo">545</span><a id="line.545">     * @param notify  notify listeners?</a>
+<span class="sourceLineNo">546</span><a id="line.546">     *</a>
+<span class="sourceLineNo">547</span><a id="line.547">     * @since 1.0.10</a>
+<span class="sourceLineNo">548</span><a id="line.548">     */</a>
+<span class="sourceLineNo">549</span><a id="line.549">    public void setLabelInsets(RectangleInsets insets, boolean notify) {</a>
+<span class="sourceLineNo">550</span><a id="line.550">        ParamChecks.nullNotPermitted(insets, "insets");</a>
+<span class="sourceLineNo">551</span><a id="line.551">        if (!insets.equals(this.labelInsets)) {</a>
+<span class="sourceLineNo">552</span><a id="line.552">            this.labelInsets = insets;</a>
+<span class="sourceLineNo">553</span><a id="line.553">            if (notify) {</a>
+<span class="sourceLineNo">554</span><a id="line.554">                fireChangeEvent();</a>
+<span class="sourceLineNo">555</span><a id="line.555">            }</a>
+<span class="sourceLineNo">556</span><a id="line.556">        }</a>
+<span class="sourceLineNo">557</span><a id="line.557">    }</a>
+<span class="sourceLineNo">558</span><a id="line.558"></a>
+<span class="sourceLineNo">559</span><a id="line.559">    /**</a>
+<span class="sourceLineNo">560</span><a id="line.560">     * Returns the angle of the axis label.</a>
+<span class="sourceLineNo">561</span><a id="line.561">     *</a>
+<span class="sourceLineNo">562</span><a id="line.562">     * @return The angle (in radians).</a>
+<span class="sourceLineNo">563</span><a id="line.563">     *</a>
+<span class="sourceLineNo">564</span><a id="line.564">     * @see #setLabelAngle(double)</a>
+<span class="sourceLineNo">565</span><a id="line.565">     */</a>
+<span class="sourceLineNo">566</span><a id="line.566">    public double getLabelAngle() {</a>
+<span class="sourceLineNo">567</span><a id="line.567">        return this.labelAngle;</a>
+<span class="sourceLineNo">568</span><a id="line.568">    }</a>
+<span class="sourceLineNo">569</span><a id="line.569"></a>
+<span class="sourceLineNo">570</span><a id="line.570">    /**</a>
+<span class="sourceLineNo">571</span><a id="line.571">     * Sets the angle for the label and sends an {@link AxisChangeEvent} to all</a>
+<span class="sourceLineNo">572</span><a id="line.572">     * registered listeners.</a>
+<span class="sourceLineNo">573</span><a id="line.573">     *</a>
+<span class="sourceLineNo">574</span><a id="line.574">     * @param angle  the angle (in radians).</a>
+<span class="sourceLineNo">575</span><a id="line.575">     *</a>
+<span class="sourceLineNo">576</span><a id="line.576">     * @see #getLabelAngle()</a>
+<span class="sourceLineNo">577</span><a id="line.577">     */</a>
+<span class="sourceLineNo">578</span><a id="line.578">    public void setLabelAngle(double angle) {</a>
+<span class="sourceLineNo">579</span><a id="line.579">        this.labelAngle = angle;</a>
+<span class="sourceLineNo">580</span><a id="line.580">        fireChangeEvent();</a>
+<span class="sourceLineNo">581</span><a id="line.581">    }</a>
+<span class="sourceLineNo">582</span><a id="line.582">    </a>
+<span class="sourceLineNo">583</span><a id="line.583">    /**</a>
+<span class="sourceLineNo">584</span><a id="line.584">     * Returns the location of the axis label.  The default is</a>
+<span class="sourceLineNo">585</span><a id="line.585">     * {@link AxisLabelLocation#MIDDLE}.</a>
+<span class="sourceLineNo">586</span><a id="line.586">     * </a>
+<span class="sourceLineNo">587</span><a id="line.587">     * @return The location of the axis label (never {@code null}). </a>
+<span class="sourceLineNo">588</span><a id="line.588">     * </a>
+<span class="sourceLineNo">589</span><a id="line.589">     * @since 1.0.16</a>
+<span class="sourceLineNo">590</span><a id="line.590">     */</a>
+<span class="sourceLineNo">591</span><a id="line.591">    public AxisLabelLocation getLabelLocation() {</a>
+<span class="sourceLineNo">592</span><a id="line.592">        return this.labelLocation;</a>
+<span class="sourceLineNo">593</span><a id="line.593">    }</a>
+<span class="sourceLineNo">594</span><a id="line.594">    </a>
+<span class="sourceLineNo">595</span><a id="line.595">    /**</a>
+<span class="sourceLineNo">596</span><a id="line.596">     * Sets the axis label location and sends an {@link AxisChangeEvent} to</a>
+<span class="sourceLineNo">597</span><a id="line.597">     * all registered listeners.</a>
+<span class="sourceLineNo">598</span><a id="line.598">     * </a>
+<span class="sourceLineNo">599</span><a id="line.599">     * @param location  the new location ({@code null} not permitted).</a>
+<span class="sourceLineNo">600</span><a id="line.600">     * </a>
+<span class="sourceLineNo">601</span><a id="line.601">     * @since 1.0.16</a>
+<span class="sourceLineNo">602</span><a id="line.602">     */</a>
+<span class="sourceLineNo">603</span><a id="line.603">    public void setLabelLocation(AxisLabelLocation location) {</a>
+<span class="sourceLineNo">604</span><a id="line.604">        ParamChecks.nullNotPermitted(location, "location");</a>
+<span class="sourceLineNo">605</span><a id="line.605">        this.labelLocation = location;</a>
+<span class="sourceLineNo">606</span><a id="line.606">        fireChangeEvent();</a>
+<span class="sourceLineNo">607</span><a id="line.607">    }</a>
+<span class="sourceLineNo">608</span><a id="line.608"></a>
+<span class="sourceLineNo">609</span><a id="line.609">    /**</a>
+<span class="sourceLineNo">610</span><a id="line.610">     * A flag that controls whether or not the axis line is drawn.</a>
+<span class="sourceLineNo">611</span><a id="line.611">     *</a>
+<span class="sourceLineNo">612</span><a id="line.612">     * @return A boolean.</a>
+<span class="sourceLineNo">613</span><a id="line.613">     *</a>
+<span class="sourceLineNo">614</span><a id="line.614">     * @see #getAxisLinePaint()</a>
+<span class="sourceLineNo">615</span><a id="line.615">     * @see #getAxisLineStroke()</a>
+<span class="sourceLineNo">616</span><a id="line.616">     * @see #setAxisLineVisible(boolean)</a>
+<span class="sourceLineNo">617</span><a id="line.617">     */</a>
+<span class="sourceLineNo">618</span><a id="line.618">    public boolean isAxisLineVisible() {</a>
+<span class="sourceLineNo">619</span><a id="line.619">        return this.axisLineVisible;</a>
+<span class="sourceLineNo">620</span><a id="line.620">    }</a>
+<span class="sourceLineNo">621</span><a id="line.621"></a>
+<span class="sourceLineNo">622</span><a id="line.622">    /**</a>
+<span class="sourceLineNo">623</span><a id="line.623">     * Sets a flag that controls whether or not the axis line is visible and</a>
+<span class="sourceLineNo">624</span><a id="line.624">     * sends an {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">625</span><a id="line.625">     *</a>
+<span class="sourceLineNo">626</span><a id="line.626">     * @param visible  the flag.</a>
+<span class="sourceLineNo">627</span><a id="line.627">     *</a>
+<span class="sourceLineNo">628</span><a id="line.628">     * @see #isAxisLineVisible()</a>
+<span class="sourceLineNo">629</span><a id="line.629">     * @see #setAxisLinePaint(Paint)</a>
+<span class="sourceLineNo">630</span><a id="line.630">     * @see #setAxisLineStroke(Stroke)</a>
+<span class="sourceLineNo">631</span><a id="line.631">     */</a>
+<span class="sourceLineNo">632</span><a id="line.632">    public void setAxisLineVisible(boolean visible) {</a>
+<span class="sourceLineNo">633</span><a id="line.633">        this.axisLineVisible = visible;</a>
+<span class="sourceLineNo">634</span><a id="line.634">        fireChangeEvent();</a>
+<span class="sourceLineNo">635</span><a id="line.635">    }</a>
+<span class="sourceLineNo">636</span><a id="line.636"></a>
+<span class="sourceLineNo">637</span><a id="line.637">    /**</a>
+<span class="sourceLineNo">638</span><a id="line.638">     * Returns the paint used to draw the axis line.</a>
+<span class="sourceLineNo">639</span><a id="line.639">     *</a>
+<span class="sourceLineNo">640</span><a id="line.640">     * @return The paint (never {@code null}).</a>
+<span class="sourceLineNo">641</span><a id="line.641">     *</a>
+<span class="sourceLineNo">642</span><a id="line.642">     * @see #setAxisLinePaint(Paint)</a>
+<span class="sourceLineNo">643</span><a id="line.643">     */</a>
+<span class="sourceLineNo">644</span><a id="line.644">    public Paint getAxisLinePaint() {</a>
+<span class="sourceLineNo">645</span><a id="line.645">        return this.axisLinePaint;</a>
+<span class="sourceLineNo">646</span><a id="line.646">    }</a>
+<span class="sourceLineNo">647</span><a id="line.647"></a>
+<span class="sourceLineNo">648</span><a id="line.648">    /**</a>
+<span class="sourceLineNo">649</span><a id="line.649">     * Sets the paint used to draw the axis line and sends an</a>
+<span class="sourceLineNo">650</span><a id="line.650">     * {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">651</span><a id="line.651">     *</a>
+<span class="sourceLineNo">652</span><a id="line.652">     * @param paint  the paint ({@code null} not permitted).</a>
+<span class="sourceLineNo">653</span><a id="line.653">     *</a>
+<span class="sourceLineNo">654</span><a id="line.654">     * @see #getAxisLinePaint()</a>
+<span class="sourceLineNo">655</span><a id="line.655">     */</a>
+<span class="sourceLineNo">656</span><a id="line.656">    public void setAxisLinePaint(Paint paint) {</a>
+<span class="sourceLineNo">657</span><a id="line.657">        ParamChecks.nullNotPermitted(paint, "paint");</a>
+<span class="sourceLineNo">658</span><a id="line.658">        this.axisLinePaint = paint;</a>
+<span class="sourceLineNo">659</span><a id="line.659">        fireChangeEvent();</a>
+<span class="sourceLineNo">660</span><a id="line.660">    }</a>
+<span class="sourceLineNo">661</span><a id="line.661"></a>
+<span class="sourceLineNo">662</span><a id="line.662">    /**</a>
+<span class="sourceLineNo">663</span><a id="line.663">     * Returns the stroke used to draw the axis line.</a>
+<span class="sourceLineNo">664</span><a id="line.664">     *</a>
+<span class="sourceLineNo">665</span><a id="line.665">     * @return The stroke (never {@code null}).</a>
+<span class="sourceLineNo">666</span><a id="line.666">     *</a>
+<span class="sourceLineNo">667</span><a id="line.667">     * @see #setAxisLineStroke(Stroke)</a>
+<span class="sourceLineNo">668</span><a id="line.668">     */</a>
+<span class="sourceLineNo">669</span><a id="line.669">    public Stroke getAxisLineStroke() {</a>
+<span class="sourceLineNo">670</span><a id="line.670">        return this.axisLineStroke;</a>
+<span class="sourceLineNo">671</span><a id="line.671">    }</a>
+<span class="sourceLineNo">672</span><a id="line.672"></a>
+<span class="sourceLineNo">673</span><a id="line.673">    /**</a>
+<span class="sourceLineNo">674</span><a id="line.674">     * Sets the stroke used to draw the axis line and sends an</a>
+<span class="sourceLineNo">675</span><a id="line.675">     * {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">676</span><a id="line.676">     *</a>
+<span class="sourceLineNo">677</span><a id="line.677">     * @param stroke  the stroke ({@code null} not permitted).</a>
+<span class="sourceLineNo">678</span><a id="line.678">     *</a>
+<span class="sourceLineNo">679</span><a id="line.679">     * @see #getAxisLineStroke()</a>
+<span class="sourceLineNo">680</span><a id="line.680">     */</a>
+<span class="sourceLineNo">681</span><a id="line.681">    public void setAxisLineStroke(Stroke stroke) {</a>
+<span class="sourceLineNo">682</span><a id="line.682">        ParamChecks.nullNotPermitted(stroke, "stroke");</a>
+<span class="sourceLineNo">683</span><a id="line.683">        this.axisLineStroke = stroke;</a>
+<span class="sourceLineNo">684</span><a id="line.684">        fireChangeEvent();</a>
+<span class="sourceLineNo">685</span><a id="line.685">    }</a>
+<span class="sourceLineNo">686</span><a id="line.686"></a>
+<span class="sourceLineNo">687</span><a id="line.687">    /**</a>
+<span class="sourceLineNo">688</span><a id="line.688">     * Returns a flag indicating whether or not the tick labels are visible.</a>
+<span class="sourceLineNo">689</span><a id="line.689">     *</a>
+<span class="sourceLineNo">690</span><a id="line.690">     * @return The flag.</a>
+<span class="sourceLineNo">691</span><a id="line.691">     *</a>
+<span class="sourceLineNo">692</span><a id="line.692">     * @see #getTickLabelFont()</a>
+<span class="sourceLineNo">693</span><a id="line.693">     * @see #getTickLabelPaint()</a>
+<span class="sourceLineNo">694</span><a id="line.694">     * @see #setTickLabelsVisible(boolean)</a>
+<span class="sourceLineNo">695</span><a id="line.695">     */</a>
+<span class="sourceLineNo">696</span><a id="line.696">    public boolean isTickLabelsVisible() {</a>
+<span class="sourceLineNo">697</span><a id="line.697">        return this.tickLabelsVisible;</a>
+<span class="sourceLineNo">698</span><a id="line.698">    }</a>
+<span class="sourceLineNo">699</span><a id="line.699"></a>
+<span class="sourceLineNo">700</span><a id="line.700">    /**</a>
+<span class="sourceLineNo">701</span><a id="line.701">     * Sets the flag that determines whether or not the tick labels are</a>
+<span class="sourceLineNo">702</span><a id="line.702">     * visible and sends an {@link AxisChangeEvent} to all registered</a>
+<span class="sourceLineNo">703</span><a id="line.703">     * listeners.</a>
+<span class="sourceLineNo">704</span><a id="line.704">     *</a>
+<span class="sourceLineNo">705</span><a id="line.705">     * @param flag  the flag.</a>
+<span class="sourceLineNo">706</span><a id="line.706">     *</a>
+<span class="sourceLineNo">707</span><a id="line.707">     * @see #isTickLabelsVisible()</a>
+<span class="sourceLineNo">708</span><a id="line.708">     * @see #setTickLabelFont(Font)</a>
+<span class="sourceLineNo">709</span><a id="line.709">     * @see #setTickLabelPaint(Paint)</a>
+<span class="sourceLineNo">710</span><a id="line.710">     */</a>
+<span class="sourceLineNo">711</span><a id="line.711">    public void setTickLabelsVisible(boolean flag) {</a>
+<span class="sourceLineNo">712</span><a id="line.712"></a>
+<span class="sourceLineNo">713</span><a id="line.713">        if (flag != this.tickLabelsVisible) {</a>
+<span class="sourceLineNo">714</span><a id="line.714">            this.tickLabelsVisible = flag;</a>
+<span class="sourceLineNo">715</span><a id="line.715">            fireChangeEvent();</a>
+<span class="sourceLineNo">716</span><a id="line.716">        }</a>
+<span class="sourceLineNo">717</span><a id="line.717"></a>
+<span class="sourceLineNo">718</span><a id="line.718">    }</a>
+<span class="sourceLineNo">719</span><a id="line.719"></a>
+<span class="sourceLineNo">720</span><a id="line.720">    /**</a>
+<span class="sourceLineNo">721</span><a id="line.721">     * Returns the flag that indicates whether or not the minor tick marks are</a>
+<span class="sourceLineNo">722</span><a id="line.722">     * showing.</a>
+<span class="sourceLineNo">723</span><a id="line.723">     *</a>
+<span class="sourceLineNo">724</span><a id="line.724">     * @return The flag that indicates whether or not the minor tick marks are</a>
+<span class="sourceLineNo">725</span><a id="line.725">     *         showing.</a>
+<span class="sourceLineNo">726</span><a id="line.726">     *</a>
+<span class="sourceLineNo">727</span><a id="line.727">     * @see #setMinorTickMarksVisible(boolean)</a>
+<span class="sourceLineNo">728</span><a id="line.728">     *</a>
+<span class="sourceLineNo">729</span><a id="line.729">     * @since 1.0.12</a>
+<span class="sourceLineNo">730</span><a id="line.730">     */</a>
+<span class="sourceLineNo">731</span><a id="line.731">    public boolean isMinorTickMarksVisible() {</a>
+<span class="sourceLineNo">732</span><a id="line.732">        return this.minorTickMarksVisible;</a>
+<span class="sourceLineNo">733</span><a id="line.733">    }</a>
+<span class="sourceLineNo">734</span><a id="line.734"></a>
+<span class="sourceLineNo">735</span><a id="line.735">    /**</a>
+<span class="sourceLineNo">736</span><a id="line.736">     * Sets the flag that indicates whether or not the minor tick marks are </a>
+<span class="sourceLineNo">737</span><a id="line.737">     * showing and sends an {@link AxisChangeEvent} to all registered</a>
+<span class="sourceLineNo">738</span><a id="line.738">     * listeners.</a>
+<span class="sourceLineNo">739</span><a id="line.739">     *</a>
+<span class="sourceLineNo">740</span><a id="line.740">     * @param flag  the flag.</a>
+<span class="sourceLineNo">741</span><a id="line.741">     *</a>
+<span class="sourceLineNo">742</span><a id="line.742">     * @see #isMinorTickMarksVisible()</a>
+<span class="sourceLineNo">743</span><a id="line.743">     *</a>
+<span class="sourceLineNo">744</span><a id="line.744">     * @since 1.0.12</a>
+<span class="sourceLineNo">745</span><a id="line.745">     */</a>
+<span class="sourceLineNo">746</span><a id="line.746">    public void setMinorTickMarksVisible(boolean flag) {</a>
+<span class="sourceLineNo">747</span><a id="line.747">        if (flag != this.minorTickMarksVisible) {</a>
+<span class="sourceLineNo">748</span><a id="line.748">            this.minorTickMarksVisible = flag;</a>
+<span class="sourceLineNo">749</span><a id="line.749">            fireChangeEvent();</a>
+<span class="sourceLineNo">750</span><a id="line.750">        }</a>
+<span class="sourceLineNo">751</span><a id="line.751">    }</a>
+<span class="sourceLineNo">752</span><a id="line.752"></a>
+<span class="sourceLineNo">753</span><a id="line.753">    /**</a>
+<span class="sourceLineNo">754</span><a id="line.754">     * Returns the font used for the tick labels (if showing).</a>
+<span class="sourceLineNo">755</span><a id="line.755">     *</a>
+<span class="sourceLineNo">756</span><a id="line.756">     * @return The font (never {@code null}).</a>
+<span class="sourceLineNo">757</span><a id="line.757">     *</a>
+<span class="sourceLineNo">758</span><a id="line.758">     * @see #setTickLabelFont(Font)</a>
+<span class="sourceLineNo">759</span><a id="line.759">     */</a>
+<span class="sourceLineNo">760</span><a id="line.760">    public Font getTickLabelFont() {</a>
+<span class="sourceLineNo">761</span><a id="line.761">        return this.tickLabelFont;</a>
+<span class="sourceLineNo">762</span><a id="line.762">    }</a>
+<span class="sourceLineNo">763</span><a id="line.763"></a>
+<span class="sourceLineNo">764</span><a id="line.764">    /**</a>
+<span class="sourceLineNo">765</span><a id="line.765">     * Sets the font for the tick labels and sends an {@link AxisChangeEvent}</a>
+<span class="sourceLineNo">766</span><a id="line.766">     * to all registered listeners.</a>
+<span class="sourceLineNo">767</span><a id="line.767">     *</a>
+<span class="sourceLineNo">768</span><a id="line.768">     * @param font  the font ({@code null} not allowed).</a>
+<span class="sourceLineNo">769</span><a id="line.769">     *</a>
+<span class="sourceLineNo">770</span><a id="line.770">     * @see #getTickLabelFont()</a>
+<span class="sourceLineNo">771</span><a id="line.771">     */</a>
+<span class="sourceLineNo">772</span><a id="line.772">    public void setTickLabelFont(Font font) {</a>
+<span class="sourceLineNo">773</span><a id="line.773">        ParamChecks.nullNotPermitted(font, "font");</a>
+<span class="sourceLineNo">774</span><a id="line.774">        if (!this.tickLabelFont.equals(font)) {</a>
+<span class="sourceLineNo">775</span><a id="line.775">            this.tickLabelFont = font;</a>
+<span class="sourceLineNo">776</span><a id="line.776">            fireChangeEvent();</a>
+<span class="sourceLineNo">777</span><a id="line.777">        }</a>
+<span class="sourceLineNo">778</span><a id="line.778">    }</a>
+<span class="sourceLineNo">779</span><a id="line.779"></a>
+<span class="sourceLineNo">780</span><a id="line.780">    /**</a>
+<span class="sourceLineNo">781</span><a id="line.781">     * Returns the color/shade used for the tick labels.</a>
+<span class="sourceLineNo">782</span><a id="line.782">     *</a>
+<span class="sourceLineNo">783</span><a id="line.783">     * @return The paint used for the tick labels.</a>
+<span class="sourceLineNo">784</span><a id="line.784">     *</a>
+<span class="sourceLineNo">785</span><a id="line.785">     * @see #setTickLabelPaint(Paint)</a>
+<span class="sourceLineNo">786</span><a id="line.786">     */</a>
+<span class="sourceLineNo">787</span><a id="line.787">    public Paint getTickLabelPaint() {</a>
+<span class="sourceLineNo">788</span><a id="line.788">        return this.tickLabelPaint;</a>
+<span class="sourceLineNo">789</span><a id="line.789">    }</a>
+<span class="sourceLineNo">790</span><a id="line.790"></a>
+<span class="sourceLineNo">791</span><a id="line.791">    /**</a>
+<span class="sourceLineNo">792</span><a id="line.792">     * Sets the paint used to draw tick labels (if they are showing) and</a>
+<span class="sourceLineNo">793</span><a id="line.793">     * sends an {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">794</span><a id="line.794">     *</a>
+<span class="sourceLineNo">795</span><a id="line.795">     * @param paint  the paint ({@code null} not permitted).</a>
+<span class="sourceLineNo">796</span><a id="line.796">     *</a>
+<span class="sourceLineNo">797</span><a id="line.797">     * @see #getTickLabelPaint()</a>
+<span class="sourceLineNo">798</span><a id="line.798">     */</a>
+<span class="sourceLineNo">799</span><a id="line.799">    public void setTickLabelPaint(Paint paint) {</a>
+<span class="sourceLineNo">800</span><a id="line.800">        ParamChecks.nullNotPermitted(paint, "paint");</a>
+<span class="sourceLineNo">801</span><a id="line.801">        this.tickLabelPaint = paint;</a>
+<span class="sourceLineNo">802</span><a id="line.802">        fireChangeEvent();</a>
+<span class="sourceLineNo">803</span><a id="line.803">    }</a>
+<span class="sourceLineNo">804</span><a id="line.804"></a>
+<span class="sourceLineNo">805</span><a id="line.805">    /**</a>
+<span class="sourceLineNo">806</span><a id="line.806">     * Returns the insets for the tick labels.</a>
+<span class="sourceLineNo">807</span><a id="line.807">     *</a>
+<span class="sourceLineNo">808</span><a id="line.808">     * @return The insets (never {@code null}).</a>
+<span class="sourceLineNo">809</span><a id="line.809">     *</a>
+<span class="sourceLineNo">810</span><a id="line.810">     * @see #setTickLabelInsets(RectangleInsets)</a>
+<span class="sourceLineNo">811</span><a id="line.811">     */</a>
+<span class="sourceLineNo">812</span><a id="line.812">    public RectangleInsets getTickLabelInsets() {</a>
+<span class="sourceLineNo">813</span><a id="line.813">        return this.tickLabelInsets;</a>
+<span class="sourceLineNo">814</span><a id="line.814">    }</a>
+<span class="sourceLineNo">815</span><a id="line.815"></a>
+<span class="sourceLineNo">816</span><a id="line.816">    /**</a>
+<span class="sourceLineNo">817</span><a id="line.817">     * Sets the insets for the tick labels and sends an {@link AxisChangeEvent}</a>
+<span class="sourceLineNo">818</span><a id="line.818">     * to all registered listeners.</a>
+<span class="sourceLineNo">819</span><a id="line.819">     *</a>
+<span class="sourceLineNo">820</span><a id="line.820">     * @param insets  the insets ({@code null} not permitted).</a>
+<span class="sourceLineNo">821</span><a id="line.821">     *</a>
+<span class="sourceLineNo">822</span><a id="line.822">     * @see #getTickLabelInsets()</a>
+<span class="sourceLineNo">823</span><a id="line.823">     */</a>
+<span class="sourceLineNo">824</span><a id="line.824">    public void setTickLabelInsets(RectangleInsets insets) {</a>
+<span class="sourceLineNo">825</span><a id="line.825">        ParamChecks.nullNotPermitted(insets, "insets");</a>
+<span class="sourceLineNo">826</span><a id="line.826">        if (!this.tickLabelInsets.equals(insets)) {</a>
+<span class="sourceLineNo">827</span><a id="line.827">            this.tickLabelInsets = insets;</a>
+<span class="sourceLineNo">828</span><a id="line.828">            fireChangeEvent();</a>
+<span class="sourceLineNo">829</span><a id="line.829">        }</a>
+<span class="sourceLineNo">830</span><a id="line.830">    }</a>
+<span class="sourceLineNo">831</span><a id="line.831"></a>
+<span class="sourceLineNo">832</span><a id="line.832">    /**</a>
+<span class="sourceLineNo">833</span><a id="line.833">     * Returns the flag that indicates whether or not the tick marks are</a>
+<span class="sourceLineNo">834</span><a id="line.834">     * showing.</a>
+<span class="sourceLineNo">835</span><a id="line.835">     *</a>
+<span class="sourceLineNo">836</span><a id="line.836">     * @return The flag that indicates whether or not the tick marks are</a>
+<span class="sourceLineNo">837</span><a id="line.837">     *         showing.</a>
+<span class="sourceLineNo">838</span><a id="line.838">     *</a>
+<span class="sourceLineNo">839</span><a id="line.839">     * @see #setTickMarksVisible(boolean)</a>
+<span class="sourceLineNo">840</span><a id="line.840">     */</a>
+<span class="sourceLineNo">841</span><a id="line.841">    public boolean isTickMarksVisible() {</a>
+<span class="sourceLineNo">842</span><a id="line.842">        return this.tickMarksVisible;</a>
+<span class="sourceLineNo">843</span><a id="line.843">    }</a>
+<span class="sourceLineNo">844</span><a id="line.844"></a>
+<span class="sourceLineNo">845</span><a id="line.845">    /**</a>
+<span class="sourceLineNo">846</span><a id="line.846">     * Sets the flag that indicates whether or not the tick marks are showing</a>
+<span class="sourceLineNo">847</span><a id="line.847">     * and sends an {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">848</span><a id="line.848">     *</a>
+<span class="sourceLineNo">849</span><a id="line.849">     * @param flag  the flag.</a>
+<span class="sourceLineNo">850</span><a id="line.850">     *</a>
+<span class="sourceLineNo">851</span><a id="line.851">     * @see #isTickMarksVisible()</a>
+<span class="sourceLineNo">852</span><a id="line.852">     */</a>
+<span class="sourceLineNo">853</span><a id="line.853">    public void setTickMarksVisible(boolean flag) {</a>
+<span class="sourceLineNo">854</span><a id="line.854">        if (flag != this.tickMarksVisible) {</a>
+<span class="sourceLineNo">855</span><a id="line.855">            this.tickMarksVisible = flag;</a>
+<span class="sourceLineNo">856</span><a id="line.856">            fireChangeEvent();</a>
+<span class="sourceLineNo">857</span><a id="line.857">        }</a>
+<span class="sourceLineNo">858</span><a id="line.858">    }</a>
+<span class="sourceLineNo">859</span><a id="line.859"></a>
+<span class="sourceLineNo">860</span><a id="line.860">    /**</a>
+<span class="sourceLineNo">861</span><a id="line.861">     * Returns the inside length of the tick marks.</a>
+<span class="sourceLineNo">862</span><a id="line.862">     *</a>
+<span class="sourceLineNo">863</span><a id="line.863">     * @return The length.</a>
+<span class="sourceLineNo">864</span><a id="line.864">     *</a>
+<span class="sourceLineNo">865</span><a id="line.865">     * @see #getTickMarkOutsideLength()</a>
+<span class="sourceLineNo">866</span><a id="line.866">     * @see #setTickMarkInsideLength(float)</a>
+<span class="sourceLineNo">867</span><a id="line.867">     */</a>
+<span class="sourceLineNo">868</span><a id="line.868">    public float getTickMarkInsideLength() {</a>
+<span class="sourceLineNo">869</span><a id="line.869">        return this.tickMarkInsideLength;</a>
+<span class="sourceLineNo">870</span><a id="line.870">    }</a>
+<span class="sourceLineNo">871</span><a id="line.871"></a>
+<span class="sourceLineNo">872</span><a id="line.872">    /**</a>
+<span class="sourceLineNo">873</span><a id="line.873">     * Sets the inside length of the tick marks and sends</a>
+<span class="sourceLineNo">874</span><a id="line.874">     * an {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">875</span><a id="line.875">     *</a>
+<span class="sourceLineNo">876</span><a id="line.876">     * @param length  the new length.</a>
+<span class="sourceLineNo">877</span><a id="line.877">     *</a>
+<span class="sourceLineNo">878</span><a id="line.878">     * @see #getTickMarkInsideLength()</a>
+<span class="sourceLineNo">879</span><a id="line.879">     */</a>
+<span class="sourceLineNo">880</span><a id="line.880">    public void setTickMarkInsideLength(float length) {</a>
+<span class="sourceLineNo">881</span><a id="line.881">        this.tickMarkInsideLength = length;</a>
+<span class="sourceLineNo">882</span><a id="line.882">        fireChangeEvent();</a>
+<span class="sourceLineNo">883</span><a id="line.883">    }</a>
+<span class="sourceLineNo">884</span><a id="line.884"></a>
+<span class="sourceLineNo">885</span><a id="line.885">    /**</a>
+<span class="sourceLineNo">886</span><a id="line.886">     * Returns the outside length of the tick marks.</a>
+<span class="sourceLineNo">887</span><a id="line.887">     *</a>
+<span class="sourceLineNo">888</span><a id="line.888">     * @return The length.</a>
+<span class="sourceLineNo">889</span><a id="line.889">     *</a>
+<span class="sourceLineNo">890</span><a id="line.890">     * @see #getTickMarkInsideLength()</a>
+<span class="sourceLineNo">891</span><a id="line.891">     * @see #setTickMarkOutsideLength(float)</a>
+<span class="sourceLineNo">892</span><a id="line.892">     */</a>
+<span class="sourceLineNo">893</span><a id="line.893">    public float getTickMarkOutsideLength() {</a>
+<span class="sourceLineNo">894</span><a id="line.894">        return this.tickMarkOutsideLength;</a>
+<span class="sourceLineNo">895</span><a id="line.895">    }</a>
+<span class="sourceLineNo">896</span><a id="line.896"></a>
+<span class="sourceLineNo">897</span><a id="line.897">    /**</a>
+<span class="sourceLineNo">898</span><a id="line.898">     * Sets the outside length of the tick marks and sends</a>
+<span class="sourceLineNo">899</span><a id="line.899">     * an {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">900</span><a id="line.900">     *</a>
+<span class="sourceLineNo">901</span><a id="line.901">     * @param length  the new length.</a>
+<span class="sourceLineNo">902</span><a id="line.902">     *</a>
+<span class="sourceLineNo">903</span><a id="line.903">     * @see #getTickMarkInsideLength()</a>
+<span class="sourceLineNo">904</span><a id="line.904">     */</a>
+<span class="sourceLineNo">905</span><a id="line.905">    public void setTickMarkOutsideLength(float length) {</a>
+<span class="sourceLineNo">906</span><a id="line.906">        this.tickMarkOutsideLength = length;</a>
+<span class="sourceLineNo">907</span><a id="line.907">        fireChangeEvent();</a>
+<span class="sourceLineNo">908</span><a id="line.908">    }</a>
+<span class="sourceLineNo">909</span><a id="line.909"></a>
+<span class="sourceLineNo">910</span><a id="line.910">    /**</a>
+<span class="sourceLineNo">911</span><a id="line.911">     * Returns the stroke used to draw tick marks.</a>
+<span class="sourceLineNo">912</span><a id="line.912">     *</a>
+<span class="sourceLineNo">913</span><a id="line.913">     * @return The stroke (never {@code null}).</a>
+<span class="sourceLineNo">914</span><a id="line.914">     *</a>
+<span class="sourceLineNo">915</span><a id="line.915">     * @see #setTickMarkStroke(Stroke)</a>
+<span class="sourceLineNo">916</span><a id="line.916">     */</a>
+<span class="sourceLineNo">917</span><a id="line.917">    public Stroke getTickMarkStroke() {</a>
+<span class="sourceLineNo">918</span><a id="line.918">        return this.tickMarkStroke;</a>
+<span class="sourceLineNo">919</span><a id="line.919">    }</a>
+<span class="sourceLineNo">920</span><a id="line.920"></a>
+<span class="sourceLineNo">921</span><a id="line.921">    /**</a>
+<span class="sourceLineNo">922</span><a id="line.922">     * Sets the stroke used to draw tick marks and sends</a>
+<span class="sourceLineNo">923</span><a id="line.923">     * an {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">924</span><a id="line.924">     *</a>
+<span class="sourceLineNo">925</span><a id="line.925">     * @param stroke  the stroke ({@code null} not permitted).</a>
+<span class="sourceLineNo">926</span><a id="line.926">     *</a>
+<span class="sourceLineNo">927</span><a id="line.927">     * @see #getTickMarkStroke()</a>
+<span class="sourceLineNo">928</span><a id="line.928">     */</a>
+<span class="sourceLineNo">929</span><a id="line.929">    public void setTickMarkStroke(Stroke stroke) {</a>
+<span class="sourceLineNo">930</span><a id="line.930">        ParamChecks.nullNotPermitted(stroke, "stroke");</a>
+<span class="sourceLineNo">931</span><a id="line.931">        if (!this.tickMarkStroke.equals(stroke)) {</a>
+<span class="sourceLineNo">932</span><a id="line.932">            this.tickMarkStroke = stroke;</a>
+<span class="sourceLineNo">933</span><a id="line.933">            fireChangeEvent();</a>
+<span class="sourceLineNo">934</span><a id="line.934">        }</a>
+<span class="sourceLineNo">935</span><a id="line.935">    }</a>
+<span class="sourceLineNo">936</span><a id="line.936"></a>
+<span class="sourceLineNo">937</span><a id="line.937">    /**</a>
+<span class="sourceLineNo">938</span><a id="line.938">     * Returns the paint used to draw tick marks (if they are showing).</a>
+<span class="sourceLineNo">939</span><a id="line.939">     *</a>
+<span class="sourceLineNo">940</span><a id="line.940">     * @return The paint (never {@code null}).</a>
+<span class="sourceLineNo">941</span><a id="line.941">     *</a>
+<span class="sourceLineNo">942</span><a id="line.942">     * @see #setTickMarkPaint(Paint)</a>
+<span class="sourceLineNo">943</span><a id="line.943">     */</a>
+<span class="sourceLineNo">944</span><a id="line.944">    public Paint getTickMarkPaint() {</a>
+<span class="sourceLineNo">945</span><a id="line.945">        return this.tickMarkPaint;</a>
+<span class="sourceLineNo">946</span><a id="line.946">    }</a>
+<span class="sourceLineNo">947</span><a id="line.947"></a>
+<span class="sourceLineNo">948</span><a id="line.948">    /**</a>
+<span class="sourceLineNo">949</span><a id="line.949">     * Sets the paint used to draw tick marks and sends an</a>
+<span class="sourceLineNo">950</span><a id="line.950">     * {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">951</span><a id="line.951">     *</a>
+<span class="sourceLineNo">952</span><a id="line.952">     * @param paint  the paint ({@code null} not permitted).</a>
+<span class="sourceLineNo">953</span><a id="line.953">     *</a>
+<span class="sourceLineNo">954</span><a id="line.954">     * @see #getTickMarkPaint()</a>
+<span class="sourceLineNo">955</span><a id="line.955">     */</a>
+<span class="sourceLineNo">956</span><a id="line.956">    public void setTickMarkPaint(Paint paint) {</a>
+<span class="sourceLineNo">957</span><a id="line.957">        ParamChecks.nullNotPermitted(paint, "paint");</a>
+<span class="sourceLineNo">958</span><a id="line.958">        this.tickMarkPaint = paint;</a>
+<span class="sourceLineNo">959</span><a id="line.959">        fireChangeEvent();</a>
+<span class="sourceLineNo">960</span><a id="line.960">    }</a>
+<span class="sourceLineNo">961</span><a id="line.961"></a>
+<span class="sourceLineNo">962</span><a id="line.962">    /**</a>
+<span class="sourceLineNo">963</span><a id="line.963">     * Returns the inside length of the minor tick marks.</a>
+<span class="sourceLineNo">964</span><a id="line.964">     *</a>
+<span class="sourceLineNo">965</span><a id="line.965">     * @return The length.</a>
+<span class="sourceLineNo">966</span><a id="line.966">     *</a>
+<span class="sourceLineNo">967</span><a id="line.967">     * @see #getMinorTickMarkOutsideLength()</a>
+<span class="sourceLineNo">968</span><a id="line.968">     * @see #setMinorTickMarkInsideLength(float)</a>
+<span class="sourceLineNo">969</span><a id="line.969">     *</a>
+<span class="sourceLineNo">970</span><a id="line.970">     * @since 1.0.12</a>
+<span class="sourceLineNo">971</span><a id="line.971">     */</a>
+<span class="sourceLineNo">972</span><a id="line.972">    public float getMinorTickMarkInsideLength() {</a>
+<span class="sourceLineNo">973</span><a id="line.973">        return this.minorTickMarkInsideLength;</a>
+<span class="sourceLineNo">974</span><a id="line.974">    }</a>
+<span class="sourceLineNo">975</span><a id="line.975"></a>
+<span class="sourceLineNo">976</span><a id="line.976">    /**</a>
+<span class="sourceLineNo">977</span><a id="line.977">     * Sets the inside length of the minor tick marks and sends</a>
+<span class="sourceLineNo">978</span><a id="line.978">     * an {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">979</span><a id="line.979">     *</a>
+<span class="sourceLineNo">980</span><a id="line.980">     * @param length  the new length.</a>
+<span class="sourceLineNo">981</span><a id="line.981">     *</a>
+<span class="sourceLineNo">982</span><a id="line.982">     * @see #getMinorTickMarkInsideLength()</a>
+<span class="sourceLineNo">983</span><a id="line.983">     *</a>
+<span class="sourceLineNo">984</span><a id="line.984">     * @since 1.0.12</a>
+<span class="sourceLineNo">985</span><a id="line.985">     */</a>
+<span class="sourceLineNo">986</span><a id="line.986">    public void setMinorTickMarkInsideLength(float length) {</a>
+<span class="sourceLineNo">987</span><a id="line.987">        this.minorTickMarkInsideLength = length;</a>
+<span class="sourceLineNo">988</span><a id="line.988">        fireChangeEvent();</a>
+<span class="sourceLineNo">989</span><a id="line.989">    }</a>
+<span class="sourceLineNo">990</span><a id="line.990"></a>
+<span class="sourceLineNo">991</span><a id="line.991">    /**</a>
+<span class="sourceLineNo">992</span><a id="line.992">     * Returns the outside length of the minor tick marks.</a>
+<span class="sourceLineNo">993</span><a id="line.993">     *</a>
+<span class="sourceLineNo">994</span><a id="line.994">     * @return The length.</a>
+<span class="sourceLineNo">995</span><a id="line.995">     *</a>
+<span class="sourceLineNo">996</span><a id="line.996">     * @see #getMinorTickMarkInsideLength()</a>
+<span class="sourceLineNo">997</span><a id="line.997">     * @see #setMinorTickMarkOutsideLength(float)</a>
+<span class="sourceLineNo">998</span><a id="line.998">     *</a>
+<span class="sourceLineNo">999</span><a id="line.999">     * @since 1.0.12</a>
+<span class="sourceLineNo">1000</span><a id="line.1000">     */</a>
+<span class="sourceLineNo">1001</span><a id="line.1001">    public float getMinorTickMarkOutsideLength() {</a>
+<span class="sourceLineNo">1002</span><a id="line.1002">        return this.minorTickMarkOutsideLength;</a>
+<span class="sourceLineNo">1003</span><a id="line.1003">    }</a>
+<span class="sourceLineNo">1004</span><a id="line.1004"></a>
+<span class="sourceLineNo">1005</span><a id="line.1005">    /**</a>
+<span class="sourceLineNo">1006</span><a id="line.1006">     * Sets the outside length of the minor tick marks and sends</a>
+<span class="sourceLineNo">1007</span><a id="line.1007">     * an {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1008</span><a id="line.1008">     *</a>
+<span class="sourceLineNo">1009</span><a id="line.1009">     * @param length  the new length.</a>
+<span class="sourceLineNo">1010</span><a id="line.1010">     *</a>
+<span class="sourceLineNo">1011</span><a id="line.1011">     * @see #getMinorTickMarkInsideLength()</a>
+<span class="sourceLineNo">1012</span><a id="line.1012">     *</a>
+<span class="sourceLineNo">1013</span><a id="line.1013">     * @since 1.0.12</a>
+<span class="sourceLineNo">1014</span><a id="line.1014">     */</a>
+<span class="sourceLineNo">1015</span><a id="line.1015">    public void setMinorTickMarkOutsideLength(float length) {</a>
+<span class="sourceLineNo">1016</span><a id="line.1016">        this.minorTickMarkOutsideLength = length;</a>
+<span class="sourceLineNo">1017</span><a id="line.1017">        fireChangeEvent();</a>
+<span class="sourceLineNo">1018</span><a id="line.1018">    }</a>
+<span class="sourceLineNo">1019</span><a id="line.1019"></a>
+<span class="sourceLineNo">1020</span><a id="line.1020">    /**</a>
+<span class="sourceLineNo">1021</span><a id="line.1021">     * Returns the plot that the axis is assigned to.  This method will return</a>
+<span class="sourceLineNo">1022</span><a id="line.1022">     * {@code null} if the axis is not currently assigned to a plot.</a>
+<span class="sourceLineNo">1023</span><a id="line.1023">     *</a>
+<span class="sourceLineNo">1024</span><a id="line.1024">     * @return The plot that the axis is assigned to (possibly {@code null}).</a>
+<span class="sourceLineNo">1025</span><a id="line.1025">     *</a>
+<span class="sourceLineNo">1026</span><a id="line.1026">     * @see #setPlot(Plot)</a>
+<span class="sourceLineNo">1027</span><a id="line.1027">     */</a>
+<span class="sourceLineNo">1028</span><a id="line.1028">    public Plot getPlot() {</a>
+<span class="sourceLineNo">1029</span><a id="line.1029">        return this.plot;</a>
+<span class="sourceLineNo">1030</span><a id="line.1030">    }</a>
+<span class="sourceLineNo">1031</span><a id="line.1031"></a>
+<span class="sourceLineNo">1032</span><a id="line.1032">    /**</a>
+<span class="sourceLineNo">1033</span><a id="line.1033">     * Sets a reference to the plot that the axis is assigned to.</a>
+<span class="sourceLineNo">1034</span><a id="line.1034">     * &lt;P&gt;</a>
+<span class="sourceLineNo">1035</span><a id="line.1035">     * This method is used internally, you shouldn't need to call it yourself.</a>
+<span class="sourceLineNo">1036</span><a id="line.1036">     *</a>
+<span class="sourceLineNo">1037</span><a id="line.1037">     * @param plot  the plot.</a>
+<span class="sourceLineNo">1038</span><a id="line.1038">     *</a>
+<span class="sourceLineNo">1039</span><a id="line.1039">     * @see #getPlot()</a>
+<span class="sourceLineNo">1040</span><a id="line.1040">     */</a>
+<span class="sourceLineNo">1041</span><a id="line.1041">    public void setPlot(Plot plot) {</a>
+<span class="sourceLineNo">1042</span><a id="line.1042">        this.plot = plot;</a>
+<span class="sourceLineNo">1043</span><a id="line.1043">        configure();</a>
+<span class="sourceLineNo">1044</span><a id="line.1044">    }</a>
+<span class="sourceLineNo">1045</span><a id="line.1045"></a>
+<span class="sourceLineNo">1046</span><a id="line.1046">    /**</a>
+<span class="sourceLineNo">1047</span><a id="line.1047">     * Returns the fixed dimension for the axis.</a>
+<span class="sourceLineNo">1048</span><a id="line.1048">     *</a>
+<span class="sourceLineNo">1049</span><a id="line.1049">     * @return The fixed dimension.</a>
+<span class="sourceLineNo">1050</span><a id="line.1050">     *</a>
+<span class="sourceLineNo">1051</span><a id="line.1051">     * @see #setFixedDimension(double)</a>
+<span class="sourceLineNo">1052</span><a id="line.1052">     */</a>
+<span class="sourceLineNo">1053</span><a id="line.1053">    public double getFixedDimension() {</a>
+<span class="sourceLineNo">1054</span><a id="line.1054">        return this.fixedDimension;</a>
+<span class="sourceLineNo">1055</span><a id="line.1055">    }</a>
+<span class="sourceLineNo">1056</span><a id="line.1056"></a>
+<span class="sourceLineNo">1057</span><a id="line.1057">    /**</a>
+<span class="sourceLineNo">1058</span><a id="line.1058">     * Sets the fixed dimension for the axis.</a>
+<span class="sourceLineNo">1059</span><a id="line.1059">     * &lt;P&gt;</a>
+<span class="sourceLineNo">1060</span><a id="line.1060">     * This is used when combining more than one plot on a chart.  In this case,</a>
+<span class="sourceLineNo">1061</span><a id="line.1061">     * there may be several axes that need to have the same height or width so</a>
+<span class="sourceLineNo">1062</span><a id="line.1062">     * that they are aligned.  This method is used to fix a dimension for the</a>
+<span class="sourceLineNo">1063</span><a id="line.1063">     * axis (the context determines whether the dimension is horizontal or</a>
+<span class="sourceLineNo">1064</span><a id="line.1064">     * vertical).</a>
+<span class="sourceLineNo">1065</span><a id="line.1065">     *</a>
+<span class="sourceLineNo">1066</span><a id="line.1066">     * @param dimension  the fixed dimension.</a>
+<span class="sourceLineNo">1067</span><a id="line.1067">     *</a>
+<span class="sourceLineNo">1068</span><a id="line.1068">     * @see #getFixedDimension()</a>
+<span class="sourceLineNo">1069</span><a id="line.1069">     */</a>
+<span class="sourceLineNo">1070</span><a id="line.1070">    public void setFixedDimension(double dimension) {</a>
+<span class="sourceLineNo">1071</span><a id="line.1071">        this.fixedDimension = dimension;</a>
+<span class="sourceLineNo">1072</span><a id="line.1072">    }</a>
+<span class="sourceLineNo">1073</span><a id="line.1073"></a>
+<span class="sourceLineNo">1074</span><a id="line.1074">    /**</a>
+<span class="sourceLineNo">1075</span><a id="line.1075">     * Configures the axis to work with the current plot.  Override this method</a>
+<span class="sourceLineNo">1076</span><a id="line.1076">     * to perform any special processing (such as auto-rescaling).</a>
+<span class="sourceLineNo">1077</span><a id="line.1077">     */</a>
+<span class="sourceLineNo">1078</span><a id="line.1078">    public abstract void configure();</a>
+<span class="sourceLineNo">1079</span><a id="line.1079"></a>
+<span class="sourceLineNo">1080</span><a id="line.1080">    /**</a>
+<span class="sourceLineNo">1081</span><a id="line.1081">     * Estimates the space (height or width) required to draw the axis.</a>
+<span class="sourceLineNo">1082</span><a id="line.1082">     *</a>
+<span class="sourceLineNo">1083</span><a id="line.1083">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1084</span><a id="line.1084">     * @param plot  the plot that the axis belongs to.</a>
+<span class="sourceLineNo">1085</span><a id="line.1085">     * @param plotArea  the area within which the plot (including axes) should</a>
+<span class="sourceLineNo">1086</span><a id="line.1086">     *                  be drawn.</a>
+<span class="sourceLineNo">1087</span><a id="line.1087">     * @param edge  the axis location.</a>
+<span class="sourceLineNo">1088</span><a id="line.1088">     * @param space  space already reserved.</a>
+<span class="sourceLineNo">1089</span><a id="line.1089">     *</a>
+<span class="sourceLineNo">1090</span><a id="line.1090">     * @return The space required to draw the axis (including pre-reserved</a>
+<span class="sourceLineNo">1091</span><a id="line.1091">     *         space).</a>
+<span class="sourceLineNo">1092</span><a id="line.1092">     */</a>
+<span class="sourceLineNo">1093</span><a id="line.1093">    public abstract AxisSpace reserveSpace(Graphics2D g2, Plot plot,</a>
+<span class="sourceLineNo">1094</span><a id="line.1094">                                           Rectangle2D plotArea,</a>
+<span class="sourceLineNo">1095</span><a id="line.1095">                                           RectangleEdge edge,</a>
+<span class="sourceLineNo">1096</span><a id="line.1096">                                           AxisSpace space);</a>
+<span class="sourceLineNo">1097</span><a id="line.1097"></a>
+<span class="sourceLineNo">1098</span><a id="line.1098">    /**</a>
+<span class="sourceLineNo">1099</span><a id="line.1099">     * Draws the axis on a Java 2D graphics device (such as the screen or a</a>
+<span class="sourceLineNo">1100</span><a id="line.1100">     * printer).</a>
+<span class="sourceLineNo">1101</span><a id="line.1101">     *</a>
+<span class="sourceLineNo">1102</span><a id="line.1102">     * @param g2  the graphics device ({@code null} not permitted).</a>
+<span class="sourceLineNo">1103</span><a id="line.1103">     * @param cursor  the cursor location (determines where to draw the axis).</a>
+<span class="sourceLineNo">1104</span><a id="line.1104">     * @param plotArea  the area within which the axes and plot should be drawn.</a>
+<span class="sourceLineNo">1105</span><a id="line.1105">     * @param dataArea  the area within which the data should be drawn.</a>
+<span class="sourceLineNo">1106</span><a id="line.1106">     * @param edge  the axis location ({@code null} not permitted).</a>
+<span class="sourceLineNo">1107</span><a id="line.1107">     * @param plotState  collects information about the plot</a>
+<span class="sourceLineNo">1108</span><a id="line.1108">     *                   ({@code null} permitted).</a>
+<span class="sourceLineNo">1109</span><a id="line.1109">     *</a>
+<span class="sourceLineNo">1110</span><a id="line.1110">     * @return The axis state (never {@code null}).</a>
+<span class="sourceLineNo">1111</span><a id="line.1111">     */</a>
+<span class="sourceLineNo">1112</span><a id="line.1112">    public abstract AxisState draw(Graphics2D g2, double cursor,</a>
+<span class="sourceLineNo">1113</span><a id="line.1113">            Rectangle2D plotArea, Rectangle2D dataArea, RectangleEdge edge,</a>
+<span class="sourceLineNo">1114</span><a id="line.1114">            PlotRenderingInfo plotState);</a>
+<span class="sourceLineNo">1115</span><a id="line.1115"></a>
+<span class="sourceLineNo">1116</span><a id="line.1116">    /**</a>
+<span class="sourceLineNo">1117</span><a id="line.1117">     * Calculates the positions of the ticks for the axis, storing the results</a>
+<span class="sourceLineNo">1118</span><a id="line.1118">     * in the tick list (ready for drawing).</a>
+<span class="sourceLineNo">1119</span><a id="line.1119">     *</a>
+<span class="sourceLineNo">1120</span><a id="line.1120">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1121</span><a id="line.1121">     * @param state  the axis state.</a>
+<span class="sourceLineNo">1122</span><a id="line.1122">     * @param dataArea  the area inside the axes.</a>
+<span class="sourceLineNo">1123</span><a id="line.1123">     * @param edge  the edge on which the axis is located.</a>
+<span class="sourceLineNo">1124</span><a id="line.1124">     *</a>
+<span class="sourceLineNo">1125</span><a id="line.1125">     * @return The list of ticks.</a>
+<span class="sourceLineNo">1126</span><a id="line.1126">     */</a>
+<span class="sourceLineNo">1127</span><a id="line.1127">    public abstract List refreshTicks(Graphics2D g2, AxisState state,</a>
+<span class="sourceLineNo">1128</span><a id="line.1128">            Rectangle2D dataArea, RectangleEdge edge);</a>
+<span class="sourceLineNo">1129</span><a id="line.1129"></a>
+<span class="sourceLineNo">1130</span><a id="line.1130">    /**</a>
+<span class="sourceLineNo">1131</span><a id="line.1131">     * Created an entity for the axis.</a>
+<span class="sourceLineNo">1132</span><a id="line.1132">     *</a>
+<span class="sourceLineNo">1133</span><a id="line.1133">     * @param cursor  the initial cursor value.</a>
+<span class="sourceLineNo">1134</span><a id="line.1134">     * @param state  the axis state after completion of the drawing with a</a>
+<span class="sourceLineNo">1135</span><a id="line.1135">     *     possibly updated cursor position.</a>
+<span class="sourceLineNo">1136</span><a id="line.1136">     * @param dataArea  the data area.</a>
+<span class="sourceLineNo">1137</span><a id="line.1137">     * @param edge  the edge.</a>
+<span class="sourceLineNo">1138</span><a id="line.1138">     * @param plotState  the PlotRenderingInfo from which a reference to the</a>
+<span class="sourceLineNo">1139</span><a id="line.1139">     *     entity collection can be obtained.</a>
+<span class="sourceLineNo">1140</span><a id="line.1140">     *</a>
+<span class="sourceLineNo">1141</span><a id="line.1141">     * @since 1.0.13</a>
+<span class="sourceLineNo">1142</span><a id="line.1142">     */</a>
+<span class="sourceLineNo">1143</span><a id="line.1143">    protected void createAndAddEntity(double cursor, AxisState state,</a>
+<span class="sourceLineNo">1144</span><a id="line.1144">            Rectangle2D dataArea, RectangleEdge edge,</a>
+<span class="sourceLineNo">1145</span><a id="line.1145">            PlotRenderingInfo plotState) {</a>
+<span class="sourceLineNo">1146</span><a id="line.1146"></a>
+<span class="sourceLineNo">1147</span><a id="line.1147">        if (plotState == null || plotState.getOwner() == null) {</a>
+<span class="sourceLineNo">1148</span><a id="line.1148">            return;  // no need to create entity if we can't save it anyways...</a>
+<span class="sourceLineNo">1149</span><a id="line.1149">        }</a>
+<span class="sourceLineNo">1150</span><a id="line.1150">        Rectangle2D hotspot = null;</a>
+<span class="sourceLineNo">1151</span><a id="line.1151">        if (edge.equals(RectangleEdge.TOP)) {</a>
+<span class="sourceLineNo">1152</span><a id="line.1152">            hotspot = new Rectangle2D.Double(dataArea.getX(),</a>
+<span class="sourceLineNo">1153</span><a id="line.1153">                    state.getCursor(), dataArea.getWidth(),</a>
+<span class="sourceLineNo">1154</span><a id="line.1154">                    cursor - state.getCursor());</a>
+<span class="sourceLineNo">1155</span><a id="line.1155">        }</a>
+<span class="sourceLineNo">1156</span><a id="line.1156">        else if (edge.equals(RectangleEdge.BOTTOM)) {</a>
+<span class="sourceLineNo">1157</span><a id="line.1157">            hotspot = new Rectangle2D.Double(dataArea.getX(), cursor,</a>
+<span class="sourceLineNo">1158</span><a id="line.1158">                    dataArea.getWidth(), state.getCursor() - cursor);</a>
+<span class="sourceLineNo">1159</span><a id="line.1159">        }</a>
+<span class="sourceLineNo">1160</span><a id="line.1160">        else if (edge.equals(RectangleEdge.LEFT)) {</a>
+<span class="sourceLineNo">1161</span><a id="line.1161">            hotspot = new Rectangle2D.Double(state.getCursor(),</a>
+<span class="sourceLineNo">1162</span><a id="line.1162">                    dataArea.getY(), cursor - state.getCursor(),</a>
+<span class="sourceLineNo">1163</span><a id="line.1163">                    dataArea.getHeight());</a>
+<span class="sourceLineNo">1164</span><a id="line.1164">        }</a>
+<span class="sourceLineNo">1165</span><a id="line.1165">        else if (edge.equals(RectangleEdge.RIGHT)) {</a>
+<span class="sourceLineNo">1166</span><a id="line.1166">            hotspot = new Rectangle2D.Double(cursor, dataArea.getY(),</a>
+<span class="sourceLineNo">1167</span><a id="line.1167">                    state.getCursor() - cursor, dataArea.getHeight());</a>
+<span class="sourceLineNo">1168</span><a id="line.1168">        }</a>
+<span class="sourceLineNo">1169</span><a id="line.1169">        EntityCollection e = plotState.getOwner().getEntityCollection();</a>
+<span class="sourceLineNo">1170</span><a id="line.1170">        if (e != null) {</a>
+<span class="sourceLineNo">1171</span><a id="line.1171">            e.add(new AxisEntity(hotspot, this));</a>
+<span class="sourceLineNo">1172</span><a id="line.1172">        }</a>
+<span class="sourceLineNo">1173</span><a id="line.1173">    }</a>
+<span class="sourceLineNo">1174</span><a id="line.1174"></a>
+<span class="sourceLineNo">1175</span><a id="line.1175">    /**</a>
+<span class="sourceLineNo">1176</span><a id="line.1176">     * Registers an object for notification of changes to the axis.</a>
+<span class="sourceLineNo">1177</span><a id="line.1177">     *</a>
+<span class="sourceLineNo">1178</span><a id="line.1178">     * @param listener  the object that is being registered.</a>
+<span class="sourceLineNo">1179</span><a id="line.1179">     *</a>
+<span class="sourceLineNo">1180</span><a id="line.1180">     * @see #removeChangeListener(AxisChangeListener)</a>
+<span class="sourceLineNo">1181</span><a id="line.1181">     */</a>
+<span class="sourceLineNo">1182</span><a id="line.1182">    public void addChangeListener(AxisChangeListener listener) {</a>
+<span class="sourceLineNo">1183</span><a id="line.1183">        this.listenerList.add(AxisChangeListener.class, listener);</a>
+<span class="sourceLineNo">1184</span><a id="line.1184">    }</a>
+<span class="sourceLineNo">1185</span><a id="line.1185"></a>
+<span class="sourceLineNo">1186</span><a id="line.1186">    /**</a>
+<span class="sourceLineNo">1187</span><a id="line.1187">     * Deregisters an object for notification of changes to the axis.</a>
+<span class="sourceLineNo">1188</span><a id="line.1188">     *</a>
+<span class="sourceLineNo">1189</span><a id="line.1189">     * @param listener  the object to deregister.</a>
+<span class="sourceLineNo">1190</span><a id="line.1190">     *</a>
+<span class="sourceLineNo">1191</span><a id="line.1191">     * @see #addChangeListener(AxisChangeListener)</a>
+<span class="sourceLineNo">1192</span><a id="line.1192">     */</a>
+<span class="sourceLineNo">1193</span><a id="line.1193">    public void removeChangeListener(AxisChangeListener listener) {</a>
+<span class="sourceLineNo">1194</span><a id="line.1194">        this.listenerList.remove(AxisChangeListener.class, listener);</a>
+<span class="sourceLineNo">1195</span><a id="line.1195">    }</a>
+<span class="sourceLineNo">1196</span><a id="line.1196"></a>
+<span class="sourceLineNo">1197</span><a id="line.1197">    /**</a>
+<span class="sourceLineNo">1198</span><a id="line.1198">     * Returns &lt;code&gt;true&lt;/code&gt; if the specified object is registered with</a>
+<span class="sourceLineNo">1199</span><a id="line.1199">     * the dataset as a listener.  Most applications won't need to call this</a>
+<span class="sourceLineNo">1200</span><a id="line.1200">     * method, it exists mainly for use by unit testing code.</a>
+<span class="sourceLineNo">1201</span><a id="line.1201">     *</a>
+<span class="sourceLineNo">1202</span><a id="line.1202">     * @param listener  the listener.</a>
+<span class="sourceLineNo">1203</span><a id="line.1203">     *</a>
+<span class="sourceLineNo">1204</span><a id="line.1204">     * @return A boolean.</a>
+<span class="sourceLineNo">1205</span><a id="line.1205">     */</a>
+<span class="sourceLineNo">1206</span><a id="line.1206">    public boolean hasListener(EventListener listener) {</a>
+<span class="sourceLineNo">1207</span><a id="line.1207">        List list = Arrays.asList(this.listenerList.getListenerList());</a>
+<span class="sourceLineNo">1208</span><a id="line.1208">        return list.contains(listener);</a>
+<span class="sourceLineNo">1209</span><a id="line.1209">    }</a>
+<span class="sourceLineNo">1210</span><a id="line.1210"></a>
+<span class="sourceLineNo">1211</span><a id="line.1211">    /**</a>
+<span class="sourceLineNo">1212</span><a id="line.1212">     * Notifies all registered listeners that the axis has changed.</a>
+<span class="sourceLineNo">1213</span><a id="line.1213">     * The AxisChangeEvent provides information about the change.</a>
+<span class="sourceLineNo">1214</span><a id="line.1214">     *</a>
+<span class="sourceLineNo">1215</span><a id="line.1215">     * @param event  information about the change to the axis.</a>
+<span class="sourceLineNo">1216</span><a id="line.1216">     */</a>
+<span class="sourceLineNo">1217</span><a id="line.1217">    protected void notifyListeners(AxisChangeEvent event) {</a>
+<span class="sourceLineNo">1218</span><a id="line.1218">        Object[] listeners = this.listenerList.getListenerList();</a>
+<span class="sourceLineNo">1219</span><a id="line.1219">        for (int i = listeners.length - 2; i &gt;= 0; i -= 2) {</a>
+<span class="sourceLineNo">1220</span><a id="line.1220">            if (listeners[i] == AxisChangeListener.class) {</a>
+<span class="sourceLineNo">1221</span><a id="line.1221">                ((AxisChangeListener) listeners[i + 1]).axisChanged(event);</a>
+<span class="sourceLineNo">1222</span><a id="line.1222">            }</a>
+<span class="sourceLineNo">1223</span><a id="line.1223">        }</a>
+<span class="sourceLineNo">1224</span><a id="line.1224">    }</a>
+<span class="sourceLineNo">1225</span><a id="line.1225"></a>
+<span class="sourceLineNo">1226</span><a id="line.1226">    /**</a>
+<span class="sourceLineNo">1227</span><a id="line.1227">     * Sends an {@link AxisChangeEvent} to all registered listeners.</a>
+<span class="sourceLineNo">1228</span><a id="line.1228">     *</a>
+<span class="sourceLineNo">1229</span><a id="line.1229">     * @since 1.0.12</a>
+<span class="sourceLineNo">1230</span><a id="line.1230">     */</a>
+<span class="sourceLineNo">1231</span><a id="line.1231">    protected void fireChangeEvent() {</a>
+<span class="sourceLineNo">1232</span><a id="line.1232">        notifyListeners(new AxisChangeEvent(this));</a>
+<span class="sourceLineNo">1233</span><a id="line.1233">    }</a>
+<span class="sourceLineNo">1234</span><a id="line.1234"></a>
+<span class="sourceLineNo">1235</span><a id="line.1235">    /**</a>
+<span class="sourceLineNo">1236</span><a id="line.1236">     * Returns a rectangle that encloses the axis label.  This is typically</a>
+<span class="sourceLineNo">1237</span><a id="line.1237">     * used for layout purposes (it gives the maximum dimensions of the label).</a>
+<span class="sourceLineNo">1238</span><a id="line.1238">     *</a>
+<span class="sourceLineNo">1239</span><a id="line.1239">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1240</span><a id="line.1240">     * @param edge  the edge of the plot area along which the axis is measuring.</a>
+<span class="sourceLineNo">1241</span><a id="line.1241">     *</a>
+<span class="sourceLineNo">1242</span><a id="line.1242">     * @return The enclosing rectangle.</a>
+<span class="sourceLineNo">1243</span><a id="line.1243">     */</a>
+<span class="sourceLineNo">1244</span><a id="line.1244">    protected Rectangle2D getLabelEnclosure(Graphics2D g2, RectangleEdge edge) {</a>
+<span class="sourceLineNo">1245</span><a id="line.1245">        Rectangle2D result = new Rectangle2D.Double();</a>
+<span class="sourceLineNo">1246</span><a id="line.1246">        Rectangle2D bounds = null;</a>
+<span class="sourceLineNo">1247</span><a id="line.1247">        if (this.attributedLabel != null) {</a>
+<span class="sourceLineNo">1248</span><a id="line.1248">            TextLayout layout = new TextLayout(</a>
+<span class="sourceLineNo">1249</span><a id="line.1249">                    this.attributedLabel.getIterator(), </a>
+<span class="sourceLineNo">1250</span><a id="line.1250">                    g2.getFontRenderContext());</a>
+<span class="sourceLineNo">1251</span><a id="line.1251">            bounds = layout.getBounds();</a>
+<span class="sourceLineNo">1252</span><a id="line.1252">        } else {</a>
+<span class="sourceLineNo">1253</span><a id="line.1253">            String axisLabel = getLabel();</a>
+<span class="sourceLineNo">1254</span><a id="line.1254">            if (axisLabel != null &amp;&amp; !axisLabel.equals("")) {</a>
+<span class="sourceLineNo">1255</span><a id="line.1255">                FontMetrics fm = g2.getFontMetrics(getLabelFont());</a>
+<span class="sourceLineNo">1256</span><a id="line.1256">                bounds = TextUtilities.getTextBounds(axisLabel, g2, fm);</a>
+<span class="sourceLineNo">1257</span><a id="line.1257">            }</a>
+<span class="sourceLineNo">1258</span><a id="line.1258">        }</a>
+<span class="sourceLineNo">1259</span><a id="line.1259">        if (bounds != null) {</a>
+<span class="sourceLineNo">1260</span><a id="line.1260">            RectangleInsets insets = getLabelInsets();</a>
+<span class="sourceLineNo">1261</span><a id="line.1261">            bounds = insets.createOutsetRectangle(bounds);</a>
+<span class="sourceLineNo">1262</span><a id="line.1262">            double angle = getLabelAngle();</a>
+<span class="sourceLineNo">1263</span><a id="line.1263">            if (edge == RectangleEdge.LEFT || edge == RectangleEdge.RIGHT) {</a>
+<span class="sourceLineNo">1264</span><a id="line.1264">                angle = angle - Math.PI / 2.0;</a>
+<span class="sourceLineNo">1265</span><a id="line.1265">            }</a>
+<span class="sourceLineNo">1266</span><a id="line.1266">            double x = bounds.getCenterX();</a>
+<span class="sourceLineNo">1267</span><a id="line.1267">            double y = bounds.getCenterY();</a>
+<span class="sourceLineNo">1268</span><a id="line.1268">            AffineTransform transformer</a>
+<span class="sourceLineNo">1269</span><a id="line.1269">                = AffineTransform.getRotateInstance(angle, x, y);</a>
+<span class="sourceLineNo">1270</span><a id="line.1270">            Shape labelBounds = transformer.createTransformedShape(bounds);</a>
+<span class="sourceLineNo">1271</span><a id="line.1271">            result = labelBounds.getBounds2D();</a>
+<span class="sourceLineNo">1272</span><a id="line.1272">        }</a>
+<span class="sourceLineNo">1273</span><a id="line.1273">        return result;</a>
+<span class="sourceLineNo">1274</span><a id="line.1274">    }</a>
+<span class="sourceLineNo">1275</span><a id="line.1275"></a>
+<span class="sourceLineNo">1276</span><a id="line.1276">    protected double labelLocationX(AxisLabelLocation location, </a>
+<span class="sourceLineNo">1277</span><a id="line.1277">            Rectangle2D dataArea) {</a>
+<span class="sourceLineNo">1278</span><a id="line.1278">        if (location.equals(AxisLabelLocation.HIGH_END)) {</a>
+<span class="sourceLineNo">1279</span><a id="line.1279">            return dataArea.getMaxX();</a>
+<span class="sourceLineNo">1280</span><a id="line.1280">        }</a>
+<span class="sourceLineNo">1281</span><a id="line.1281">        if (location.equals(AxisLabelLocation.MIDDLE)) {</a>
+<span class="sourceLineNo">1282</span><a id="line.1282">            return dataArea.getCenterX();</a>
+<span class="sourceLineNo">1283</span><a id="line.1283">        }</a>
+<span class="sourceLineNo">1284</span><a id="line.1284">        if (location.equals(AxisLabelLocation.LOW_END)) {</a>
+<span class="sourceLineNo">1285</span><a id="line.1285">            return dataArea.getMinX();</a>
+<span class="sourceLineNo">1286</span><a id="line.1286">        }</a>
+<span class="sourceLineNo">1287</span><a id="line.1287">        throw new RuntimeException("Unexpected AxisLabelLocation: " + location);</a>
+<span class="sourceLineNo">1288</span><a id="line.1288">    }</a>
+<span class="sourceLineNo">1289</span><a id="line.1289">    </a>
+<span class="sourceLineNo">1290</span><a id="line.1290">    protected double labelLocationY(AxisLabelLocation location, </a>
+<span class="sourceLineNo">1291</span><a id="line.1291">            Rectangle2D dataArea) {</a>
+<span class="sourceLineNo">1292</span><a id="line.1292">        if (location.equals(AxisLabelLocation.HIGH_END)) {</a>
+<span class="sourceLineNo">1293</span><a id="line.1293">            return dataArea.getMinY();</a>
+<span class="sourceLineNo">1294</span><a id="line.1294">        }</a>
+<span class="sourceLineNo">1295</span><a id="line.1295">        if (location.equals(AxisLabelLocation.MIDDLE)) {</a>
+<span class="sourceLineNo">1296</span><a id="line.1296">            return dataArea.getCenterY();</a>
+<span class="sourceLineNo">1297</span><a id="line.1297">        }</a>
+<span class="sourceLineNo">1298</span><a id="line.1298">        if (location.equals(AxisLabelLocation.LOW_END)) {</a>
+<span class="sourceLineNo">1299</span><a id="line.1299">            return dataArea.getMaxY();</a>
+<span class="sourceLineNo">1300</span><a id="line.1300">        }</a>
+<span class="sourceLineNo">1301</span><a id="line.1301">        throw new RuntimeException("Unexpected AxisLabelLocation: " + location);</a>
+<span class="sourceLineNo">1302</span><a id="line.1302">    }</a>
+<span class="sourceLineNo">1303</span><a id="line.1303">    </a>
+<span class="sourceLineNo">1304</span><a id="line.1304">    protected TextAnchor labelAnchorH(AxisLabelLocation location) {</a>
+<span class="sourceLineNo">1305</span><a id="line.1305">        if (location.equals(AxisLabelLocation.HIGH_END)) {</a>
+<span class="sourceLineNo">1306</span><a id="line.1306">            return TextAnchor.CENTER_RIGHT;</a>
+<span class="sourceLineNo">1307</span><a id="line.1307">        }</a>
+<span class="sourceLineNo">1308</span><a id="line.1308">        if (location.equals(AxisLabelLocation.MIDDLE)) {</a>
+<span class="sourceLineNo">1309</span><a id="line.1309">            return TextAnchor.CENTER;</a>
+<span class="sourceLineNo">1310</span><a id="line.1310">        }</a>
+<span class="sourceLineNo">1311</span><a id="line.1311">        if (location.equals(AxisLabelLocation.LOW_END)) {</a>
+<span class="sourceLineNo">1312</span><a id="line.1312">            return TextAnchor.CENTER_LEFT;</a>
+<span class="sourceLineNo">1313</span><a id="line.1313">        }</a>
+<span class="sourceLineNo">1314</span><a id="line.1314">        throw new RuntimeException("Unexpected AxisLabelLocation: " + location);</a>
+<span class="sourceLineNo">1315</span><a id="line.1315">    }</a>
+<span class="sourceLineNo">1316</span><a id="line.1316">    </a>
+<span class="sourceLineNo">1317</span><a id="line.1317">    protected TextAnchor labelAnchorV(AxisLabelLocation location) {</a>
+<span class="sourceLineNo">1318</span><a id="line.1318">        if (location.equals(AxisLabelLocation.HIGH_END)) {</a>
+<span class="sourceLineNo">1319</span><a id="line.1319">            return TextAnchor.CENTER_RIGHT;</a>
+<span class="sourceLineNo">1320</span><a id="line.1320">        }</a>
+<span class="sourceLineNo">1321</span><a id="line.1321">        if (location.equals(AxisLabelLocation.MIDDLE)) {</a>
+<span class="sourceLineNo">1322</span><a id="line.1322">            return TextAnchor.CENTER;</a>
+<span class="sourceLineNo">1323</span><a id="line.1323">        }</a>
+<span class="sourceLineNo">1324</span><a id="line.1324">        if (location.equals(AxisLabelLocation.LOW_END)) {</a>
+<span class="sourceLineNo">1325</span><a id="line.1325">            return TextAnchor.CENTER_LEFT;</a>
+<span class="sourceLineNo">1326</span><a id="line.1326">        }</a>
+<span class="sourceLineNo">1327</span><a id="line.1327">        throw new RuntimeException("Unexpected AxisLabelLocation: " + location);</a>
+<span class="sourceLineNo">1328</span><a id="line.1328">    }</a>
+<span class="sourceLineNo">1329</span><a id="line.1329"></a>
+<span class="sourceLineNo">1330</span><a id="line.1330">    /**</a>
+<span class="sourceLineNo">1331</span><a id="line.1331">     * Draws the axis label.</a>
+<span class="sourceLineNo">1332</span><a id="line.1332">     *</a>
+<span class="sourceLineNo">1333</span><a id="line.1333">     * @param label  the label text.</a>
+<span class="sourceLineNo">1334</span><a id="line.1334">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1335</span><a id="line.1335">     * @param plotArea  the plot area.</a>
+<span class="sourceLineNo">1336</span><a id="line.1336">     * @param dataArea  the area inside the axes.</a>
+<span class="sourceLineNo">1337</span><a id="line.1337">     * @param edge  the location of the axis.</a>
+<span class="sourceLineNo">1338</span><a id="line.1338">     * @param state  the axis state ({@code null} not permitted).</a>
+<span class="sourceLineNo">1339</span><a id="line.1339">     *</a>
+<span class="sourceLineNo">1340</span><a id="line.1340">     * @return Information about the axis.</a>
+<span class="sourceLineNo">1341</span><a id="line.1341">     */</a>
+<span class="sourceLineNo">1342</span><a id="line.1342">    protected AxisState drawLabel(String label, Graphics2D g2,</a>
+<span class="sourceLineNo">1343</span><a id="line.1343">            Rectangle2D plotArea, Rectangle2D dataArea, RectangleEdge edge,</a>
+<span class="sourceLineNo">1344</span><a id="line.1344">            AxisState state) {</a>
+<span class="sourceLineNo">1345</span><a id="line.1345"></a>
+<span class="sourceLineNo">1346</span><a id="line.1346">        // it is unlikely that 'state' will be null, but check anyway...</a>
+<span class="sourceLineNo">1347</span><a id="line.1347">        ParamChecks.nullNotPermitted(state, "state");</a>
+<span class="sourceLineNo">1348</span><a id="line.1348"></a>
+<span class="sourceLineNo">1349</span><a id="line.1349">        if ((label == null) || (label.equals(""))) {</a>
+<span class="sourceLineNo">1350</span><a id="line.1350">            return state;</a>
+<span class="sourceLineNo">1351</span><a id="line.1351">        }</a>
+<span class="sourceLineNo">1352</span><a id="line.1352"></a>
+<span class="sourceLineNo">1353</span><a id="line.1353">        Font font = getLabelFont();</a>
+<span class="sourceLineNo">1354</span><a id="line.1354">        RectangleInsets insets = getLabelInsets();</a>
+<span class="sourceLineNo">1355</span><a id="line.1355">        g2.setFont(font);</a>
+<span class="sourceLineNo">1356</span><a id="line.1356">        g2.setPaint(getLabelPaint());</a>
+<span class="sourceLineNo">1357</span><a id="line.1357">        FontMetrics fm = g2.getFontMetrics();</a>
+<span class="sourceLineNo">1358</span><a id="line.1358">        Rectangle2D labelBounds = TextUtilities.getTextBounds(label, g2, fm);</a>
+<span class="sourceLineNo">1359</span><a id="line.1359"></a>
+<span class="sourceLineNo">1360</span><a id="line.1360">        if (edge == RectangleEdge.TOP) {</a>
+<span class="sourceLineNo">1361</span><a id="line.1361">            AffineTransform t = AffineTransform.getRotateInstance(</a>
+<span class="sourceLineNo">1362</span><a id="line.1362">                    getLabelAngle(), labelBounds.getCenterX(),</a>
+<span class="sourceLineNo">1363</span><a id="line.1363">                    labelBounds.getCenterY());</a>
+<span class="sourceLineNo">1364</span><a id="line.1364">            Shape rotatedLabelBounds = t.createTransformedShape(labelBounds);</a>
+<span class="sourceLineNo">1365</span><a id="line.1365">            labelBounds = rotatedLabelBounds.getBounds2D();</a>
+<span class="sourceLineNo">1366</span><a id="line.1366">            double labelx = labelLocationX(this.labelLocation, dataArea);</a>
+<span class="sourceLineNo">1367</span><a id="line.1367">            double labely = state.getCursor() - insets.getBottom()</a>
+<span class="sourceLineNo">1368</span><a id="line.1368">                            - labelBounds.getHeight() / 2.0;</a>
+<span class="sourceLineNo">1369</span><a id="line.1369">            TextAnchor anchor = labelAnchorH(this.labelLocation);</a>
+<span class="sourceLineNo">1370</span><a id="line.1370">            TextUtilities.drawRotatedString(label, g2, (float) labelx,</a>
+<span class="sourceLineNo">1371</span><a id="line.1371">                    (float) labely, anchor, getLabelAngle(), TextAnchor.CENTER);</a>
+<span class="sourceLineNo">1372</span><a id="line.1372">            state.cursorUp(insets.getTop() + labelBounds.getHeight()</a>
+<span class="sourceLineNo">1373</span><a id="line.1373">                    + insets.getBottom());</a>
+<span class="sourceLineNo">1374</span><a id="line.1374">        }</a>
+<span class="sourceLineNo">1375</span><a id="line.1375">        else if (edge == RectangleEdge.BOTTOM) {</a>
+<span class="sourceLineNo">1376</span><a id="line.1376">            AffineTransform t = AffineTransform.getRotateInstance(</a>
+<span class="sourceLineNo">1377</span><a id="line.1377">                    getLabelAngle(), labelBounds.getCenterX(),</a>
+<span class="sourceLineNo">1378</span><a id="line.1378">                    labelBounds.getCenterY());</a>
+<span class="sourceLineNo">1379</span><a id="line.1379">            Shape rotatedLabelBounds = t.createTransformedShape(labelBounds);</a>
+<span class="sourceLineNo">1380</span><a id="line.1380">            labelBounds = rotatedLabelBounds.getBounds2D();</a>
+<span class="sourceLineNo">1381</span><a id="line.1381">            double labelx = labelLocationX(this.labelLocation, dataArea);</a>
+<span class="sourceLineNo">1382</span><a id="line.1382">            double labely = state.getCursor()</a>
+<span class="sourceLineNo">1383</span><a id="line.1383">                            + insets.getTop() + labelBounds.getHeight() / 2.0;</a>
+<span class="sourceLineNo">1384</span><a id="line.1384">            TextAnchor anchor = labelAnchorH(this.labelLocation);</a>
+<span class="sourceLineNo">1385</span><a id="line.1385">            TextUtilities.drawRotatedString(label, g2, (float) labelx,</a>
+<span class="sourceLineNo">1386</span><a id="line.1386">                    (float) labely, anchor, getLabelAngle(), TextAnchor.CENTER);</a>
+<span class="sourceLineNo">1387</span><a id="line.1387">            state.cursorDown(insets.getTop() + labelBounds.getHeight()</a>
+<span class="sourceLineNo">1388</span><a id="line.1388">                    + insets.getBottom());</a>
+<span class="sourceLineNo">1389</span><a id="line.1389">        }</a>
+<span class="sourceLineNo">1390</span><a id="line.1390">        else if (edge == RectangleEdge.LEFT) {</a>
+<span class="sourceLineNo">1391</span><a id="line.1391">            AffineTransform t = AffineTransform.getRotateInstance(</a>
+<span class="sourceLineNo">1392</span><a id="line.1392">                    getLabelAngle() - Math.PI / 2.0, labelBounds.getCenterX(),</a>
+<span class="sourceLineNo">1393</span><a id="line.1393">                    labelBounds.getCenterY());</a>
+<span class="sourceLineNo">1394</span><a id="line.1394">            Shape rotatedLabelBounds = t.createTransformedShape(labelBounds);</a>
+<span class="sourceLineNo">1395</span><a id="line.1395">            labelBounds = rotatedLabelBounds.getBounds2D();</a>
+<span class="sourceLineNo">1396</span><a id="line.1396">            double labelx = state.getCursor()</a>
+<span class="sourceLineNo">1397</span><a id="line.1397">                            - insets.getRight() - labelBounds.getWidth() / 2.0;</a>
+<span class="sourceLineNo">1398</span><a id="line.1398">            double labely = labelLocationY(this.labelLocation, dataArea);</a>
+<span class="sourceLineNo">1399</span><a id="line.1399">            TextAnchor anchor = labelAnchorV(this.labelLocation);</a>
+<span class="sourceLineNo">1400</span><a id="line.1400">            TextUtilities.drawRotatedString(label, g2, (float) labelx,</a>
+<span class="sourceLineNo">1401</span><a id="line.1401">                    (float) labely, anchor, getLabelAngle() - Math.PI / 2.0, </a>
+<span class="sourceLineNo">1402</span><a id="line.1402">                    anchor);</a>
+<span class="sourceLineNo">1403</span><a id="line.1403">            state.cursorLeft(insets.getLeft() + labelBounds.getWidth()</a>
+<span class="sourceLineNo">1404</span><a id="line.1404">                    + insets.getRight());</a>
+<span class="sourceLineNo">1405</span><a id="line.1405">        }</a>
+<span class="sourceLineNo">1406</span><a id="line.1406">        else if (edge == RectangleEdge.RIGHT) {</a>
+<span class="sourceLineNo">1407</span><a id="line.1407">            AffineTransform t = AffineTransform.getRotateInstance(</a>
+<span class="sourceLineNo">1408</span><a id="line.1408">                    getLabelAngle() + Math.PI / 2.0,</a>
+<span class="sourceLineNo">1409</span><a id="line.1409">                    labelBounds.getCenterX(), labelBounds.getCenterY());</a>
+<span class="sourceLineNo">1410</span><a id="line.1410">            Shape rotatedLabelBounds = t.createTransformedShape(labelBounds);</a>
+<span class="sourceLineNo">1411</span><a id="line.1411">            labelBounds = rotatedLabelBounds.getBounds2D();</a>
+<span class="sourceLineNo">1412</span><a id="line.1412">            double labelx = state.getCursor()</a>
+<span class="sourceLineNo">1413</span><a id="line.1413">                            + insets.getLeft() + labelBounds.getWidth() / 2.0;</a>
+<span class="sourceLineNo">1414</span><a id="line.1414">            double labely = labelLocationY(this.labelLocation, dataArea);</a>
+<span class="sourceLineNo">1415</span><a id="line.1415">            TextAnchor anchor = labelAnchorV(this.labelLocation);</a>
+<span class="sourceLineNo">1416</span><a id="line.1416">            TextUtilities.drawRotatedString(label, g2, (float) labelx,</a>
+<span class="sourceLineNo">1417</span><a id="line.1417">                    (float) labely, anchor, getLabelAngle() + Math.PI / 2.0, </a>
+<span class="sourceLineNo">1418</span><a id="line.1418">                    anchor);</a>
+<span class="sourceLineNo">1419</span><a id="line.1419">            state.cursorRight(insets.getLeft() + labelBounds.getWidth()</a>
+<span class="sourceLineNo">1420</span><a id="line.1420">                    + insets.getRight());</a>
+<span class="sourceLineNo">1421</span><a id="line.1421">        }</a>
+<span class="sourceLineNo">1422</span><a id="line.1422"></a>
+<span class="sourceLineNo">1423</span><a id="line.1423">        return state;</a>
+<span class="sourceLineNo">1424</span><a id="line.1424"></a>
+<span class="sourceLineNo">1425</span><a id="line.1425">    }</a>
+<span class="sourceLineNo">1426</span><a id="line.1426"></a>
+<span class="sourceLineNo">1427</span><a id="line.1427">    /**</a>
+<span class="sourceLineNo">1428</span><a id="line.1428">     * Draws the axis label.</a>
+<span class="sourceLineNo">1429</span><a id="line.1429">     *</a>
+<span class="sourceLineNo">1430</span><a id="line.1430">     * @param label  the label text.</a>
+<span class="sourceLineNo">1431</span><a id="line.1431">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1432</span><a id="line.1432">     * @param plotArea  the plot area.</a>
+<span class="sourceLineNo">1433</span><a id="line.1433">     * @param dataArea  the area inside the axes.</a>
+<span class="sourceLineNo">1434</span><a id="line.1434">     * @param edge  the location of the axis.</a>
+<span class="sourceLineNo">1435</span><a id="line.1435">     * @param state  the axis state ({@code null} not permitted).</a>
+<span class="sourceLineNo">1436</span><a id="line.1436">     *</a>
+<span class="sourceLineNo">1437</span><a id="line.1437">     * @return Information about the axis.</a>
+<span class="sourceLineNo">1438</span><a id="line.1438">     * </a>
+<span class="sourceLineNo">1439</span><a id="line.1439">     * @since 1.0.16</a>
+<span class="sourceLineNo">1440</span><a id="line.1440">     */</a>
+<span class="sourceLineNo">1441</span><a id="line.1441">    protected AxisState drawAttributedLabel(AttributedString label, </a>
+<span class="sourceLineNo">1442</span><a id="line.1442">            Graphics2D g2, Rectangle2D plotArea, Rectangle2D dataArea, </a>
+<span class="sourceLineNo">1443</span><a id="line.1443">            RectangleEdge edge, AxisState state) {</a>
+<span class="sourceLineNo">1444</span><a id="line.1444"></a>
+<span class="sourceLineNo">1445</span><a id="line.1445">        // it is unlikely that 'state' will be null, but check anyway...</a>
+<span class="sourceLineNo">1446</span><a id="line.1446">        ParamChecks.nullNotPermitted(state, "state");</a>
+<span class="sourceLineNo">1447</span><a id="line.1447"></a>
+<span class="sourceLineNo">1448</span><a id="line.1448">        if (label == null) {</a>
+<span class="sourceLineNo">1449</span><a id="line.1449">            return state;</a>
+<span class="sourceLineNo">1450</span><a id="line.1450">        }</a>
+<span class="sourceLineNo">1451</span><a id="line.1451"></a>
+<span class="sourceLineNo">1452</span><a id="line.1452">        RectangleInsets insets = getLabelInsets();</a>
+<span class="sourceLineNo">1453</span><a id="line.1453">        g2.setFont(getLabelFont());</a>
+<span class="sourceLineNo">1454</span><a id="line.1454">        g2.setPaint(getLabelPaint());</a>
+<span class="sourceLineNo">1455</span><a id="line.1455">        TextLayout layout = new TextLayout(this.attributedLabel.getIterator(),</a>
+<span class="sourceLineNo">1456</span><a id="line.1456">                g2.getFontRenderContext());</a>
+<span class="sourceLineNo">1457</span><a id="line.1457">        Rectangle2D labelBounds = layout.getBounds();</a>
+<span class="sourceLineNo">1458</span><a id="line.1458"></a>
+<span class="sourceLineNo">1459</span><a id="line.1459">        if (edge == RectangleEdge.TOP) {</a>
+<span class="sourceLineNo">1460</span><a id="line.1460">            AffineTransform t = AffineTransform.getRotateInstance(</a>
+<span class="sourceLineNo">1461</span><a id="line.1461">                    getLabelAngle(), labelBounds.getCenterX(),</a>
+<span class="sourceLineNo">1462</span><a id="line.1462">                    labelBounds.getCenterY());</a>
+<span class="sourceLineNo">1463</span><a id="line.1463">            Shape rotatedLabelBounds = t.createTransformedShape(labelBounds);</a>
+<span class="sourceLineNo">1464</span><a id="line.1464">            labelBounds = rotatedLabelBounds.getBounds2D();</a>
+<span class="sourceLineNo">1465</span><a id="line.1465">            double labelx = labelLocationX(this.labelLocation, dataArea);</a>
+<span class="sourceLineNo">1466</span><a id="line.1466">            double labely = state.getCursor() - insets.getBottom()</a>
+<span class="sourceLineNo">1467</span><a id="line.1467">                            - labelBounds.getHeight() / 2.0;</a>
+<span class="sourceLineNo">1468</span><a id="line.1468">            TextAnchor anchor = labelAnchorH(this.labelLocation);</a>
+<span class="sourceLineNo">1469</span><a id="line.1469">            AttrStringUtils.drawRotatedString(label, g2, (float) labelx,</a>
+<span class="sourceLineNo">1470</span><a id="line.1470">                    (float) labely, anchor, getLabelAngle(), TextAnchor.CENTER);</a>
+<span class="sourceLineNo">1471</span><a id="line.1471">            state.cursorUp(insets.getTop() + labelBounds.getHeight()</a>
+<span class="sourceLineNo">1472</span><a id="line.1472">                    + insets.getBottom());</a>
+<span class="sourceLineNo">1473</span><a id="line.1473">        }</a>
+<span class="sourceLineNo">1474</span><a id="line.1474">        else if (edge == RectangleEdge.BOTTOM) {</a>
+<span class="sourceLineNo">1475</span><a id="line.1475">            AffineTransform t = AffineTransform.getRotateInstance(</a>
+<span class="sourceLineNo">1476</span><a id="line.1476">                    getLabelAngle(), labelBounds.getCenterX(),</a>
+<span class="sourceLineNo">1477</span><a id="line.1477">                    labelBounds.getCenterY());</a>
+<span class="sourceLineNo">1478</span><a id="line.1478">            Shape rotatedLabelBounds = t.createTransformedShape(labelBounds);</a>
+<span class="sourceLineNo">1479</span><a id="line.1479">            labelBounds = rotatedLabelBounds.getBounds2D();</a>
+<span class="sourceLineNo">1480</span><a id="line.1480">            double labelx = labelLocationX(this.labelLocation, dataArea);</a>
+<span class="sourceLineNo">1481</span><a id="line.1481">            double labely = state.getCursor()</a>
+<span class="sourceLineNo">1482</span><a id="line.1482">                            + insets.getTop() + labelBounds.getHeight() / 2.0;</a>
+<span class="sourceLineNo">1483</span><a id="line.1483">            TextAnchor anchor = labelAnchorH(this.labelLocation);</a>
+<span class="sourceLineNo">1484</span><a id="line.1484">            AttrStringUtils.drawRotatedString(label, g2, (float) labelx,</a>
+<span class="sourceLineNo">1485</span><a id="line.1485">                    (float) labely, anchor, getLabelAngle(), TextAnchor.CENTER);</a>
+<span class="sourceLineNo">1486</span><a id="line.1486">            state.cursorDown(insets.getTop() + labelBounds.getHeight()</a>
+<span class="sourceLineNo">1487</span><a id="line.1487">                    + insets.getBottom());</a>
+<span class="sourceLineNo">1488</span><a id="line.1488">        }</a>
+<span class="sourceLineNo">1489</span><a id="line.1489">        else if (edge == RectangleEdge.LEFT) {</a>
+<span class="sourceLineNo">1490</span><a id="line.1490">            AffineTransform t = AffineTransform.getRotateInstance(</a>
+<span class="sourceLineNo">1491</span><a id="line.1491">                    getLabelAngle() - Math.PI / 2.0, labelBounds.getCenterX(),</a>
+<span class="sourceLineNo">1492</span><a id="line.1492">                    labelBounds.getCenterY());</a>
+<span class="sourceLineNo">1493</span><a id="line.1493">            Shape rotatedLabelBounds = t.createTransformedShape(labelBounds);</a>
+<span class="sourceLineNo">1494</span><a id="line.1494">            labelBounds = rotatedLabelBounds.getBounds2D();</a>
+<span class="sourceLineNo">1495</span><a id="line.1495">            double labelx = state.getCursor()</a>
+<span class="sourceLineNo">1496</span><a id="line.1496">                            - insets.getRight() - labelBounds.getWidth() / 2.0;</a>
+<span class="sourceLineNo">1497</span><a id="line.1497">            double labely = labelLocationY(this.labelLocation, dataArea);</a>
+<span class="sourceLineNo">1498</span><a id="line.1498">            TextAnchor anchor = labelAnchorV(this.labelLocation);</a>
+<span class="sourceLineNo">1499</span><a id="line.1499">            AttrStringUtils.drawRotatedString(label, g2, (float) labelx,</a>
+<span class="sourceLineNo">1500</span><a id="line.1500">                    (float) labely, anchor, getLabelAngle() - Math.PI / 2.0, </a>
+<span class="sourceLineNo">1501</span><a id="line.1501">                    anchor);</a>
+<span class="sourceLineNo">1502</span><a id="line.1502">            state.cursorLeft(insets.getLeft() + labelBounds.getWidth()</a>
+<span class="sourceLineNo">1503</span><a id="line.1503">                    + insets.getRight());</a>
+<span class="sourceLineNo">1504</span><a id="line.1504">        }</a>
+<span class="sourceLineNo">1505</span><a id="line.1505">        else if (edge == RectangleEdge.RIGHT) {</a>
+<span class="sourceLineNo">1506</span><a id="line.1506">            AffineTransform t = AffineTransform.getRotateInstance(</a>
+<span class="sourceLineNo">1507</span><a id="line.1507">                    getLabelAngle() + Math.PI / 2.0,</a>
+<span class="sourceLineNo">1508</span><a id="line.1508">                    labelBounds.getCenterX(), labelBounds.getCenterY());</a>
+<span class="sourceLineNo">1509</span><a id="line.1509">            Shape rotatedLabelBounds = t.createTransformedShape(labelBounds);</a>
+<span class="sourceLineNo">1510</span><a id="line.1510">            labelBounds = rotatedLabelBounds.getBounds2D();</a>
+<span class="sourceLineNo">1511</span><a id="line.1511">            double labelx = state.getCursor()</a>
+<span class="sourceLineNo">1512</span><a id="line.1512">                            + insets.getLeft() + labelBounds.getWidth() / 2.0;</a>
+<span class="sourceLineNo">1513</span><a id="line.1513">            double labely = labelLocationY(this.labelLocation, dataArea);</a>
+<span class="sourceLineNo">1514</span><a id="line.1514">            TextAnchor anchor = labelAnchorV(this.labelLocation);</a>
+<span class="sourceLineNo">1515</span><a id="line.1515">            AttrStringUtils.drawRotatedString(label, g2, (float) labelx,</a>
+<span class="sourceLineNo">1516</span><a id="line.1516">                    (float) labely, anchor, getLabelAngle() + Math.PI / 2.0, </a>
+<span class="sourceLineNo">1517</span><a id="line.1517">                    anchor);</a>
+<span class="sourceLineNo">1518</span><a id="line.1518">            state.cursorRight(insets.getLeft() + labelBounds.getWidth()</a>
+<span class="sourceLineNo">1519</span><a id="line.1519">                    + insets.getRight());</a>
+<span class="sourceLineNo">1520</span><a id="line.1520">        }</a>
+<span class="sourceLineNo">1521</span><a id="line.1521">        return state;</a>
+<span class="sourceLineNo">1522</span><a id="line.1522">    }</a>
+<span class="sourceLineNo">1523</span><a id="line.1523"></a>
+<span class="sourceLineNo">1524</span><a id="line.1524">    /**</a>
+<span class="sourceLineNo">1525</span><a id="line.1525">     * Draws an axis line at the current cursor position and edge.</a>
+<span class="sourceLineNo">1526</span><a id="line.1526">     *</a>
+<span class="sourceLineNo">1527</span><a id="line.1527">     * @param g2  the graphics device.</a>
+<span class="sourceLineNo">1528</span><a id="line.1528">     * @param cursor  the cursor position.</a>
+<span class="sourceLineNo">1529</span><a id="line.1529">     * @param dataArea  the data area.</a>
+<span class="sourceLineNo">1530</span><a id="line.1530">     * @param edge  the edge.</a>
+<span class="sourceLineNo">1531</span><a id="line.1531">     */</a>
+<span class="sourceLineNo">1532</span><a id="line.1532">    protected void drawAxisLine(Graphics2D g2, double cursor,</a>
+<span class="sourceLineNo">1533</span><a id="line.1533">            Rectangle2D dataArea, RectangleEdge edge) {</a>
+<span class="sourceLineNo">1534</span><a id="line.1534">        Line2D axisLine = null;</a>
+<span class="sourceLineNo">1535</span><a id="line.1535">        double x = dataArea.getX();</a>
+<span class="sourceLineNo">1536</span><a id="line.1536">        double y = dataArea.getY();</a>
+<span class="sourceLineNo">1537</span><a id="line.1537">        if (edge == RectangleEdge.TOP) {</a>
+<span class="sourceLineNo">1538</span><a id="line.1538">            axisLine = new Line2D.Double(x, cursor, dataArea.getMaxX(), cursor);</a>
+<span class="sourceLineNo">1539</span><a id="line.1539">        } else if (edge == RectangleEdge.BOTTOM) {</a>
+<span class="sourceLineNo">1540</span><a id="line.1540">            axisLine = new Line2D.Double(x, cursor, dataArea.getMaxX(), cursor);</a>
+<span class="sourceLineNo">1541</span><a id="line.1541">        } else if (edge == RectangleEdge.LEFT) {</a>
+<span class="sourceLineNo">1542</span><a id="line.1542">            axisLine = new Line2D.Double(cursor, y, cursor, dataArea.getMaxY());</a>
+<span class="sourceLineNo">1543</span><a id="line.1543">        } else if (edge == RectangleEdge.RIGHT) {</a>
+<span class="sourceLineNo">1544</span><a id="line.1544">            axisLine = new Line2D.Double(cursor, y, cursor, dataArea.getMaxY());</a>
+<span class="sourceLineNo">1545</span><a id="line.1545">        }</a>
+<span class="sourceLineNo">1546</span><a id="line.1546">        g2.setPaint(this.axisLinePaint);</a>
+<span class="sourceLineNo">1547</span><a id="line.1547">        g2.setStroke(this.axisLineStroke);</a>
+<span class="sourceLineNo">1548</span><a id="line.1548">        Object saved = g2.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);</a>
+<span class="sourceLineNo">1549</span><a id="line.1549">        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, </a>
+<span class="sourceLineNo">1550</span><a id="line.1550">                RenderingHints.VALUE_STROKE_NORMALIZE);</a>
+<span class="sourceLineNo">1551</span><a id="line.1551">        g2.draw(axisLine);</a>
+<span class="sourceLineNo">1552</span><a id="line.1552">        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, saved);</a>
+<span class="sourceLineNo">1553</span><a id="line.1553">    }</a>
+<span class="sourceLineNo">1554</span><a id="line.1554"></a>
+<span class="sourceLineNo">1555</span><a id="line.1555">    /**</a>
+<span class="sourceLineNo">1556</span><a id="line.1556">     * Returns a clone of the axis.</a>
+<span class="sourceLineNo">1557</span><a id="line.1557">     *</a>
+<span class="sourceLineNo">1558</span><a id="line.1558">     * @return A clone.</a>
+<span class="sourceLineNo">1559</span><a id="line.1559">     *</a>
+<span class="sourceLineNo">1560</span><a id="line.1560">     * @throws CloneNotSupportedException if some component of the axis does</a>
+<span class="sourceLineNo">1561</span><a id="line.1561">     *         not support cloning.</a>
+<span class="sourceLineNo">1562</span><a id="line.1562">     */</a>
+<span class="sourceLineNo">1563</span><a id="line.1563">    @Override</a>
+<span class="sourceLineNo">1564</span><a id="line.1564">    public Object clone() throws CloneNotSupportedException {</a>
+<span class="sourceLineNo">1565</span><a id="line.1565">        Axis clone = (Axis) super.clone();</a>
+<span class="sourceLineNo">1566</span><a id="line.1566">        // It's up to the plot which clones up to restore the correct references</a>
+<span class="sourceLineNo">1567</span><a id="line.1567">        clone.plot = null;</a>
+<span class="sourceLineNo">1568</span><a id="line.1568">        clone.listenerList = new EventListenerList();</a>
+<span class="sourceLineNo">1569</span><a id="line.1569">        return clone;</a>
+<span class="sourceLineNo">1570</span><a id="line.1570">    }</a>
+<span class="sourceLineNo">1571</span><a id="line.1571"></a>
+<span class="sourceLineNo">1572</span><a id="line.1572">    /**</a>
+<span class="sourceLineNo">1573</span><a id="line.1573">     * Tests this axis for equality with another object.</a>
+<span class="sourceLineNo">1574</span><a id="line.1574">     *</a>
+<span class="sourceLineNo">1575</span><a id="line.1575">     * @param obj  the object ({@code null} permitted).</a>
+<span class="sourceLineNo">1576</span><a id="line.1576">     *</a>
+<span class="sourceLineNo">1577</span><a id="line.1577">     * @return &lt;code&gt;true&lt;/code&gt; or &lt;code&gt;false&lt;/code&gt;.</a>
+<span class="sourceLineNo">1578</span><a id="line.1578">     */</a>
+<span class="sourceLineNo">1579</span><a id="line.1579">    @Override</a>
+<span class="sourceLineNo">1580</span><a id="line.1580">    public boolean equals(Object obj) {</a>
+<span class="sourceLineNo">1581</span><a id="line.1581">        if (obj == this) {</a>
+<span class="sourceLineNo">1582</span><a id="line.1582">            return true;</a>
+<span class="sourceLineNo">1583</span><a id="line.1583">        }</a>
+<span class="sourceLineNo">1584</span><a id="line.1584">        if (!(obj instanceof Axis)) {</a>
+<span class="sourceLineNo">1585</span><a id="line.1585">            return false;</a>
+<span class="sourceLineNo">1586</span><a id="line.1586">        }</a>
+<span class="sourceLineNo">1587</span><a id="line.1587">        Axis that = (Axis) obj;</a>
+<span class="sourceLineNo">1588</span><a id="line.1588">        if (this.visible != that.visible) {</a>
+<span class="sourceLineNo">1589</span><a id="line.1589">            return false;</a>
+<span class="sourceLineNo">1590</span><a id="line.1590">        }</a>
+<span class="sourceLineNo">1591</span><a id="line.1591">        if (!ObjectUtilities.equal(this.label, that.label)) {</a>
+<span class="sourceLineNo">1592</span><a id="line.1592">            return false;</a>
+<span class="sourceLineNo">1593</span><a id="line.1593">        }</a>
+<span class="sourceLineNo">1594</span><a id="line.1594">        if (!AttributedStringUtilities.equal(this.attributedLabel, </a>
+<span class="sourceLineNo">1595</span><a id="line.1595">                that.attributedLabel)) {</a>
+<span class="sourceLineNo">1596</span><a id="line.1596">            return false;</a>
+<span class="sourceLineNo">1597</span><a id="line.1597">        }</a>
+<span class="sourceLineNo">1598</span><a id="line.1598">        if (!ObjectUtilities.equal(this.labelFont, that.labelFont)) {</a>
+<span class="sourceLineNo">1599</span><a id="line.1599">            return false;</a>
+<span class="sourceLineNo">1600</span><a id="line.1600">        }</a>
+<span class="sourceLineNo">1601</span><a id="line.1601">        if (!PaintUtilities.equal(this.labelPaint, that.labelPaint)) {</a>
+<span class="sourceLineNo">1602</span><a id="line.1602">            return false;</a>
+<span class="sourceLineNo">1603</span><a id="line.1603">        }</a>
+<span class="sourceLineNo">1604</span><a id="line.1604">        if (!ObjectUtilities.equal(this.labelInsets, that.labelInsets)) {</a>
+<span class="sourceLineNo">1605</span><a id="line.1605">            return false;</a>
+<span class="sourceLineNo">1606</span><a id="line.1606">        }</a>
+<span class="sourceLineNo">1607</span><a id="line.1607">        if (this.labelAngle != that.labelAngle) {</a>
+<span class="sourceLineNo">1608</span><a id="line.1608">            return false;</a>
+<span class="sourceLineNo">1609</span><a id="line.1609">        }</a>
+<span class="sourceLineNo">1610</span><a id="line.1610">        if (!this.labelLocation.equals(that.labelLocation)) {</a>
+<span class="sourceLineNo">1611</span><a id="line.1611">            return false;</a>
+<span class="sourceLineNo">1612</span><a id="line.1612">        }</a>
+<span class="sourceLineNo">1613</span><a id="line.1613">        if (this.axisLineVisible != that.axisLineVisible) {</a>
+<span class="sourceLineNo">1614</span><a id="line.1614">            return false;</a>
+<span class="sourceLineNo">1615</span><a id="line.1615">        }</a>
+<span class="sourceLineNo">1616</span><a id="line.1616">        if (!ObjectUtilities.equal(this.axisLineStroke, that.axisLineStroke)) {</a>
+<span class="sourceLineNo">1617</span><a id="line.1617">            return false;</a>
+<span class="sourceLineNo">1618</span><a id="line.1618">        }</a>
+<span class="sourceLineNo">1619</span><a id="line.1619">        if (!PaintUtilities.equal(this.axisLinePaint, that.axisLinePaint)) {</a>
+<span class="sourceLineNo">1620</span><a id="line.1620">            return false;</a>
+<span class="sourceLineNo">1621</span><a id="line.1621">        }</a>
+<span class="sourceLineNo">1622</span><a id="line.1622">        if (this.tickLabelsVisible != that.tickLabelsVisible) {</a>
+<span class="sourceLineNo">1623</span><a id="line.1623">            return false;</a>
+<span class="sourceLineNo">1624</span><a id="line.1624">        }</a>
+<span class="sourceLineNo">1625</span><a id="line.1625">        if (!ObjectUtilities.equal(this.tickLabelFont, that.tickLabelFont)) {</a>
+<span class="sourceLineNo">1626</span><a id="line.1626">            return false;</a>
+<span class="sourceLineNo">1627</span><a id="line.1627">        }</a>
+<span class="sourceLineNo">1628</span><a id="line.1628">        if (!PaintUtilities.equal(this.tickLabelPaint, that.tickLabelPaint)) {</a>
+<span class="sourceLineNo">1629</span><a id="line.1629">            return false;</a>
+<span class="sourceLineNo">1630</span><a id="line.1630">        }</a>
+<span class="sourceLineNo">1631</span><a id="line.1631">        if (!ObjectUtilities.equal(</a>
+<span class="sourceLineNo">1632</span><a id="line.1632">            this.tickLabelInsets, that.tickLabelInsets</a>
+<span class="sourceLineNo">1633</span><a id="line.1633">        )) {</a>
+<span class="sourceLineNo">1634</span><a id="line.1634">            return false;</a>
+<span class="sourceLineNo">1635</span><a id="line.1635">        }</a>
+<span class="sourceLineNo">1636</span><a id="line.1636">        if (this.tickMarksVisible != that.tickMarksVisible) {</a>
+<span class="sourceLineNo">1637</span><a id="line.1637">            return false;</a>
+<span class="sourceLineNo">1638</span><a id="line.1638">        }</a>
+<span class="sourceLineNo">1639</span><a id="line.1639">        if (this.tickMarkInsideLength != that.tickMarkInsideLength) {</a>
+<span class="sourceLineNo">1640</span><a id="line.1640">            return false;</a>
+<span class="sourceLineNo">1641</span><a id="line.1641">        }</a>
+<span class="sourceLineNo">1642</span><a id="line.1642">        if (this.tickMarkOutsideLength != that.tickMarkOutsideLength) {</a>
+<span class="sourceLineNo">1643</span><a id="line.1643">            return false;</a>
+<span class="sourceLineNo">1644</span><a id="line.1644">        }</a>
+<span class="sourceLineNo">1645</span><a id="line.1645">        if (!PaintUtilities.equal(this.tickMarkPaint, that.tickMarkPaint)) {</a>
+<span class="sourceLineNo">1646</span><a id="line.1646">            return false;</a>
+<span class="sourceLineNo">1647</span><a id="line.1647">        }</a>
+<span class="sourceLineNo">1648</span><a id="line.1648">        if (!ObjectUtilities.equal(this.tickMarkStroke, that.tickMarkStroke)) {</a>
+<span class="sourceLineNo">1649</span><a id="line.1649">            return false;</a>
+<span class="sourceLineNo">1650</span><a id="line.1650">        }</a>
+<span class="sourceLineNo">1651</span><a id="line.1651">        if (this.minorTickMarksVisible != that.minorTickMarksVisible) {</a>
+<span class="sourceLineNo">1652</span><a id="line.1652">            return false;</a>
+<span class="sourceLineNo">1653</span><a id="line.1653">        }</a>
+<span class="sourceLineNo">1654</span><a id="line.1654">        if (this.minorTickMarkInsideLength != that.minorTickMarkInsideLength) {</a>
+<span class="sourceLineNo">1655</span><a id="line.1655">            return false;</a>
+<span class="sourceLineNo">1656</span><a id="line.1656">        }</a>
+<span class="sourceLineNo">1657</span><a id="line.1657">        if (this.minorTickMarkOutsideLength</a>
+<span class="sourceLineNo">1658</span><a id="line.1658">                != that.minorTickMarkOutsideLength) {</a>
+<span class="sourceLineNo">1659</span><a id="line.1659">            return false;</a>
+<span class="sourceLineNo">1660</span><a id="line.1660">        }</a>
+<span class="sourceLineNo">1661</span><a id="line.1661">        if (this.fixedDimension != that.fixedDimension) {</a>
+<span class="sourceLineNo">1662</span><a id="line.1662">            return false;</a>
+<span class="sourceLineNo">1663</span><a id="line.1663">        }</a>
+<span class="sourceLineNo">1664</span><a id="line.1664">        return true;</a>
+<span class="sourceLineNo">1665</span><a id="line.1665">    }</a>
+<span class="sourceLineNo">1666</span><a id="line.1666"></a>
+<span class="sourceLineNo">1667</span><a id="line.1667">    /**</a>
+<span class="sourceLineNo">1668</span><a id="line.1668">     * Returns a hash code for this instance.</a>
+<span class="sourceLineNo">1669</span><a id="line.1669">     * </a>
+<span class="sourceLineNo">1670</span><a id="line.1670">     * @return A hash code. </a>
+<span class="sourceLineNo">1671</span><a id="line.1671">     */</a>
+<span class="sourceLineNo">1672</span><a id="line.1672">    @Override</a>
+<span class="sourceLineNo">1673</span><a id="line.1673">    public int hashCode() {</a>
+<span class="sourceLineNo">1674</span><a id="line.1674">        int hash = 3;</a>
+<span class="sourceLineNo">1675</span><a id="line.1675">        if (this.label != null) {</a>
+<span class="sourceLineNo">1676</span><a id="line.1676">            hash = 83 * hash + this.label.hashCode();</a>
+<span class="sourceLineNo">1677</span><a id="line.1677">        }</a>
+<span class="sourceLineNo">1678</span><a id="line.1678">        return hash;</a>
+<span class="sourceLineNo">1679</span><a id="line.1679">    }</a>
+<span class="sourceLineNo">1680</span><a id="line.1680"></a>
+<span class="sourceLineNo">1681</span><a id="line.1681">    /**</a>
+<span class="sourceLineNo">1682</span><a id="line.1682">     * Provides serialization support.</a>
+<span class="sourceLineNo">1683</span><a id="line.1683">     *</a>
+<span class="sourceLineNo">1684</span><a id="line.1684">     * @param stream  the output stream.</a>
+<span class="sourceLineNo">1685</span><a id="line.1685">     *</a>
+<span class="sourceLineNo">1686</span><a id="line.1686">     * @throws IOException  if there is an I/O error.</a>
+<span class="sourceLineNo">1687</span><a id="line.1687">     */</a>
+<span class="sourceLineNo">1688</span><a id="line.1688">    private void writeObject(ObjectOutputStream stream) throws IOException {</a>
+<span class="sourceLineNo">1689</span><a id="line.1689">        stream.defaultWriteObject();</a>
+<span class="sourceLineNo">1690</span><a id="line.1690">        SerialUtilities.writeAttributedString(this.attributedLabel, stream);</a>
+<span class="sourceLineNo">1691</span><a id="line.1691">        SerialUtilities.writePaint(this.labelPaint, stream);</a>
+<span class="sourceLineNo">1692</span><a id="line.1692">        SerialUtilities.writePaint(this.tickLabelPaint, stream);</a>
+<span class="sourceLineNo">1693</span><a id="line.1693">        SerialUtilities.writeStroke(this.axisLineStroke, stream);</a>
+<span class="sourceLineNo">1694</span><a id="line.1694">        SerialUtilities.writePaint(this.axisLinePaint, stream);</a>
+<span class="sourceLineNo">1695</span><a id="line.1695">        SerialUtilities.writeStroke(this.tickMarkStroke, stream);</a>
+<span class="sourceLineNo">1696</span><a id="line.1696">        SerialUtilities.writePaint(this.tickMarkPaint, stream);</a>
+<span class="sourceLineNo">1697</span><a id="line.1697">    }</a>
+<span class="sourceLineNo">1698</span><a id="line.1698"></a>
+<span class="sourceLineNo">1699</span><a id="line.1699">    /**</a>
+<span class="sourceLineNo">1700</span><a id="line.1700">     * Provides serialization support.</a>
+<span class="sourceLineNo">1701</span><a id="line.1701">     *</a>
+<span class="sourceLineNo">1702</span><a id="line.1702">     * @param stream  the input stream.</a>
+<span class="sourceLineNo">1703</span><a id="line.1703">     *</a>
+<span class="sourceLineNo">1704</span><a id="line.1704">     * @throws IOException  if there is an I/O error.</a>
+<span class="sourceLineNo">1705</span><a id="line.1705">     * @throws ClassNotFoundException  if there is a classpath problem.</a>
+<span class="sourceLineNo">1706</span><a id="line.1706">     */</a>
+<span class="sourceLineNo">1707</span><a id="line.1707">    private void readObject(ObjectInputStream stream)</a>
+<span class="sourceLineNo">1708</span><a id="line.1708">        throws IOException, ClassNotFoundException {</a>
+<span class="sourceLineNo">1709</span><a id="line.1709">        stream.defaultReadObject();</a>
+<span class="sourceLineNo">1710</span><a id="line.1710">        this.attributedLabel = SerialUtilities.readAttributedString(stream);</a>
+<span class="sourceLineNo">1711</span><a id="line.1711">        this.labelPaint = SerialUtilities.readPaint(stream);</a>
+<span class="sourceLineNo">1712</span><a id="line.1712">        this.tickLabelPaint = SerialUtilities.readPaint(stream);</a>
+<span class="sourceLineNo">1713</span><a id="line.1713">        this.axisLineStroke = SerialUtilities.readStroke(stream);</a>
+<span class="sourceLineNo">1714</span><a id="line.1714">        this.axisLinePaint = SerialUtilities.readPaint(stream);</a>
+<span class="sourceLineNo">1715</span><a id="line.1715">        this.tickMarkStroke = SerialUtilities.readStroke(stream);</a>
+<span class="sourceLineNo">1716</span><a id="line.1716">        this.tickMarkPaint = SerialUtilities.readPaint(stream);</a>
+<span class="sourceLineNo">1717</span><a id="line.1717">        this.listenerList = new EventListenerList();</a>
+<span class="sourceLineNo">1718</span><a id="line.1718">    }</a>
+<span class="sourceLineNo">1719</span><a id="line.1719"></a>
+<span class="sourceLineNo">1720</span><a id="line.1720">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>
