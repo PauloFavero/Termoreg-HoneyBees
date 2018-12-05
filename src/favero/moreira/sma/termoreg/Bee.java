@@ -14,10 +14,8 @@ public class Bee implements Runnable{
 	
    public Bee(Hive hive){
 	this.hHive = hive;
-    t = new Thread(this);
     this.init();
-    System.out.println("New thread: " + t);
-    t.start();
+    System.out.println("New thread: ");
    }
 	
 	public void run(){
@@ -31,6 +29,7 @@ public class Bee implements Runnable{
 //        	System.out.println ("Hive's temperature right now is " + 
 //                        this.hHive.temp);
         	this.perception();
+        	Thread.sleep(50);
         	}
         } 
         catch (Exception e) 

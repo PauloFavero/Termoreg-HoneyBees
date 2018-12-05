@@ -21,10 +21,12 @@ public class Hive {
 	   private Hive(){
 		   this.setMaxOfBees(5);
 		   this.bee = new Bee[this.maxOfBees];
+		   
 		   this.setTemp(15.);
 		   //System.out.println ("Hive's temperature right now is " + this.temp);
 		   for(int i  = 0; i<this.maxOfBees; i++) {
 			   this.bee[i] = new Bee(this);
+			   new Thread(bee[i]).start();
 		   }
 	   }
 
