@@ -6,8 +6,8 @@ public class Bee{
 	private Hive hHive;
 	private double dPrecision;
 	private int iGroup;
-	private static double dSupLim;
-	private static double dInfLim;
+	private double dSupLim = 36.0;
+	private double dInfLim = 32.0;
 	//private String sBeeId;
 	private int iId;
 	 protected static double dTempBees;
@@ -16,6 +16,8 @@ public class Bee{
 	this.hHive = hive;
 	this.iGroup = iGroup;
 	this.dTempBees = 0;
+	this.dSupLim =36.0;
+	this.dInfLim =32.0;
    }
 
 	
@@ -69,20 +71,20 @@ public class Bee{
 		this.dPrecision = dPrecision;
 	}
 	
-	public static double getdSupLim() {
+	public double getdSupLim() {
 		return dSupLim;
 	}
 
-	public static void setdSupLim(double dSupLim) {
-		Bee.dSupLim = dSupLim;
+	public void setdSupLim(double dSupLim) {
+		this.dSupLim = dSupLim;
 	}
 
-	public static double getdInfLim() {
+	public double getdInfLim() {
 		return dInfLim;
 	}
 
-	public static void setdInfLim(double dInfLim) {
-		Bee.dInfLim = dInfLim;
+	public void setdInfLim(double dInfLim) {
+		this.dInfLim = dInfLim;
 	}
 
 }

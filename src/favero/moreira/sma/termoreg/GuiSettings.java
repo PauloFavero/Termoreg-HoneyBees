@@ -136,10 +136,10 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 	        int value = (int)source.getValue();
 	        System.out.println("Slider Value: " +  value);
 	        if(source == infLimSlider ) {
-	        	Bee.setdInfLim((double)value);
+	        	//Bee.setdInfLim((double)value);
 	        }
 	        else {
-	        	Bee.setdSupLim((double)value);
+	        	//Bee.setdSupLim((double)value);
 	        }
 	        
 	    }
@@ -155,8 +155,8 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 	    	this.infValue = (double)infLimSlider.getValue();
 	    	this.supValue = (double)supLimSlider.getValue();
 	    	
-	    	Bee.setdInfLim((double)infLimSlider.getValue());
-	    	Bee.setdSupLim((double)supLimSlider.getValue());
+	    	//Bee.setdInfLim((double)infLimSlider.getValue());
+	    	//Bee.setdSupLim((double)supLimSlider.getValue());
 	    	}
 	    else if(e.getSource() == applyButton) {
 	    	

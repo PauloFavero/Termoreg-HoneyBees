@@ -18,7 +18,7 @@ public class Hive {
 	   //make the constructor private so that this class cannot be
 	   //instantiated
 	   private Hive(){
-		   this.setMaxOfBees(5);
+		   this.setMaxOfBees(5000);
 		   this.heatCoeffTransfer = 10.0;
 		   this.bee =  new Bee[this.maxOfBees];
 		   this.setTemp(15.);
@@ -41,7 +41,7 @@ public class Hive {
     }
 
     public void setTemp(double temp) {
-        this.temp += temp;
+        this.temp = temp;
     }
 
 
