@@ -5,6 +5,7 @@ public class Hive {
 	protected double temp;
 	private int maxOfBees;
 	private Bee[] bee;
+	private int iNumGroups;
 
 
 	public Bee[] getBee() {
@@ -20,12 +21,12 @@ public class Hive {
 	   //instantiated
 	   private Hive(){
 		   this.setMaxOfBees(5);
-		   this.bee = new Bee[this.maxOfBees];
+		   this.bee =  Bee[this.maxOfBees];
 		   
 		   this.setTemp(15.);
 		   //System.out.println ("Hive's temperature right now is " + this.temp);
 		   for(int i  = 0; i<this.maxOfBees; i++) {
-			   this.bee[i] = new Bee(this);
+			   this.bee[i] = new Bee(this, (int)(maxOfBees%iNumGroups));
 		   }
 	   }
 
