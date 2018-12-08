@@ -1,11 +1,9 @@
 <component name="libraryTable">
   <library name="javadoc1">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/jcommon-1.0.23/javadoc/type-search-index.zip!/" />
-      <root url="jar://$PROJECT_DIR$/jcommon-1.0.23/javadoc/member-search-index.zip!/" />
-      <root url="jar://$PROJECT_DIR$/jcommon-1.0.23/javadoc/package-search-index.zip!/" />
-    </CLASSES>
-    <JAVADOC />
+    <CLASSES />
+    <JAVADOC>
+      <root url="file://$PROJECT_DIR$/jfreechart-1.0.19/javadoc" />
+    </JAVADOC>
     <SOURCES />
   </library>
 </component>

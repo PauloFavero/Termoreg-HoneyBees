@@ -4,18 +4,21 @@ import java.util.Random;
 public class Bee{
 	
 	private Hive hHive;
-	private double dThreshold;
+	// private double dThreshold;
 	private double dPrecision;
-	private static double dSupLim = 36.;
-	private static double dInfLim = 32.;
+	private int iGroup;
+	private static double dSupLim;
+	private static double dInfLim;
 	//private String sBeeId;
 	private int iId;
-	
-   public Bee(Hive hive){
+	static double dTempBees;
+
+   public Bee(Hive hive, int iGroup){
 	this.hHive = hive;
-    this.init();
+	this.iGroup = iGroup;
+	this.dTempBees = 0;
    }
-	
+	/*
 	public void run(){
 
         	this.perception();
@@ -31,43 +34,40 @@ public class Bee{
 	}
 	
 	private boolean isHot() {
-		if((this.hHive.temp + this.dPrecision) > this.dThreshold)
+		if((this.hHive.temp + this.dPrecision) > this.dSupLim)
 			return true;
 		else return false;
 	}
 	
 	private boolean isCold() {
-		if((this.hHive.temp - this.dPrecision) < this.dThreshold)
+		if((this.hHive.temp - this.dPrecision) < this.dInfLim)
 			return true;
 		else return false;
 	}
 	
 	private void makeItCold() {
-		this.hHive.setTemp(-0.0005);
+		this.dTempBees += -0.0005;
 //		System.out.println ("Bee " + 
 //                this.iId + 
 //                " is cooling the hive");
 	}
 	
 	private void makeItHot() {
-		this.hHive.setTemp(0.0005);
-//		System.out.println ("Bee " + 
-//                this.iId + 
+		this.dTempBees += 0.0005;
+//		System.out.println ("Bee " +
+//                this.iId +
 //                " is heating the hive");
 	}
-	
+	/*
 	public void init() {
 
 		this.dPrecision = 0.5;
-		this.dThreshold = randomGenerator();
-		System.out.println ("Bee dThreshold " + 
-                this.dThreshold);
+		//this.dThreshold = randomGenerator();
+		this.iGroup =
+		System.out.println ("Bee iGroup " +
+                this.iGroup);
 		this.iId = (int)java.lang.Thread.currentThread().getId();
-	}
-	
-	public void changeThreshold() {
-		this.dThreshold = randomGenerator();
-	}
+	}*/
 	
 	public double randomGenerator() {
 		
@@ -76,13 +76,7 @@ public class Bee{
 		
 		return randomValue;
 	}
-	
-	public double getdThreshold() {
-		return dThreshold;
-	}
-	public void setdThreshold(double dThreshold) {
-		this.dThreshold = dThreshold;
-	}
+
 	public double getdPrecision() {
 		return this.dPrecision;
 	}
@@ -105,9 +99,5 @@ public class Bee{
 	public static void setdInfLim(double dInfLim) {
 		Bee.dInfLim = dInfLim;
 	}
-
-	
-	
-	
 
 }
