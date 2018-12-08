@@ -25,7 +25,7 @@ public class Main extends Thread {
         }
 
     }
-
+    /* ************************************************ */
     /* ************************************************ */
     /* Method name:        beesPerception               */
     /* Method description: Call the perception of each  */
