@@ -161,7 +161,7 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 	    else if(e.getSource() == applyButton) {
 	    	
 	    	for (int i = 0; i < Hive.getInstance().getBee().length; i++) {
-	    		Hive.getInstance().getBee()[i].changeThreshold();
+	    		//Hive.getInstance().getBee()[i].changeThreshold();
 				
 			}
 	    	

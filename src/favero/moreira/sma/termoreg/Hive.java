@@ -5,7 +5,7 @@ public class Hive {
 	protected double temp;
 	private int maxOfBees;
 	private Bee[] bee;
-	private int iNumGroups;
+	private int iNumGroups=1;
     private double heatCoeffTransfer;
 
     //create an object of SingleObject
@@ -19,6 +19,7 @@ public class Hive {
 	   //instantiated
 	   private Hive(){
 		   this.setMaxOfBees(5);
+		   this.heatCoeffTransfer = 10.0;
 		   this.bee =  new Bee[this.maxOfBees];
 		   this.setTemp(15.);
 		   //System.out.println ("Hive's temperature right now is " + this.temp);

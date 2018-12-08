@@ -42,10 +42,6 @@ public class Main extends Thread {
         heatTransfer(hive, environment);
     }
 
-    /* TODO
-    * replace with the correct variable of Bees.
-    */
-
     /* ************************************************ */
     /* Method name:        heatTransfer                 */
     /* Method description:    Set the temperature of    */
@@ -60,6 +56,7 @@ public class Main extends Thread {
         double temp = Bee.dTempBees + hive.getTemp() + (environment.getTemp()-hive.getTemp())/hive.getHeatCoeffTransfer();
 
         hive.setTemp(Bee.dTempBees + hive.getTemp() + (environment.getTemp()-hive.getTemp())/hive.getHeatCoeffTransfer());
+        Bee.dTempBees = 0.0;
     }
 
 
