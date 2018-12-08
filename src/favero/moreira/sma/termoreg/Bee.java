@@ -5,6 +5,7 @@ public class Bee{
 	
 	private Hive hHive;
 	private double dPrecision;
+
 	private int iGroup;
 	private double dSupLim = 36.0;
 	private double dInfLim = 32.0;
@@ -56,14 +57,6 @@ public class Bee{
 //                " is heating the hive");
 	}
 
-	public double randomGenerator() {
-		
-		Random r = new Random();
-		double randomValue = dInfLim + (dSupLim - dInfLim) * r.nextDouble();
-		
-		return randomValue;
-	}
-
 	public double getdPrecision() {
 		return this.dPrecision;
 	}
@@ -86,5 +79,12 @@ public class Bee{
 	public void setdInfLim(double dInfLim) {
 		this.dInfLim = dInfLim;
 	}
-
+	public void setiGroup(int iGroup) {
+		this.iGroup = iGroup;
+	}
+	public void setConfig(int iGroup, double dNewInfLim, double dNewSupLim) {
+		setiGroup(iGroup);
+		setdInfLim(dNewInfLim);
+		setdSupLim(dNewSupLim);
+	}
 }

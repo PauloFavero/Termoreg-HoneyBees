@@ -20,7 +20,7 @@ import org.jfree.data.time.Second;
 //Tutoriel JAVAFX code.makery
 
 
-public class GuiSettings extends JFrame implements ActionListener, ChangeListener{
+public class GuiSettings extends JFrame implements Runnable, ActionListener, ChangeListener{
 	
 	static final int TEMP_MIN = 32;
 	static final int TEMP_MAX = 36;
@@ -162,6 +162,9 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 	        if(source == infLimSlider ) {
 	        	//Bee.setdInfLim((double)value);
 	        }
+			else if(source == nbGroupsSlider ) {
+				BeeGroups.setNumGroup(value);
+			}
 	        else {
 	        	//Bee.setdSupLim((double)value);
 	        }
@@ -183,12 +186,7 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 	    	//Bee.setdSupLim((double)supLimSlider.getValue());
 	    	}
 	    else if(e.getSource() == applyButton) {
-	    	
-	    	for (int i = 0; i < Hive.getInstance().getBee().length; i++) {
-	    		//Hive.getInstance().getBee()[i].changeThreshold();
-				
-			}
-	    	
+				BeeGroups.updateGroup();
 	    }
 	}
 
@@ -207,5 +205,10 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 
 	private void setSupValue(double supValue) {
 		this.supValue = supValue;
+	}
+
+	@Override
+	public void run() {
+
 	}
 }

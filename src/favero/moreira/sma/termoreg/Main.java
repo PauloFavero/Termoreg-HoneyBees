@@ -27,9 +27,8 @@ public class Main extends Thread {
             System.out.println("Hive temperature BEFORE: " + hive.getTemp());
             demo.update(hive);
             beesPerception(hive,environment);
-            t.sleep(500);
+            sleep(500);
             System.out.println("Hive temperature AFTER: " + hive.getTemp());
-
         }
 
     }
@@ -66,6 +65,5 @@ public class Main extends Thread {
         hive.setTemp(Bee.dTempBees + hive.getTemp() + (environment.getTemp()-hive.getTemp())/hive.getHeatCoeffTransfer());
         Bee.dTempBees = 0.0;
     }
-
 
 }

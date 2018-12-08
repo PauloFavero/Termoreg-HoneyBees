@@ -24,7 +24,7 @@ public class Hive {
 		   this.setTemp(15.);
 		   //System.out.println ("Hive's temperature right now is " + this.temp);
 		   for(int i  = 0; i<this.maxOfBees; i++) {
-			   this.bee[i] = new Bee(this, (int)(maxOfBees%iNumGroups));
+			   this.bee[i] = new Bee(this, (int)(i%iNumGroups));
 		   }
 
 	   }
@@ -45,7 +45,11 @@ public class Hive {
         this.temp = temp;
     }
 
-
+    public void update(int iNumGroups, double dNewInfLim[], double dNewSupLim[]){
+        for(int i=0; i < maxOfBees; i++){
+            bee[i].setConfig(i%iNumGroups, dNewInfLim[i%iNumGroups], dNewSupLim[i%iNumGroups]);
+        }
+    }
     public void showMessage() {
         System.out.println("I'm a hive ");
     }
