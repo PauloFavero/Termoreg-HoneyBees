@@ -26,7 +26,6 @@ public class Hive {
 		   //System.out.println ("Hive's temperature right now is " + this.temp);
 		   for(int i  = 0; i<this.maxOfBees; i++) {
 			   this.bee[i] = new Bee(this);
-			   new Thread(bee[i]).start();
 		   }
 	   }
 

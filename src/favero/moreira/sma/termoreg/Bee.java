@@ -1,7 +1,7 @@
 package favero.moreira.sma.termoreg;
 import java.util.Random;
 
-public class Bee implements Runnable{
+public class Bee{
 	
 	private Hive hHive;
 	private double dThreshold;
@@ -10,12 +10,10 @@ public class Bee implements Runnable{
 	private static double dInfLim = 32.;
 	//private String sBeeId;
 	private int iId;
-	private Thread t;
 	
    public Bee(Hive hive){
 	this.hHive = hive;
     this.init();
-    System.out.println("New thread: ");
    }
 	
 	public void run(){
@@ -29,7 +27,6 @@ public class Bee implements Runnable{
 //        	System.out.println ("Hive's temperature right now is " + 
 //                        this.hHive.temp);
         	this.perception();
-        	Thread.sleep(50);
         	}
         } 
         catch (Exception e) 
@@ -39,7 +36,7 @@ public class Bee implements Runnable{
         }
     }
 	
-	public synchronized void perception() {
+	public void perception() {
 		if(isHot()) {
 			this.makeItCold();
 		}
