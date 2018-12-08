@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="javadoc">
-    <CLASSES />
-    <JAVADOC>
-      <root url="file://$PROJECT_DIR$/jcommon-1.0.23/javadoc" />
-    </JAVADOC>
-    <SOURCES />
-  </library>
-</component>
