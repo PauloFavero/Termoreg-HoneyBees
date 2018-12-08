@@ -17,24 +17,9 @@ public class Bee{
    }
 	
 	public void run(){
-        try{
-        	while(true) {
-            // Displaying the thread that is running 
-            /*System.out.println ("Thread " + 
-                  Thread.currentThread().getId() + 
-                  " is running");
-            System.out.println("Bee Id: " + this.sBeeId);*/
-//        	System.out.println ("Hive's temperature right now is " + 
-//                        this.hHive.temp);
+
         	this.perception();
-        	}
-        } 
-        catch (Exception e) 
-        { 
-            // Throwing an exception 
-            System.out.println ("Exception is caught");
-        }
-    }
+   }
 	
 	public void perception() {
 		if(isHot()) {
