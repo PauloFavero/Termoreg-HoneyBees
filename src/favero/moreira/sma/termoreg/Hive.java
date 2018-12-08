@@ -6,47 +6,26 @@ public class Hive {
 	private int maxOfBees;
 	private Bee[] bee;
 	private int iNumGroups;
-
-    protected double temp;
-    private int maxOfBees;
-    private Bee[] bee;
     private double heatCoeffTransfer;
 
+    //create an object of SingleObject
+    private static Hive instance;
 
     public Bee[] getBee() {
         return bee;
     }
 
-
 	   //make the constructor private so that this class cannot be
 	   //instantiated
 	   private Hive(){
 		   this.setMaxOfBees(5);
-		   this.bee =  Bee[this.maxOfBees];
-		   
+		   this.bee =  new Bee[this.maxOfBees];
 		   this.setTemp(15.);
 		   //System.out.println ("Hive's temperature right now is " + this.temp);
 		   for(int i  = 0; i<this.maxOfBees; i++) {
 			   this.bee[i] = new Bee(this, (int)(maxOfBees%iNumGroups));
 		   }
 	   }
-    //create an object of SingleObject
-    private static Hive instance;
-
-
-    //make the constructor private so that this class cannot be
-    //instantiated
-    private Hive() {
-        this.setMaxOfBees(5);
-        this.bee = new Bee[this.maxOfBees];
-        this.heatCoeffTransfer = 10;
-
-        this.setTemp(15.);
-        //System.out.println ("Hive's temperature right now is " + this.temp);
-        for (int i = 0; i < this.maxOfBees; i++) {
-            this.bee[i] = new Bee(this);
-        }
-    }
 
     //Get the only object available
     public static Hive getInstance() {

@@ -37,7 +37,7 @@ public class Main extends Thread {
     private static void beesPerception(Hive hive, Environment environment) {
 
         for (int i = 0; i < hive.getBee().length; i++) {
-            hive.getBee()[i].run();
+            hive.getBee()[i].perception();
         }
         heatTransfer(hive, environment);
     }
@@ -49,7 +49,7 @@ public class Main extends Thread {
     /* ************************************************ */
     /* Method name:        heatTransfer                 */
     /* Method description:    Set the temperature of    */
-    /* the Hive if the necessary changes                */
+    /* the Hive if have necessary changes               */
     /* Input params:       Hive                         */
     /* Input params:       Environment                  */
     /* Outpu params:       Void                         */
@@ -57,9 +57,9 @@ public class Main extends Thread {
     private static void heatTransfer(Hive hive, Environment environment) {
 
         //hiveTemp = Bees.contribution hiveTemp + (envTemp-hiveTemp)/hiveCoeffTransfer
-        double temp = Bee.getdInfLim() + hive.getTemp() + (environment.getTemp()-hive.getTemp())/hive.getHeatCoeffTransfer();
+        double temp = Bee.dTempBees + hive.getTemp() + (environment.getTemp()-hive.getTemp())/hive.getHeatCoeffTransfer();
 
-        hive.setTemp(Bee.getdInfLim() + hive.getTemp() + (environment.getTemp()-hive.getTemp())/hive.getHeatCoeffTransfer());
+        hive.setTemp(Bee.dTempBees + hive.getTemp() + (environment.getTemp()-hive.getTemp())/hive.getHeatCoeffTransfer());
     }
 
 

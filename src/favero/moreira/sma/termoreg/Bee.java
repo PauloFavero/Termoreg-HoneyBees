@@ -4,25 +4,20 @@ import java.util.Random;
 public class Bee{
 	
 	private Hive hHive;
-	// private double dThreshold;
 	private double dPrecision;
 	private int iGroup;
 	private static double dSupLim;
 	private static double dInfLim;
 	//private String sBeeId;
 	private int iId;
-	static double dTempBees;
+	 protected static double dTempBees;
 
    public Bee(Hive hive, int iGroup){
 	this.hHive = hive;
 	this.iGroup = iGroup;
 	this.dTempBees = 0;
    }
-	/*
-	public void run(){
 
-        	this.perception();
-   }
 	
 	public void perception() {
 		if(isHot()) {
@@ -58,17 +53,7 @@ public class Bee{
 //                this.iId +
 //                " is heating the hive");
 	}
-	/*
-	public void init() {
 
-		this.dPrecision = 0.5;
-		//this.dThreshold = randomGenerator();
-		this.iGroup =
-		System.out.println ("Bee iGroup " +
-                this.iGroup);
-		this.iId = (int)java.lang.Thread.currentThread().getId();
-	}*/
-	
 	public double randomGenerator() {
 		
 		Random r = new Random();
