@@ -9,13 +9,13 @@ import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
+import org.jfree.ui.ApplicationFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import org.jfree.*;
-import org.jfree.experimental.*;
+
 
 public class DynamicChart extends ApplicationFrame implements ActionListener {
 
@@ -33,7 +33,7 @@ public class DynamicChart extends ApplicationFrame implements ActionListener {
     public DynamicChart(final String title) {
 
         super(title);
-        this.series = new TimeSeries("Random Data", Millisecond.class);
+        this.series = new TimeSeries("Temperature", Millisecond.class);
         final TimeSeriesCollection dataset = new TimeSeriesCollection(this.series);
         final JFreeChart chart = createChart(dataset);
 
@@ -59,7 +59,7 @@ public class DynamicChart extends ApplicationFrame implements ActionListener {
      */
     private JFreeChart createChart(final XYDataset dataset) {
         final JFreeChart result = ChartFactory.createTimeSeriesChart(
-                "Dynamic Data Demo",
+                "Hive Temperature",
                 "Time",
                 "Value",
                 dataset,
@@ -72,7 +72,7 @@ public class DynamicChart extends ApplicationFrame implements ActionListener {
         axis.setAutoRange(true);
         axis.setFixedAutoRange(60000.0);  // 60 seconds
         axis = plot.getRangeAxis();
-        axis.setRange(0.0, 200.0);
+        axis.setRange(15.0, 40.0);
         return result;
     }
 
@@ -100,6 +100,16 @@ public class DynamicChart extends ApplicationFrame implements ActionListener {
             System.out.println("Now = " + now.toString());
             this.series.add(new Millisecond(), this.lastValue);
         }
+    }
+
+    public void update(Hive hive){
+
+        final double factor = hive.getTemp();
+        //final double factor = 0.90 + 0.2 * hive.getTemp();
+        this.lastValue =  factor;
+        final Millisecond now = new Millisecond();
+        System.out.println("Now = " + now.toString());
+        this.series.add(new Millisecond(), this.lastValue);
     }
 
 //    /**
