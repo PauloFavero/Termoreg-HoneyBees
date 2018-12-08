@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0afa0f6e-b876-4bf1-9489-38a8986942bc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/favero/moreira/sma/termoreg/Environment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/favero/moreira/sma/termoreg/Bee.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/favero/moreira/sma/termoreg/Bee.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/favero/moreira/sma/termoreg/GuiSettings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/favero/moreira/sma/termoreg/GuiSettings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/favero/moreira/sma/termoreg/Hive.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/favero/moreira/sma/termoreg/Hive.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -56,8 +52,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/favero/moreira/sma/termoreg/Hive.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="251">
-              <caret line="27" column="8" selection-start-line="27" selection-start-column="8" selection-end-line="27" selection-end-column="8" />
+            <state relative-caret-position="382">
+              <caret line="37" column="16" selection-start-line="37" selection-start-column="16" selection-end-line="37" selection-end-column="16" />
               <folding>
                 <element signature="e#297#298#0" expanded="true" />
                 <element signature="e#323#324#0" expanded="true" />
@@ -65,7 +61,7 @@
                 <element signature="e#869#870#0" expanded="true" />
                 <element signature="e#907#908#0" expanded="true" />
                 <element signature="e#933#934#0" expanded="true" />
-                <element signature="e#1112#1113#0" expanded="true" />
+                <element signature="e#1143#1144#0" expanded="true" />
                 <element signature="e#1139#1140#0" expanded="true" />
                 <element signature="e#1179#1180#0" expanded="true" />
                 <element signature="e#1245#1246#0" expanded="true" />
@@ -78,17 +74,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/favero/moreira/sma/termoreg/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="342">
-              <caret line="61" column="56" selection-start-line="61" selection-start-column="56" selection-end-line="61" selection-end-column="56" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="413">
-              <caret line="430" column="10" selection-start-line="430" selection-start-column="10" selection-end-line="430" selection-end-column="10" />
+            <state relative-caret-position="720">
+              <caret line="48" column="58" selection-start-line="48" selection-start-column="58" selection-end-line="48" selection-end-column="58" />
             </state>
           </provider>
         </entry>
@@ -97,7 +84,7 @@
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="15">
-              <caret line="1" column="2" selection-start-line="1" selection-start-column="2" selection-end-line="1" selection-end-column="2" />
+              <caret line="1" column="19" selection-start-line="1" selection-start-column="19" selection-end-line="1" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -326,8 +313,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/favero/moreira/sma/termoreg/Hive.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="27" column="8" selection-start-line="27" selection-start-column="8" selection-end-line="27" selection-end-column="8" />
+        <state relative-caret-position="382">
+          <caret line="37" column="16" selection-start-line="37" selection-start-column="16" selection-end-line="37" selection-end-column="16" />
           <folding>
             <element signature="e#297#298#0" expanded="true" />
             <element signature="e#323#324#0" expanded="true" />
@@ -335,19 +322,12 @@
             <element signature="e#869#870#0" expanded="true" />
             <element signature="e#907#908#0" expanded="true" />
             <element signature="e#933#934#0" expanded="true" />
-            <element signature="e#1112#1113#0" expanded="true" />
+            <element signature="e#1143#1144#0" expanded="true" />
             <element signature="e#1139#1140#0" expanded="true" />
             <element signature="e#1179#1180#0" expanded="true" />
             <element signature="e#1245#1246#0" expanded="true" />
             <element signature="e#1303#1304#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/favero/moreira/sma/termoreg/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="61" column="56" selection-start-line="61" selection-start-column="56" selection-end-line="61" selection-end-column="56" />
         </state>
       </provider>
     </entry>
@@ -365,14 +345,21 @@
     <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="413">
-          <caret line="430" column="10" selection-start-line="430" selection-start-column="10" selection-end-line="430" selection-end-column="10" />
+          <caret line="455" column="10" selection-start-line="455" selection-start-column="10" selection-end-line="455" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/favero/moreira/sma/termoreg/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="48" column="58" selection-start-line="48" selection-start-column="58" selection-end-line="48" selection-end-column="58" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
-          <caret line="1" column="2" selection-start-line="1" selection-start-column="2" selection-end-line="1" selection-end-column="2" />
+          <caret line="1" column="19" selection-start-line="1" selection-start-column="19" selection-end-line="1" selection-end-column="19" />
         </state>
       </provider>
     </entry>
