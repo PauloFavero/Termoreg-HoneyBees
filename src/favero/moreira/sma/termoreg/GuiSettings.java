@@ -1,6 +1,12 @@
 package favero.moreira.sma.termoreg;
 
-import org.jfree.chart.JFreeChart;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /*import javax.swing.Timer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -10,12 +16,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.DynamicTimeSeriesCollection;
 import org.jfree.data.time.Second;
 */
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 //Tutoriel JAVAFX code.makery
 
@@ -26,7 +26,9 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 	static final int TEMP_MAX = 36;
 	static final int INF_INIT = 32;
 	static final int SUP_INIT = 36;
-	
+	static final int BEES_MIN = 1;
+	static final int BEES_MAX = 5000;
+
 	public double infValue;
 	public double supValue;
 	
@@ -36,16 +38,22 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 	private JPanel mainPanel;
 	private JPanel sliderPanel;
 	private JPanel buttonPanel;
+	private JPanel nbGroupsPanel;
 	//A JSlider component 
 	private JSlider infLimSlider;
 	private JSlider supLimSlider;
+	private JSlider nbGroupsSlider;
 	//trigger update button
 	private JButton applyButton;
 	private JButton resetButton;
+	private JButton setGroups;
+
+	private JTextField nbGroups;
 	
 	//A JLabel contains a text label 
 	private JLabel labelSliderInf;
 	private JLabel labelSliderSup;
+	private JLabel labelGroupsSlider;
 	
 	
 	public GuiSettings() {
@@ -54,31 +62,40 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 		mainPanel   = new JPanel();
 		sliderPanel = new JPanel();
 		buttonPanel = new JPanel();
+		nbGroupsPanel = new JPanel();
 		
 		//Font settings for sliders
 		Font font = new Font("Serif", Font.ITALIC, 15);
 		
-		JFreeChart chart;
-		
 		//Sliders Configuration
 		infLimSlider = new JSlider(JSlider.HORIZONTAL,TEMP_MIN, TEMP_MAX, INF_INIT);
 		supLimSlider =  new JSlider(JSlider.HORIZONTAL,TEMP_MIN, TEMP_MAX, SUP_INIT);
+		nbGroupsSlider =  new JSlider(JSlider.HORIZONTAL,BEES_MIN, BEES_MAX, 1);
 		
-		//Create the label.
+		//Create the Slider labels.
 		labelSliderInf = new JLabel("Threshold Min", JLabel.CENTER);
 		labelSliderInf.setAlignmentX(Component.CENTER_ALIGNMENT);
 		labelSliderSup = new JLabel("Threshold Max", JLabel.CENTER);
 		labelSliderSup.setAlignmentX(Component.CENTER_ALIGNMENT);
-		
+		labelGroupsSlider = new JLabel("Set the groupement of bees", JLabel.CENTER);
+		labelGroupsSlider.setAlignmentX(Component.CENTER_ALIGNMENT);
+
 		
 		infLimSlider.addChangeListener((ChangeListener) this);
 		supLimSlider.addChangeListener((ChangeListener) this);
+		nbGroupsSlider.addChangeListener((ChangeListener) this);
 
 		//Turn on labels at major tick marks.
 		infLimSlider.setMajorTickSpacing(2);
 		infLimSlider.setMinorTickSpacing(1);
 		infLimSlider.setPaintTicks(true);
 		infLimSlider.setPaintLabels(true);
+
+		//Turn on labels at major tick marks.
+		nbGroupsSlider.setMajorTickSpacing(500);
+		nbGroupsSlider.setMinorTickSpacing(100);
+		nbGroupsSlider.setPaintTicks(true);
+		nbGroupsSlider.setPaintLabels(true);
 		
 		//Turn on labels at major tick marks.
 		supLimSlider.setMajorTickSpacing(2);
@@ -88,6 +105,7 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 		
 		infLimSlider.setFont(font);
 		supLimSlider.setFont(font);
+		nbGroupsSlider.setFont(font);
 		
 		//Buttons
 
@@ -103,6 +121,11 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 		sliderPanel.add(labelSliderSup);
 		sliderPanel.add(infLimSlider);
 		sliderPanel.add(supLimSlider);
+
+		nbGroupsPanel.setLayout(new GridLayout(2,1));
+		nbGroupsPanel.add(labelGroupsSlider);
+		nbGroupsPanel.add(nbGroupsSlider);
+
 		
 		buttonPanel.setLayout(new GridLayout(1,2));
 		buttonPanel.add(resetButton);
@@ -118,8 +141,9 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 //		mainPanel.add(applyButton);
 
 		
-		this.setLayout(new GridLayout(2,1));
+		this.setLayout(new GridLayout(3,1));
 		//Add the mainPanel to this current JFrame
+		this.add(nbGroupsSlider);
 		this.add(sliderPanel);
 		this.add(buttonPanel);
 		

@@ -1,5 +1,7 @@
 package favero.moreira.sma.termoreg;
 
+import org.jfree.ui.RefineryUtilities;
+
 public class Main extends Thread {
 
     public static void main(String[] args) throws InterruptedException {
@@ -12,12 +14,18 @@ public class Main extends Thread {
         t.setName("Main Thread");
 
         GuiSettings guiWindow = new GuiSettings();
+        final DynamicChart demo = new DynamicChart("Dynamic Data Demo");
+        demo.pack();
+        RefineryUtilities.centerFrameOnScreen(demo);
+
+        demo.setVisible(true);
 
 
         System.out.println("Hive temperature: " + hive.getTemp());
 
         while(true){
             System.out.println("Hive temperature BEFORE: " + hive.getTemp());
+            demo.update(hive);
             beesPerception(hive,environment);
             t.sleep(500);
             System.out.println("Hive temperature AFTER: " + hive.getTemp());

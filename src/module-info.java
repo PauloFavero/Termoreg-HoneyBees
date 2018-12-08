@@ -8,4 +8,5 @@
 module favero.moreira.sma.termoreg {
 	requires java.desktop;
     requires jfreechart;
+    requires jcommon;
 }

@@ -26,6 +26,7 @@ public class Hive {
 		   for(int i  = 0; i<this.maxOfBees; i++) {
 			   this.bee[i] = new Bee(this, (int)(maxOfBees%iNumGroups));
 		   }
+
 	   }
 
     //Get the only object available
