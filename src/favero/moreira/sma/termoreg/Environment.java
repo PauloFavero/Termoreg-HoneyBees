@@ -2,7 +2,7 @@ package favero.moreira.sma.termoreg;
 
 public class Environment {
 
-    private double dtemp;
+    private static double dtemp;
     private static Environment instance;
 
     private Environment() {
@@ -21,11 +21,11 @@ public class Environment {
 
     }
 
-    public double getTemp() {
+    public static double getTemp() {
         return dtemp;
     }
 
-    public void setTemp(double dtemp) {
-        this.dtemp = dtemp;
+    public static void setTemp(double dtemp) {
+        Environment.dtemp = dtemp;
     }
 }

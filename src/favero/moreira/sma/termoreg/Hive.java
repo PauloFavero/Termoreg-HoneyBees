@@ -1,11 +1,11 @@
 package favero.moreira.sma.termoreg;
 
 public class Hive {
-	
-	protected double temp;
-	private int maxOfBees;
-	private Bee[] bee;
-	private int iNumGroups=1;
+
+    protected double temp;
+    private int maxOfBees;
+    private Bee[] bee;
+    private int iNumGroups = 1;
     private double heatCoeffTransfer;
 
     //create an object of SingleObject
@@ -15,19 +15,19 @@ public class Hive {
         return bee;
     }
 
-	   //make the constructor private so that this class cannot be
-	   //instantiated
-	   private Hive(){
-		   this.setMaxOfBees(5000);
-		   this.heatCoeffTransfer = 10.0;
-		   this.bee =  new Bee[this.maxOfBees];
-		   this.setTemp(15.);
-		   //System.out.println ("Hive's temperature right now is " + this.temp);
-		   for(int i  = 0; i<this.maxOfBees; i++) {
-			   this.bee[i] = new Bee(this, (int)(i%iNumGroups));
-		   }
+    //make the constructor private so that this class cannot be
+    //instantiated
+    private Hive() {
+        this.setMaxOfBees(5000);
+        this.heatCoeffTransfer = 10.0;
+        this.bee = new Bee[this.maxOfBees];
+        this.setTemp(15.);
+        //System.out.println ("Hive's temperature right now is " + this.temp);
+        for (int i = 0; i < this.maxOfBees; i++) {
+            this.bee[i] = new Bee(this, (int) (i % iNumGroups));
+        }
 
-	   }
+    }
 
     //Get the only object available
     public static Hive getInstance() {
@@ -45,11 +45,12 @@ public class Hive {
         this.temp = temp;
     }
 
-    public void update(int iNumGroups, double dNewInfLim[], double dNewSupLim[]){
-        for(int i=0; i < maxOfBees; i++){
-            bee[i].setConfig(i%iNumGroups, dNewInfLim[i%iNumGroups], dNewSupLim[i%iNumGroups]);
+    public void update(int iNumGroups, double dNewInfLim[], double dNewSupLim[]) {
+        for (int i = 0; i < maxOfBees; i++) {
+            bee[i].setConfig(i % iNumGroups, dNewInfLim[i % iNumGroups], dNewSupLim[i % iNumGroups]);
         }
     }
+
     public void showMessage() {
         System.out.println("I'm a hive ");
     }
