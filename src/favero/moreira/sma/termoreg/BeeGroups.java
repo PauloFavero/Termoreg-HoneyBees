@@ -15,10 +15,10 @@ public class BeeGroups {
             values[i] = (double) randomGenerator();
         }
         Arrays.sort(values);
-        for (int i = 0; i < (values.length / 2); i++)
-            newInf[i] = values[i];
-        for (int i = 0; i < (values.length / 2); i++)
-            newSup[i] = values[(values.length / 2) + i];
+        for (int i = 0; i < ((values.length-1)/2); i++) {
+            newInf[i] = values[2*i];
+            newSup[i] = values[2*i + 1];
+        }
         Hive.getInstance().update(numGroup, newInf, newSup);
 
     }
