@@ -6,7 +6,7 @@ public class Environment {
     private static Environment instance;
 
     private Environment() {
-        this.dtemp = 34.50;
+        this.dtemp = 35.;
 
     }
 

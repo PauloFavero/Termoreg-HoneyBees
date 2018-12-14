@@ -28,6 +28,7 @@ public class Main extends Thread {
 
         System.out.println("Hive temperature: " + hive.getTemp());
 
+
         while (true) {
             if (!BeeGroups.getIsbAbleUpdate()) {
                 System.out.println("Hive temperature BEFORE: " + hive.getTemp());
