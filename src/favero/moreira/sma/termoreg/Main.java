@@ -23,7 +23,6 @@ public class Main extends Thread {
         guiWindow.pack();
         RefineryUtilities.centerFrameOnScreen(guiWindow);
 
-        guiWindow.setVisible(true);
 
         //500x729
         guiWindow.getSize();
@@ -55,21 +54,20 @@ public class Main extends Thread {
             }
         });
         SimulationParameters simulation = new SimulationParameters(timerPerception, timerGraphics);
-
-        BeeGroups.updateGroup();
+        guiWindow.setVisible(true);
         SimulationParameters.startSimulation();
-
+        BeeGroups.updateGroup();
 
     }
 
-    // ***************************************************************************
-    // * Method name:        beesPerception                                      *
-    // * Method description: Call the perception of each                         *
-    // * bee and do the temperature control                                      *
-    // * Input params:       Hive                                                *
-    // * Input params:       Environment                                         *
-    // * Output params:       Void                                               *
-    // ***************************************************************************
+    /*****************************************************************************
+     * Method name: beesPerception
+     * Method description: Call the perception of each bee and do
+     * the temperature control
+     * @param hive
+     * @param environment
+     * @return Void
+     ****************************************************************************/
     private static void beesPerception(Hive hive, Environment environment) {
 
         for (int i = 0; i < hive.getBee().length; i++) {
@@ -79,14 +77,14 @@ public class Main extends Thread {
     }
 
 
-    // ***************************************************************************
-    // * Method name:        heatTransfer                                        *
-    // * Method description: Set the temperature of the Hive                     *
-    // if have necessary changes                                                 *
-    // * Input params:       Hive                                                *
-    // * Input params:       Environment                                         *
-    // * Output params:       Void                                               *
-    // ***************************************************************************
+    /***************************************************************************
+     * Method name: heatTransfer
+     * Method description: Set the temperature of the Hive
+     * if have necessary changes
+     * @param hive
+     * @param environment
+     * @return Void
+     ***************************************************************************/
     private static void heatTransfer(Hive hive, Environment environment) {
 
         //hiveTemp = Bees.contribution hiveTemp + (envTemp-hiveTemp)/hiveCoeffTransfer

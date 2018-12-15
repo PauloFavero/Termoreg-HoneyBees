@@ -15,13 +15,18 @@ public class Hive {
         return bee;
     }
 
-    //make the constructor private so that this class cannot be
-    //instantiated
+    /***************************************************************************
+     * Method name: Hive
+     * Method description: Private Constructor for Singleton Pattern
+     * @param
+     * @param
+     * @return Void
+     ***************************************************************************/
     private Hive() {
         this.setMaxOfBees(5000);
         this.heatCoeffTransfer = 10.0;
         this.bee = new Bee[this.maxOfBees];
-        this.setTemp(15.);
+        this.setTemp(25.);
         //System.out.println ("Hive's temperature right now is " + this.temp);
         for (int i = 0; i < this.maxOfBees; i++) {
             this.bee[i] = new Bee(this, (int) (i % iNumGroups));
@@ -29,7 +34,13 @@ public class Hive {
 
     }
 
-    //Get the only object available
+    /***************************************************************************
+     * Method name: getInstance
+     * Method description: Returns the unique instance of Hive
+     * @param
+     * @param
+     * @return Hive
+     ***************************************************************************/
     public static Hive getInstance() {
         if (instance == null) {
             instance = new Hive();
@@ -45,14 +56,18 @@ public class Hive {
         this.temp = temp;
     }
 
+    /***************************************************************************
+     * Method name: update
+     * Method description: set heterogeneous configuration of the bees
+     * @param iNumGroups
+     * @param dNewInfLim
+     * @param dNewSupLim
+     * @return Void
+     ***************************************************************************/
     public void update(int iNumGroups, double dNewInfLim[], double dNewSupLim[]) {
         for (int i = 0; i < maxOfBees; i++) {
             bee[i].setConfig(i % iNumGroups, dNewInfLim[i % iNumGroups], dNewSupLim[i % iNumGroups]);
         }
-    }
-
-    public void showMessage() {
-        System.out.println("I'm a hive ");
     }
 
     public void setMaxOfBees(int nBees) {
@@ -60,10 +75,22 @@ public class Hive {
 
     }
 
+    /***************************************************************************
+     * Method name: getHeatCoeffTransfer
+     * Method description: Getter heatCoeffTransfer
+     * @param
+     * @return double
+     ***************************************************************************/
     public double getHeatCoeffTransfer() {
         return heatCoeffTransfer;
     }
 
+    /***************************************************************************
+     * Method name: setHeatCoeffTransfer
+     * Method description: Setter heatCoeffTransfer
+     * @param heatCoeffTransfer
+     * @return void
+     ***************************************************************************/
     public void setHeatCoeffTransfer(double heatCoeffTransfer) {
         this.heatCoeffTransfer = heatCoeffTransfer;
     }

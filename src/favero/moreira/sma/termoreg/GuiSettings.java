@@ -109,8 +109,8 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 
         buttonPanel.setLayout(new GridLayout(1, 2));
         buttonPanel.add(resetButton);
-        buttonPanel.add(applyButton);
         buttonPanel.add(stopButton);
+        buttonPanel.add(applyButton);
         buttonPanel.setPreferredSize(new Dimension(100, 20));
 
         chart = new DynamicTimeSeriesChart("Hive Temperature");
@@ -132,25 +132,6 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 
     }
 
-//    /**
-//     * Creates a sample chart.
-//     *
-//     * @param dataset the dataset.
-//     * @return A sample chart.
-//     */
-
-//    private JFreeChart createChart(final XYDataset dataset) {
-//        final JFreeChart result = ChartFactory.createTimeSeriesChart(
-//                "Hive Temperature",
-//                "Time",
-//                "Value",
-//                dataset,
-//                true,
-//                true,
-//                false
-//        );
-//        final XYPlot plot = result.getXYPlot();
-//
 //        DateAxis xaxis = (DateAxis)plot.getDomainAxis();
 //        xaxis.setAutoRange(true);
 //        //xaxis.setFixedAutoRange(60000.0);  // 60 seconds
@@ -178,6 +159,14 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 //        this.series.add(new Millisecond(), this.lastValue);
 //    }
 
+    /*****************************************************************************
+     * Method name: sliderEnvConfig
+     * Method description: Set the parameters for slider iniatilization
+     * @param slider
+     * @param font
+     * @return Void
+     ****************************************************************************/
+
     public void sliderEnvConfig(JSlider slider, Font font) {
         slider.addChangeListener((ChangeListener) this);
 
@@ -190,18 +179,30 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 
     }
 
+    /*****************************************************************************
+     * Method name: sliderSimulationConfig
+     * Method description: Set the best initialization for the sliders
+     * @param slider
+     * @param font
+     * @return Void
+     ****************************************************************************/
+
     public void sliderSimulationConfig(JSlider slider, Font font) {
         slider.addChangeListener((ChangeListener) this);
 
         //Turn on labels at major tick marks.
         slider.setMajorTickSpacing(100);
-        //slider.setMinorTickSpacing(2);
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
         slider.setFont(font);
 
     }
-
+    /*****************************************************************************
+     * Method name: createLabels
+     * Method description: Creates all the labels in the main Gui
+     * @param
+     * @return Void
+     ****************************************************************************/
     public void createLabels() {
         //Create the Slider labels.
         this.labelSliderEnv = new JLabel("Environment Temperature: " + this.envTempSlider.getValue() + "\u00B0" + "C", JLabel.CENTER);
@@ -218,29 +219,13 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
         this.labelWarning.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.labelWarning.setVisible(false);
     }
-
+    /*****************************************************************************
+     * Method name: createLabels
+     * Method description: Creates all the labels in the main Gui
+     * @param
+     * @return Void
+     ****************************************************************************/
     public void groupsPanelConfig() {
-//        this.nbGroupsPanel.setLayout(new GridBagLayout());
-//        GridBagConstraints gbc = new GridBagConstraints();
-//
-//        gbc.gridx = 0;
-//        gbc.gridy = 0;
-//        gbc.fill = GridBagConstraints.BOTH;
-//        gbc.anchor = GridBagConstraints.PAGE_START;
-//        this.nbGroupsPanel.add(labelGroups, gbc);
-//
-//
-//        gbc.gridx = 0;
-//        gbc.gridy = 1;
-//        gbc.fill = GridBagConstraints.BOTH;
-//        gbc.anchor = GridBagConstraints.LINE_START;
-//        this.nbGroupsPanel.add(this.nbGroupsTextField, gbc);
-//
-//        gbc.gridx = 2;
-//        gbc.gridy = 1;
-//        gbc.fill = GridBagConstraints.BOTH;
-//        gbc.anchor = GridBagConstraints.LINE_END;
-//        this.nbGroupsPanel.add(this.labelWarning, gbc);
 
         this.nbGroupsPanel.setLayout(new GridLayout(3, 1));
         this.nbGroupsPanel.add(this.labelGroups);
@@ -248,12 +233,25 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
         this.nbGroupsPanel.add(this.labelWarning);
 
     }
-
+    /*****************************************************************************
+     * Method name: beesPerception
+     * Method description: Call the perception of each bee and do
+     * the temperature control
+     * @param
+     * @return Void
+     ****************************************************************************/
     private void makeFrameFullSize() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setSize(screenSize.width, screenSize.height);
     }
-
+    /*****************************************************************************
+     * Method name: stateChanged
+     * Method description: Listener for the slider. They are only actived when
+     * the user release the slider. This function update the delay time of the
+     * Simulation and the labels on the GUI.
+     * @param e
+     * @return Void
+     ****************************************************************************/
     public void stateChanged(ChangeEvent e) {
         JSlider source = (JSlider) e.getSource();
         if (!source.getValueIsAdjusting()) {
@@ -277,11 +275,24 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
             }
         }
     }
-
+    /*****************************************************************************
+     * Method name: getChart
+     * Method description: Getter DynamicTimeSeriesChart
+     * @param
+     * @return DynamicTimeSeriesChart
+     ****************************************************************************/
     public DynamicTimeSeriesChart getChart() {
         return chart;
     }
-
+    /*****************************************************************************
+     * Method name: actionPerformed
+     * Method description: Listener for the buttons. Execute action according
+     * with the pressed button.
+     * TODO: Verify if the user enter a string for the groups value
+     * TODO: Verify the synchronisation of BeeGroups.update with the timers.
+     * @param e
+     * @return Void
+     ****************************************************************************/
     @Override
     public void actionPerformed(ActionEvent e) {
         // TODO Auto-generated method stub
