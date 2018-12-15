@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class BeeGroups {
-    private static int numGroup;
+    private static int numGroup = 1;
     private static boolean bAbleUpdate = false;
 
 

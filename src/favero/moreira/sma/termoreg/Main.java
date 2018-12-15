@@ -2,8 +2,12 @@ package favero.moreira.sma.termoreg;
 
 import org.jfree.ui.RefineryUtilities;
 
-public class Main extends Thread {
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+public class Main extends Thread {
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -11,12 +15,11 @@ public class Main extends Thread {
         // Get the only object available
         Hive hive = Hive.getInstance();
         Environment environment = Environment.getInstance();
-        SimulationParameters simulation = new SimulationParameters();
-
         Thread t = Thread.currentThread();
         t.setName("Main Thread");
 
         final GuiSettings guiWindow = new GuiSettings("Super Bee Simulator 2000");
+        final DynamicTimeSeriesChart chart = new DynamicTimeSeriesChart("Hive Temperature");
         guiWindow.pack();
         RefineryUtilities.centerFrameOnScreen(guiWindow);
 
@@ -24,20 +27,38 @@ public class Main extends Thread {
 
         //500x729
         guiWindow.getSize();
-
-
-        System.out.println("Hive temperature: " + hive.getTemp());
-
-
-        while (true) {
-            if (!BeeGroups.getIsbAbleUpdate()) {
-                System.out.println("Hive temperature BEFORE: " + hive.getTemp());
-                guiWindow.update(hive);
-                beesPerception(hive, environment);
-                sleep(simulation.getSpeedSimulation());
-                System.out.println("Hive temperature AFTER: " + hive.getTemp());
+        Timer timerGraphics = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("graphics");
+                        guiWindow.getChart().update((float) hive.getTemp(), 2);
+                    }
+                });
             }
-        }
+        });
+        Timer timerPerception = new Timer(500, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!BeeGroups.getIsbAbleUpdate()) {
+                            //guiWindow.update(hive,(Integer)1000/simulation.getSpeedSimulation());
+                            //guiWindow.getChart().update((float) hive.getTemp(), (Integer) 1000 / simulation.getSpeedSimulation());
+                            System.out.println("percepetion");
+                            beesPerception(hive, environment);
+                            //sleep(simulation.getSpeedSimulation());
+                        }
+                    }
+                });
+            }
+        });
+        SimulationParameters simulation = new SimulationParameters(timerPerception, timerGraphics);
+
+        BeeGroups.updateGroup();
+        SimulationParameters.startSimulation();
+
 
     }
 

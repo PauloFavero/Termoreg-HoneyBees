@@ -1,14 +1,6 @@
 package favero.moreira.sma.termoreg;
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.data.time.Millisecond;
 import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
-import org.jfree.data.xy.XYDataset;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -39,6 +31,7 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
     //trigger update button
     private JButton applyButton;
     private JButton resetButton;
+    private JButton stopButton;
 
     private JTextField nbGroupsTextField;
 
@@ -47,6 +40,10 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
     private JLabel labelGroups;
     private JLabel labelWarning;
     private JLabel labelSpeed;
+
+
+    //final JFreeChart chart;
+    final DynamicTimeSeriesChart chart;
 
     /**
      * The time series data.
@@ -66,7 +63,7 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
         sliderPanel = new JPanel();
         buttonPanel = new JPanel();
         nbGroupsPanel = new JPanel();
-        nbGroupsPanel.setSize(new Dimension(50,739));
+        nbGroupsPanel.setSize(new Dimension(50, 739));
 
 
         //Font settings for sliders
@@ -74,23 +71,26 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 
         //Text Fields
         nbGroupsTextField = new JTextField();
-//        nbGroupsTextField.setColumns(4);
+        nbGroupsTextField.setColumns(5);
+        nbGroupsTextField.setHorizontalAlignment(10);
 
         //Sliders Configuration
         envTempSlider = new JSlider(JSlider.HORIZONTAL, TEMP_MIN, TEMP_MAX, ENV_INIT);
         sliderEnvConfig(envTempSlider, font);
 
         speedSimulationSlider = new JSlider(JSlider.HORIZONTAL, SPEED_MAX, SPEED_MIN, SPEED_INIT);
-        sliderSimulationConfig(speedSimulationSlider,font);
+        sliderSimulationConfig(speedSimulationSlider, font);
 
         createLabels();
 
         //Buttons
         applyButton = new JButton("Apply");
         resetButton = new JButton("Reset");
+        stopButton = new JButton("Stop");
 
         applyButton.addActionListener(this);
         resetButton.addActionListener(this);
+        stopButton.addActionListener(this);
 
         //Set the layout manager of the panel to be a grid of three rows and two columns
         sliderPanel.setLayout(new GridLayout(4, 1));
@@ -110,31 +110,21 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
         buttonPanel.setLayout(new GridLayout(1, 2));
         buttonPanel.add(resetButton);
         buttonPanel.add(applyButton);
-        buttonPanel.setPreferredSize(new Dimension(100, 100));
+        buttonPanel.add(stopButton);
+        buttonPanel.setPreferredSize(new Dimension(100, 20));
 
+        chart = new DynamicTimeSeriesChart("Hive Temperature");
 
-        this.series = new TimeSeries("Temperature", Millisecond.class);
-        final TimeSeriesCollection dataset = new TimeSeriesCollection(this.series);
-        final JFreeChart chart = createChart(dataset);
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-        final ChartPanel chartPanel = new ChartPanel(chart);
-
-
-        final JPanel content = new JPanel(new GridLayout());
-        content.add(chartPanel);
-        //content.add(resetButton, BorderLayout.SOUTH);
-        //content.add(applyButton, BorderLayout.SOUTH);
-        chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
-
-        //setContentPane(content);
-        chartPanel.setName("Temperature Evolution");
-
-        this.setLayout(new GridLayout(2, 2));
         //Add the mainPanel to this current JFrame
-        this.add(nbGroupsPanel);
-        this.add(sliderPanel);
-        this.add(buttonPanel);
-        this.add(chartPanel);
+        this.add(mainPanel);
+        mainPanel.add(nbGroupsPanel);
+        mainPanel.add(sliderPanel);
+        mainPanel.add(chart);
+        mainPanel.add(buttonPanel);
+
 
         this.pack();
         this.setVisible(true);
@@ -142,39 +132,51 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 
     }
 
-    /**
-     * Creates a sample chart.
-     *
-     * @param dataset the dataset.
-     * @return A sample chart.
-     */
+//    /**
+//     * Creates a sample chart.
+//     *
+//     * @param dataset the dataset.
+//     * @return A sample chart.
+//     */
 
-    private JFreeChart createChart(final XYDataset dataset) {
-        final JFreeChart result = ChartFactory.createTimeSeriesChart(
-                "Hive Temperature",
-                "Time",
-                "Value",
-                dataset,
-                true,
-                true,
-                false
-        );
-        final XYPlot plot = result.getXYPlot();
-        ValueAxis axis = plot.getDomainAxis();
-        axis.setAutoRange(true);
-        axis.setFixedAutoRange(60000.0);  // 60 seconds
-        axis = plot.getRangeAxis();
-        axis.setRange(15.0, 40.0);
-        return result;
-    }
-
-    public void update(Hive hive) {
-        this.lastValue = hive.getTemp();
-        ;
-        final Millisecond now = new Millisecond();
-        System.out.println("Now = " + now.toString());
-        this.series.add(new Millisecond(), this.lastValue);
-    }
+//    private JFreeChart createChart(final XYDataset dataset) {
+//        final JFreeChart result = ChartFactory.createTimeSeriesChart(
+//                "Hive Temperature",
+//                "Time",
+//                "Value",
+//                dataset,
+//                true,
+//                true,
+//                false
+//        );
+//        final XYPlot plot = result.getXYPlot();
+//
+//        DateAxis xaxis = (DateAxis)plot.getDomainAxis();
+//        xaxis.setAutoRange(true);
+//        //xaxis.setFixedAutoRange(60000.0);  // 60 seconds
+//        xaxis.setRange(25.0, 40.0);
+//        xaxis.setAutoRange(true); ////set true to move graph with time.
+//        xaxis.setTickUnit(new DateTickUnit(DateTickUnit.SECOND, 2, new SimpleDateFormat("ss")));
+//
+//
+//        XYItemRenderer renderer = plot.getRenderer();
+//        renderer.setSeriesPaint(0, Color.RED);
+//        renderer.setSeriesPaint(1, Color.GREEN);
+//        return result;
+//    }
+//
+//    public void update(Hive hive, int tickTime) {
+//        this.lastValue = hive.getTemp();
+//        ;
+//        final Millisecond now = new Millisecond();
+//        System.out.println("Now = " + now.toString());
+//
+//        final XYPlot plot = this.getChart().getXYPlot();
+//        DateAxis xaxis = (DateAxis)plot.getDomainAxis();
+//
+//        xaxis.setTickUnit(new DateTickUnit(DateTickUnit.SECOND, tickTime, new SimpleDateFormat("ss")));
+//        this.series.add(new Millisecond(), this.lastValue);
+//    }
 
     public void sliderEnvConfig(JSlider slider, Font font) {
         slider.addChangeListener((ChangeListener) this);
@@ -200,9 +202,9 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 
     }
 
-    public void createLabels(){
+    public void createLabels() {
         //Create the Slider labels.
-        this.labelSliderEnv = new JLabel("Environment Temperature: " + this.envTempSlider.getValue()+ "\u00B0" + "C", JLabel.CENTER);
+        this.labelSliderEnv = new JLabel("Environment Temperature: " + this.envTempSlider.getValue() + "\u00B0" + "C", JLabel.CENTER);
         this.labelSliderEnv.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         this.labelGroups = new JLabel("Number of groups", JLabel.CENTER);
@@ -240,42 +242,44 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 //        gbc.anchor = GridBagConstraints.LINE_END;
 //        this.nbGroupsPanel.add(this.labelWarning, gbc);
 
-        this.nbGroupsPanel.setLayout(new GridLayout(3,1));
+        this.nbGroupsPanel.setLayout(new GridLayout(3, 1));
         this.nbGroupsPanel.add(this.labelGroups);
         this.nbGroupsPanel.add(this.nbGroupsTextField);
         this.nbGroupsPanel.add(this.labelWarning);
 
     }
 
-    private void makeFrameFullSize()
-    {
+    private void makeFrameFullSize() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setSize(screenSize.width, screenSize.height);
     }
 
     public void stateChanged(ChangeEvent e) {
         JSlider source = (JSlider) e.getSource();
-
         if (!source.getValueIsAdjusting()) {
             int value = (int) source.getValue();
             System.out.println("Slider Value: " + value);
             if (source == this.envTempSlider) {
                 Environment.setTemp(value);
             } else if (source == this.speedSimulationSlider) {
-                if(value == 0){
-                    value+=1;
+                if (value == 0) {
+                    value += 1;
                 }
                 SimulationParameters.setSpeedSimulation(value);
+                SimulationParameters.setDelayPerception();
             }
-        }
-        else {
+        } else {
 
-            if(source == this.envTempSlider){
+            if (source == this.envTempSlider) {
                 this.labelSliderEnv.setText("Environment Temperature: " + envTempSlider.getValue() + "\u00B0" + "C");
-            }else{
+            } else {
                 this.labelSpeed.setText("Cycle Update: " + speedSimulationSlider.getValue() + "ms");
             }
         }
+    }
+
+    public DynamicTimeSeriesChart getChart() {
+        return chart;
     }
 
     @Override
@@ -290,15 +294,26 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
             BeeGroups.setbAbleUpdate(false);
         } else if (e.getSource() == applyButton) {
             int value = Integer.parseInt(this.nbGroupsTextField.getText());
-            if ((value <= 0) || (value > 5000)) {
-                this.labelWarning.setVisible(true);
-            } else {
+            if ((value > 0) && (value <= 5000)) {
                 this.labelWarning.setVisible(false);
                 BeeGroups.setNumGroup(value);
                 BeeGroups.setbAbleUpdate(true);
                 BeeGroups.updateGroup();
                 BeeGroups.setbAbleUpdate(false);
 
+            } else {
+                this.labelWarning.setVisible(true);
+
+            }
+        } else if (e.getSource() == stopButton) {
+            if (stopButton.getText().equals("Stop")) {
+                SimulationParameters.stopSimulation();
+                SimulationParameters.setSimulationStop(true);
+                stopButton.setText("Start");
+            } else {
+                SimulationParameters.setSimulationStop(false);
+                SimulationParameters.startSimulation();
+                stopButton.setText("Stop");
             }
         }
     }

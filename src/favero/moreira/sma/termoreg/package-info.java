@@ -1,0 +1,1 @@
+package favero.moreira.sma.termoreg;
