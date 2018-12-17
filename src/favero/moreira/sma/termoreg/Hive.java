@@ -94,4 +94,39 @@ public class Hive {
     public void setHeatCoeffTransfer(double heatCoeffTransfer) {
         this.heatCoeffTransfer = heatCoeffTransfer;
     }
+
+
+    /*****************************************************************************
+     * Method name: beesPerception
+     * Method description: Call the perception of each bee and do
+     * the temperature control
+     * @param
+     * @param
+     * @return Void
+     ****************************************************************************/
+    public void beesInHivePerception() {
+
+        for (int i = 0; i < this.getBee().length; i++) {
+            this.getBee()[i].perception();
+        }
+        heatTransferHive();
+    }
+
+
+    /***************************************************************************
+     * Method name: heatTransfer
+     * Method description: Set the temperature of the Hive
+     * if have necessary changes
+     * @param
+     * @param
+     * @return Void
+     ***************************************************************************/
+    public  void heatTransferHive() {
+
+        //hiveTemp = Bees.contribution hiveTemp + (envTemp-hiveTemp)/hiveCoeffTransfer
+        double temp = Bee.dTempBees + this.getTemp() + (Environment.getTemp() - this.getTemp()) / this.getHeatCoeffTransfer();
+
+        this.setTemp(Bee.dTempBees + this.getTemp() + (Environment.getTemp() - this.getTemp()) / this.getHeatCoeffTransfer());
+        Bee.dTempBees = 0.0;
+    }
 }

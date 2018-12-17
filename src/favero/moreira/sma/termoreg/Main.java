@@ -43,16 +43,14 @@ public class Main extends Thread {
                     @Override
                     public void run() {
                         if (!BeeGroups.getIsbAbleUpdate()) {
-                            //guiWindow.update(hive,(Integer)1000/simulation.getSpeedSimulation());
-                            //guiWindow.getChart().update((float) hive.getTemp(), (Integer) 1000 / simulation.getSpeedSimulation());
                             System.out.println("percepetion");
-                            beesPerception(hive, environment);
-                            //sleep(simulation.getSpeedSimulation());
+                            hive.beesInHivePerception();
                         }
                     }
                 });
             }
         });
+
         SimulationParameters simulation = new SimulationParameters(timerPerception, timerGraphics);
         guiWindow.setVisible(true);
         BeeGroups.updateGroup();
@@ -60,38 +58,5 @@ public class Main extends Thread {
 
     }
 
-    /*****************************************************************************
-     * Method name: beesPerception
-     * Method description: Call the perception of each bee and do
-     * the temperature control
-     * @param hive
-     * @param environment
-     * @return Void
-     ****************************************************************************/
-    private static void beesPerception(Hive hive, Environment environment) {
-
-        for (int i = 0; i < hive.getBee().length; i++) {
-            hive.getBee()[i].perception();
-        }
-        heatTransfer(hive, environment);
-    }
-
-
-    /***************************************************************************
-     * Method name: heatTransfer
-     * Method description: Set the temperature of the Hive
-     * if have necessary changes
-     * @param hive
-     * @param environment
-     * @return Void
-     ***************************************************************************/
-    private static void heatTransfer(Hive hive, Environment environment) {
-
-        //hiveTemp = Bees.contribution hiveTemp + (envTemp-hiveTemp)/hiveCoeffTransfer
-        double temp = Bee.dTempBees + hive.getTemp() + (environment.getTemp() - hive.getTemp()) / hive.getHeatCoeffTransfer();
-
-        hive.setTemp(Bee.dTempBees + hive.getTemp() + (environment.getTemp() - hive.getTemp()) / hive.getHeatCoeffTransfer());
-        Bee.dTempBees = 0.0;
-    }
 
 }
