@@ -21,7 +21,7 @@ public class DynamicTimeSeriesChart extends JPanel {
         dataset = new DynamicTimeSeriesCollection(1, 60, new Second());
         dataset.setTimeBase(new Second(0, 0, 0, 1, 1, 2000)); // date 1st jan 0 mins 0 secs
 
-        dataset.addSeries(new float[1], 0, title);
+        dataset.addSeries(new float[0], 0, "Temperature");
         chart = null;
         chart = ChartFactory.createTimeSeriesChart(
                 title, "Time", "Temperature", dataset, true,
@@ -29,7 +29,6 @@ public class DynamicTimeSeriesChart extends JPanel {
         final XYPlot plot = chart.getXYPlot();
         plot.clearAnnotations();
         DateAxis axis = (DateAxis) plot.getDomainAxis();
-        //axis = plot.getRangeAxis();
         axis.setRange(25.0, 40.0);
         axis.setAutoRange(true); ////set true to move graph with time.
         axis.setDateFormatOverride(new SimpleDateFormat("mm.ss.SS"));
@@ -43,8 +42,13 @@ public class DynamicTimeSeriesChart extends JPanel {
     public void update(float value, int tickTime) {
         float[] newData = new float[1];
         newData[0] = value;
-        dataset.advanceTime();
-        dataset.appendData(newData);
+
+            dataset.advanceTime();
+            dataset.appendData(newData);
+    }
+
+    public DynamicTimeSeriesCollection getDataset() {
+        return dataset;
     }
 
 }

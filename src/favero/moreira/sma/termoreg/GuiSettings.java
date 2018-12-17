@@ -78,8 +78,10 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
         envTempSlider = new JSlider(JSlider.HORIZONTAL, TEMP_MIN, TEMP_MAX, ENV_INIT);
         sliderEnvConfig(envTempSlider, font);
         envTempSlider.setValue(((int) Environment.getTemp()));
+        envTempSlider.setSnapToTicks(true);
         speedSimulationSlider = new JSlider(JSlider.HORIZONTAL, SPEED_MAX, SPEED_MIN, SPEED_INIT);
         sliderSimulationConfig(speedSimulationSlider, font);
+        speedSimulationSlider.setSnapToTicks(true);
 
 
         createLabels();
@@ -173,7 +175,7 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
 
         //Turn on labels at major tick marks.
         slider.setMajorTickSpacing(10);
-        slider.setMinorTickSpacing(2);
+        slider.setMinorTickSpacing(1);
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
         slider.setFont(font);
@@ -212,7 +214,7 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
         this.labelGroups = new JLabel("Number of groups", JLabel.CENTER);
         this.labelGroups.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        this.labelSpeed = new JLabel("Cycle Update: " + this.speedSimulationSlider.getValue() + "ms", JLabel.CENTER);
+        this.labelSpeed = new JLabel("Simulation time: " + (float)1000/this.speedSimulationSlider.getValue() + "s", JLabel.CENTER);
         this.labelSpeed.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 
@@ -258,6 +260,7 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
         if (!source.getValueIsAdjusting()) {
             int value = (int) source.getValue();
             System.out.println("Slider Value: " + value);
+
             if (source == this.envTempSlider) {
                 Environment.setTemp(value);
             } else if (source == this.speedSimulationSlider) {
@@ -269,10 +272,18 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
             }
         } else {
 
-            if (source == this.envTempSlider) {
+            if (source == this.envTempSlider)
+            {
                 this.labelSliderEnv.setText("Environment Temperature: " + envTempSlider.getValue() + "\u00B0" + "C");
-            } else {
-                this.labelSpeed.setText("Cycle Update: " + speedSimulationSlider.getValue() + "ms");
+            }
+            else {
+                if (speedSimulationSlider.getValue() == 0) {
+                    this.labelSpeed.setText("Simulation time: " + (float)1000/(speedSimulationSlider.getValue() + 1) + "s");
+                }
+                else{
+                    this.labelSpeed.setText("Simulation time: " + (float)1000/speedSimulationSlider.getValue() + "s");
+                }
+
             }
         }
     }

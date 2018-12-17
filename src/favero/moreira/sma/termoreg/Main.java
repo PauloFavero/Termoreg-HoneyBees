@@ -55,7 +55,6 @@ public class Main extends Thread {
         });
         SimulationParameters simulation = new SimulationParameters(timerPerception, timerGraphics);
         guiWindow.setVisible(true);
-
         BeeGroups.updateGroup();
 
 
