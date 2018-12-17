@@ -77,16 +77,17 @@ public class GuiSettings extends JFrame implements ActionListener, ChangeListene
         //Sliders Configuration
         envTempSlider = new JSlider(JSlider.HORIZONTAL, TEMP_MIN, TEMP_MAX, ENV_INIT);
         sliderEnvConfig(envTempSlider, font);
-
+        envTempSlider.setValue(((int) Environment.getTemp()));
         speedSimulationSlider = new JSlider(JSlider.HORIZONTAL, SPEED_MAX, SPEED_MIN, SPEED_INIT);
         sliderSimulationConfig(speedSimulationSlider, font);
+
 
         createLabels();
 
         //Buttons
         applyButton = new JButton("Apply");
         resetButton = new JButton("Reset");
-        stopButton = new JButton("Stop");
+        stopButton = new JButton("Start");
 
         applyButton.addActionListener(this);
         resetButton.addActionListener(this);
